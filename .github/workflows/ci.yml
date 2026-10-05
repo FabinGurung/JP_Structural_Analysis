@@ -25,3 +25,10 @@ jobs:
         run: python -m pytest -q
       - name: Run public-data safety scan
         run: python scripts/check_public_safety.py
+      - name: Build sanitized SAR package
+        run: python examples/sanitized/mdm_two_span/build_example.py --output build/mdm_two_span
+      - name: Upload sanitized SAR package
+        uses: actions/upload-artifact@v4
+        with:
+          name: sanitized-mdm-two-span-sar
+          path: build/mdm_two_span
