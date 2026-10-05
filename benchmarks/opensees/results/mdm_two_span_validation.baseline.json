@@ -1,0 +1,120 @@
+{
+  "validator": "OpenSeesPy independent validation of thesis SAMPLE_MDM_001",
+  "source": "data/website_demo_data.json",
+  "project_code": "SAMPLE_MDM_001",
+  "source_mutated": false,
+  "solver": {
+    "name": "OpenSeesPy",
+    "package_version": "3.8.0.0",
+    "engine_version": "3.8.0",
+    "analysis_type": "2D linear elastic static",
+    "element_type": "elasticBeamColumn"
+  },
+  "model_interpretation": {
+    "A": "fixed support",
+    "B": "continuous intermediate support: vertical restrained, rotation free",
+    "C": "fixed support",
+    "load": "AB UDL applied downward; BC unloaded",
+    "sign_conversion": "OpenSees local end moments negated to match source clockwise-positive MDM member-end convention"
+  },
+  "opensees_result": {
+    "analysis_return_code": 0,
+    "node_displacements": {
+      "A": [0.0, 0.0, 0.0],
+      "B": [0.0, 0.0, 0.0009],
+      "C": [0.0, 0.0, 0.0]
+    },
+    "support_reactions_y": {
+      "A": 33.75,
+      "B": 30.0,
+      "C": -3.75
+    },
+    "member_end_moments_mdm_sign": {
+      "AB": {
+        "near_final_moment": -37.5,
+        "far_final_moment": 15.0
+      },
+      "BC": {
+        "near_final_moment": -15.0,
+        "far_final_moment": -7.5
+      }
+    },
+    "raw_element_local_force_vectors": {
+      "AB": [0.0, 33.75, 37.5, 0.0, 26.25, -15.0],
+      "BC": [0.0, 3.75, 15.0, 0.0, -3.75, 7.5]
+    }
+  },
+  "comparison": {
+    "status": "FAIL_REACTION_DATA_RECONCILIATION",
+    "moment_checks_pass": true,
+    "reaction_checks_pass": false,
+    "moment_checks": [
+      {
+        "member": "AB",
+        "quantity": "near_final_moment",
+        "stored_mdm": -37.5,
+        "opensees": -37.5,
+        "difference": 0.0,
+        "pass": true
+      },
+      {
+        "member": "AB",
+        "quantity": "far_final_moment",
+        "stored_mdm": 15.0,
+        "opensees": 15.0,
+        "difference": 0.0,
+        "pass": true
+      },
+      {
+        "member": "BC",
+        "quantity": "near_final_moment",
+        "stored_mdm": -15.0,
+        "opensees": -15.0,
+        "difference": 0.0,
+        "pass": true
+      },
+      {
+        "member": "BC",
+        "quantity": "far_final_moment",
+        "stored_mdm": -7.5,
+        "opensees": -7.5,
+        "difference": 0.0,
+        "pass": true
+      }
+    ],
+    "reaction_checks": [
+      {
+        "joint": "A",
+        "quantity": "vertical_reaction",
+        "stored_mdm": 38.75,
+        "opensees": 33.75,
+        "difference": -5.0,
+        "pass": false
+      },
+      {
+        "joint": "B",
+        "quantity": "vertical_reaction",
+        "stored_mdm": 22.5,
+        "opensees": 30.0,
+        "difference": 7.5,
+        "pass": false
+      },
+      {
+        "joint": "C",
+        "quantity": "vertical_reaction",
+        "stored_mdm": -1.25,
+        "opensees": -3.75,
+        "difference": -2.5,
+        "pass": false
+      }
+    ],
+    "equilibrium": {
+      "total_downward_load_kN": 60.0,
+      "total_opensees_vertical_reaction_kN": 60.0,
+      "total_stored_vertical_reaction_kN": 60.0,
+      "opensees_global_equilibrium_pass": true,
+      "stored_global_equilibrium_pass": true
+    },
+    "note": "The source dataset is not modified by this validator. A reaction mismatch is retained as evidence requiring reconciliation against the governed thesis authority."
+  }
+}

@@ -1,0 +1,27 @@
+name: structural-engine-ci
+
+on:
+  push:
+    branches:
+      - engine/opensees-sar-v0.1
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install governed test stack
+        run: python -m pip install -e ".[test,opensees]"
+      - name: Run unit and regression tests
+        run: python -m pytest -q
+      - name: Run public-data safety scan
+        run: python scripts/check_public_safety.py

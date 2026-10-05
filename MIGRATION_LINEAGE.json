@@ -1,0 +1,127 @@
+{
+  "schema": "jp_structural.migration_lineage.v0.1",
+  "migration_date": "2026-10-05",
+  "source_repository": "FabinGurung/JP_Research-and-Development",
+  "records": [
+    {
+      "source_repository": "FabinGurung/JP_Research-and-Development",
+      "source_branch": "structural-analysis-solver-v0.1",
+      "source_commit": "eacb159bc3c7ad06e8146105fcbff383923ccb0f",
+      "source_path": "structural-analysis/src/aec_structural_validation/direct_stiffness.py",
+      "destination_path": "src/jp_structural/solvers/native/direct_stiffness.py",
+      "action": "migrate",
+      "migration_date": "2026-10-05",
+      "migration_reason": "Transparent 2D direct-stiffness benchmark"
+    },
+    {
+      "source_repository": "FabinGurung/JP_Research-and-Development",
+      "source_branch": "structural-analysis-solver-v0.1",
+      "source_commit": "eacb159bc3c7ad06e8146105fcbff383923ccb0f",
+      "source_path": "structural-analysis/src/aec_structural_validation/mdm.py",
+      "destination_path": "src/jp_structural/solvers/native/mdm.py",
+      "action": "migrate",
+      "migration_date": "2026-10-05",
+      "migration_reason": "Transparent moment-distribution benchmark"
+    },
+    {
+      "source_repository": "FabinGurung/JP_Research-and-Development",
+      "source_branch": "structural-analysis-solver-v0.1",
+      "source_commit": "eacb159bc3c7ad06e8146105fcbff383923ccb0f",
+      "source_path": "structural-analysis/src/aec_structural_validation/floor_efm.py",
+      "destination_path": "src/jp_structural/solvers/native/floor_efm.py",
+      "action": "migrate",
+      "migration_date": "2026-10-05",
+      "migration_reason": "Governed floor EFM helper benchmark"
+    },
+    {
+      "source_repository": "FabinGurung/JP_Research-and-Development",
+      "source_branch": "structural-analysis-solver-v0.1",
+      "source_commit": "eacb159bc3c7ad06e8146105fcbff383923ccb0f",
+      "source_path": "structural-analysis/src/aec_structural_validation/load_combinations.py",
+      "destination_path": "src/jp_structural/solvers/native/load_combinations.py",
+      "action": "migrate",
+      "migration_date": "2026-10-05",
+      "migration_reason": "Transparent load-combination helper"
+    },
+    {
+      "source_repository": "FabinGurung/JP_Research-and-Development",
+      "source_branch": "structural-analysis-solver-v0.1",
+      "source_commit": "eacb159bc3c7ad06e8146105fcbff383923ccb0f",
+      "source_path": "structural-analysis/src/aec_structural_validation/response_spectrum.py",
+      "destination_path": "src/jp_structural/solvers/native/response_spectrum.py",
+      "action": "migrate",
+      "migration_date": "2026-10-05",
+      "migration_reason": "Transparent spectrum post-processing helper"
+    },
+    {
+      "source_repository": "FabinGurung/JP_Research-and-Development",
+      "source_branch": "opensees-mdm-validation-v0.1",
+      "source_commit": "077f42d77582770bac55bc4b07a116a640c03665",
+      "source_path": "analysis/opensees/mdm_two_span_validation.py",
+      "destination_path": "benchmarks/opensees/mdm_two_span_validation.py",
+      "action": "refactor",
+      "migration_date": "2026-10-05",
+      "migration_reason": "Independent OpenSees reproduction benchmark; paths refactored only"
+    },
+    {
+      "source_repository": "FabinGurung/JP_Research-and-Development",
+      "source_branch": "opensees-mdm-validation-v0.1",
+      "source_commit": "077f42d77582770bac55bc4b07a116a640c03665",
+      "source_path": "data/website_demo_data.json",
+      "destination_path": "examples/sanitized/mdm_two_span/website_demo_data.json",
+      "action": "migrate",
+      "migration_date": "2026-10-05",
+      "migration_reason": "Existing public sanitized benchmark dataset"
+    },
+    {
+      "source_repository": "FabinGurung/JP_Research-and-Development",
+      "source_branch": "opensees-structural-report-v0.1",
+      "source_commit": "5959ca6ddec9545fb483fe64cf1d78c30fc7888a",
+      "source_path": "analysis/opensees_structural_report/e2k_inventory.py",
+      "destination_path": "src/jp_structural/ingestion/e2k_inventory.py",
+      "action": "migrate",
+      "migration_date": "2026-10-05",
+      "migration_reason": "Lossless-first E2K source inventory"
+    },
+    {
+      "source_repository": "FabinGurung/JP_Research-and-Development",
+      "source_branch": "opensees-structural-report-v0.1",
+      "source_commit": "5959ca6ddec9545fb483fe64cf1d78c30fc7888a",
+      "source_path": "analysis/opensees_structural_report/normalized_model.py",
+      "destination_path": "src/jp_structural/normalization/e2k_normalizer.py",
+      "action": "refactor",
+      "migration_date": "2026-10-05",
+      "migration_reason": "E2K story/object normalizer moved under canonical package"
+    },
+    {
+      "source_repository": "FabinGurung/JP_Research-and-Development",
+      "source_branch": "opensees-structural-report-v0.1",
+      "source_commit": "5959ca6ddec9545fb483fe64cf1d78c30fc7888a",
+      "source_path": "analysis/opensees_structural_report/opensees_elastic_frame.py",
+      "destination_path": "src/jp_structural/solvers/opensees/elastic_frame.py",
+      "action": "migrate",
+      "migration_date": "2026-10-05",
+      "migration_reason": "Primary elastic 3D frame adapter seed"
+    },
+    {
+      "source_repository": "FabinGurung/JP_Research-and-Development",
+      "source_branch": "opensees-structural-report-v0.1",
+      "source_commit": "5959ca6ddec9545fb483fe64cf1d78c30fc7888a",
+      "source_path": "analysis/opensees_structural_report/report_blueprint.json",
+      "destination_path": "reports/templates/report_blueprint_seed.json",
+      "action": "migrate",
+      "migration_date": "2026-10-05",
+      "migration_reason": "Seed only; real project blueprint must come from supplied SAR"
+    },
+    {
+      "source_repository": "FabinGurung/JP_Research-and-Development",
+      "source_branch": "structural-analysis-demo-v1",
+      "source_commit": "68c4493745f4ef71bb7321dbf37f75fd6a0f0dda",
+      "source_path": "presentation/demo lineage",
+      "destination_path": "none",
+      "action": "inspect_only",
+      "migration_date": "2026-10-05",
+      "migration_reason": "Presentation ideas may be reused later; no Pages/deployment migration in engine bootstrap"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+schema_version: "0.1"
+inspected_date: "2026-10-05"
+sources:
+  - source_id: UP-OPENSEES
+    name: OpenSees
+    role: primary finite-element engine
+    repository: OpenSees/OpenSees
+    default_branch: master
+    inspected_commit: aa3806ff159c3cc74554e0df5dfb9b69456615e8
+    released_engine_version: "3.8.0"
+    license: "UC Regents COPYRIGHT; noncommercial/internal-use permissions; commercial product distribution requires permission/review"
+    integration_mode: "runtime/package API via OpenSeesPy; no vendored OpenSees source"
+    depends_on: ["src/jp_structural/solvers/opensees/"]
+  - source_id: UP-OPENSEES-DOCS
+    name: OpenSeesDocumentation
+    role: authoritative command/modeling documentation
+    repository: OpenSees/OpenSeesDocumentation
+    default_branch: master
+    inspected_commit: ce493a894a65bed4f7b5efb03523504615b74288
+    license: "UNRESOLVED at repository-root LICENSE path; do not redistribute documentation content without review"
+    integration_mode: "reference only"
+  - source_id: UP-OPENSEESPY
+    name: OpenSeesPy
+    role: Python interface to primary engine
+    package: openseespy
+    package_version: "3.8.0.0"
+    released: "2026-03-18"
+    integration_mode: "pinned Python dependency"
+    license: "package points to LICENSE.md; commercial redistribution remains coupled to OpenSees licensing review"
+  - source_id: UP-PYNITE
+    name: PyNite
+    role: independent Python-native elastic benchmark
+    repository: JWock82/Pynite
+    default_branch: main
+    inspected_commit: 4afc9f1719c03de0e1e5879e4ac2ef0321d6c073
+    license: MIT
+    integration_mode: "future optional dependency/API adapter; no vendored source"
+  - source_id: UP-FRAME3DD
+    name: Frame3DD
+    role: independent frame static/modal benchmark
+    repository: hpgavin/frame3dd
+    default_branch: main
+    inspected_commit: 58d66510c120785dcf0ea1ffe67d2eccd545c348
+    license: GPL-3.0
+    integration_mode: "future CLI/data-exchange adapter; no vendored source"
+  - source_id: UP-XC
+    name: XC
+    role: broader civil structural FE benchmark/research
+    repository: xcfem/xc
+    default_branch: master
+    inspected_commit: f03fbef139751093777f3b9c379f0c1631384f3c
+    license: GPL-3.0
+    integration_mode: "future external-process/API adapter; no vendored source"
+  - source_id: UP-CALCULIX
+    name: CalculiX
+    role: detailed shell/solid/local FE benchmark
+    repository: Dhondtguido/CalculiX
+    default_branch: master
+    inspected_commit: 078778112369f18a207de039d50307d5797f941b
+    license: GPL-2.0
+    integration_mode: "future input-deck/CLI adapter; no vendored source"

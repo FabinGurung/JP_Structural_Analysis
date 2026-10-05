@@ -1,0 +1,21 @@
+{
+  "schema": "opensees_structural_report.report_blueprint.v0.1",
+  "sections": [
+    {"id":"cover","title":"Structural Analysis and Design Report","source":"project registry"},
+    {"id":"salient_features","title":"Salient Features","source":"normalized model + project registry"},
+    {"id":"basis","title":"Design Basis, Codes and Assumptions","source":"code/check registry"},
+    {"id":"materials","title":"Materials and Sections","source":"normalized model"},
+    {"id":"loads","title":"Loads, Mass Source and Load Combinations","source":"normalized model"},
+    {"id":"model","title":"Structural Model and Analysis Method","source":"normalized model + solver manifest"},
+    {"id":"modal","title":"Modal Properties and Participation","source":"OpenSees results"},
+    {"id":"seismic","title":"Seismic Analysis and Base Shear","source":"OpenSees results + independent code checks"},
+    {"id":"displacement","title":"Storey Displacement and Drift","source":"OpenSees results"},
+    {"id":"forces","title":"Member Forces and Reactions","source":"OpenSees results"},
+    {"id":"irregularity","title":"Irregularity and Stability Checks","source":"derived checks"},
+    {"id":"design","title":"Structural Element Design Checks","source":"explicit design modules, not proprietary ETABS ratios"},
+    {"id":"summary","title":"Design Summary and Governing Results","source":"report database"},
+    {"id":"qa","title":"Validation, Differences and QA","source":"ETABS/OpenSees comparator where ETABS evidence exists"},
+    {"id":"annex","title":"Annexes and Machine-Readable Provenance","source":"manifests, hashes, result IDs"}
+  ],
+  "traceability_rule": "Every quantitative report claim must point to a result/check ID, analysis-run ID, model hash and source authority."
+}
