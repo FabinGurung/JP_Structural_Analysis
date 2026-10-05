@@ -147,9 +147,36 @@ def assign_lumped_node_masses(build: BuildResult, node_masses: dict[str, tuple[f
         ops.mass(tag,float(mx),float(my),float(mz),0.0,0.0,0.0)
 
 
-def eigen_periods(num_modes: int) -> list[float]:
-    vals=ops.eigen(num_modes)
-    return [2.0*math.pi/math.sqrt(float(lam)) for lam in vals]
+def eigen_periods(num_modes: int, *, solver: str = "auto") -> list[float]:
+    """Return modal periods with an explicit, auditable eigen-solver strategy.
+
+    auto first uses OpenSees' default ARPACK solver and falls back to
+    -fullGenLapack when ARPACK cannot form the requested factorization.
+    The fallback is especially useful for very small regression models.
+    No eigenvalue is accepted unless it is finite and strictly positive.
+    """
+    if num_modes < 1:
+        raise ValueError("num_modes must be >= 1")
+    if solver not in {"auto", "arpack", "fullGenLapack"}:
+        raise ValueError(f"Unsupported eigen solver strategy: {solver!r}")
+
+    if solver == "fullGenLapack":
+        vals = ops.eigen("-fullGenLapack", num_modes)
+    elif solver == "arpack":
+        vals = ops.eigen(num_modes)
+    else:
+        try:
+            vals = ops.eigen(num_modes)
+        except Exception:
+            vals = ops.eigen("-fullGenLapack", num_modes)
+
+    periods = []
+    for lam in vals:
+        value = float(lam)
+        if not math.isfinite(value) or value <= 0:
+            raise ValueError(f"Invalid eigenvalue returned by OpenSees: {value!r}")
+        periods.append(2.0 * math.pi / math.sqrt(value))
+    return periods
 
 
 def total_reaction(dof: int) -> float:
