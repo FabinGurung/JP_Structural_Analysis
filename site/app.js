@@ -1,0 +1,1 @@
+(async()=>{const el=document.getElementById("build");try{const r=await fetch("build-meta.json",{cache:"no-store"});if(!r.ok)throw new Error();const m=await r.json();el.textContent="Build "+String(m.sha||"").slice(0,8)+" · "+(m.deployed||"GitHub Pages")}catch(_){el.textContent="GitHub Pages showcase"}})();

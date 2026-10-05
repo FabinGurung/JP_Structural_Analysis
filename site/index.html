@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#07111f">
+  <meta name="description" content="JP Structural Analysis — governed OpenSees structural-analysis, validation and SAR engine.">
+  <title>JP Structural Analysis</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="grid-bg" aria-hidden="true"></div>
+  <header class="nav shell">
+    <a class="brand" href="#top" aria-label="JP Structural Analysis home">
+      <span class="mark">JP</span>
+      <span><strong>Structural Analysis</strong><small>Open engineering pipeline</small></span>
+    </a>
+    <nav>
+      <a href="#pipeline">Pipeline</a>
+      <a href="#benchmark">Benchmark</a>
+      <a href="#modules">Modules</a>
+      <a href="#roadmap">Roadmap</a>
+      <a class="nav-cta" href="https://github.com/FabinGurung/JP_Structural_Analysis">GitHub ↗</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero shell">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="pulse"></span> GOVERNED STRUCTURAL ENGINE · PUBLIC SHOWCASE</div>
+        <h1>From source evidence<br>to <em>auditable</em> structural results.</h1>
+        <p class="lede">A reproducible structural-analysis and Structural Analysis Report pipeline built around OpenSees, normalized models, fail-closed QA, independent benchmarks and traceable reporting.</p>
+        <div class="actions">
+          <a class="button primary" href="demo/SAR.html">Open live SAR demo</a>
+          <a class="button secondary" href="demo/validation_results.json">Inspect validation JSON</a>
+        </div>
+        <div class="status-strip">
+          <div><span class="k">ENGINE</span><strong>OpenSees 3.8.0</strong></div>
+          <div><span class="k">PYTHON</span><strong>OpenSeesPy 3.8.0.0</strong></div>
+          <div><span class="k">STATE</span><strong>V0.1 in progress</strong></div>
+        </div>
+      </div>
+      <div class="hero-visual" role="img" aria-label="Structural frame and analysis flow illustration">
+        <div class="screen">
+          <div class="screen-top"><span></span><span></span><span></span><code>ANALYSIS / MODEL VIEW</code></div>
+          <svg viewBox="0 0 620 420" class="frame-svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="beam" x1="0" x2="1"><stop offset="0" stop-color="#2ee6a6"/><stop offset="1" stop-color="#57a5ff"/></linearGradient>
+              <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            <g class="axes"><path d="M45 365H580M45 365V45"/><path d="M45 365l28-16M45 365l18 24"/></g>
+            <g class="structure" filter="url(#glow)">
+              <path d="M130 330V105M310 330V105M490 330V105" />
+              <path d="M130 105H490M130 220H490" />
+            </g>
+            <g class="nodes">
+              <circle cx="130" cy="105" r="6"/><circle cx="310" cy="105" r="6"/><circle cx="490" cy="105" r="6"/>
+              <circle cx="130" cy="220" r="6"/><circle cx="310" cy="220" r="6"/><circle cx="490" cy="220" r="6"/>
+            </g>
+            <g class="supports"><path d="M112 330h36l-18 18zM292 330h36l-18 18zM472 330h36l-18 18z"/></g>
+            <g class="loads">
+              <path d="M170 60v35m0 0-7-12m7 12 7-12M225 60v35m0 0-7-12m7 12 7-12M280 60v35m0 0-7-12m7 12 7-12M335 60v35m0 0-7-12m7 12 7-12M390 60v35m0 0-7-12m7 12 7-12M445 60v35m0 0-7-12m7 12 7-12"/>
+            </g>
+            <g class="labels"><text x="500" y="115">elasticBeamColumn</text><text x="500" y="228">normalized frame</text><text x="70" y="390">x</text><text x="30" y="55">z</text></g>
+          </svg>
+          <div class="console">
+            <span>model.qa</span><b>PASS*</b>
+            <span>solver</span><b>OpenSees</b>
+            <span>provenance</span><b>LOCKED</b>
+            <small>* public benchmark retains an explicit reaction-reconciliation hold.</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="numbers shell" aria-label="Current public benchmark summary">
+      <article><strong>16</strong><span>CI regression tests</span></article>
+      <article><strong>0.000</strong><span>member-end moment Δ in benchmark</span></article>
+      <article><strong>60 kN</strong><span>global vertical equilibrium</span></article>
+      <article><strong class="amber">REVIEW</strong><span>reaction reconciliation state</span></article>
+    </section>
+
+    <section id="pipeline" class="section shell">
+      <div class="section-head">
+        <div><span class="eyebrow">01 · PIPELINE</span><h2>One model. Traceable transformations.</h2></div>
+        <p>Every stage preserves where the information came from, what transformed it, which solver/version ran it, and what remains unresolved.</p>
+      </div>
+      <div class="pipeline">
+        <article><span>01</span><i>Source</i><h3>Evidence inventory</h3><p>Hash and classify original inputs without pretending derived data is source truth.</p></article>
+        <div class="arrow">→</div>
+        <article><span>02</span><i>Model</i><h3>Normalize</h3><p>Stable IDs, units, geometry, materials, sections, restraints, loads and analysis cases.</p></article>
+        <div class="arrow">→</div>
+        <article><span>03</span><i>Gate</i><h3>Pre-solve QA</h3><p>Fail closed on missing references, invalid geometry, unresolved design basis and model defects.</p></article>
+        <div class="arrow">→</div>
+        <article><span>04</span><i>Solve</i><h3>OpenSees</h3><p>Primary finite-element execution with explicit configuration and solver version.</p></article>
+        <div class="arrow">→</div>
+        <article><span>05</span><i>Proof</i><h3>Validate + SAR</h3><p>Compare, explain differences, persist results and generate auditable reporting artifacts.</p></article>
+      </div>
+    </section>
+
+    <section id="benchmark" class="section shell">
+      <div class="section-head">
+        <div><span class="eyebrow">02 · LIVE SANITIZED BENCHMARK</span><h2>Two-span continuous beam.</h2></div>
+        <p>This public example intentionally keeps a known discrepancy visible. Passing software execution is not allowed to masquerade as engineering validation.</p>
+      </div>
+      <div class="benchmark-grid">
+        <article class="beam-card">
+          <div class="card-tag">SAMPLE_MDM_001</div>
+          <svg viewBox="0 0 760 250" class="beam-demo" aria-label="Two-span continuous beam diagram">
+            <g class="load-line"><path d="M80 45H400"/><path d="M100 45v48m40-48v48m40-48v48m40-48v48m40-48v48m40-48v48m40-48v48m40-48v48"/></g>
+            <g class="beamline"><path d="M80 115H680"/></g>
+            <g class="beamnodes"><circle cx="80" cy="115" r="7"/><circle cx="380" cy="115" r="7"/><circle cx="680" cy="115" r="7"/></g>
+            <g class="support-shapes"><path d="M60 128h40l-20 27zM360 128h40l-20 27zM660 128h40l-20 27z"/></g>
+            <g class="beamtext"><text x="70" y="188">A</text><text x="372" y="188">B</text><text x="672" y="188">C</text><text x="205" y="105">6 m · 10 kN/m</text><text x="505" y="105">6 m · unloaded</text><text x="300" y="225">EI = 25,000 kN·m²</text></g>
+          </svg>
+          <div class="micro-note">Sanitized mathematical benchmark · no private project data</div>
+        </article>
+        <article class="results-card">
+          <div class="result-head"><span>Validation</span><strong>ENGINEER_REVIEW_REQUIRED</strong></div>
+          <div class="check ok"><span>✓</span><div><b>Member-end moments</b><small>OpenSees matches governed source values</small></div><em>PASS</em></div>
+          <div class="check ok"><span>✓</span><div><b>Global equilibrium</b><small>ΣRy = applied load = 60 kN</small></div><em>PASS</em></div>
+          <div class="check hold"><span>!</span><div><b>Support reactions A/B/C</b><small>Distribution does not reconcile with source</small></div><em>HOLD</em></div>
+          <div class="result-links"><a href="demo/SAR.html">SAR report →</a><a href="demo/analysis_results.json">Results JSON →</a><a href="demo/report_manifest.json">Manifest →</a></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="modules" class="section shell">
+      <div class="section-head">
+        <div><span class="eyebrow">03 · ENGINE</span><h2>Small modules, explicit responsibilities.</h2></div>
+        <p>The repository separates evidence handling, normalized structural meaning, numerical engines, QA, validation and reporting instead of mixing them into one opaque script.</p>
+      </div>
+      <div class="module-grid">
+        <article><b>INGEST</b><h3>Source inventory</h3><p>SHA-256, classification, source authority and parser lineage.</p></article>
+        <article><b>NORMALIZE</b><h3>E2K → canonical model</h3><p>Conservative extraction of structural meaning without silently guessing ambiguity.</p></article>
+        <article><b>SOLVE</b><h3>OpenSees adapter</h3><p>Elastic frame seed, explicit eigensolver behavior and reproducible configuration.</p></article>
+        <article><b>BENCHMARK</b><h3>Transparent native solvers</h3><p>Moment distribution, direct stiffness, load combinations and focused checks.</p></article>
+        <article><b>QA</b><h3>Fail-closed gates</h3><p>Model/reference checks and professional states that preserve unresolved items.</p></article>
+        <article><b>REPORT</b><h3>SAR artifacts</h3><p>HTML plus machine-readable result, validation, assumption, conflict and manifest records.</p></article>
+      </div>
+    </section>
+
+    <section id="roadmap" class="section shell">
+      <div class="section-head">
+        <div><span class="eyebrow">04 · ROADMAP</span><h2>What exists — and what does not yet.</h2></div>
+        <p>No “coming soon” item is represented as implemented. Cross-engine comparison remains an explicit V0.1 acceptance dependency.</p>
+      </div>
+      <div class="roadmap">
+        <div class="road done"><span>✓</span><div><b>Governed repository + schemas</b><small>Implemented</small></div></div>
+        <div class="road done"><span>✓</span><div><b>OpenSees benchmark + sanitized SAR</b><small>Implemented</small></div></div>
+        <div class="road active"><span>→</span><div><b>Canonical 3D model + modal/seismic workflow</b><small>In progress</small></div></div>
+        <div class="road"><span>○</span><div><b>PyNite independent adapter</b><small>Not implemented</small></div></div>
+        <div class="road"><span>○</span><div><b>Frame3DD / XC / CalculiX adapters</b><small>Not implemented</small></div></div>
+        <div class="road"><span>○</span><div><b>Government-template SAR + PDF</b><small>Not implemented</small></div></div>
+      </div>
+    </section>
+
+    <section class="closing shell">
+      <div>
+        <span class="eyebrow">PUBLIC-SAFE BY DESIGN</span>
+        <h2>Show the method.<br>Protect the project.</h2>
+      </div>
+      <p>This public repository contains sanitized examples and engineering infrastructure only. Client/government source models, drawings, signatures, credentials and private evidence remain outside the public codebase.</p>
+      <a class="button primary" href="https://github.com/FabinGurung/JP_Structural_Analysis">Explore source on GitHub ↗</a>
+    </section>
+  </main>
+
+  <footer class="shell">
+    <span>JP Structural Analysis</span>
+    <span>Governed structural computation · OpenSees primary</span>
+    <span id="build">Public showcase</span>
+  </footer>
+  <script src="app.js"></script>
+</body>
+</html>
