@@ -1,0 +1,1 @@
+"""Normalized analysis-result records."""

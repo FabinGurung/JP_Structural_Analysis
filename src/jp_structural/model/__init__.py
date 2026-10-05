@@ -1,0 +1,1 @@
+"""Canonical structural-model helpers."""
