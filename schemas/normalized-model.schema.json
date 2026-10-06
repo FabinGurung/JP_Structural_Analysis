@@ -99,6 +99,48 @@
         "null"
       ]
     },
+    "nodal_masses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "node_id",
+          "mx",
+          "my",
+          "mz"
+        ],
+        "properties": {
+          "node_id": {
+            "type": "string"
+          },
+          "mx": {
+            "type": "number",
+            "minimum": 0
+          },
+          "my": {
+            "type": "number",
+            "minimum": 0
+          },
+          "mz": {
+            "type": "number",
+            "minimum": 0
+          },
+          "mrx": {
+            "type": "number",
+            "minimum": 0
+          },
+          "mry": {
+            "type": "number",
+            "minimum": 0
+          },
+          "mrz": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": true
+      }
+    },
     "joint_loads": {
       "type": "array"
     },
