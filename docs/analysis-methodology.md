@@ -47,3 +47,32 @@ Normalized Phase-B modal results include, for each requested mode:
 The result set also records solver/version, canonical-model digest, deterministic run/result IDs, source-reference IDs, explicit implementation scope and warnings. These outputs are analysis evidence, not reinforced-concrete design or professional approval.
 
 Analysis output is not member/code design. Design checks require separate benchmarked modules.
+
+
+## Phase-C response-spectrum core boundary
+
+The bounded Phase-C core consumes an **explicit acceleration response spectrum** and the Phase-B canonical frame/modal model. The engine does not manufacture spectrum ordinates, damping, unit conversions or code coefficients.
+
+Implemented in the current bounded slice:
+
+- deterministic spectrum validation, sorting and linear interpolation inside the supplied period domain;
+- fail-closed rejection of period extrapolation;
+- explicit damping and unit-consistency metadata;
+- one-direction modal response-spectrum evaluation for X, Y or Z;
+- SRSS modal combination;
+- modal and combined base-shear response;
+- storey displacement only when the caller explicitly maps a storey to a canonical response node;
+- inter-storey drift from those explicit response-node mappings;
+- optional numerical design-limit evaluation only when a governing code/source reference and numerical limits are supplied by the governed caller;
+- deterministic result/run IDs, model digest and spectrum provenance.
+
+The implementation deliberately does **not** infer or claim:
+
+- CQC or other modal-combination methods beyond the currently implemented SRSS path;
+- accidental-eccentricity load application;
+- orthogonal-direction combination;
+- Nepal-code numerical coefficients or limits that were not supplied as governed inputs;
+- shell/end-release/rigid-offset equivalence that remains outside the Phase-B frame adapter;
+- source-software equivalence, professional approval or reinforced-concrete design.
+
+Dynamic torsional response can be present in the underlying modal model, but accidental-eccentricity execution and a dedicated torsional-irregularity acceptance module remain future work. Therefore this Phase-C core is a reproducible analysis capability, not a completed seismic code-compliance certification.
