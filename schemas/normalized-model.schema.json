@@ -1,1 +1,137 @@
-{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"Canonical normalized structural model","type":"object","required":["schema_version","project","units","source_references","storeys","nodes","materials","sections","load_patterns","load_cases"],"properties":{"schema_version":{"const":"0.1"},"model_id":{"type":["string","null"]},"project":{"type":"object","required":["project_id"],"additionalProperties":true},"units":{"type":"object","required":["force","length"],"additionalProperties":true},"design_basis":{"type":["object","null"]},"source_references":{"type":"array"},"storeys":{"type":"array"},"nodes":{"type":"array"},"frame_members":{"type":"array"},"shell_elements":{"type":"array"},"materials":{"type":"array"},"sections":{"type":"array"},"supports":{"type":"array"},"constraints":{"type":"array"},"diaphragms":{"type":"array"},"end_releases":{"type":"array"},"rigid_offsets":{"type":"array"},"stiffness_modifiers":{"type":"array"},"load_patterns":{"type":"array"},"load_cases":{"type":"array"},"load_combinations":{"type":"array"},"mass_source":{"type":["object","null"]},"joint_loads":{"type":"array"},"frame_loads":{"type":"array"},"area_loads":{"type":"array"},"response_spectra":{"type":"array"},"analysis_cases":{"type":"array"}},"additionalProperties":true}
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Canonical normalized structural model",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "project",
+    "units",
+    "source_references",
+    "storeys",
+    "nodes",
+    "materials",
+    "sections",
+    "load_patterns",
+    "load_cases"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "model_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "project": {
+      "type": "object",
+      "required": [
+        "project_id"
+      ],
+      "additionalProperties": true
+    },
+    "units": {
+      "type": "object",
+      "required": [
+        "force",
+        "length"
+      ],
+      "additionalProperties": true
+    },
+    "design_basis": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "source_references": {
+      "type": "array"
+    },
+    "storeys": {
+      "type": "array"
+    },
+    "nodes": {
+      "type": "array"
+    },
+    "frame_members": {
+      "type": "array"
+    },
+    "shell_elements": {
+      "type": "array"
+    },
+    "materials": {
+      "type": "array"
+    },
+    "sections": {
+      "type": "array"
+    },
+    "supports": {
+      "type": "array"
+    },
+    "constraints": {
+      "type": "array"
+    },
+    "diaphragms": {
+      "type": "array"
+    },
+    "end_releases": {
+      "type": "array"
+    },
+    "rigid_offsets": {
+      "type": "array"
+    },
+    "stiffness_modifiers": {
+      "type": "array"
+    },
+    "load_patterns": {
+      "type": "array"
+    },
+    "load_cases": {
+      "type": "array"
+    },
+    "load_combinations": {
+      "type": "array"
+    },
+    "mass_source": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "joint_loads": {
+      "type": "array"
+    },
+    "frame_loads": {
+      "type": "array"
+    },
+    "area_loads": {
+      "type": "array"
+    },
+    "response_spectra": {
+      "type": "array"
+    },
+    "analysis_cases": {
+      "type": "array"
+    },
+    "source_qa": {
+      "type": "object"
+    },
+    "normalization_warnings": {
+      "type": "array"
+    },
+    "translation_scope": {
+      "type": "object"
+    },
+    "provenance": {
+      "type": "object"
+    },
+    "shell_mesh_qa": {
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": true
+}
