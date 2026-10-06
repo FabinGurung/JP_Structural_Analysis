@@ -204,8 +204,8 @@ def test_response_spectrum_returns_base_shear_storey_displacement_and_drift():
         ],
         "eigen_solver": "fullGenLapack",
     }
-    first = run_canonical_response_spectrum(_model(), _spectrum(), 2, **kwargs)
-    second = run_canonical_response_spectrum(_model(), _spectrum(), 2, **kwargs)
+    first = run_canonical_response_spectrum(_model(), _spectrum(), 3, **kwargs)
+    second = run_canonical_response_spectrum(_model(), _spectrum(), 3, **kwargs)
 
     assert first["analysis_run_id"] == second["analysis_run_id"]
     assert first["result_set_id"] == second["result_set_id"]
