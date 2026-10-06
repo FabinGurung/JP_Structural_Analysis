@@ -187,6 +187,142 @@ def _srss(values: list[float]) -> float:
     return math.sqrt(sum(float(value) ** 2 for value in values))
 
 
+def cqc_correlation_coefficient(
+    omega_i: float,
+    omega_j: float,
+    damping_ratio: float,
+) -> float:
+    """Return the equal-damping CQC correlation coefficient for two modes."""
+    wi = _positive(omega_i, field_name="omega_i")
+    wj = _positive(omega_j, field_name="omega_j")
+    zeta = _finite(damping_ratio, field_name="damping_ratio")
+    if not (0.0 < zeta < 1.0):
+        raise ResponseSpectrumError("damping_ratio must be between 0 and 1")
+
+    beta = wj / wi
+    numerator = 8.0 * zeta * zeta * (1.0 + beta) * (beta ** 1.5)
+    denominator = (
+        (1.0 - beta * beta) ** 2
+        + 4.0 * zeta * zeta * beta * (1.0 + beta) ** 2
+    )
+    if denominator <= 0.0:
+        raise ResponseSpectrumError("CQC correlation denominator must be positive")
+    rho = numerator / denominator
+    return min(1.0, max(0.0, rho))
+
+
+def _combine_modal_values(
+    values: list[float],
+    circular_frequencies: list[float],
+    *,
+    method: str,
+    damping_ratio: float,
+) -> float:
+    combination = str(method).upper()
+    if combination == "SRSS":
+        return _srss(values)
+    if combination != "CQC":
+        raise ResponseSpectrumError("modal_combination must be SRSS or CQC")
+    if len(values) != len(circular_frequencies):
+        raise ResponseSpectrumError(
+            "modal response and frequency arrays must have equal length"
+        )
+
+    total = 0.0
+    for i, value_i in enumerate(values):
+        for j, value_j in enumerate(values):
+            rho = cqc_correlation_coefficient(
+                circular_frequencies[i],
+                circular_frequencies[j],
+                damping_ratio,
+            )
+            total += rho * float(value_i) * float(value_j)
+
+    tolerance = 1e-12 * max(1.0, sum(abs(float(v)) for v in values) ** 2)
+    if total < -tolerance:
+        raise ResponseSpectrumError(
+            "CQC quadratic form became negative; modal inputs require review"
+        )
+    return math.sqrt(max(0.0, total))
+
+
+def _torsion_point_map(
+    model: dict[str, Any],
+    torsion_points: list[dict[str, Any]] | None,
+    node_tags: dict[str, int],
+) -> list[dict[str, Any]]:
+    """Normalize explicit two-node storey torsion probes.
+
+    The caller supplies a positive physical separation. The adapter does not infer
+    an extreme-edge location, diaphragm width, code eccentricity or acceptance
+    threshold from geometry alone.
+    """
+    if torsion_points is None:
+        return []
+    if not isinstance(torsion_points, list) or not torsion_points:
+        raise ResponseSpectrumError("torsion_points must be a non-empty list or null")
+
+    storeys = {
+        str(item.get("id")): item
+        for item in model.get("storeys", []) or []
+        if item.get("id") is not None
+    }
+    nodes = {
+        str(item.get("id")): item
+        for item in model.get("nodes", []) or []
+        if item.get("id") is not None
+    }
+
+    normalized: list[dict[str, Any]] = []
+    seen_storeys: set[str] = set()
+    for item in torsion_points:
+        if not isinstance(item, dict):
+            raise ResponseSpectrumError("each torsion point must be an object")
+        storey_id = str(item.get("storey_id"))
+        node_a_id = str(item.get("node_a_id"))
+        node_b_id = str(item.get("node_b_id"))
+        if storey_id not in storeys:
+            raise ResponseSpectrumError(
+                f"torsion point references missing storey: {storey_id}"
+            )
+        if node_a_id == node_b_id:
+            raise ResponseSpectrumError("torsion point node_a_id and node_b_id differ")
+        for label, node_id in (("node_a_id", node_a_id), ("node_b_id", node_b_id)):
+            if node_id not in node_tags or node_id not in nodes:
+                raise ResponseSpectrumError(
+                    f"torsion point {label} references missing node: {node_id}"
+                )
+            if str(nodes[node_id].get("storey_id")) != storey_id:
+                raise ResponseSpectrumError(
+                    f"torsion point {label} must belong to storey {storey_id}"
+                )
+        if storey_id in seen_storeys:
+            raise ResponseSpectrumError(
+                f"multiple torsion probes supplied for storey {storey_id}"
+            )
+        seen_storeys.add(storey_id)
+        separation = _positive(
+            item.get("separation"),
+            field_name=f"torsion_points[{storey_id}].separation",
+        )
+        elevation = _finite(
+            storeys[storey_id].get("elevation"),
+            field_name=f"storey[{storey_id}].elevation",
+        )
+        normalized.append(
+            {
+                "storey_id": storey_id,
+                "node_a_id": node_a_id,
+                "node_b_id": node_b_id,
+                "separation": separation,
+                "elevation": elevation,
+            }
+        )
+
+    normalized.sort(key=lambda row: (row["elevation"], row["storey_id"]))
+    return normalized
+
+
 def _response_point_map(
     model: dict[str, Any],
     response_points: list[dict[str, Any]] | None,
@@ -326,22 +462,23 @@ def run_canonical_response_spectrum(
     direction: str,
     modal_combination: str = "SRSS",
     response_points: list[dict[str, Any]] | None = None,
+    torsion_points: list[dict[str, Any]] | None = None,
     design_checks: dict[str, Any] | None = None,
     eigen_solver: str = "auto",
 ) -> dict[str, Any]:
     """Run deterministic modal response-spectrum superposition for one direction.
 
     Storey displacement/drift is emitted only when response_points explicitly maps
-    each requested storey to a canonical node. Accidental eccentricity and
-    orthogonal-direction combination remain fail-closed future work.
+    each requested storey to a canonical node. Torsional rotation is emitted only
+    from explicit two-node storey probes with a caller-supplied positive
+    separation. Accidental eccentricity remains fail-closed future work.
     """
     axis = str(direction).upper()
     if axis not in _AXES:
         raise ResponseSpectrumError("direction must be X, Y, or Z")
-    if str(modal_combination).upper() != "SRSS":
-        raise ResponseSpectrumError(
-            "Phase C seq8 currently supports only explicit modal_combination='SRSS'"
-        )
+    combination = str(modal_combination).upper()
+    if combination not in {"SRSS", "CQC"}:
+        raise ResponseSpectrumError("modal_combination must be SRSS or CQC")
     if not isinstance(num_modes, int) or num_modes < 1:
         raise ResponseSpectrumError("num_modes must be an integer >= 1")
 
@@ -361,11 +498,15 @@ def run_canonical_response_spectrum(
     eigenvalues, solver_used = _solve_eigenvalues(num_modes, solver=eigen_solver)
     modal_mass_rows, total_mass = _modal_mass_data(build, num_modes)
     response_map = _response_point_map(model, response_points, build.node_tags)
+    torsion_map = _torsion_point_map(model, torsion_points, build.node_tags)
     dof = _AXES[axis]
 
     modal_rows: list[dict[str, Any]] = []
     point_modal_displacements: dict[str, list[float]] = {
         row["storey_id"]: [] for row in response_map
+    }
+    torsion_modal_rotations: dict[str, list[float]] = {
+        row["storey_id"]: [] for row in torsion_map
     }
 
     for mode_index, (eigenvalue, mass_row) in enumerate(
@@ -393,6 +534,28 @@ def run_canonical_response_spectrum(
             point_displacements[point["storey_id"]] = displacement
             point_modal_displacements[point["storey_id"]].append(displacement)
 
+        torsional_rotations: dict[str, float] = {}
+        for point in torsion_map:
+            phi_a = float(
+                ops.nodeEigenvector(
+                    build.node_tags[point["node_a_id"]],
+                    mode_index,
+                    dof,
+                )
+            )
+            phi_b = float(
+                ops.nodeEigenvector(
+                    build.node_tags[point["node_b_id"]],
+                    mode_index,
+                    dof,
+                )
+            )
+            displacement_a = phi_a * gamma * acceleration / eigenvalue
+            displacement_b = phi_b * gamma * acceleration / eigenvalue
+            rotation = (displacement_b - displacement_a) / point["separation"]
+            torsional_rotations[point["storey_id"]] = rotation
+            torsion_modal_rotations[point["storey_id"]].append(rotation)
+
         modal_rows.append(
             {
                 "mode": mode_index,
@@ -409,16 +572,34 @@ def run_canonical_response_spectrum(
                 ][axis],
                 "base_shear": base_shear,
                 "response_point_displacement": point_displacements,
+                "torsional_rotation": torsional_rotations,
             }
         )
 
-    combined_base_shear = _srss([row["base_shear"] for row in modal_rows])
+    circular_frequencies = [row["circular_frequency"] for row in modal_rows]
+
+    def combine(values: list[float]) -> float:
+        return _combine_modal_values(
+            values,
+            circular_frequencies,
+            method=combination,
+            damping_ratio=normalized_spectrum["damping_ratio"],
+        )
+
+    combined_base_shear = combine([row["base_shear"] for row in modal_rows])
     combined_displacements = [
         {
             **point,
-            "displacement": _srss(point_modal_displacements[point["storey_id"]]),
+            "displacement": combine(point_modal_displacements[point["storey_id"]]),
         }
         for point in response_map
+    ]
+    combined_torsional_rotations = [
+        {
+            **point,
+            "rotation": combine(torsion_modal_rotations[point["storey_id"]]),
+        }
+        for point in torsion_map
     ]
 
     storey_drifts: list[dict[str, Any]] = []
@@ -435,7 +616,7 @@ def run_canonical_response_spectrum(
                 point_modal_displacements[upper["storey_id"]],
             )
         ]
-        drift = _srss(modal_drifts)
+        drift = combine(modal_drifts)
         storey_drifts.append(
             {
                 "lower_storey_id": lower["storey_id"],
@@ -455,7 +636,7 @@ def run_canonical_response_spectrum(
 
     digest = _model_digest(model)
     spectrum_key = (
-        f"{normalized_spectrum['id']}:{axis}:SRSS:{num_modes}:"
+        f"{normalized_spectrum['id']}:{axis}:{combination}:{num_modes}:"
         f"{normalized_spectrum['damping_ratio']}:{normalized_spectrum['scale_factor']}"
     )
     analysis_key = f"{model_id}:opensees-response-spectrum:{digest}:{spectrum_key}"
@@ -481,7 +662,7 @@ def run_canonical_response_spectrum(
                 "case_id": stable_id("CASE", analysis_key),
                 "case_type": "RESPONSE_SPECTRUM",
                 "direction": axis,
-                "modal_combination": "SRSS",
+                "modal_combination": combination,
                 "num_modes": num_modes,
                 "spectrum": normalized_spectrum,
                 "total_translational_mass": total_mass.get(axis),
@@ -490,6 +671,7 @@ def run_canonical_response_spectrum(
                     "base_shear": combined_base_shear,
                     "storey_displacement": combined_displacements,
                     "interstorey_drift": storey_drifts,
+                    "torsional_rotation": combined_torsional_rotations,
                 },
                 "design_checks": checks,
             }
@@ -502,6 +684,7 @@ def run_canonical_response_spectrum(
             "base_shear": normalized_spectrum["units"]["base_shear"],
             "response_displacement": normalized_spectrum["units"]["displacement"],
             "drift_ratio": "dimensionless",
+            "torsional_rotation": "rad",
         },
         "qa": {
             "status": (
@@ -513,8 +696,12 @@ def run_canonical_response_spectrum(
             "warnings": build.warnings,
             "scope": {
                 "response_spectrum_interpolation": "IMPLEMENTED_LINEAR_FAIL_OUTSIDE_DOMAIN",
-                "modal_combination": "IMPLEMENTED_SRSS",
-                "base_shear": "IMPLEMENTED_MODAL_SRSS",
+                "modal_combination": (
+                    "IMPLEMENTED_SRSS"
+                    if combination == "SRSS"
+                    else "IMPLEMENTED_CQC_EQUAL_DAMPING"
+                ),
+                "base_shear": f"IMPLEMENTED_MODAL_{combination}",
                 "storey_displacement": (
                     "IMPLEMENTED_EXPLICIT_RESPONSE_POINTS"
                     if response_map
@@ -525,18 +712,188 @@ def run_canonical_response_spectrum(
                     if response_map
                     else "NOT_REQUESTED"
                 ),
-                "torsion_from_dynamic_modes": "PRESENT_ONLY_IF_MODEL_MODAL_RESPONSE_CONTAINS_IT",
+                "torsion_from_dynamic_modes": (
+                    "IMPLEMENTED_EXPLICIT_TWO_NODE_STOREY_PROBES"
+                    if torsion_map
+                    else "NOT_REQUESTED"
+                ),
                 "accidental_eccentricity": "NOT_IMPLEMENTED_FAIL_CLOSED",
-                "orthogonal_direction_combination": "NOT_IMPLEMENTED_FAIL_CLOSED",
+                "orthogonal_direction_combination": "AVAILABLE_AS_EXPLICIT_POSTPROCESSING",
                 "nepal_code_numerical_limits": "CALLER_SUPPLIED_ONLY",
                 "rc_design": "NOT_IMPLEMENTED",
             },
         },
         "provenance": {
-            "adapter": "jp_structural.solvers.opensees.canonical_seismic/v0.1",
+            "adapter": "jp_structural.solvers.opensees.canonical_seismic/v0.2",
             "model_sha256": digest,
             "spectrum_id": normalized_spectrum["id"],
             "spectrum_source_reference": normalized_spectrum.get("source_reference"),
+            "deterministic_ids": True,
+            "source_preserving": True,
+        },
+    }
+
+
+
+def combine_orthogonal_direction_results(
+    first: dict[str, Any],
+    second: dict[str, Any],
+    *,
+    orthogonal_factor: float,
+) -> dict[str, Any]:
+    """Envelope two orthogonal response-spectrum cases with an explicit factor.
+
+    No code-specific 100/30 or similar rule is assumed. The caller must provide
+    the governed orthogonal factor. The output is an absolute-value envelope, not
+    a signed vector response.
+    """
+    factor = _finite(orthogonal_factor, field_name="orthogonal_factor")
+    if not (0.0 <= factor <= 1.0):
+        raise ResponseSpectrumError("orthogonal_factor must be between 0 and 1")
+
+    if first.get("model_id") != second.get("model_id"):
+        raise ResponseSpectrumError("orthogonal cases must reference the same model_id")
+    cases_a = first.get("case_results") or []
+    cases_b = second.get("case_results") or []
+    if len(cases_a) != 1 or len(cases_b) != 1:
+        raise ResponseSpectrumError(
+            "orthogonal combination requires exactly one case_result per input"
+        )
+    case_a = cases_a[0]
+    case_b = cases_b[0]
+    axis_a = str(case_a.get("direction") or "").upper()
+    axis_b = str(case_b.get("direction") or "").upper()
+    if axis_a not in _AXES or axis_b not in _AXES or axis_a == axis_b:
+        raise ResponseSpectrumError(
+            "orthogonal combination requires two distinct X/Y/Z directions"
+        )
+
+    def envelope(value_a: float, value_b: float) -> dict[str, float]:
+        a = abs(float(value_a))
+        b = abs(float(value_b))
+        a_dominant = a + factor * b
+        b_dominant = b + factor * a
+        return {
+            f"{axis_a}_dominant": a_dominant,
+            f"{axis_b}_dominant": b_dominant,
+            "envelope": max(a_dominant, b_dominant),
+        }
+
+    combined_a = case_a.get("combined") or {}
+    combined_b = case_b.get("combined") or {}
+    base_shear = envelope(
+        combined_a.get("base_shear", 0.0),
+        combined_b.get("base_shear", 0.0),
+    )
+
+    def by_key(rows: list[dict[str, Any]], key_fields: tuple[str, ...]):
+        return {
+            tuple(str(row.get(field)) for field in key_fields): row
+            for row in rows
+        }
+
+    disp_a = by_key(combined_a.get("storey_displacement", []) or [], ("storey_id",))
+    disp_b = by_key(combined_b.get("storey_displacement", []) or [], ("storey_id",))
+    if set(disp_a) != set(disp_b):
+        raise ResponseSpectrumError(
+            "orthogonal storey_displacement mappings must reference identical storeys"
+        )
+    displacement_envelope = []
+    for key in sorted(disp_a):
+        row_a = disp_a[key]
+        row_b = disp_b[key]
+        displacement_envelope.append(
+            {
+                "storey_id": key[0],
+                "response": envelope(
+                    row_a["displacement"],
+                    row_b["displacement"],
+                ),
+            }
+        )
+
+    drift_a = by_key(
+        combined_a.get("interstorey_drift", []) or [],
+        ("lower_storey_id", "upper_storey_id"),
+    )
+    drift_b = by_key(
+        combined_b.get("interstorey_drift", []) or [],
+        ("lower_storey_id", "upper_storey_id"),
+    )
+    if set(drift_a) != set(drift_b):
+        raise ResponseSpectrumError(
+            "orthogonal interstorey_drift mappings must reference identical storey pairs"
+        )
+    drift_envelope = []
+    for key in sorted(drift_a):
+        row_a = drift_a[key]
+        row_b = drift_b[key]
+        drift_envelope.append(
+            {
+                "lower_storey_id": key[0],
+                "upper_storey_id": key[1],
+                "drift": envelope(row_a["drift"], row_b["drift"]),
+                "drift_ratio": envelope(
+                    row_a["drift_ratio"],
+                    row_b["drift_ratio"],
+                ),
+            }
+        )
+
+    torsion_a = by_key(
+        combined_a.get("torsional_rotation", []) or [],
+        ("storey_id",),
+    )
+    torsion_b = by_key(
+        combined_b.get("torsional_rotation", []) or [],
+        ("storey_id",),
+    )
+    if set(torsion_a) != set(torsion_b):
+        raise ResponseSpectrumError(
+            "orthogonal torsional-rotation mappings must reference identical storeys"
+        )
+    torsion_envelope = []
+    for key in sorted(torsion_a):
+        torsion_envelope.append(
+            {
+                "storey_id": key[0],
+                "rotation": envelope(
+                    torsion_a[key]["rotation"],
+                    torsion_b[key]["rotation"],
+                ),
+            }
+        )
+
+    source_ids = [str(case_a.get("case_id")), str(case_b.get("case_id"))]
+    combination_key = (
+        f"{first.get('model_id')}:orthogonal-envelope:"
+        f"{axis_a}:{axis_b}:{factor}:{':'.join(source_ids)}"
+    )
+    return {
+        "schema_version": "0.1",
+        "combination_id": stable_id("COMB", combination_key),
+        "model_id": first.get("model_id"),
+        "combination_type": "EXPLICIT_ORTHOGONAL_DIRECTION_ENVELOPE",
+        "directions": [axis_a, axis_b],
+        "orthogonal_factor": factor,
+        "source_case_ids": source_ids,
+        "combined": {
+            "base_shear": base_shear,
+            "storey_displacement": displacement_envelope,
+            "interstorey_drift": drift_envelope,
+            "torsional_rotation": torsion_envelope,
+        },
+        "qa": {
+            "status": "PASS_COMPUTATION",
+            "scope": {
+                "orthogonal_factor": "CALLER_SUPPLIED",
+                "signed_vector_reconstruction": "NOT_CLAIMED",
+                "accidental_eccentricity": "NOT_IMPLEMENTED_FAIL_CLOSED",
+                "code_specific_orthogonal_rule": "NOT_INFERRED",
+            },
+        },
+        "provenance": {
+            "adapter": "jp_structural.solvers.opensees.canonical_seismic/v0.2",
             "deterministic_ids": True,
             "source_preserving": True,
         },
