@@ -1,0 +1,87 @@
+{
+  "$schema": "https://raw.githubusercontent.com/FabinGurung/JP_A7_System_Registry_and_Knowledge_Graph/main/schemas/module-manifest.schema.json",
+  "schema_version": "1.0.0",
+  "manifest_kind": "A7_MODULE_MANIFEST",
+  "manifest_status": "ACTIVE",
+  "module_id": "MOD-STRUCT-001",
+  "repository_id": "REPO-000002",
+  "provider_repository_id": "843020367",
+  "repository_full_name": "FabinGurung/JP_Structural_Analysis",
+  "canonical_label": "JP Structural Analysis",
+  "module_role": "STRUCTURAL_ANALYSIS",
+  "ownership_profile_id": "OWN-MOD-STRUCT-001",
+  "a7_registry": {
+    "system_id": "SYS-A7-000001",
+    "repository_id": "REPO-000001",
+    "provider_repository_id": "1406572237",
+    "repository_full_name": "FabinGurung/JP_A7_System_Registry_and_Knowledge_Graph",
+    "module_registry_path": "registry/entities/modules.json",
+    "ownership_registry_path": "registry/authority/module-ownership.json",
+    "authority_map_path": "registry/authority/authority-map.json",
+    "system_boundary_path": "registry/authority/system-boundaries.json"
+  },
+  "refs": {
+    "default_branch": "main",
+    "canonical_working_ref": "engine/opensees-sar-v0.1",
+    "publication_ref": "main"
+  },
+  "routing_entrypoints": [
+    {
+      "entrypoint_id": "READ_FIRST",
+      "kind": "HUMAN_READ_FIRST",
+      "ref": "engine/opensees-sar-v0.1",
+      "path": "README.md"
+    },
+    {
+      "entrypoint_id": "GOVERNANCE",
+      "kind": "AUTHORITY_DOCUMENT",
+      "ref": "engine/opensees-sar-v0.1",
+      "path": "GOVERNANCE.md"
+    },
+    {
+      "entrypoint_id": "PROVENANCE",
+      "kind": "PROVENANCE",
+      "ref": "engine/opensees-sar-v0.1",
+      "path": "PROVENANCE.md"
+    },
+    {
+      "entrypoint_id": "ENGINE_SOURCE",
+      "kind": "ENGINE_SOURCE",
+      "ref": "engine/opensees-sar-v0.1",
+      "path": "src/"
+    },
+    {
+      "entrypoint_id": "SCHEMAS",
+      "kind": "FORMAL_CONTRACT",
+      "ref": "engine/opensees-sar-v0.1",
+      "path": "schemas/"
+    },
+    {
+      "entrypoint_id": "BENCHMARKS",
+      "kind": "VALIDATION_EVIDENCE",
+      "ref": "engine/opensees-sar-v0.1",
+      "path": "benchmarks/"
+    },
+    {
+      "entrypoint_id": "TESTS",
+      "kind": "VALIDATION",
+      "ref": "engine/opensees-sar-v0.1",
+      "path": "tests/"
+    },
+    {
+      "entrypoint_id": "REPORTS",
+      "kind": "REPORT_OUTPUT_AREA",
+      "ref": "engine/opensees-sar-v0.1",
+      "path": "reports/"
+    }
+  ],
+  "resolver_rules": [
+    "READ_THIS_MANIFEST_FIRST",
+    "LOAD_A7_OWNERSHIP_PROFILE_BEFORE_DOMAIN_MUTATION",
+    "USE_CANONICAL_WORKING_REF_FOR_CURRENT_ENGINE",
+    "CI_SUCCESS_IS_NOT_ENGINEERING_APPROVAL",
+    "OPERATIONS_LINKS_DO_NOT_TRANSFER_STRUCTURAL_AUTHORITY"
+  ],
+  "manifest_role": "ROUTING_ONLY_NON_AUTHORITATIVE_FOR_DOMAIN_FACTS",
+  "observed_at": "2026-10-06T11:36:00Z"
+}
