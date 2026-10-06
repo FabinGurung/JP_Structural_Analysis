@@ -2,6 +2,8 @@ import pytest
 
 from jp_structural.solvers.opensees.canonical_seismic import (
     ResponseSpectrumError,
+    combine_orthogonal_direction_results,
+    cqc_correlation_coefficient,
     interpolate_spectral_acceleration,
     normalize_response_spectrum,
     run_canonical_response_spectrum,
@@ -237,13 +239,13 @@ def test_response_spectrum_refuses_period_extrapolation_and_unsupported_combinat
     with pytest.raises(ResponseSpectrumError, match="outside explicit spectrum domain"):
         interpolate_spectral_acceleration(normalized, 10.1)
 
-    with pytest.raises(ResponseSpectrumError, match="only explicit modal_combination='SRSS'"):
+    with pytest.raises(ResponseSpectrumError, match="modal_combination must be SRSS or CQC"):
         run_canonical_response_spectrum(
             _model(),
             _spectrum(),
             2,
             direction="X",
-            modal_combination="CQC",
+            modal_combination="ABS",
             eigen_solver="fullGenLapack",
         )
 
@@ -269,3 +271,118 @@ def test_explicit_design_limits_are_evaluated_but_not_invented():
     assert checks["code_reference"] == "SYNTHETIC_LIMITS_NOT_A_REAL_CODE"
     assert checks["checks"]
     assert all(item["status"] in {"PASS", "FAIL", "UNRESOLVED"} for item in checks["checks"])
+
+
+
+def test_cqc_coefficient_is_symmetric_and_unity_for_identical_frequency():
+    assert cqc_correlation_coefficient(10.0, 10.0, 0.05) == pytest.approx(1.0)
+    forward = cqc_correlation_coefficient(10.0, 20.0, 0.05)
+    reverse = cqc_correlation_coefficient(20.0, 10.0, 0.05)
+    assert forward == pytest.approx(reverse)
+    assert 0.0 < forward < 1.0
+
+
+def test_cqc_response_and_explicit_torsional_probe_are_deterministic():
+    kwargs = {
+        "direction": "X",
+        "modal_combination": "CQC",
+        "response_points": [
+            {"storey_id": "STY-BASE", "node_id": "N-B1"},
+            {"storey_id": "STY-ROOF", "node_id": "N-T1"},
+        ],
+        "torsion_points": [
+            {
+                "storey_id": "STY-ROOF",
+                "node_a_id": "N-T1",
+                "node_b_id": "N-T2",
+                "separation": 4000.0,
+            }
+        ],
+        "eigen_solver": "fullGenLapack",
+    }
+    first = run_canonical_response_spectrum(_model(), _spectrum(), 3, **kwargs)
+    second = run_canonical_response_spectrum(_model(), _spectrum(), 3, **kwargs)
+
+    assert first["analysis_run_id"] == second["analysis_run_id"]
+    case = first["case_results"][0]
+    assert case["modal_combination"] == "CQC"
+    assert case["combined"]["base_shear"] > 0.0
+    assert len(case["combined"]["torsional_rotation"]) == 1
+    assert case["combined"]["torsional_rotation"][0]["rotation"] >= 0.0
+    assert first["qa"]["scope"]["modal_combination"] == "IMPLEMENTED_CQC_EQUAL_DAMPING"
+    assert (
+        first["qa"]["scope"]["torsion_from_dynamic_modes"]
+        == "IMPLEMENTED_EXPLICIT_TWO_NODE_STOREY_PROBES"
+    )
+
+
+def test_orthogonal_direction_envelope_requires_explicit_factor():
+    common = {
+        "modal_combination": "SRSS",
+        "response_points": [
+            {"storey_id": "STY-BASE", "node_id": "N-B1"},
+            {"storey_id": "STY-ROOF", "node_id": "N-T1"},
+        ],
+        "eigen_solver": "fullGenLapack",
+    }
+    x_result = run_canonical_response_spectrum(
+        _model(), _spectrum(), 3, direction="X", **common
+    )
+    y_result = run_canonical_response_spectrum(
+        _model(), _spectrum(), 3, direction="Y", **common
+    )
+    combined = combine_orthogonal_direction_results(
+        x_result,
+        y_result,
+        orthogonal_factor=0.30,
+    )
+
+    assert combined["combination_type"] == "EXPLICIT_ORTHOGONAL_DIRECTION_ENVELOPE"
+    assert combined["orthogonal_factor"] == pytest.approx(0.30)
+    assert combined["combined"]["base_shear"]["envelope"] >= 0.0
+    assert len(combined["combined"]["storey_displacement"]) == 2
+    assert len(combined["combined"]["interstorey_drift"]) == 1
+    assert combined["qa"]["scope"]["code_specific_orthogonal_rule"] == "NOT_INFERRED"
+
+    with pytest.raises(ResponseSpectrumError, match="between 0 and 1"):
+        combine_orthogonal_direction_results(
+            x_result,
+            y_result,
+            orthogonal_factor=1.30,
+        )
+
+
+def test_torsional_probe_refuses_ambiguous_or_zero_geometry():
+    with pytest.raises(ResponseSpectrumError, match="node_a_id and node_b_id differ"):
+        run_canonical_response_spectrum(
+            _model(),
+            _spectrum(),
+            3,
+            direction="X",
+            torsion_points=[
+                {
+                    "storey_id": "STY-ROOF",
+                    "node_a_id": "N-T1",
+                    "node_b_id": "N-T1",
+                    "separation": 4000.0,
+                }
+            ],
+            eigen_solver="fullGenLapack",
+        )
+
+    with pytest.raises(ResponseSpectrumError, match="must be > 0"):
+        run_canonical_response_spectrum(
+            _model(),
+            _spectrum(),
+            3,
+            direction="X",
+            torsion_points=[
+                {
+                    "storey_id": "STY-ROOF",
+                    "node_a_id": "N-T1",
+                    "node_b_id": "N-T2",
+                    "separation": 0.0,
+                }
+            ],
+            eigen_solver="fullGenLapack",
+        )
