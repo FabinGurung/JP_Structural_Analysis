@@ -8,6 +8,8 @@ from .canonical_frame import (
 )
 from .canonical_seismic import (
     ResponseSpectrumError,
+    combine_orthogonal_direction_results,
+    cqc_correlation_coefficient,
     interpolate_spectral_acceleration,
     normalize_response_spectrum,
     run_canonical_response_spectrum,
@@ -18,6 +20,8 @@ __all__ = [
     "CanonicalTranslationError",
     "ResponseSpectrumError",
     "build_canonical_frame_model",
+    "combine_orthogonal_direction_results",
+    "cqc_correlation_coefficient",
     "interpolate_spectral_acceleration",
     "normalize_response_spectrum",
     "run_canonical_response_spectrum",
