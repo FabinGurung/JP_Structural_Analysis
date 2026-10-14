@@ -59,7 +59,7 @@ Implemented in the current bounded slice:
 - fail-closed rejection of period extrapolation;
 - explicit damping and unit-consistency metadata;
 - one-direction modal response-spectrum evaluation for X, Y or Z;
-- SRSS modal combination;
+- SRSS modal combination and equal-damping CQC modal correlation/combination selected explicitly by the caller;
 - modal and combined base-shear response;
 - storey displacement only when the caller explicitly maps a storey to a canonical response node;
 - inter-storey drift from those explicit response-node mappings;
@@ -68,11 +68,22 @@ Implemented in the current bounded slice:
 
 The implementation deliberately does **not** infer or claim:
 
-- CQC or other modal-combination methods beyond the currently implemented SRSS path;
+- modal-combination methods beyond the implemented SRSS and equal-damping CQC paths;
 - accidental-eccentricity load application;
-- orthogonal-direction combination;
+- implicit/code-specific orthogonal-direction factors; the bounded orthogonal envelope helper requires a caller-supplied factor;
 - Nepal-code numerical coefficients or limits that were not supplied as governed inputs;
 - shell/end-release/rigid-offset equivalence that remains outside the Phase-B frame adapter;
 - source-software equivalence, professional approval or reinforced-concrete design.
 
-Dynamic torsional response can be present in the underlying modal model, but accidental-eccentricity execution and a dedicated torsional-irregularity acceptance module remain future work. Therefore this Phase-C core is a reproducible analysis capability, not a completed seismic code-compliance certification.
+Explicit two-node storey torsional-response probes are available when canonical node IDs and a positive physical separation are supplied by the caller. These probes are response quantities, not torsional-irregularity acceptance checks. Accidental-eccentricity execution and dedicated torsional-irregularity acceptance remain future work. Therefore this Phase-C core is a reproducible analysis capability, not a completed seismic code-compliance certification.
+
+
+## Seq9 bounded combination and torsional-response extension
+
+The OpenSees Phase-C extension retains the explicit canonical inputs and provenance of Seq8 while adding:
+
+- `modal_combination="CQC"` for equal-damping complete quadratic combination. The supplied spectrum damping ratio is mandatory; modes are coupled using their computed circular frequencies. `SRSS` remains selectable.
+- Optional `torsion_points`: one explicit pair of distinct, same-storey canonical node IDs plus a positive physical separation per storey. Modal differential displacement over that separation yields an approximate storey rotation in radians; this is **not** accidental eccentricity or a torsional-irregularity code check.
+- `combine_orthogonal_direction_results(first, second, orthogonal_factor=...)`: a caller-supplied factor in [0, 1] produces absolute-response envelopes for the two distinct directions. No code-specific 100/30 or similar combination is inferred. The postprocessor does not reconstruct signed simultaneous responses.
+
+All quantities and thresholds requiring normative meaning remain caller-supplied. Results are bounded computational evidence and must not be treated as Nepal-code acceptance, professional sign-off, or equivalence with ETABS. Numerical test and CI evidence must be verified separately before Seq9 is recorded as closed.
