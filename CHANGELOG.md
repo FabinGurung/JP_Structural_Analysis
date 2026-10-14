@@ -10,3 +10,7 @@
 - Added explicit nodal-mass assignment and rigid-diaphragm execution semantics without silently deriving either from incomplete source meaning.
 - Added OpenSees modal/eigen execution with normalized period, frequency, generalized-mass and translational effective-modal-mass participation results.
 - Added sanitized Phase-B regression tests and explicit failure cases for unresolved nodal mass and diaphragm semantics.
+- Added bounded Phase-C response-spectrum modal superposition with explicitly supplied acceleration spectra, SRSS, base shear, mapped displacement/drift, and caller-supplied check limits (Seq8, A9 closed).
+- Added bounded Phase-C equal-damping CQC, explicit two-node torsional response probes, and caller-factored orthogonal envelope helper (Seq9, A9 open).
+- Reconciled Phase-C methodology and added Seq9 regression tests on 2026-10-14; latest complete CI/Local/Main closeout verification is pending.
+- Engine V0.1 is NOT RELEASED; accidental eccentricity, structural irregularity acceptance, independent-engine comparison, real-project equivalence, SAR PDF and RC design remain outside this slice.
