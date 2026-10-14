@@ -386,3 +386,51 @@ def test_torsional_probe_refuses_ambiguous_or_zero_geometry():
             ],
             eigen_solver="fullGenLapack",
         )
+
+
+def test_seq9_cqc_coefficient_is_symmetric_and_fail_closed():
+    assert cqc_correlation_coefficient(10.0, 10.0, 0.05) == pytest.approx(1.0)
+    rho_ab = cqc_correlation_coefficient(10.0, 13.0, 0.05)
+    rho_ba = cqc_correlation_coefficient(13.0, 10.0, 0.05)
+    assert 0.0 < rho_ab < 1.0
+    assert rho_ab == pytest.approx(rho_ba, rel=1e-12)
+
+    with pytest.raises(ResponseSpectrumError, match="must be > 0"):
+        cqc_correlation_coefficient(0.0, 10.0, 0.05)
+    with pytest.raises(ResponseSpectrumError, match="between 0 and 1"):
+        cqc_correlation_coefficient(10.0, 13.0, 0.0)
+
+
+def test_seq9_orthogonal_envelope_rejects_model_and_storey_mismatches():
+    first = {
+        "model_id": "MOD-SANITIZED-A",
+        "case_results": [{
+            "case_id": "CASE-X",
+            "direction": "X",
+            "combined": {
+                "base_shear": 100.0,
+                "storey_displacement": [{"storey_id": "STY-1", "displacement": 2.0}],
+                "interstorey_drift": [],
+                "torsional_rotation": [],
+            },
+        }],
+    }
+    second = {
+        "model_id": "MOD-SANITIZED-B",
+        "case_results": [{
+            "case_id": "CASE-Y",
+            "direction": "Y",
+            "combined": {
+                "base_shear": 80.0,
+                "storey_displacement": [{"storey_id": "STY-1", "displacement": 1.0}],
+                "interstorey_drift": [],
+                "torsional_rotation": [],
+            },
+        }],
+    }
+    with pytest.raises(ResponseSpectrumError, match="same model_id"):
+        combine_orthogonal_direction_results(first, second, orthogonal_factor=0.3)
+    second["model_id"] = first["model_id"]
+    second["case_results"][0]["combined"]["storey_displacement"][0]["storey_id"] = "STY-2"
+    with pytest.raises(ResponseSpectrumError, match="identical storeys"):
+        combine_orthogonal_direction_results(first, second, orthogonal_factor=0.3)
