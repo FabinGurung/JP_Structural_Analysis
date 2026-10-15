@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "NBC current edition selector - provenance only, not code compliant design",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "code_set",
+    "source_references",
+    "calculation_scope"
+  ],
+  "properties": {
+    "calculation_scope": {
+      "enum": [
+        "NEW_ENGINEERED_ANALYSIS",
+        "HISTORICAL_REPORT_RECONCILIATION",
+        "RUD_CANDIDATE_HOLD"
+      ]
+    },
+    "code_set": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "required": [
+        "NBC 105"
+      ],
+      "properties": {
+        "NBC 105": {
+          "const": "2025"
+        },
+        "NBC 205": {
+          "const": "2024"
+        },
+        "NBC 206": {
+          "const": "2024"
+        }
+      }
+    },
+    "source_references": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "municipality_bylaws_reference": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "registered_code_clauses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "edition",
+          "clause",
+          "source_file_or_url"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "edition": {
+            "type": "string"
+          },
+          "clause": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_file_or_url": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}
