@@ -1,0 +1,56 @@
+name: Publish A9 Seq9 frozen prerelease
+on:
+  push:
+    branches:
+      - release/a9-seq9-publish-oneoff-20261015
+permissions:
+  contents: write
+jobs:
+  release-frozen-seq9:
+    if: github.repository == 'FabinGurung/JP_Structural_Analysis'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify frozen source and publish prerelease once
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          SHA="f7c2f8ad7d06ec18b750835b311748b129f39a36"
+          TAG="a9-seq9-phase-c-20261015"
+          BRANCH="milestone/a9-seq9-phase-c-20261015"
+          SOURCE="$(gh api "repos/$REPO/git/ref/heads/$BRANCH" --jq '.object.sha')"
+          test "$SOURCE" = "$SHA" || { echo "Milestone branch moved: $SOURCE"; exit 1; }
+          gh api "repos/$REPO/git/commits/$SHA" > /dev/null
+          if gh api "repos/$REPO/git/ref/tags/$TAG" > /tmp/tag.json 2>/dev/null; then
+            EXISTING="$(gh api "repos/$REPO/git/ref/tags/$TAG" --jq '.object.sha')"
+            test "$EXISTING" = "$SHA" || { echo "Tag collision: $EXISTING"; exit 1; }
+          else
+            gh api -X POST "repos/$REPO/git/refs" -f "ref=refs/tags/$TAG" -f "sha=$SHA" > /tmp/tag-created.json
+          fi
+          if gh release view "$TAG" --repo "$REPO" > /dev/null 2>&1; then
+            echo "Existing release retained; no duplicate."
+          else
+            cat > /tmp/seq9-notes.md <<'NOTES'
+          # A9 Seq9 - OpenSees Phase C (frozen milestone)
+
+          DEVELOPMENT MILESTONE / PRERELEASE. NOT a V0.1 product or engineering approval.
+
+          Frozen code commit: f7c2f8ad7d06ec18b750835b311748b129f39a36.
+          Snapshot: milestone/a9-seq9-phase-c-20261015.
+
+          ## Included
+          Canonical model QA; bounded 3D OpenSees elastic frame; explicit nodal mass / rigid diaphragms; eigen/modal analysis; bounded response spectrum with SRSS and equal-damping CQC; caller-defined orthogonal response envelope; explicit two-node storey torsional-response probes.
+
+          ## Verified Seq9 closeout
+          36 regression tests pass; public-safety scan succeeded; Seq9 POST Local/Main records were reported as verified 9/9 at closeout.
+
+          ## Unresolved
+          No complete shell/slab/release/offset equivalence, accidental-eccentricity/torsion code checks, independently benchmarked RC beam-column/slab/footing/stair design, complete NBC 105:2025 compliance, private project OpenSees analysis signoff, or approved government SAR. SAMPLE_MDM_001 support-reaction discrepancy remains open.
+
+          Development remains held. New exploration on separate branches. CI success is not professional/government approval.
+          NOTES
+            gh release create "$TAG" --repo "$REPO" --target "$SHA" --verify-tag --prerelease --title "A9 Seq9 - OpenSees Phase C (Frozen Development Milestone)" --notes-file /tmp/seq9-notes.md
+          fi
+          gh release view "$TAG" --repo "$REPO" --json tagName,isPrerelease,url,targetCommitish --jq '{tag: .tagName, prerelease: .isPrerelease, url: .url, target: .targetCommitish}'
