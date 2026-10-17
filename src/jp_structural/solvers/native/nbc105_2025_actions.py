@@ -209,7 +209,11 @@ def check_design_interstory_drift(
     """
     if design_displacement_verified is not True:
         raise NBCActionError("verification of design (not raw analysis) displacement required")
-    d=_positive(design_interstory_displacement_m,"design_interstory_displacement_m")
+    if isinstance(design_interstory_displacement_m,bool):
+        raise NBCActionError("design displacement must be numeric")
+    try:d=float(design_interstory_displacement_m)
+    except (ValueError,TypeError) as exc:raise NBCActionError("invalid design displacement") from exc
+    if not math.isfinite(d) or d<0:raise NBCActionError("design displacement must be finite and nonnegative")
     h=_positive(storey_height_m,"storey_height_m")
     limits={"ULS":.025,"SLS":.006}
     if limit_state not in limits:
@@ -233,3 +237,94 @@ def mrsm_base_shear_scaling(
             "base_reaction_factor":factor,
             "drift_factor":1.,"displacement_factor":1.,
             "code_limit":"No claim that modal mass sufficiency or missing-mass correction is satisfied"}
+
+
+def spectral_shape_factor(
+    soil_type: str, period_s: float, *, method: str
+) -> dict:
+    """FULL verified Eq 4.1(2), Table 4-1, Fig 4-1/4-2; 0<T<=6 s.
+
+    ESM uses Ta=0 per Table 4-1 note. MRSM uses the listed Ta.
+    Do not use ESM spectrum in modal/time history computations.
+    """
+    t=_positive(period_s,"period_s")
+    params={"A":(.1,.5,4.,2.5),"B":(.1,.7,4.,2.5),
+            "C":(.1,1.,4.,2.5),"D":(.5,2.,5.,2.25)}
+    if soil_type not in params:
+        raise NBCActionError("source-classified soil type A/B/C/D required")
+    if method not in ("ESM","MRSM"):
+        raise NBCActionError("method must be ESM or MRSM (no automatic time-history certification)")
+    if t>6:
+        raise NBCActionError("NBC 105:2025 Eq 4.1(2) range is T<=6s; unsupported period")
+    ta,tc,td,alpha=params[soil_type]
+    if method=="ESM":ta=0.
+    if ta>0 and t<ta:
+        ch=1+(alpha-1)*(t/ta)
+        branch="ramp"
+    elif t<tc:
+        ch=alpha
+        branch="plateau"
+    elif t<td:
+        ch=alpha*tc/t
+        branch="constant_velocity"
+    else:
+        ch=alpha*tc*td/t**2
+        branch="constant_displacement"
+    if not math.isfinite(ch) or ch<=0:raise NBCActionError("nonfinite spectral response")
+    return {"code":CODE_EDITION,"clause":"4.1.2 Eq 4.1(2)/Table 4-1",
+            "source":SOURCE_URL,"analysis_method":method,"soil_type":soil_type,
+            "period_s":t,"Ta_s":ta,"Tc_s":tc,"Td_s":td,"alpha":alpha,
+            "spectral_shape_Ch":ch,"branch":branch}
+
+
+def effective_cracked_flexural_stiffness_factor(component: str, limit_state: str) -> dict:
+    """NBC105:2025 §3.4 Table3-1 FLEXURAL factors, not axial/shear/torsion."""
+    factors={
+        "BEAM":(.35,.70),"COLUMN":(.70,.90),
+        "WALL_CRACKED":(.50,.70),"WALL_UNCRACKED":(.80,.90),
+        "MASONRY_WALL":(.45,.60),"FLAT_SLAB":(.25,.50)
+    }
+    if component not in factors or limit_state not in ("ULS","SLS"):
+        raise NBCActionError("verified Table 3-1 component/limit state required")
+    value=factors[component][0 if limit_state=="ULS" else 1]
+    return {"code":CODE_EDITION,"clause":"3.4/Table 3-1",
+            "source":SOURCE_URL,"component":component,"limit_state":limit_state,
+            "gross_flexural_stiffness_multiplier":value}
+
+
+def modal_mass_coverage_gate(
+    modal_participation_fractions: Sequence[Mapping],
+    *,
+    missing_mass_correction_evidence_id: str | None = None
+) -> dict:
+    """NBC105:2025 §7.3 at least 90% mass and <33Hz modes.
+    Modes >=33 Hz need independently established missing-mass correction.
+    This is a screening gate, not validation of the modal FE solution.
+    """
+    if not isinstance(modal_participation_fractions,(list,tuple)) or not modal_participation_fractions:
+        raise NBCActionError("nonempty independently extracted modal list required")
+    seen=set(); included=0.;high=[]
+    for r in modal_participation_fractions:
+        if not isinstance(r,Mapping):
+            raise NBCActionError("modal record must be mapping")
+        mid=r.get("mode_id")
+        if not isinstance(mid,str) or not mid.strip() or mid in seen:
+            raise NBCActionError("unique string modal ID required")
+        seen.add(mid)
+        freq=_positive(r.get("frequency_hz"),"frequency_hz")
+        if isinstance(r.get("effective_mass_fraction"),bool):
+            raise NBCActionError("mass fraction boolean invalid")
+        try:fraction=float(r.get("effective_mass_fraction"))
+        except (ValueError,TypeError) as exc:raise NBCActionError("invalid mass fraction") from exc
+        if not math.isfinite(fraction) or not 0<=fraction<=1:
+            raise NBCActionError("mass fraction outside 0..1")
+        if freq<33:included+=fraction
+        else:high.append(mid)
+    if included>1.0+1e-9:
+        raise NBCActionError("mass coverage exceeds total mass")
+    corrected=bool(missing_mass_correction_evidence_id and missing_mass_correction_evidence_id.strip())
+    status="PASS_BOUNDED" if included>=.9 and (not high or corrected) else "HOLD_MASS_OR_FREQ_CORRECTION"
+    return {"code":CODE_EDITION,"clause":"7.3","source":SOURCE_URL,
+            "covered_mass_fraction_below_33Hz":included,"modes_33Hz_or_higher":high,
+            "missing_mass_correction_evidence":missing_mass_correction_evidence_id if corrected else None,
+            "status":status,"engineering_approval":False}

@@ -96,3 +96,43 @@ def test_factor_conflicts_fail_closed():
         seismic_story_forces({"schema":"unverified"}, {"F1":3}, .1,1)
     with pytest.raises(NBCActionError):
         mrsm_base_shear_scaling(100,0)
+
+
+def test_full_spectral_shape_branches_and_methods():
+    from jp_structural.solvers.native.nbc105_2025_actions import spectral_shape_factor
+    def ch(t,method):
+        return spectral_shape_factor("D",t,method=method)["spectral_shape_Ch"]
+    assert ch(.1,"ESM")==pytest.approx(2.25)
+    assert ch(.1,"MRSM")==pytest.approx(1+(2.25-1)*(.1/.5))
+    assert ch(.5,"MRSM")==pytest.approx(2.25)
+    assert ch(2,"MRSM")==pytest.approx(2.25)
+    assert ch(3,"MRSM")==pytest.approx(2.25*2/3)
+    assert ch(5,"MRSM")==pytest.approx(2.25*2/5)
+    assert ch(6,"MRSM")==pytest.approx(2.25*2*5/36)
+    assert ch(5,"ESM")==pytest.approx(ch(5,"MRSM"))
+    assert ch(3,"ESM")==pytest.approx(ch(3,"MRSM"))
+    with pytest.raises(NBCActionError): spectral_shape_factor("D",6.1,method="MRSM")
+    with pytest.raises(NBCActionError): spectral_shape_factor("D",.5,method="UNKNOWN")
+    with pytest.raises(NBCActionError): spectral_shape_factor("E",1,method="ESM")
+
+def test_verified_current_cracked_flexural_modifiers():
+    from jp_structural.solvers.native.nbc105_2025_actions import effective_cracked_flexural_stiffness_factor
+    f=effective_cracked_flexural_stiffness_factor
+    assert f("BEAM","ULS")["gross_flexural_stiffness_multiplier"]==.35
+    assert f("BEAM","SLS")["gross_flexural_stiffness_multiplier"]==.70
+    assert f("COLUMN","ULS")["gross_flexural_stiffness_multiplier"]==.70
+    assert f("COLUMN","SLS")["gross_flexural_stiffness_multiplier"]==.90
+    with pytest.raises(NBCActionError):f("MASS","ULS")
+
+def test_verified_current_mass_and_frequency_limits():
+    from jp_structural.solvers.native.nbc105_2025_actions import modal_mass_coverage_gate
+    f=modal_mass_coverage_gate
+    modes=[{"mode_id":"1","frequency_hz":2.,"effective_mass_fraction":.60},
+           {"mode_id":"2","frequency_hz":4.,"effective_mass_fraction":.35}]
+    assert f(modes)["status"]=="PASS_BOUNDED"
+    assert f(modes[:1])["status"]=="HOLD_MASS_OR_FREQ_CORRECTION"
+    high=[{"mode_id":"1","frequency_hz":2.,"effective_mass_fraction":.92},
+          {"mode_id":"99","frequency_hz":34.,"effective_mass_fraction":.02}]
+    assert f(high)["status"]=="HOLD_MASS_OR_FREQ_CORRECTION"
+    assert f(high,missing_mass_correction_evidence_id="MODEL-MISSING-MASS-001")["status"]=="PASS_BOUNDED"
+    assert check_design_interstory_drift(0,3,"ULS",design_displacement_verified=True)["result"]=="PASS"
