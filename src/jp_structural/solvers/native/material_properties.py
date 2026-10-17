@@ -26,7 +26,10 @@ def _pos(value: object, field: str) -> float:
 def rectangular_section(width_m: float, depth_m: float) -> dict:
     """b along local x, h along local y; Ixx=b*h³/12, Iyy=h*b³/12."""
     b, h = _pos(width_m, "width_m"), _pos(depth_m, "depth_m")
-    a, ix, iy = b*h, b*h**3/12, h*b**3/12
+    try:
+        a, ix, iy = b*h, b*h**3/12, h*b**3/12
+    except OverflowError as exc:
+        raise MaterialInputError("section calculation overflow") from exc
     if not all(math.isfinite(x) and x > 0 for x in (a, ix, iy)):
         raise MaterialInputError("section overflow")
     return {"formula_id": "JP-MAT-RECT-001", "area_m2": a,
