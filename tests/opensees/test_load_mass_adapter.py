@@ -12,6 +12,7 @@ def _fixture():
     m={
         "schema_version":"0.1","model_id":"DEMO-FRAME-1",
         "project":{"project_id":"SYNTHETIC-001"},
+        "design_basis":{"code":"SANITIZED_TEST","damping_ratio":0.05},
         "units":{"force":"kN","length":"m","time":"s","mass":"kN*s^2/m"},
         "source_references":[{"id":"SYNTH","source_type":"SYNTHETIC"}],
         "storeys":[{"id":"BASE","elevation":0},{"id":"ROOF","elevation":3}],
