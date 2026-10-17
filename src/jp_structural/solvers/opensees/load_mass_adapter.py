@@ -117,7 +117,8 @@ def run_audited_static_gravity(model: dict, assembly: dict, *, absolute_toleranc
                for nid in sorted(support_nodes)]
     try:
         equilibrium=verify_vertical_support_equilibrium(
-            assembly["source_nodes"],gravity_loads,reactions,
+            [{"node_id":n["id"],"x_m":n["x"],"y_m":n["y"]} for n in resolved["nodes"]],
+            gravity_loads,reactions,
             abs_tol=absolute_tolerance,rel_tol=1e-8)
     except LoadAssemblyError as exc:
         raise LoadMassAdapterError(f"global gravity equilibrium rejected: {exc}") from exc
