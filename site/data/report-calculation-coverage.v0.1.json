@@ -22,26 +22,29 @@
       "id": "M02",
       "implemented_paths": [
         "src/jp_structural/solvers/native/gravity_loads.py",
-        "src/jp_structural/solvers/opensees/canonical_frame.py"
+        "src/jp_structural/solvers/opensees/canonical_frame.py",
+        "src/jp_structural/solvers/native/load_mass_assembly.py",
+        "src/jp_structural/solvers/opensees/load_mass_adapter.py"
       ],
       "precedent_sections": "2.6.1-2.6.3; 4.2",
       "priority": "P0",
-      "remaining_scope": "Line/area-to-member placement, floor load tributary integration, storey center-of-mass, diaphragm mass assembly.",
+      "remaining_scope": "Bounded source-to-node gravity and seismic mass allocation, conservative center-of-mass, canonical OpenSees mass binding, isolated gravity static solver, and support free-body checks are implemented. Automatic tributary geometry/real load-path identification, distributed frame/area load mapping, shell behavior and source model equivalence remain unresolved.",
       "status": "PARTIAL",
       "title": "Gravity loads and seismic mass",
-      "validation_gate": "Reactions equal gravity loads; no duplicate self-weight; mass reconstructed from load source."
+      "validation_gate": "Synthetic OpenSees frame vertical Rz/Mx/My equilibrium PASS; reject duplicate source keys, geometry drift, existing mass or unsupported units. Real project geometry/source comparison and member-load response benchmarks still pending."
     },
     {
       "id": "M03",
       "implemented_paths": [
-        "src/jp_structural/solvers/native/equivalent_lateral.py"
+        "src/jp_structural/solvers/native/equivalent_lateral.py",
+        "src/jp_structural/solvers/native/nbc105_2025_actions.py"
       ],
       "precedent_sections": "2.6.4; 5.1",
       "priority": "P0",
-      "remaining_scope": "Edition-verified NBC 105:2025 spectrum factors, empirical/Rayleigh period selection and site-specific parameters.",
-      "status": "DRAFT_UNVALIDATED",
+      "remaining_scope": "NBC105:2025 §§4.1–4.2, 5.1–5.3 and 6.1–6.3: audited ESM/MRSM spectra for T<=6 s, RC frame period, ULS/SLS coefficients, live mass factors, and bounded ELF forces implemented. Actual site class/zoning, verified Rayleigh result, FE application of accidental torsion, P-Delta, complete independent numerical benchmarks and design acceptance remain pending.",
+      "status": "PARTIAL",
       "title": "Equivalent static seismic loading",
-      "validation_gate": "Clause-by-clause references, independent hand values, seismic base shear and floor force equilibrium."
+      "validation_gate": "Government 2025 source exact clauses/pdfs, functional branch tests and load-mass conservation verified; site-evidence and real model checks remain gated."
     },
     {
       "id": "M04",
@@ -73,11 +76,12 @@
       "id": "M06",
       "implemented_paths": [
         "src/jp_structural/solvers/native/load_combinations.py",
-        "src/jp_structural/solvers/native/response_spectrum.py"
+        "src/jp_structural/solvers/native/response_spectrum.py",
+        "src/jp_structural/solvers/native/nbc105_2025_actions.py"
       ],
       "precedent_sections": "2.8; 5.1",
       "priority": "P0",
-      "remaining_scope": "Complete edition-controlled ULS/SLS, 5% accidental eccentricity if applicable, vertical action, orthogonal interaction.",
+      "remaining_scope": "Complete edition-controlled ULS/SLS, 5% accidental eccentricity if applicable, vertical action, orthogonal interaction. Implemented bounded §5.6 torsion ACTION PAIRS, not equivalent FE torsion; §7.5 force-only MRSM scaling (no drift/displacement scaling).",
       "status": "PARTIAL",
       "title": "Seismic and load combinations",
       "validation_gate": "Combination family coverage and governing-demand envelope compared with independent values."
@@ -85,11 +89,12 @@
     {
       "id": "M07",
       "implemented_paths": [
-        "src/jp_structural/solvers/opensees/canonical_seismic.py"
+        "src/jp_structural/solvers/opensees/canonical_seismic.py",
+        "src/jp_structural/solvers/native/nbc105_2025_actions.py"
       ],
       "precedent_sections": "2.7; 5.6-5.10",
       "priority": "P1",
-      "remaining_scope": "Proper storey stiffness, lateral displacement/drift, torsional ratios, center of rigidity, mass and P-Delta acceptance.",
+      "remaining_scope": "Proper storey stiffness, lateral displacement/drift, torsional ratios, center of rigidity, mass and P-Delta acceptance. Verified §3.4 effective flexural stiffness factors, §5.5.3 design-drift limits, and §7.3 conservative modal-mass screening implemented; actual whole-model irregularity acceptance incomplete.",
       "status": "PARTIAL",
       "title": "Storey response and seismic irregularities",
       "validation_gate": "Numerical ratios with explicit ULS/SLS code limits, mode/axis/units and evidence per storey."
