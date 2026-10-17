@@ -61,7 +61,6 @@ def allocate_loads_to_nodes(
         if nid in node_map:
             raise LoadAssemblyError(f"duplicate node: {nid}")
         sid = _id(n.get("storey_id"), f"{nid}.storey_id")
-        x = _number(n.get("x_m"), f"{nid}.x_m", zero_ok=True) if float(n.get("x_m", 0)) >= 0 else None
         # Local models may use signed coordinates; do not restrict to first quadrant.
         try:
             x, y, z = (float(n[v]) for v in ("x_m", "y_m", "z_m"))
@@ -184,9 +183,6 @@ def verify_vertical_support_equilibrium(nodes: Sequence[Mapping],
                 raise LoadAssemblyError(f"invalid/duplicate response node {k}")
             used.add(k)
             x,y=pts[k]
-            z=_number(item.get(mag), mag, zero_ok=True)
-            # Upward gravity support Rz can be negative in a physical uplift case:
-            # use explicit signed finite value instead of _number.
             if sign==1:
                 try:
                     z=float(item[mag])
@@ -194,6 +190,8 @@ def verify_vertical_support_equilibrium(nodes: Sequence[Mapping],
                     raise LoadAssemblyError("invalid signed support reaction") from exc
                 if not math.isfinite(z):
                     raise LoadAssemblyError("nonfinite support reaction")
+            else:
+                z=_number(item.get(mag), mag, zero_ok=True)
             f=sign*z
             mx=y*f
             my=-x*f
