@@ -41,7 +41,7 @@
       ],
       "precedent_sections": "2.6.4; 5.1",
       "priority": "P0",
-      "remaining_scope": "NBC105:2025 §§4.1–4.2, 5.1–5.3 and 6.1–6.3: audited ESM/MRSM spectra for T<=6 s, RC frame period, ULS/SLS coefficients, live mass factors, and bounded ELF forces implemented. Actual site class/zoning, verified Rayleigh result, FE application of accidental torsion, P-Delta, complete independent numerical benchmarks and design acceptance remain pending.",
+      "remaining_scope": "NBC105:2025 \u00a7\u00a74.1\u20134.2, 5.1\u20135.3 and 6.1\u20136.3: audited ESM/MRSM spectra for T<=6 s, RC frame period, ULS/SLS coefficients, live mass factors, and bounded ELF forces implemented. Actual site class/zoning, verified Rayleigh result, FE application of accidental torsion, P-Delta, complete independent numerical benchmarks and design acceptance remain pending.",
       "status": "PARTIAL",
       "title": "Equivalent static seismic loading",
       "validation_gate": "Government 2025 source exact clauses/pdfs, functional branch tests and load-mass conservation verified; site-evidence and real model checks remain gated."
@@ -81,7 +81,7 @@
       ],
       "precedent_sections": "2.8; 5.1",
       "priority": "P0",
-      "remaining_scope": "Complete edition-controlled ULS/SLS, 5% accidental eccentricity if applicable, vertical action, orthogonal interaction. Implemented bounded §5.6 torsion ACTION PAIRS, not equivalent FE torsion; §7.5 force-only MRSM scaling (no drift/displacement scaling).",
+      "remaining_scope": "Complete edition-controlled ULS/SLS, 5% accidental eccentricity if applicable, vertical action, orthogonal interaction. Implemented bounded \u00a75.6 torsion ACTION PAIRS, not equivalent FE torsion; \u00a77.5 force-only MRSM scaling (no drift/displacement scaling).",
       "status": "PARTIAL",
       "title": "Seismic and load combinations",
       "validation_gate": "Combination family coverage and governing-demand envelope compared with independent values."
@@ -94,7 +94,7 @@
       ],
       "precedent_sections": "2.7; 5.6-5.10",
       "priority": "P1",
-      "remaining_scope": "Proper storey stiffness, lateral displacement/drift, torsional ratios, center of rigidity, mass and P-Delta acceptance. Verified §3.4 effective flexural stiffness factors, §5.5.3 design-drift limits, and §7.3 conservative modal-mass screening implemented; actual whole-model irregularity acceptance incomplete.",
+      "remaining_scope": "Proper storey stiffness, lateral displacement/drift, torsional ratios, center of rigidity, mass and P-Delta acceptance. Verified \u00a73.4 effective flexural stiffness factors, \u00a75.5.3 design-drift limits, and \u00a77.3 conservative modal-mass screening implemented; actual whole-model irregularity acceptance incomplete.",
       "status": "PARTIAL",
       "title": "Storey response and seismic irregularities",
       "validation_gate": "Numerical ratios with explicit ULS/SLS code limits, mode/axis/units and evidence per storey."
