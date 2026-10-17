@@ -145,6 +145,7 @@ def allocate_loads_to_nodes(
             "formula_id":"JP-LOAD-MASS-PLACEMENT-006",
             "status":"SOURCE_ASSIGNED_NUMERIC_CONSERVATION_PASS_NOT_ENGINEERING_APPROVAL",
             "units":{"force":"kN","length":"m","time":"s","mass":"kN*s^2/m"},
+            "source_nodes":[{"node_id":nid, **n} for nid,n in node_map.items()],
             "gravity_m_s2":g,"total_gravity_load_kN":total_downward,
             "total_seismic_weight_kN":total_seismic,
             "gravity_nodal_loads":nodal_gravity,"nodal_masses":nodal_masses,
