@@ -105,32 +105,38 @@
     {
       "id": "M08",
       "title": "RC beam design",
-      "status": "MISSING",
+      "status": "PARTIAL",
       "precedent_sections": "6.2",
       "priority": "P1",
-      "implemented_paths": [],
-      "remaining_scope": "Factored flexure, ductile shear, combined torsion, bar schedules, anchorage, confinement and constructability.",
-      "validation_gate": "Benchmark all governing beam checks against independently verified hand calculations."
+      "implemented_paths": [
+        "src/jp_structural/solvers/native/rc_detailing_checks.py"
+      ],
+      "remaining_scope": "Factored flexure, ductile shear, combined torsion, bar schedules, anchorage, confinement and constructability. Implemented ONLY bounded verified NBC 105:2025 Annex A dimensional/rebar/joint prechecks; demand/capacity engines still missing.",
+      "validation_gate": "Benchmark all governing beam checks against independently verified hand calculations. Prechecks are NOT equivalent to full RC design."
     },
     {
       "id": "M09",
       "title": "RC column P-M-M design",
-      "status": "MISSING",
+      "status": "PARTIAL",
       "precedent_sections": "6.1",
       "priority": "P1",
-      "implemented_paths": [],
-      "remaining_scope": "Axial-biaxial interaction, slenderness, minimum eccentricity, longitudinal and transverse bars.",
-      "validation_gate": "Numerical interaction surface and detailing checks, independent design examples."
+      "implemented_paths": [
+        "src/jp_structural/solvers/native/rc_detailing_checks.py"
+      ],
+      "remaining_scope": "Axial-biaxial interaction, slenderness, minimum eccentricity, longitudinal and transverse bars. Implemented ONLY bounded verified NBC 105:2025 Annex A dimensional/rebar/joint prechecks; demand/capacity engines still missing.",
+      "validation_gate": "Numerical interaction surface and detailing checks, independent design examples. Prechecks are NOT equivalent to full RC design."
     },
     {
       "id": "M10",
       "title": "Seismic joints and hierarchy",
-      "status": "MISSING",
+      "status": "PARTIAL",
       "precedent_sections": "6.2.3",
       "priority": "P1",
-      "implemented_paths": [],
-      "remaining_scope": "Strong-column/weak-beam capacity, beam-column joint shear, anchorage and confinement.",
-      "validation_gate": "Verified joint equilibrium, capacity ratios and detailing figures with code-traceable tests."
+      "implemented_paths": [
+        "src/jp_structural/solvers/native/rc_detailing_checks.py"
+      ],
+      "remaining_scope": "Strong-column/weak-beam capacity, beam-column joint shear, anchorage and confinement. Implemented ONLY bounded verified NBC 105:2025 Annex A dimensional/rebar/joint prechecks; demand/capacity engines still missing.",
+      "validation_gate": "Verified joint equilibrium, capacity ratios and detailing figures with code-traceable tests. Prechecks are NOT equivalent to full RC design."
     },
     {
       "id": "M11",

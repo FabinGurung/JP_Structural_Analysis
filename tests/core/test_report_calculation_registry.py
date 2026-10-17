@@ -12,8 +12,8 @@ def test_coverage_has_all_eighteen_contract_modules():
     rows = {item["id"]: item for item in obj["requirements"]}
     assert len(rows) == 18
     assert set(rows) == {f"M{i:02d}" for i in range(1, 17)} | {"S17", "S18"}
-    assert rows["M08"]["status"] == "MISSING"
-    assert rows["M09"]["status"] == "MISSING"
+    assert rows["M08"]["status"] == "PARTIAL"
+    assert rows["M09"]["status"] == "PARTIAL"
     assert rows["M12"]["status"] == "MISSING"
     assert rows["M13"]["status"] == "MISSING"
     assert rows["M01"]["status"] == "PARTIAL"
