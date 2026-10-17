@@ -1,0 +1,221 @@
+{
+  "authority": "JP_Structural_Analysis post-Seq9 draft branch; no automatic V0.1 release",
+  "code_basis": "NBC 105:2025 for new seismic work, NBC 206:2024 architectural, NBC 205:2024 only after eligibility and 2025 compatibility proof. IS editions require verified clause basis.",
+  "frozen_seq9_commit": "f7c2f8ad7d06ec18b750835b311748b129f39a36",
+  "live_pages_warning": "Current main Pages workflow checks out an older pinned commit. This draft dashboard is not evidence of live deployment.",
+  "precedent_scope": "Two source structural reports: G+1.5 residential and G+2.5 mixed-use. Confidential originals stay in private Drive.",
+  "requirements": [
+    {
+      "id": "M01",
+      "implemented_paths": [
+        "src/jp_structural/solvers/native/material_properties.py",
+        "src/jp_structural/solvers/opensees/canonical_frame.py"
+      ],
+      "precedent_sections": "2.1-2.3",
+      "priority": "P0",
+      "remaining_scope": "Source-linked density, cracked/modified stiffness and RC material states; no implicit M20/M25 property selection.",
+      "status": "PARTIAL",
+      "title": "Material and section properties",
+      "validation_gate": "Source-backed E, G, A, I; units, property uncertainty and material conflict tests."
+    },
+    {
+      "id": "M02",
+      "implemented_paths": [
+        "src/jp_structural/solvers/native/gravity_loads.py",
+        "src/jp_structural/solvers/opensees/canonical_frame.py"
+      ],
+      "precedent_sections": "2.6.1-2.6.3; 4.2",
+      "priority": "P0",
+      "remaining_scope": "Line/area-to-member placement, floor load tributary integration, storey center-of-mass, diaphragm mass assembly.",
+      "status": "PARTIAL",
+      "title": "Gravity loads and seismic mass",
+      "validation_gate": "Reactions equal gravity loads; no duplicate self-weight; mass reconstructed from load source."
+    },
+    {
+      "id": "M03",
+      "implemented_paths": [
+        "src/jp_structural/solvers/native/equivalent_lateral.py"
+      ],
+      "precedent_sections": "2.6.4; 5.1",
+      "priority": "P0",
+      "remaining_scope": "Edition-verified NBC 105:2025 spectrum factors, empirical/Rayleigh period selection and site-specific parameters.",
+      "status": "DRAFT_UNVALIDATED",
+      "title": "Equivalent static seismic loading",
+      "validation_gate": "Clause-by-clause references, independent hand values, seismic base shear and floor force equilibrium."
+    },
+    {
+      "id": "M04",
+      "implemented_paths": [
+        "src/jp_structural/solvers/opensees/canonical_frame.py",
+        "src/jp_structural/solvers/native/direct_stiffness.py"
+      ],
+      "precedent_sections": "3-4; 5.2-5.4; 5.11-5.14",
+      "priority": "P0",
+      "remaining_scope": "Real building gravity/static cases, complete local member force diagrams, reaction-source benchmark, shell/release/offset parity.",
+      "status": "IMPLEMENTED_BOUNDED",
+      "title": "3D elastic FE and member force recovery",
+      "validation_gate": "Independent free-body equilibrium, supported geometry benchmark and member P/V/M/T comparison."
+    },
+    {
+      "id": "M05",
+      "implemented_paths": [
+        "src/jp_structural/solvers/opensees/canonical_seismic.py",
+        "src/jp_structural/solvers/opensees/canonical_frame.py"
+      ],
+      "precedent_sections": "2.6.4; 5.5; 5.6-5.7",
+      "priority": "P0",
+      "remaining_scope": "All supported dynamic load cases, verified 90% participation rule where applicable, actual building mass source and scaling.",
+      "status": "IMPLEMENTED_BOUNDED",
+      "title": "Modal and response spectrum",
+      "validation_gate": "Mode/mass check, SRSS/CQC hand examples, independent spectrum and scaling benchmarks."
+    },
+    {
+      "id": "M06",
+      "implemented_paths": [
+        "src/jp_structural/solvers/native/load_combinations.py",
+        "src/jp_structural/solvers/native/response_spectrum.py"
+      ],
+      "precedent_sections": "2.8; 5.1",
+      "priority": "P0",
+      "remaining_scope": "Complete edition-controlled ULS/SLS, 5% accidental eccentricity if applicable, vertical action, orthogonal interaction.",
+      "status": "PARTIAL",
+      "title": "Seismic and load combinations",
+      "validation_gate": "Combination family coverage and governing-demand envelope compared with independent values."
+    },
+    {
+      "id": "M07",
+      "implemented_paths": [
+        "src/jp_structural/solvers/opensees/canonical_seismic.py"
+      ],
+      "precedent_sections": "2.7; 5.6-5.10",
+      "priority": "P1",
+      "remaining_scope": "Proper storey stiffness, lateral displacement/drift, torsional ratios, center of rigidity, mass and P-Delta acceptance.",
+      "status": "PARTIAL",
+      "title": "Storey response and seismic irregularities",
+      "validation_gate": "Numerical ratios with explicit ULS/SLS code limits, mode/axis/units and evidence per storey."
+    },
+    {
+      "id": "M08",
+      "implemented_paths": [],
+      "precedent_sections": "6.2",
+      "priority": "P1",
+      "remaining_scope": "Factored flexure, ductile shear, combined torsion, bar schedules, anchorage, confinement and constructability.",
+      "status": "MISSING",
+      "title": "RC beam design",
+      "validation_gate": "Benchmark all governing beam checks against independently verified hand calculations."
+    },
+    {
+      "id": "M09",
+      "implemented_paths": [],
+      "precedent_sections": "6.1",
+      "priority": "P1",
+      "remaining_scope": "Axial-biaxial interaction, slenderness, minimum eccentricity, longitudinal and transverse bars.",
+      "status": "MISSING",
+      "title": "RC column P-M-M design",
+      "validation_gate": "Numerical interaction surface and detailing checks, independent design examples."
+    },
+    {
+      "id": "M10",
+      "implemented_paths": [],
+      "precedent_sections": "6.2.3",
+      "priority": "P1",
+      "remaining_scope": "Strong-column/weak-beam capacity, beam-column joint shear, anchorage and confinement.",
+      "status": "MISSING",
+      "title": "Seismic joints and hierarchy",
+      "validation_gate": "Verified joint equilibrium, capacity ratios and detailing figures with code-traceable tests."
+    },
+    {
+      "id": "M11",
+      "implemented_paths": [
+        "src/jp_structural/solvers/native/floor_efm.py"
+      ],
+      "precedent_sections": "6.3",
+      "priority": "P1",
+      "remaining_scope": "Actual two-way slabs, edge conditions, Table 26 coefficient basis, steel, serviceability and punching where needed.",
+      "status": "PARTIAL",
+      "title": "Slab design",
+      "validation_gate": "Validated two-way coefficient worksheets and stiffness-independent hand checks."
+    },
+    {
+      "id": "M12",
+      "implemented_paths": [],
+      "precedent_sections": "6.4",
+      "priority": "P1",
+      "remaining_scope": "Footing sizing, bearing, eccentricity, uplift, one-way shear, punching, flexure, steel and settlement.",
+      "status": "MISSING",
+      "title": "Rigid isolated/combined footing",
+      "validation_gate": "Fixture with NOT SAFE shear MUST remain FAIL; no passing adopted-size override."
+    },
+    {
+      "id": "M13",
+      "implemented_paths": [],
+      "precedent_sections": "6.4.1-6.4.2",
+      "priority": "P2",
+      "remaining_scope": "Winkler foundation mesh, non-tension soil, bearing pressure, deflection, plate and punching demand.",
+      "status": "MISSING",
+      "title": "Subgrade/raft FE",
+      "validation_gate": "Known plate/spring benchmarks and independent foundation reaction equilibrium."
+    },
+    {
+      "id": "M14",
+      "implemented_paths": [],
+      "precedent_sections": "6.5",
+      "priority": "P1",
+      "remaining_scope": "Flight slope self-weight, step volumes, landing reaction, bending, shear and reinforcement.",
+      "status": "MISSING",
+      "title": "Open-well staircase design",
+      "validation_gate": "Hand-verified flight and landing examples with thickness consistency gate."
+    },
+    {
+      "id": "M15",
+      "implemented_paths": [],
+      "precedent_sections": "4.2.3-4.2.4 (G+2.5 only)",
+      "priority": "P2",
+      "remaining_scope": "Lift car/counterweight/machine-room load paths, dynamic allowances where applicable.",
+      "status": "MISSING",
+      "title": "Lift/equipment and special loads",
+      "validation_gate": "Source-based equipment capacities and load-path conservation; G+1.5 not forced to include lift."
+    },
+    {
+      "id": "M16",
+      "implemented_paths": [],
+      "precedent_sections": "2.6.5",
+      "priority": "P1",
+      "remaining_scope": "Wind actions for governing comparisons rather than assuming seismic always governs.",
+      "status": "MISSING",
+      "title": "Wind-load screening",
+      "validation_gate": "Computed wind action/envelope with relevant code and project-specific exposure parameters."
+    },
+    {
+      "id": "S17",
+      "implemented_paths": [
+        "src/jp_structural/qa/pre_solve.py",
+        "src/jp_structural/solvers/independent_registry.py"
+      ],
+      "precedent_sections": "2.4; 3; 5-6",
+      "priority": "P0",
+      "remaining_scope": "Independent solver adapter operationalization, source conflict gates, full numeric checks and immutable run identifiers.",
+      "status": "PARTIAL",
+      "title": "Source QA, numerical verification and provenance",
+      "validation_gate": "No unknown result marked PASS, report reaction discrepancy unresolved until reconciled."
+    },
+    {
+      "id": "S18",
+      "implemented_paths": [],
+      "precedent_sections": "1-6; annex",
+      "priority": "P2",
+      "remaining_scope": "Consume validated results from R&D LaTeX renderer; numbered equations, force diagrams, checks, citations and private/public separation.",
+      "status": "DRAFT_UNVALIDATED",
+      "title": "Complete report/PDF/website projection",
+      "validation_gate": "Every report item links to computation run and code edition; no private project publication."
+    }
+  ],
+  "schema": "jp.structural.calculation_coverage.v0.1",
+  "status_definitions": {
+    "DRAFT_UNVALIDATED": "Prototype or formula arithmetic exists, but code/reliability validation is not complete.",
+    "IMPLEMENTED_BOUNDED": "Implemented and regression-tested for limited configurations, NOT automatically fit for all precedent cases.",
+    "MISSING": "No corresponding complete design/check engine is implemented.",
+    "PARTIAL": "Some calculations exist, but the report-level requirements are not fully covered."
+  },
+  "version": "0.1"
+}
