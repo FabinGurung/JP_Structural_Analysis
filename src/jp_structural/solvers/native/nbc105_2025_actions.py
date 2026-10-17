@@ -57,7 +57,8 @@ def _check_basis(basis: Mapping) -> None:
     if result.get("calculation_scope") != "NEW_ENGINEERED_ANALYSIS" or result["code_editions"].get("NBC 105")!="2025":
         raise NBCActionError("NBC 105:2025 engineered analysis basis is mandatory")
     url=basis.get("source_references",{}).get("NBC 105","")
-    if url != SOURCE_URL and not url.startswith("https://dudbc.gov.np/") and not url.startswith("https://www.dudbc.gov.np/"):
+    if url not in (SOURCE_URL, "https://dudbc.gov.np/pages/building-code/",
+                   "https://www.dudbc.gov.np/pages/building-code/"):
         raise NBCActionError("NBC 105 source must be an identified official government URL")
 
 
@@ -323,7 +324,8 @@ def modal_mass_coverage_gate(
     if included>1.0+1e-9:
         raise NBCActionError("mass coverage exceeds total mass")
     corrected=bool(missing_mass_correction_evidence_id and missing_mass_correction_evidence_id.strip())
-    status="PASS_BOUNDED" if included>=.9 and (not high or corrected) else "HOLD_MASS_OR_FREQ_CORRECTION"
+    # A reference ID does not prove the missing-mass correction was numerically performed.
+    status="PASS_BOUNDED" if included>=.9 and not high else "HOLD_MASS_OR_FREQ_CORRECTION"
     return {"code":CODE_EDITION,"clause":"7.3","source":SOURCE_URL,
             "covered_mass_fraction_below_33Hz":included,"modes_33Hz_or_higher":high,
             "missing_mass_correction_evidence":missing_mass_correction_evidence_id if corrected else None,

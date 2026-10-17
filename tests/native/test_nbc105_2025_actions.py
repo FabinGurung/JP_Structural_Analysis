@@ -134,5 +134,5 @@ def test_verified_current_mass_and_frequency_limits():
     high=[{"mode_id":"1","frequency_hz":2.,"effective_mass_fraction":.92},
           {"mode_id":"99","frequency_hz":34.,"effective_mass_fraction":.02}]
     assert f(high)["status"]=="HOLD_MASS_OR_FREQ_CORRECTION"
-    assert f(high,missing_mass_correction_evidence_id="MODEL-MISSING-MASS-001")["status"]=="PASS_BOUNDED"
+    assert f(high,missing_mass_correction_evidence_id="MODEL-MISSING-MASS-001")["status"]=="HOLD_MASS_OR_FREQ_CORRECTION"
     assert check_design_interstory_drift(0,3,"ULS",design_displacement_verified=True)["result"]=="PASS"
