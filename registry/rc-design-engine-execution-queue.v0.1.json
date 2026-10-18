@@ -8,7 +8,7 @@
       "order": 1,
       "module": "M08",
       "engine": "RC BEAM",
-      "next": "Code-backed flexural strength and design demand, tensile compression bar sizing, shear and torsion then ductile stirrup schedule; constrain design by verified Annex A 4.1."
+      "next": "NEXT: design-action normalization from OpenSees envelopes; NBC105:2025 ductile capacity shear, torsion, negative/doubly reinforced beams, bar layout/development and code-verified detailed reinforcement schedules. Preliminary flexure and IS456 Table19/vertical stirrup checks implemented/tested."
     },
     {
       "order": 2,
@@ -57,5 +57,5 @@
     "engineer_acceptance_before_construction"
   ],
   "scaffold_module": "src/jp_structural/solvers/native/rc_detailing_checks.py",
-  "scaffold_limits": "Bounded Annex A detailing PRECHECKS only. All flexural/shear and full design engines remain unfinished."
+  "scaffold_limits": "Annex A preliminary detailing and IS456:2000 bounded positive flexure/vertical shear implemented, but no complete beam/column/joint design engine."
 }

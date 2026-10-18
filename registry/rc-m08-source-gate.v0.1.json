@@ -13,12 +13,26 @@
     "40.4",
     "Annex G"
   ],
-  "implemented": "Rectangular singly reinforced flexure and bounded vertical stirrup checks only",
-  "blocked": "Table 19 lookup is not yet machine-verified; preliminary stirrup checks never return design approval",
+  "implemented": "Bounded rectangular singly reinforced positive flexure plus vertical stirrup shear; Table 19 M20–M40 source-row and conservative lower-row lookup included.",
+  "blocked": "Code-defined Table19 numerical input implemented, but tension-bar continuity, FE design demands, ductile capacity shear, combined torsion, bar anchorage, constructability and independent project validation still HOLD. No full design safety claim.",
   "seismic_overlay": "NBC 105:2025 Annex A and edition/basis selection must be separately verified; legacy IS13920:2016 remains comparison, not automatic governing override",
   "privacy": "Public metadata only; private Drive IDs and client documents not published",
   "development_branch_only": true,
   "source_link_back_to_private_drive": "ID-RESOLVED-IN-PRIVATE_LIBRARY_ONLY",
   "official_amendment6_url": "https://www.services.bis.gov.in/tmp/CED19013804_03062024_1.pdf",
-  "amendment6_review": "Reviewed official BIS Amendment No. 6 (June 2024); no amendment to Cl. 26.5.1.1, 26.5.1.5/6, 38.1, 40.2, 40.4 or Annex G in that amendment. Clause 41.3.2 updated, so torsional design remains excluded. Earlier amendment status must still be tracked."
+  "amendment6_review": "Reviewed official BIS Amendment No. 6 (June 2024); no amendment to Cl. 26.5.1.1, 26.5.1.5/6, 38.1, 40.2, 40.4 or Annex G in that amendment. Clause 41.3.2 updated, so torsional design remains excluded. Earlier amendment status must still be tracked.",
+  "table19_implementation": {
+    "module": "src/jp_structural/solvers/native/rc_beam_strength.py",
+    "function": "conservative_table19_shear_strength",
+    "source": "Existing private IS456 PDF transcribed at printed page 73 (Table19); official BIS amendment6 crosschecked",
+    "grades_MPa": [
+      20,
+      25,
+      30,
+      35,
+      40
+    ],
+    "steel_percent_policy": "Use exact row when present, otherwise lower-or-equal tabulated steel ratio (conservative), cap at >=3% last row",
+    "is_full_beam_design": false
+  }
 }

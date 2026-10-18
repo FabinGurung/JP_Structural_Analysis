@@ -117,8 +117,8 @@
         "src/jp_structural/solvers/native/rc_detailing_checks.py",
         "src/jp_structural/solvers/native/rc_beam_strength.py"
       ],
-      "remaining_scope": "Bounded IS 456:2000 rectangular singly-reinforced positive flexure (stress-block equilibrium, neutral-axis limit, min/max steel, tension steel sizing) and provisional vertical-stirrup shear checks now exist. FULL M08 requires code-verified Table19 shear lookup, shear/torsion combinations, ductile shear, negative/flanged/doubly-reinforced beams, anchorage, bar detailing, crack/deflection checks, reliable actual factored demand and independent project benchmarks.",
-      "validation_gate": "Synthetic independent force-block/equilibrium and reinforcement inverse tests. Shear numeric Table19 remains HOLD even if candidate stirrups pass; unsafe/over-reinforced sections FAIL. No RC design approval, full beam strength or member schedule claims."
+      "remaining_scope": "IS456:2000 bounded singly reinforced rectangular positive-flexure capacity/steel sizing and vertical-stirrup shear checks now implemented. Table 19 numeric strength derives from conservative lower-or-equal steel-percentage source rows; no external hand-typed tau_c required for supported grades. STILL MISSING: real FE factored-demand integration, bar layout, top/negative reinforcement, ductile capacity shear per NBC105:2025, torsion and combined actions, flanged/doubly reinforced sections, bar development/anchorage/curtailment, deflection/cracks and independent real-project benchmark.",
+      "validation_gate": "CI synthetic stress-block equilibrium, inverse steel sizing, min/max steel, over-reinforced FAIL, Tables 19/20 spot checks, under-strength stirrup FAIL. Machine-verified Table19 is necessary but not a completed RC beam design: tension-bar continuity, NBC seismic detailing, actual envelopes and engineering signoff remain HOLD."
     },
     {
       "id": "M09",
