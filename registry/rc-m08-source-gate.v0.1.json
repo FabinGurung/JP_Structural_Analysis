@@ -1,0 +1,23 @@
+{
+  "schema": "jp.structural.rc_m08_source_gate.v0.1",
+  "code": "IS 456:2000",
+  "published_status": "BIS catalogue IS456:2000 reviewed 2025; new revision still draft as of audit 2026-10-18",
+  "source_pdf_url": "https://wriddodoti.gov.np/uploads/blog/20230331071217_IS-456-with-all-ammendments.pdf",
+  "private_source_drive_id": "1SMmQ9AKpaVjXzZLjKB5566HXNj7hqDTM",
+  "private_other_current_source_id": "1ko-so0wn03ogpsfbiPrwUpNol0ePVB41",
+  "no_duplicate_source_pdfs": true,
+  "referenced_clauses": [
+    "26.5.1.1",
+    "26.5.1.5",
+    "26.5.1.6",
+    "38.1/Figure22",
+    "40.2/Tables19/20",
+    "40.4",
+    "Annex G"
+  ],
+  "implemented": "Rectangular singly reinforced flexure and bounded vertical stirrup checks only",
+  "blocked": "Table 19 lookup is not yet machine-verified; preliminary stirrup checks never return design approval",
+  "seismic_overlay": "NBC 105:2025 Annex A and edition/basis selection must be separately verified; legacy IS13920:2016 remains comparison, not automatic governing override",
+  "privacy": "Only public code and source document identifiers; no private report bytes/data",
+  "development_branch_only": true
+}

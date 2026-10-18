@@ -114,10 +114,11 @@
       "precedent_sections": "6.2",
       "priority": "P1",
       "implemented_paths": [
-        "src/jp_structural/solvers/native/rc_detailing_checks.py"
+        "src/jp_structural/solvers/native/rc_detailing_checks.py",
+        "src/jp_structural/solvers/native/rc_beam_strength.py"
       ],
-      "remaining_scope": "Factored flexure, ductile shear, combined torsion, bar schedules, anchorage, confinement and constructability. Implemented ONLY bounded verified NBC 105:2025 Annex A dimensional/rebar/joint prechecks; demand/capacity engines still missing.",
-      "validation_gate": "Benchmark all governing beam checks against independently verified hand calculations. Prechecks are NOT equivalent to full RC design."
+      "remaining_scope": "Bounded IS 456:2000 rectangular singly-reinforced positive flexure (stress-block equilibrium, neutral-axis limit, min/max steel, tension steel sizing) and provisional vertical-stirrup shear checks now exist. FULL M08 requires code-verified Table19 shear lookup, shear/torsion combinations, ductile shear, negative/flanged/doubly-reinforced beams, anchorage, bar detailing, crack/deflection checks, reliable actual factored demand and independent project benchmarks.",
+      "validation_gate": "Synthetic independent force-block/equilibrium and reinforcement inverse tests. Shear numeric Table19 remains HOLD even if candidate stirrups pass; unsafe/over-reinforced sections FAIL. No RC design approval, full beam strength or member schedule claims."
     },
     {
       "id": "M09",
