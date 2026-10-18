@@ -27,6 +27,38 @@ jobs:
         run: python scripts/check_public_safety.py
       - name: Build sanitized SAR package
         run: python examples/sanitized/mdm_two_span/build_example.py --output build/mdm_two_span
+      - name: Validate report-first site links and theme
+        run: |
+          python scripts/build_calculation_coverage.py --check
+          python scripts/check_site.py
+      - name: Build source-linked assumed RC numerical report
+        run: python scripts/build_rc_reference_case.py --output build/assumed_rc/reference_case.json
+      - name: Upload assumed RC numerical report (not approved design)
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: assumed-rc-numerical-calculations-not-approved
+          path: build/assumed_rc/reference_case.json
+      - name: Build synthetic M09 RC column section numerical P-M JSON
+        run: python scripts/build_m09_section_case.py --output build/m09_section/section_case.json
+      - name: Upload M09 P-M section numerical precheck (engineering HOLD)
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: m09-section-capacity-strain-compatibility-not-approved
+          path: build/m09_section/section_case.json
+      - name: Reconstruct source F3 and preserve unsafe result
+        run: python scripts/reconcile_f3_source.py --output build/f3_source_reconciliation/f3.json
+      - name: Upload source-F3 conflict comparison (unsafe retained)
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: report-f3-source-conflict-not-safe
+          path: build/f3_source_reconciliation/f3.json
+      - name: Reconstruct source CF1 combined footing equilibrium
+        run: python scripts/reconcile_cf1_source.py --output build/cf1_source_reconciliation/cf1.json
+      - name: Upload source CF1 combined footing calculations (not approved)
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: report-cf1-combined-footing-calculations-not-approved
+          path: build/cf1_source_reconciliation/cf1.json
       - name: Upload sanitized SAR package
         uses: actions/upload-artifact@v7.0.1
         with:

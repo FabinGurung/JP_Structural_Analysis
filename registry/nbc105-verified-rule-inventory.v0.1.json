@@ -1,0 +1,121 @@
+{
+  "schema": "jp.structural.nbc105_verified_rule_inventory.v0.1",
+  "edition": "NBC 105:2025 (second revision)",
+  "official_pdf_url": "https://ebps.kathmandu.gov.np/UploadFiles/NBC_105_2025_Sesmic_Design.pdf",
+  "code_basis_scope": "VERIFIED BOUNDED ALGORITHMS ONLY. No site code approval, no full ESM/MRSM/RC certification.",
+  "mechanical_pass_gates": "GitHub CI tests with fictional data, source-aligned coefficient boundaries and arithmetic conservation; not project acceptance",
+  "registered_clauses": [
+    {
+      "clause": "3.4/Table 3-1",
+      "function": "effective_cracked_flexural_stiffness_factor",
+      "source_pdf_index_page": 38,
+      "limits": "flexural stiffness multipliers; not total FE stiffness translation"
+    },
+    {
+      "clause": "4.1.1–4.1.2 Eq 4.1(2), Table 4-1",
+      "function": "spectral_shape_factor",
+      "source_pdf_index_pages": [
+        41,
+        42,
+        43
+      ],
+      "limits": "ESM/MRSM T>0 through 6 s; soil type must be independently sourced"
+    },
+    {
+      "clause": "4.2",
+      "function": "rc_mrf_esm_design_coefficients",
+      "source_pdf_index_page": 48,
+      "limits": "SLS spectrum scaled by .20 but zoning/importance source required"
+    },
+    {
+      "clause": "5.1.1–5.1.3",
+      "function": "rc_frame_design_period",
+      "source_pdf_index_pages": [
+        49,
+        50,
+        51
+      ],
+      "limits": "RC MRF only; Rayleigh period supplied from independently solved model"
+    },
+    {
+      "clause": "5.2/Table 5-1",
+      "function": "apply_verified_live_factors",
+      "source_pdf_index_page": 51,
+      "limits": "storage .6, other .3, roof live 0; does not infer actual occupancy"
+    },
+    {
+      "clause": "5.3/Table 5-2",
+      "function": "rc_mrf_esm_design_coefficients",
+      "source_pdf_index_page": 53,
+      "limits": "RC MRF factors Rmu 4 OmegaU 1.5 OmegaS 1.25"
+    },
+    {
+      "clause": "5.5.3",
+      "function": "check_design_interstory_drift",
+      "source_pdf_index_page": 58,
+      "limits": "correct DESIGN drift, 0.025 ULS/0.006 SLS, not unscaled raw output"
+    },
+    {
+      "clause": "5.6",
+      "function": "accidental_torsion_pairs",
+      "source_pdf_index_page": 58,
+      "limits": "only ±.05 perpendicular plan width torque action, not actual FE torsion response"
+    },
+    {
+      "clause": "6.1–6.3",
+      "function": "seismic_story_forces",
+      "source_pdf_index_pages": [
+        59,
+        60
+      ],
+      "limits": "ELF with verified external seismic mass, period and coefficient; no user Z guess"
+    },
+    {
+      "clause": "7.3",
+      "function": "modal_mass_coverage_gate",
+      "source_pdf_index_pages": [
+        61,
+        62
+      ],
+      "limits": "90%/33Hz screening; high-frequency evidence alone never gives PASS"
+    },
+    {
+      "clause": "7.5",
+      "function": "mrsm_base_shear_scaling",
+      "source_pdf_index_page": 62,
+      "limits": "scale member forces/story shears/reactions only when VR<V; NEVER scale drift/displacement"
+    },
+    {
+      "clause": "Annex A 4.1.1–4.1.2",
+      "function": "beam_geometry_precheck,beam_min_longitudinal_precheck",
+      "source_pdf_index_pages": [
+        81,
+        82
+      ],
+      "limits": "limited RC beam geometry/minimum bars, not flexure/shear design"
+    },
+    {
+      "clause": "Annex A 4.2.1–4.2.2",
+      "function": "column_geometry_precheck,column_longitudinal_steel_precheck",
+      "source_pdf_index_pages": [
+        85,
+        86
+      ],
+      "limits": "limited RC column dimensional/longitudinal reinforcement rules, no P-M-M"
+    },
+    {
+      "clause": "Annex A 4.4.4",
+      "function": "column_beam_moment_capacity_precheck",
+      "source_pdf_index_page": 95,
+      "limits": "requires independently validated section capacities and nonroof classification"
+    }
+  ],
+  "never_automatically_admit": [
+    "old report parameters not independently supported by 2025 code",
+    "soil D just from report",
+    "Z and I without site-specific authority",
+    "RUD NBC205:2024 as automatically reconciled to 2025",
+    "finite element solver output as fully approved",
+    "unsafe footing from report as approved"
+  ]
+}

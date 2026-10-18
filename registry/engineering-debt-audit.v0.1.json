@@ -1,0 +1,181 @@
+{
+  "schema": "jp.structural.debt_audit.v0.1",
+  "timestamp_nepal": "2026-10-18",
+  "scope": "FabinGurung/JP_Structural_Analysis",
+  "audit_base_before_repairs": "5702cf1b3fffce01908abc1f5fbac10595261355",
+  "audited_engine_branch": "feature/post-seq9-first-party-no-e2k-20261015",
+  "frozen_engine_commit": "f7c2f8ad7d06ec18b750835b311748b129f39a36",
+  "frozen_seq9_status": "FINAL_CLOSED_PASS_LOCAL_MAIN_9_9_VERIFIED_SYNCED",
+  "frozen_seq9_modified": false,
+  "public_pages_modified": false,
+  "engineering_release_approved": false,
+  "verified_ci": {
+    "run_id": 39109102744,
+    "head_sha": "c78ac66f76b9e025e9226638779aca47737b47a6",
+    "conclusion": "success",
+    "tests_passed": 136,
+    "coverage_projection": "PASS",
+    "sanitized_sar_build": "PASS",
+    "public_data_safety_scan": "PASS",
+    "limitations": "Code-level synthetic tests and static source audit, not engineering verification against a real model/report"
+  },
+  "code_authorities": [
+    {
+      "edition": "NBC 105:2025",
+      "url": "https://ebps.kathmandu.gov.np/UploadFiles/NBC_105_2025_Sesmic_Design.pdf",
+      "scope": "Seismic actions/ductile RC detailing (Nepal)"
+    },
+    {
+      "edition": "IS 456:2000 as amended",
+      "url": "https://wriddodoti.gov.np/uploads/blog/20230331071217_IS-456-with-all-ammendments.pdf",
+      "amendment6": "https://www.services.bis.gov.in/tmp/CED19013804_03062024_1.pdf",
+      "scope": "RC flexure, vertical stirrup shear, material/rebar baseline, 5th-revision draft not adopted"
+    },
+    {
+      "edition": "IS 13920:2016",
+      "url": "https://standards.bis.gov.in/",
+      "scope": "Seismic ductile detailing comparison where applicable; 2017 and 2020 amendments, not automatic substitution for NBC"
+    }
+  ],
+  "cleared_machine_defects": [
+    {
+      "id": "D-A9-001",
+      "title": "Seq9 Local/Main synchronization",
+      "status": "CLOSED_BEFORE_THIS_AUDIT",
+      "evidence": "Live Local SyncState 9/9 and SyncDelivery ACK 9; Main LocalLibraryRegistry 9/9 VERIFIED_SYNCED; POST snapshots discovered; no Seq10 created."
+    },
+    {
+      "id": "D-A9-002",
+      "title": "Mislabelled structural torsion from longitudinal displacements",
+      "status": "FIXED_AND_TESTED",
+      "evidence": "Dynamical torsion probes require transverse physical separation, verified actual geometry and signed in-plane Rz; all arbitrary axial/vertical/zero/mismatched separations rejected.",
+      "path": "src/jp_structural/solvers/opensees/canonical_seismic.py"
+    },
+    {
+      "id": "D-A9-003",
+      "title": "Orthogonal combination could compare different or unidentified FE models",
+      "status": "FIXED_AND_TESTED",
+      "evidence": "Requires matching 64-character canonical model SHA and explicit matching unit contracts; mismatched or absent hashes fail.",
+      "path": "src/jp_structural/solvers/opensees/canonical_seismic.py"
+    },
+    {
+      "id": "D-A9-004",
+      "title": "Solver trusted caller-asserted mass assembly without checking internal numeric totals",
+      "status": "FIXED_AND_TESTED",
+      "evidence": "Source and nodal total conservation, gravity/mass/centre checks, signed coordinate/geometry consistency, duplicate components and inadmissible rotational mass now rejected before FE.",
+      "path": "src/jp_structural/solvers/opensees/load_mass_adapter.py"
+    },
+    {
+      "id": "D-A9-005",
+      "title": "NBC modal participation could be misapplied across X and Y axes",
+      "status": "FIXED_AND_TESTED",
+      "evidence": "Direction is mandatory for modal mass gate, each modal row must agree; high-frequency missing-mass correction requires actual independent evidence.",
+      "path": "src/jp_structural/solvers/native/nbc105_2025_actions.py"
+    },
+    {
+      "id": "D-A9-006",
+      "title": "Incomplete mandatory NBC beam-face/hoop numeric screens",
+      "status": "FIXED_BOUNDED_PRECHECKS_ONLY",
+      "evidence": "Added 2.5% maximum per face, beam support bottom/top check, seismic link minimum diameter, first-link distance, end-zone and span spacing limits.",
+      "path": "src/jp_structural/solvers/native/rc_detailing_checks.py"
+    },
+    {
+      "id": "D-A9-007",
+      "title": "Moment-distribution source reaction conflict remained unproven beyond total reaction mismatch",
+      "status": "DIAGNOSED_FAIL_PRESERVED",
+      "evidence": "Independent member moment-and-force reconstruction: AB near/far 33.75/26.25 versus stored 38.75/21.25; BC near/far 3.75/-3.75 versus stored 1.25/-1.25. Stored per-member force balance passes but member moment equilibrium fails. Dataset unchanged.",
+      "path": "benchmarks/opensees/mdm_two_span_validation.py"
+    }
+  ],
+  "open_gates": [
+    {
+      "id": "A9-OPEN-001",
+      "severity": "P0",
+      "type": "SOURCE_EVIDENCE",
+      "title": "SAMPLE_MDM_001 original stored support-reaction data inconsistent with its own end moments",
+      "status": "HOLD",
+      "close_when": "Original thesis source authority explicitly resolves support conditions, sign convention or stored reaction rows; re-run full independent validation. Never silently rewrite canonical source.",
+      "evidence": "benchmarks/opensees/results/mdm_two_span_validation.baseline.json",
+      "human_approval_needed": "Source-owner reconciliation"
+    },
+    {
+      "id": "A9-OPEN-002",
+      "severity": "P0",
+      "type": "ENGINEERING_SCOPE",
+      "title": "Full real-building model and site-to-member load-path evidence not established",
+      "status": "HOLD",
+      "close_when": "Real client model with independent geometry/rebar/soil/load/spectrum evidence and input alignment; complete FE demand envelopes and boundary-condition benchmarks.",
+      "human_approval_needed": "Site and engineering authority"
+    },
+    {
+      "id": "A9-OPEN-003",
+      "severity": "P0",
+      "type": "ENGINEERING_SCOPE",
+      "title": "M08 RC beam design still PARTIAL",
+      "status": "HOLD",
+      "close_when": "NBC ductile capacity shear, negative/flanged/doubly reinforced flexure, torsion, actual combinations, bar placement/development, span/crack/deflection and independent worked cases. Existing source Table19 arithmetic and preliminary link spacing not sufficient.",
+      "human_approval_needed": "Design code/engineering final QA"
+    },
+    {
+      "id": "A9-OPEN-004",
+      "severity": "P0",
+      "type": "ENGINEERING_SCOPE",
+      "title": "M09 RC column P-M-M, M10 joint strength, M12 footings still not fully implemented",
+      "status": "HOLD",
+      "close_when": "Code-traced biaxial capacity surfaces, joint anchorage/shear, foundation bearing/one-way/punching, reinforced detailing with independent validated fixtures; no source UNSAFE adopted result may pass.",
+      "human_approval_needed": "Engineering final QA"
+    },
+    {
+      "id": "A9-OPEN-005",
+      "severity": "P1",
+      "type": "ENGINEERING_SCOPE",
+      "title": "MRSM missing-mass, accidental torsion FE application, irregularities and full force-recovery validation incomplete",
+      "status": "HOLD",
+      "close_when": "Direction-specific modal participation and missing-mass correction, applied ±5% torques, story/diaphragm torsional response and stiffness/mass irregularity checks; FE benchmark against independent results.",
+      "human_approval_needed": "Code-method and independent result QA"
+    },
+    {
+      "id": "A9-OPEN-006",
+      "severity": "P1",
+      "type": "ENGINEERING_SCOPE",
+      "title": "M11/M13/M14 slabs, raft/subgrade and staircases not complete",
+      "status": "HOLD",
+      "close_when": "Applicable code equation/data ingestion and independent structural analysis/design validation.",
+      "human_approval_needed": "Engineering final QA"
+    },
+    {
+      "id": "A9-OPEN-007",
+      "severity": "P1",
+      "type": "REPORTING",
+      "title": "No fully reproduced verified private SAR",
+      "status": "HOLD",
+      "close_when": "All original report sections mapped to source IDs, normalized results, validated figures/tables, full RC checks and signed completeness manifest; compiler/PDF proofread.",
+      "human_approval_needed": "Engineer approval"
+    },
+    {
+      "id": "A9-OPEN-008",
+      "severity": "P2",
+      "type": "GOVERNANCE",
+      "title": "Historical GitHub audit records include private Drive identifiers",
+      "status": "REVIEW_REQUIRED",
+      "close_when": "Permissions/privacy classification review and explicit decision to retain links, redact current view or plan selective public-history replacement. Historical repository history cannot be made private by a new commit.",
+      "human_approval_needed": "Public-history rewrite authorization only if necessary"
+    },
+    {
+      "id": "A9-OPEN-009",
+      "severity": "P2",
+      "type": "DEPLOYMENT",
+      "title": "Public Pages snapshot remains intentionally pinned behind engineering development",
+      "status": "EXPECTED_HOLD",
+      "close_when": "Release decision, exact SHA CI and approved dispatcher promotion; do not automatically publish draft RC code as verified building design.",
+      "human_approval_needed": "Explicit promotion authorization"
+    }
+  ],
+  "closure_summary": {
+    "seq9_record_debt": "NONE",
+    "machine_repair_debt_at_verified_sha": "NONE_KNOWN_IN_TESTED_PATHS",
+    "project_engineering_debt": "OPEN_NOT_CLOSED",
+    "release_candidate": "NOT_READY",
+    "manual_QA_required_for_certification": true
+  }
+}

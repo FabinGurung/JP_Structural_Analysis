@@ -250,15 +250,19 @@ def _torsion_point_map(
     model: dict[str, Any],
     torsion_points: list[dict[str, Any]] | None,
     node_tags: dict[str, int],
+    axis: str,
 ) -> list[dict[str, Any]]:
-    """Normalize explicit two-node storey torsion probes.
+    """Normalize physical two-node storey torsion probes.
 
-    The caller supplies a positive physical separation. The adapter does not infer
-    an extreme-edge location, diaphragm width, code eccentricity or acceptance
-    threshold from geometry alone.
+    Node separation must be transverse to the excited horizontal direction;
+    (u_B-u_A)/separation then measures mean Rz rotation for a rigid diaphragm.
+    Longitudinal or vertical separation is NOT an Rz rotation. Extreme edges,
+    diaphragm width, eccentricity and acceptance limits are NOT inferred.
     """
     if torsion_points is None:
         return []
+    if axis not in {"X", "Y"}:
+        raise ResponseSpectrumError("torsional RZ probes require horizontal X or Y excitation")
     if not isinstance(torsion_points, list) or not torsion_points:
         raise ResponseSpectrumError("torsion_points must be a non-empty list or null")
 
@@ -305,6 +309,23 @@ def _torsion_point_map(
             item.get("separation"),
             field_name=f"torsion_points[{storey_id}].separation",
         )
+        node_a = nodes[node_a_id]
+        node_b = nodes[node_b_id]
+        values = []
+        for coordinate in ("x", "y", "z"):
+            a = _finite(node_a.get(coordinate), field_name=f"{node_a_id}.{coordinate}")
+            b = _finite(node_b.get(coordinate), field_name=f"{node_b_id}.{coordinate}")
+            values.append(b - a)
+        dx, dy, dz = values
+        transverse = dy if axis == "X" else dx
+        longitudinal = dx if axis == "X" else dy
+        tolerance = max(1e-8, 1e-8 * separation)
+        if abs(longitudinal) > tolerance or abs(dz) > tolerance or abs(transverse) <= tolerance:
+            raise ResponseSpectrumError(
+                "torsion probe must have transverse horizontal separation, with no longitudinal/elevation offset"
+            )
+        if not math.isclose(abs(transverse), separation, rel_tol=1e-8, abs_tol=1e-8):
+            raise ResponseSpectrumError("torsion probe separation must match transverse node geometry")
         elevation = _finite(
             storeys[storey_id].get("elevation"),
             field_name=f"storey[{storey_id}].elevation",
@@ -315,6 +336,7 @@ def _torsion_point_map(
                 "node_a_id": node_a_id,
                 "node_b_id": node_b_id,
                 "separation": separation,
+                "signed_transverse": transverse,
                 "elevation": elevation,
             }
         )
@@ -498,7 +520,7 @@ def run_canonical_response_spectrum(
     eigenvalues, solver_used = _solve_eigenvalues(num_modes, solver=eigen_solver)
     modal_mass_rows, total_mass = _modal_mass_data(build, num_modes)
     response_map = _response_point_map(model, response_points, build.node_tags)
-    torsion_map = _torsion_point_map(model, torsion_points, build.node_tags)
+    torsion_map = _torsion_point_map(model, torsion_points, build.node_tags, axis)
     dof = _AXES[axis]
 
     modal_rows: list[dict[str, Any]] = []
@@ -552,7 +574,9 @@ def run_canonical_response_spectrum(
             )
             displacement_a = phi_a * gamma * acceleration / eigenvalue
             displacement_b = phi_b * gamma * acceleration / eigenvalue
-            rotation = (displacement_b - displacement_a) / point["separation"]
+            # Global Rz from rigid in-plane motion: Ux=-Rz*y, Uy=Rz*x.
+            sign = -1.0 if axis == "X" else 1.0
+            rotation = sign * (displacement_b - displacement_a) / point["signed_transverse"]
             torsional_rotations[point["storey_id"]] = rotation
             torsion_modal_rotations[point["storey_id"]].append(rotation)
 
@@ -753,6 +777,21 @@ def combine_orthogonal_direction_results(
 
     if first.get("model_id") != second.get("model_id"):
         raise ResponseSpectrumError("orthogonal cases must reference the same model_id")
+    sha_a = (first.get("provenance") or {}).get("model_sha256")
+    sha_b = (second.get("provenance") or {}).get("model_sha256")
+    # A display model_id cannot prove numerical identity. No missing hash
+    # compatibility path is permitted in an engineering result combiner.
+    if (
+        not isinstance(sha_a, str)
+        or len(sha_a) != 64
+        or not isinstance(sha_b, str)
+        or sha_a != sha_b
+    ):
+        raise ResponseSpectrumError("orthogonal cases require identical canonical model SHA256")
+    units_a = first.get("units")
+    units_b = second.get("units")
+    if not isinstance(units_a, dict) or not units_a or units_a != units_b:
+        raise ResponseSpectrumError("orthogonal cases require identical unit contracts")
     cases_a = first.get("case_results") or []
     cases_b = second.get("case_results") or []
     if len(cases_a) != 1 or len(cases_b) != 1:

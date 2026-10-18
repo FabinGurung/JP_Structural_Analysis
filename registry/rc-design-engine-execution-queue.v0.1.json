@@ -1,0 +1,61 @@
+{
+  "schema": "jp.structural.rc_design_execution_queue.v0.1",
+  "authority": "Draft candidate on post-Seq9 branch, NBC105:2025 Annex A plus future independently verified RC flexure/shear and footing design clauses",
+  "frozen_milestone": "a9-seq9-phase-c-20261015",
+  "approved_design_outputs": false,
+  "priority_order": [
+    {
+      "order": 1,
+      "module": "M08",
+      "engine": "RC BEAM",
+      "next": "NEXT: design-action normalization from OpenSees envelopes; NBC105:2025 ductile capacity shear, torsion, negative/doubly reinforced beams, bar layout/development and code-verified detailed reinforcement schedules. Preliminary flexure and IS456 Table19/vertical stirrup checks implemented/tested."
+    },
+    {
+      "order": 2,
+      "module": "M09",
+      "engine": "RC COLUMN",
+      "next": "Biaxial P-M-M surface under factored axial load, slenderness, confinement and ties, cross-check Annex A 4.2."
+    },
+    {
+      "order": 3,
+      "module": "M10",
+      "engine": "RC SEISMIC JOINT",
+      "next": "Strong-column/weak-beam capacity based on validated member designs, joint shear, bar anchorage and development length; Annex A 4.4."
+    },
+    {
+      "order": 4,
+      "module": "M12",
+      "engine": "ISOLATED/COMBINED FOOTINGS",
+      "next": "Concentric isolated footing and rigid eccentric combined footing mathematical checks implemented; next complete shear/punching and reinforcement detailing for combined footing, settlement, alternative contact when uplift, verified actual source coordinates and true FE/foundation benchmark. F3 original unsafe flag must dominate any scenario pass."
+    },
+    {
+      "order": 5,
+      "module": "M11",
+      "engine": "ONE/TWO-WAY SLABS",
+      "next": "Verify latest applicable adopted code for moment coefficients, support edge cases, flexure, one-way/punching shear and deflection."
+    },
+    {
+      "order": 6,
+      "module": "M14",
+      "engine": "STAIRS",
+      "next": "Inclined waist/flight loads, spans, flexure, shear and steel; reconcile report thickness conflict."
+    },
+    {
+      "order": 7,
+      "module": "M13",
+      "engine": "WINKLER FOUNDATION FEA",
+      "next": "Only for projects requiring elastic-subgrade raft/slab analysis; independent reaction and contact benchmarks."
+    }
+  ],
+  "gates": [
+    "authoritative_code_clause_and_edition_with_page",
+    "source_parameters_and_provenance",
+    "source_geometry_model_link",
+    "independent_calculation_example",
+    "negative_unsafe_example",
+    "numeric_tolerances_and_units",
+    "engineer_acceptance_before_construction"
+  ],
+  "scaffold_module": "src/jp_structural/solvers/native/rc_detailing_checks.py",
+  "scaffold_limits": "Annex A preliminary detailing and IS456:2000 bounded positive flexure/vertical shear implemented, but no complete beam/column/joint design engine."
+}
