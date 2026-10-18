@@ -223,3 +223,81 @@ def vertical_stirrup_shear_check(
         "status":"FAIL" if not all(check.values()) else "HOLD_TABLE19_NUMERIC_LOOKUP",
         "full_RC_design_complete":False,"engineering_approval":False,
     }
+
+
+# Table 19 transcribed from the source PDF at printed page 73.
+# Column values are MPa for M20/M25/M30/M35/M40+; no M15 RC design
+# is admitted in this bounded engine. Reference is kept as code/table,
+# not as a client-model assumption.
+_TABLE19 = {
+    20: ((.15,.28),(.25,.36),(.50,.48),(.75,.56),(1.,.62),(1.25,.67),(1.5,.72),(1.75,.75),(2.,.79),(2.25,.81),(2.5,.82),(2.75,.82),(3.,.82)),
+    25: ((.15,.29),(.25,.36),(.50,.49),(.75,.57),(1.,.64),(1.25,.70),(1.5,.74),(1.75,.78),(2.,.82),(2.25,.85),(2.5,.88),(2.75,.90),(3.,.92)),
+    30: ((.15,.29),(.25,.37),(.50,.50),(.75,.59),(1.,.66),(1.25,.71),(1.5,.76),(1.75,.80),(2.,.84),(2.25,.88),(2.5,.91),(2.75,.94),(3.,.96)),
+    35: ((.15,.29),(.25,.37),(.50,.50),(.75,.59),(1.,.67),(1.25,.73),(1.5,.78),(1.75,.82),(2.,.86),(2.25,.90),(2.5,.93),(2.75,.96),(3.,.99)),
+    40: ((.15,.30),(.25,.38),(.50,.51),(.75,.60),(1.,.68),(1.25,.74),(1.5,.79),(1.75,.84),(2.,.88),(2.25,.92),(2.5,.95),(2.75,.98),(3.,1.01)),
+}
+
+
+def conservative_table19_shear_strength(
+    *, fck_MPa: int, tension_steel_percentage: float
+) -> dict:
+    """Table 19 source-table lookup, deliberately floors steel-% to prior row.
+
+    Flooring never returns a higher tau_c than linear interpolation would
+    produce for these monotonic table rows. Table says >=3.0 row may be used
+    for higher supplied percentages. This does NOT verify bar continuation,
+    bond, development, moment reversal, axial force, or section adequacy.
+    """
+    fck=_grade(fck_MPa,set(_TABLE19),"fck_MPa")
+    percent=_num(tension_steel_percentage,"tension_steel_percentage")
+    rows=_TABLE19[fck]
+    row=rows[0]
+    for candidate in rows:
+        if candidate[0]>percent+1e-12:break
+        row=candidate
+    return {"formula_id":"JP-RC-M08-IS456-TABLE19-003","edition":CODE,
+            "source":SOURCE,"clause":"40.2.1/Table 19",
+            "fck_MPa":fck,"provided_tension_steel_pct":percent,
+            "selected_floor_tension_steel_pct":row[0],
+            "tau_c_MPa":row[1],
+            "method":"TABLE19_LOWER_OR_EQUAL_STEEL_PERCENT_ROW",
+            "numerical_table_lookup_verified":True,
+            "safety_scope":"CONSERVATIVE_SHEAR_COEFFICIENT_ONLY"}
+
+
+def vertical_stirrup_shear_from_steel(
+    *, width_mm: float, effective_depth_mm: float, fck_MPa: int,
+    tension_steel_area_mm2: float, factored_shear_kN: float,
+    stirrup_fy_MPa: float, stirrup_legs: int,
+    stirrup_diameter_mm: float, provided_spacing_mm: float,
+) -> dict:
+    """Bounded Table19→Cl40.4 checker with no external manually typed tau_c.
+
+    The caller must independently establish tension steel continuity beyond
+    the critical section per Table 19's note. Does not complete anchorage,
+    capacity shear, high-seismic ductile detailing, torsion or axial effects.
+    """
+    b=_num(width_mm,"width_mm")
+    d=_num(effective_depth_mm,"effective_depth_mm")
+    Ast=_num(tension_steel_area_mm2,"tension_steel_area_mm2")
+    p=100*Ast/(b*d)
+    if not math.isfinite(p):raise RCBeamInputError("steel percentage overflow")
+    lookup=conservative_table19_shear_strength(fck_MPa=fck_MPa,tension_steel_percentage=p)
+    result=vertical_stirrup_shear_check(
+        width_mm=b,effective_depth_mm=d,fck_MPa=fck_MPa,
+        factored_shear_kN=factored_shear_kN,
+        table19_concrete_shear_strength_MPa=lookup["tau_c_MPa"],
+        table19_lookup_source_id="IS456-2000-TABLE19-LOWER-ROW",
+        stirrup_fy_MPa=stirrup_fy_MPa,stirrup_legs=stirrup_legs,
+        stirrup_diameter_mm=stirrup_diameter_mm,provided_spacing_mm=provided_spacing_mm)
+    result["table19_lookup"]=lookup
+    result["table19_numerical_lookup_machine_verified"]=True
+    if result["status"]=="HOLD_TABLE19_NUMERIC_LOOKUP":
+        result["status"]="BOUNDED_SHEAR_NUMERIC_CHECK_PASS_NOT_FULL_DESIGN"
+    result["unverified_inputs_and_design"]=[
+        "Actual tension bar continuity/development beyond critical shear section",
+        "Ductile shear based on probable flexural strength per NBC 105:2025",
+        "Combined torsion, axial load, frame load-combination and support-region shear",
+        "Detailing, anchorages, curtailment, and independent whole-structure benchmarks",
+    ]
+    return result
