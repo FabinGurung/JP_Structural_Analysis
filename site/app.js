@@ -42,3 +42,27 @@
     })
     .catch(err=>{if(count)count.textContent="Unable to load versioned registry: "+err.message;if(summary)summary.textContent="Coverage source temporarily unavailable";});
 })();
+
+
+/* Engineering Guild interaction: fantasy UX, numeric authority unchanged. */
+(function(){
+const themeKey='jp-engineering-guild-mode';
+const btn=document.getElementById('mode-toggle');
+let saved='day';try{saved=localStorage.getItem(themeKey)||'day';}catch(e){}
+document.documentElement.dataset.theme=saved==='night'?'night':'day';
+function label(){const night=document.documentElement.dataset.theme==='night';if(document.getElementById('mode-label'))document.getElementById('mode-label').textContent=night?'Daylight':'Night raid';btn?.setAttribute('aria-pressed',String(night));}
+label();btn?.addEventListener('click',()=>{const val=document.documentElement.dataset.theme==='night'?'day':'night';document.documentElement.dataset.theme=val;try{localStorage.setItem(themeKey,val);}catch(e){}label();});
+const stages=[
+['Source & model','Source IDs + QA','Governed drawings, materials, soil and code editions enter a typed canonical model.','Gather verified source records before the trial begins.'],
+['Loads & seismic','Bounded calculations','Gravity and mass source, NBC105:2025 spectrum coefficients and seismic floor forces.','Forge actions from explicit engineering inputs; never guess a load location.'],
+['Solve & compare','Bounded FE','OpenSees static/modal analysis and equilibrium checks, with reference discrepancies retained.','Trial a supported solver configuration, not a complete building certification.'],
+['Design & check','Locked strength-design quest','RC beam, column, joint, slab, footing and stair design engines remain incomplete.','The true boss gate: capacity, detailing and independent verification.'],
+['Report & preserve','Draft output','Normalized results feed R&D LaTeX, QA manifests and private project PDF archive.','Seal the report only after all engineering checks and review gates.']
+];
+const list=document.querySelectorAll('#quest-track .stage'),panel=document.getElementById('quest-detail');
+function activate(idx){if(!panel||!stages[idx])return;list.forEach((el,i)=>{el.classList.toggle('guild-active',i===idx);el.setAttribute('aria-pressed',String(i===idx));});const s=stages[idx];
+panel.replaceChildren();
+const eyebrow=document.createElement('div');eyebrow.className='eyebrow';eyebrow.textContent='QUEST '+String(idx+1).padStart(2,'0')+' / '+s[1].toUpperCase();
+const title=document.createElement('h3');title.textContent=s[0];const p=document.createElement('p');p.textContent='ENGINEERING / '+s[2];const lore=document.createElement('small');lore.textContent='GUILD OBJECTIVE / '+s[3];panel.append(eyebrow,title,p,lore);}
+list.forEach((el,i)=>{el.addEventListener('click',()=>activate(i));el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate(i);}});});if(list.length)activate(0);
+})();
