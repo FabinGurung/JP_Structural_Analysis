@@ -37,7 +37,7 @@ def main():
             u=urlparse(url)
             if u.scheme or url.startswith("//") or url.startswith("#") or url.startswith("mailto:"):continue
             local=(SITE/page).parent/unquote(u.path)
-            if not local.is_file() and not (local==SITE/"demo/SAR.html" and not (SITE/"demo").exists()):
+            if not local.is_file() and not (local in {SITE/"demo/SAR.html", SITE/"demo/validation_results.json"} and not (SITE/"demo").exists()):
                 problems.append(page+": broken local link "+url)
     for path in ("styles.css","app.js","data/report-calculation-coverage.v0.1.json"):
         if not (SITE/path).is_file():problems.append("Missing "+path)
