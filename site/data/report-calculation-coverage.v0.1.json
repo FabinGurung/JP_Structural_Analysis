@@ -158,10 +158,10 @@
       ],
       "precedent_sections": "6.4",
       "priority": "P1",
-      "remaining_scope": "IS456:2000 concentric interior isolated footing bearing, two-direction cantilever flexure, one-way shear and d/2 punching are implemented. Eccentric/combined footings, soil settlement and anchorage remain missing. Historical F3 original unsafe outcome is preserved independently even if a provisional reconstruction computes pass.",
+      "remaining_scope": "Numerical M12 now handles (a) concentric interior isolated pads: service soil pressure, two-way strip flexure, one-way shear and d/2 punching; (b) rigid rectangular combined footing: actual eccentric resultant, nonuniform full-contact pressure, exact force/moment equilibrium, factored bending envelope, provisional top/bottom flexure. Historical F3 NOT SAFE is preserved and source-F3/CF1 reconstruction jobs execute in CI. Outstanding: combined-footing critical shear/punching, combined reinforcement anchorage, eccentric isolated footings outside full contact, soil settlement, geotechnical source verification, actual column coordinates, true load combinations and independent FE benchmark.",
       "status": "PARTIAL",
       "title": "Rigid isolated/combined footing",
-      "validation_gate": "Fixture with NOT SAFE shear MUST remain FAIL; no passing adopted-size override. Numeric reference and negative test: tests/native/test_rc_report_kernels.py; assumed machine report: scripts/build_rc_reference_case.py; F3 fail preservation: tests/native/test_f3_source_reconciliation.py."
+      "validation_gate": "Tests test_rc_report_kernels.py, test_f3_source_reconciliation.py, test_cf1_source_reconciliation.py; workflow uploads assumed RC, F3 unsafe and CF1 combined footing machine-readable artifacts. Full building approval not established."
     },
     {
       "id": "M13",

@@ -26,7 +26,7 @@
       "order": 4,
       "module": "M12",
       "engine": "ISOLATED/COMBINED FOOTINGS",
-      "next": "Bearing, eccentricity, upward pressure, flexure, one-way and punching shear; carry forward F3 NOT SAFE source evidence; settlement when required."
+      "next": "Concentric isolated footing and rigid eccentric combined footing mathematical checks implemented; next complete shear/punching and reinforcement detailing for combined footing, settlement, alternative contact when uplift, verified actual source coordinates and true FE/foundation benchmark. F3 original unsafe flag must dominate any scenario pass."
     },
     {
       "order": 5,
