@@ -174,3 +174,108 @@ def is456_centered_isolated_footing(*,B_mm,L_mm,D_mm,d_x_mm,d_y_mm,
             "status":"BOUNDED_NUMERIC_PASS_UNVERIFIED_SITE_HOLD" if all(checks.values()) else "FAIL",
             "scope":"CENTERED_INTERIOR_ISOLATED_SOIL_FOOTING_ONLY",
             "full_foundation_design":False,"engineering_approval":False}
+
+
+
+def is456_combined_footing_rigid_contact(
+    *, length_mm, breadth_mm, column_loads, uniform_footing_weight_kN,
+    allowable_soil_pressure_kPa, load_factor, footing_depth_mm,
+    effective_depth_mm, top_Ast_mm2_per_m,bottom_Ast_mm2_per_m,
+    fck_MPa,fy_MPa,layout_source_id
+):
+    """Rigid rectangular combined footing, EXACT nonuniform linear soil reaction.
+
+    Column loads: [{x_from_left_mm,service_load_kN},...], sorted or unordered.
+    Uniform footing/backfill service weight acts at geometric centre.
+    Contact q(x) is linear only while EVERYWHERE COMPRESSION. Resultant:
+      e = (sum(P_i*x_i)+Wf*L/2)/(sum(P_i)+Wf) - L/2
+      q(x) = P/(B*L)*(1+12e(x-L/2)/L^2).
+    Exact polynomial V(x) and M(x) from vertical statics and column point loads.
+    1-mm grid is used to locate max bending, plus all exact discontinuities;
+    this does NOT replace shear/punching/settlement/contact FE verification.
+    """
+    L=n(length_mm,"length_mm")/1000;B=n(breadth_mm,"breadth_mm")/1000
+    D=n(footing_depth_mm,"footing_depth_mm");d=n(effective_depth_mm,"effective_depth_mm")
+    if d>=D:raise RCDesignError("effective footing depth must be below thickness")
+    sf=n(load_factor,"load_factor")
+    if sf<1:raise RCDesignError("load_factor must be at least 1 for this bounded case")
+    Wf=n(uniform_footing_weight_kN,"uniform_footing_weight_kN",True)
+    sbc=n(allowable_soil_pressure_kPa,"allowable_soil_pressure_kPa")
+    src=evidence(layout_source_id,"column location and soil data")
+    if not isinstance(column_loads,(list,tuple)) or len(column_loads)<2:
+        raise RCDesignError("at least two column source-load records required")
+    prepared=[];seen=set()
+    for row in column_loads:
+        if not isinstance(row,dict):raise RCDesignError("column load must be mapping")
+        x=n(row.get("x_from_left_mm"),"column.x_from_left_mm")/1000
+        p=n(row.get("service_load_kN"),"column.service_load_kN")
+        if x>=L or x in seen:raise RCDesignError("columns must be unique inside footing")
+        seen.add(x);prepared.append((x,p))
+    prepared.sort()
+    P=math.fsum(p for _,p in prepared)+Wf
+    cg=(math.fsum(x*p for x,p in prepared)+Wf*L/2)/P
+    e=cg-L/2
+    q0=P/(L*B)
+    q_left=q0*(1-6*e/L)
+    q_right=q0*(1+6*e/L)
+    if min(q_left,q_right)<=0:
+        raise RCDesignError("soil separation/uplift: nonlinear contact analysis required")
+    # service statics: integrate soil pressure, subtract distributed footing
+    # selfweight and each concentrated column load.
+    def shear(x,scale):
+        upward=(B*q0)*(x+6*e*(x*x/(L*L)-x/L))
+        down=Wf*x/L+math.fsum(p for xi,p in prepared if x>=xi)
+        return scale*(upward-down)
+    def moment(x,scale):
+        upward=B*q0*(x*x/2+2*e*x**3/(L*L)-3*e*x*x/L)
+        down=Wf*x*x/(2*L)+math.fsum(p*max(0,x-xi) for xi,p in prepared)
+        return scale*(upward-down)
+    left_force=shear(L,1.)
+    end_moment=moment(L,1.)
+    if (abs(left_force)>1e-8*max(1,P)
+        or abs(end_moment)>1e-8*max(1,P*L)):
+        raise RCDesignError("exact combined-footing force/moment equilibrium failed")
+    # 1mm sample resolution; compare the convergence separately in tests.
+    steps=max(1,math.ceil(L*1000))
+    candidates=[0.,L,*[x for x,_ in prepared]]
+    candidates += [L*i/steps for i in range(steps+1)]
+    min_pair=min(((moment(x,sf),x) for x in candidates),key=lambda z:z[0])
+    max_pair=max(((moment(x,sf),x) for x in candidates),key=lambda z:z[0])
+    max_u=max(abs(min_pair[0]),abs(max_pair[0]))/B
+    # One metre transverse strip moment demand; bar layer orientation
+    # expected to be verified by engineering detail, not assumed here.
+    flex=[]
+    for label,Ast in (("top",top_Ast_mm2_per_m),("bottom",bottom_Ast_mm2_per_m)):
+        try:
+            row=rectangular_singly_reinforced_flexure(
+                width_mm=1000,effective_depth_mm=d,overall_depth_mm=D,
+                fck_MPa=fck_MPa,fy_MPa=fy_MPa,
+                tension_steel_area_mm2=n(Ast,label+"_Ast"),
+                factored_moment_kNm=max_u)
+        except RCBeamInputError as err:raise RCDesignError(str(err)) from err
+        flex.append({"face":label,"capacity_kNm_per_m":row.get("nominal_design_moment_capacity_kNm"),
+                     "flexure_status":row["status"]})
+    flex_pass=all(x["flexure_status"]=="BOUNDED_FLEXURE_PRECHECK_PASS" for x in flex)
+    return {"engine":"M12_IS456_RIGID_COMBINED_FOOTING","code":"IS456:2000",
+      "source":IS456,"clauses":["34.2.3","34.2.4 (shear not evaluated)"],
+      "layout_source_id":src,"columns_service":prepared,
+      "footing_selfweight_service_kN":Wf,"total_service_kN":P,
+      "resultant_x_from_left_m":cg,"resultant_eccentricity_from_centroid_m":e,
+      "service_q_left_kPa":q_left,"service_q_right_kPa":q_right,
+      "service_q_max_kPa":max(q_left,q_right),"service_q_min_kPa":min(q_left,q_right),
+      "service_soil_bearing_pass":max(q_left,q_right)<=sbc,
+      "factored_load_multiplier":sf,"factored_q_left_kPa":sf*q_left,
+      "factored_q_right_kPa":sf*q_right,
+      "max_positive_moment_kNm_total":max_pair[0],
+      "max_positive_moment_x_m":max_pair[1],
+      "most_negative_moment_kNm_total":min_pair[0],
+      "most_negative_moment_x_m":min_pair[1],
+      "absolute_design_moment_kNm_per_m":max_u,
+      "service_force_equilibrium_residual_kN":left_force,
+      "service_moment_equilibrium_residual_kNm":end_moment,
+      "moment_sampling_step_mm":1000*L/steps,
+      "provisional_face_flexure":flex,
+      "status":"BOUNDED_FLEXURE_CONTACT_PASS_FULL_SHEAR_HOLD"
+          if flex_pass and max(q_left,q_right)<=sbc else "FAIL",
+      "combined_footing_shear_punching_verified":False,
+      "settlement_verified":False,"engineering_approval":False}

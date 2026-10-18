@@ -67,3 +67,41 @@ def test_foundation_actual_equations_and_unsafe_example():
     assert weak["status"]=="FAIL"
     with pytest.raises(RCDesignError,match="evidence"):
         is456_centered_isolated_footing(**(x|{"soil_assumption_source_id":""}))
+
+
+
+def test_source_like_cf1_combined_footing_exact_equilibrium_and_eccentric_pressure():
+    from jp_structural.solvers.native.rc_report_kernels import is456_combined_footing_rigid_contact
+    # The two column loads and 46kN uniform selfweight reconstruct 501kN
+    # from the archived CF1 numerical worksheet; x_A=.45m from LEFT is assumed.
+    row=is456_combined_footing_rigid_contact(
+        length_mm=4000,breadth_mm=1500,
+        column_loads=[{"x_from_left_mm":450,"service_load_kN":46},
+                      {"x_from_left_mm":1950,"service_load_kN":409}],
+        uniform_footing_weight_kN=46,allowable_soil_pressure_kPa=160,
+        load_factor=1.5,footing_depth_mm=450,effective_depth_mm=392,
+        top_Ast_mm2_per_m=math.pi*16**2/4*1000/150,
+        bottom_Ast_mm2_per_m=math.pi*16**2/4*1000/150,
+        fck_MPa=20,fy_MPa=500,
+        layout_source_id="ASSUMED-CF1-COLUMN-CENTRE-OFFSET-MAPPING")
+    expected=(46*.45+409*1.95+46*2)/501
+    e=expected-2
+    assert row["resultant_x_from_left_m"]==pytest.approx(expected)
+    assert row["service_q_left_kPa"]==pytest.approx(83.5*(1-6*e/4))
+    assert row["service_q_right_kPa"]==pytest.approx(83.5*(1+6*e/4))
+    assert row["service_force_equilibrium_residual_kN"]==pytest.approx(0,abs=1e-8)
+    assert row["service_moment_equilibrium_residual_kNm"]==pytest.approx(0,abs=1e-8)
+    assert row["max_positive_moment_kNm_total"]==pytest.approx(287.13,abs=.02)
+    assert row["most_negative_moment_kNm_total"]==pytest.approx(0,abs=.02)
+    assert row["status"]=="BOUNDED_FLEXURE_CONTACT_PASS_FULL_SHEAR_HOLD"
+    assert row["engineering_approval"] is False
+    assert row["combined_footing_shear_punching_verified"] is False
+    with pytest.raises(RCDesignError,match="soil separation"):
+        is456_combined_footing_rigid_contact(
+            length_mm=4000,breadth_mm=1500,
+            column_loads=[{"x_from_left_mm":100,"service_load_kN":1000},
+                          {"x_from_left_mm":300,"service_load_kN":10}],
+            uniform_footing_weight_kN=0,allowable_soil_pressure_kPa=160,
+            load_factor=1.5,footing_depth_mm=450,effective_depth_mm=392,
+            top_Ast_mm2_per_m=1340,bottom_Ast_mm2_per_m=1340,
+            fck_MPa=20,fy_MPa=500,layout_source_id="BAD-ECCENTRICITY")
