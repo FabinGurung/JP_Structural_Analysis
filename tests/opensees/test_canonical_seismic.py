@@ -404,6 +404,8 @@ def test_seq9_cqc_coefficient_is_symmetric_and_fail_closed():
 def test_seq9_orthogonal_envelope_rejects_model_and_storey_mismatches():
     first = {
         "model_id": "MOD-SANITIZED-A",
+        "provenance":{"model_sha256":"1"*64},
+        "units":{"force":"N","length":"mm","time":"s","mass":"N*s^2/mm"},
         "case_results": [{
             "case_id": "CASE-X",
             "direction": "X",
@@ -417,6 +419,8 @@ def test_seq9_orthogonal_envelope_rejects_model_and_storey_mismatches():
     }
     second = {
         "model_id": "MOD-SANITIZED-B",
+        "provenance":{"model_sha256":"1"*64},
+        "units":{"force":"N","length":"mm","time":"s","mass":"N*s^2/mm"},
         "case_results": [{
             "case_id": "CASE-Y",
             "direction": "Y",
@@ -470,3 +474,11 @@ def test_orthogonal_result_rejects_same_label_different_model_hash():
     mismatch["units"]["length"]="m"
     with pytest.raises(ResponseSpectrumError,match="identical unit contracts"):
         combine_orthogonal_direction_results(a,mismatch,orthogonal_factor=.3)
+
+
+
+def test_orthogonal_envelope_fails_when_both_hashes_absent():
+    a={"model_id":"same","case_results":[{"direction":"X"}]}
+    b={"model_id":"same","case_results":[{"direction":"Y"}]}
+    with pytest.raises(ResponseSpectrumError,match="identical canonical model SHA256"):
+        combine_orthogonal_direction_results(a,b,orthogonal_factor=.3)

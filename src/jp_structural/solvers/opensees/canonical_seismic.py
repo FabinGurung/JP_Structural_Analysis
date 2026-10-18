@@ -779,12 +779,18 @@ def combine_orthogonal_direction_results(
         raise ResponseSpectrumError("orthogonal cases must reference the same model_id")
     sha_a = (first.get("provenance") or {}).get("model_sha256")
     sha_b = (second.get("provenance") or {}).get("model_sha256")
-    # A display model_id alone is not a sufficient numerical input identity.
-    # Preserve compatibility with old fixture-only partial output by rejecting
-    # missing fingerprints unless BOTH are intentionally unproven (then HOLD).
-    if (sha_a is None) != (sha_b is None) or (sha_a is not None and sha_a != sha_b):
+    # A display model_id cannot prove numerical identity. No missing hash
+    # compatibility path is permitted in an engineering result combiner.
+    if (
+        not isinstance(sha_a, str)
+        or len(sha_a) != 64
+        or not isinstance(sha_b, str)
+        or sha_a != sha_b
+    ):
         raise ResponseSpectrumError("orthogonal cases require identical canonical model SHA256")
-    if first.get("units") != second.get("units"):
+    units_a = first.get("units")
+    units_b = second.get("units")
+    if not isinstance(units_a, dict) or not units_a or units_a != units_b:
         raise ResponseSpectrumError("orthogonal cases require identical unit contracts")
     cases_a = first.get("case_results") or []
     cases_b = second.get("case_results") or []
