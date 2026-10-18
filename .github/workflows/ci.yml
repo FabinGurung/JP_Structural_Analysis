@@ -38,6 +38,13 @@ jobs:
         with:
           name: assumed-rc-numerical-calculations-not-approved
           path: build/assumed_rc/reference_case.json
+      - name: Build synthetic M09 RC column section numerical P-M JSON
+        run: python scripts/build_m09_section_case.py --output build/m09_section/section_case.json
+      - name: Upload M09 P-M section numerical precheck (engineering HOLD)
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: m09-section-capacity-strain-compatibility-not-approved
+          path: build/m09_section/section_case.json
       - name: Reconstruct source F3 and preserve unsafe result
         run: python scripts/reconcile_f3_source.py --output build/f3_source_reconciliation/f3.json
       - name: Upload source-F3 conflict comparison (unsafe retained)
