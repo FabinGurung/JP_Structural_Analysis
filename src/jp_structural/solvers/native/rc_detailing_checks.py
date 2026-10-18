@@ -148,3 +148,63 @@ def fail_closed_design_summary(checks: Sequence[Mapping]) -> dict:
     return {"status":status,"failed_check_ids":fail,"held_check_ids":hold,
             "engineering_approval":False,
             "accepted_design":False}
+
+
+
+def beam_seismic_rebar_ratios_precheck(
+    *, width_mm: float, effective_depth_mm: float,
+    top_steel_area_mm2: float, bottom_steel_area_mm2: float,
+    at_column_face: bool,
+) -> dict:
+    """NBC 105:2025 Annex A §4.1.2(c,d), mandatory partial face checks.
+
+    Input is the PROVIDED tensile and compressive bar area at this section.
+    No check of min face steel, Ld, lap, curtailment or capacity shear.
+    """
+    b=_pos(width_mm,"width_mm")
+    d=_pos(effective_depth_mm,"effective_depth_mm")
+    top=_pos(top_steel_area_mm2,"top_steel_area_mm2")
+    bottom=_pos(bottom_steel_area_mm2,"bottom_steel_area_mm2")
+    if not isinstance(at_column_face,bool):
+        raise RCPrecheckInputError("at_column_face must be a boolean")
+    ptop=top/(b*d); pbottom=bottom/(b*d)
+    if not all(math.isfinite(v) for v in (ptop,pbottom)):
+        raise RCPrecheckInputError("reinforcement ratio overflow")
+    checks={"top_face_max_0_025":ptop<=.025,
+            "bottom_face_max_0_025":pbottom<=.025}
+    if at_column_face:
+        checks["column_face_bottom_ge_half_top"]=bottom>=.5*top
+    result=_result("Annex A 4.1.2(c,d)",checks)
+    result.update({"top_rho":ptop,"bottom_rho":pbottom,
+                   "scope":"PARTIAL_FACE_STEEL_LIMITS_ONLY"})
+    return result
+
+
+def beam_seismic_links_precheck(
+    *, effective_depth_mm: float, smallest_longitudinal_bar_mm: float,
+    link_diameter_mm: float, first_link_from_joint_mm: float,
+    end_zone_link_spacing_mm: float, remaining_span_link_spacing_mm: float,
+) -> dict:
+    """NBC 105:2025 Annex A §4.1.3(d,f,g,h).
+
+    Only mandatory diameter/spacing numeric gates. Assumes 2d end-zone
+    extents, proper closed link geometry, hooks and placement are separately
+    verified; all shear demand/capacity calculations are outside scope.
+    """
+    d=_pos(effective_depth_mm,"effective_depth_mm")
+    longitudinal=_pos(smallest_longitudinal_bar_mm,"smallest_longitudinal_bar_mm")
+    link=_pos(link_diameter_mm,"link_diameter_mm")
+    first=_pos(first_link_from_joint_mm,"first_link_from_joint_mm")
+    end_spacing=_pos(end_zone_link_spacing_mm,"end_zone_link_spacing_mm")
+    mid_spacing=_pos(remaining_span_link_spacing_mm,"remaining_span_link_spacing_mm")
+    maximum=min(d/4.,8*longitudinal,100.)
+    result=_result("Annex A 4.1.3(d,f,g,h)",{
+        "minimum_link_diameter_8mm":link>=8,
+        "first_link_within_50mm":first<=50,
+        "end_zone_spacing_within_limit":end_spacing<=maximum,
+        "remaining_span_spacing_within_d_over_2":mid_spacing<=d/2.,
+    })
+    result.update({"assumed_end_zone_extent_mm":2*d,
+                   "conservative_end_zone_max_spacing_mm":maximum,
+                   "scope":"LINK_DIMENSIONS_ONLY_NOT_CAPACITY_SHEAR"})
+    return result

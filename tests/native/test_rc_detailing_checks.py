@@ -59,3 +59,33 @@ def test_unverified_inputs_fail_closed():
         column_longitudinal_steel_precheck("UNKNOWN",160000,[16]*8)
     with pytest.raises(RCPrecheckInputError):
         fail_closed_design_summary([{"check_id":"x","status":"APPROVED"}])
+
+
+
+def test_nbc_beam_max_face_rho_and_bottom_face_ratio_fail_closed():
+    from jp_structural.solvers.native.rc_detailing_checks import beam_seismic_rebar_ratios_precheck
+    f=beam_seismic_rebar_ratios_precheck
+    assert f(width_mm=230,effective_depth_mm=450,top_steel_area_mm2=1000,
+             bottom_steel_area_mm2=700,at_column_face=True)["status"]=="BOUNDED_PRECHECK_PASS"
+    assert f(width_mm=230,effective_depth_mm=450,top_steel_area_mm2=2800,
+             bottom_steel_area_mm2=2000,at_column_face=False)["status"]=="FAIL"
+    assert f(width_mm=230,effective_depth_mm=450,top_steel_area_mm2=1200,
+             bottom_steel_area_mm2=300,at_column_face=True)["status"]=="FAIL"
+    with pytest.raises(RCPrecheckInputError):
+        f(width_mm=230,effective_depth_mm=450,top_steel_area_mm2=1200,
+          bottom_steel_area_mm2=600,at_column_face="true")
+
+
+def test_nbc_beam_links_are_not_equivalent_to_ductile_shear_design():
+    from jp_structural.solvers.native.rc_detailing_checks import beam_seismic_links_precheck
+    args=dict(effective_depth_mm=450,smallest_longitudinal_bar_mm=12,
+              link_diameter_mm=8,first_link_from_joint_mm=50,
+              end_zone_link_spacing_mm=90,remaining_span_link_spacing_mm=200)
+    assert beam_seismic_links_precheck(**args)["status"]=="BOUNDED_PRECHECK_PASS"
+    for update in [
+        {"link_diameter_mm":6},
+        {"first_link_from_joint_mm":51},
+        {"end_zone_link_spacing_mm":101},
+        {"remaining_span_link_spacing_mm":250},
+    ]:
+        assert beam_seismic_links_precheck(**(args|update))["status"]=="FAIL"
