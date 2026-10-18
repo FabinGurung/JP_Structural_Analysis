@@ -336,6 +336,7 @@ def _torsion_point_map(
                 "node_a_id": node_a_id,
                 "node_b_id": node_b_id,
                 "separation": separation,
+                "signed_transverse": transverse,
                 "elevation": elevation,
             }
         )
@@ -573,7 +574,9 @@ def run_canonical_response_spectrum(
             )
             displacement_a = phi_a * gamma * acceleration / eigenvalue
             displacement_b = phi_b * gamma * acceleration / eigenvalue
-            rotation = (displacement_b - displacement_a) / point["separation"]
+            # Global Rz from rigid in-plane motion: Ux=-Rz*y, Uy=Rz*x.
+            sign = -1.0 if axis == "X" else 1.0
+            rotation = sign * (displacement_b - displacement_a) / point["signed_transverse"]
             torsional_rotations[point["storey_id"]] = rotation
             torsion_modal_rotations[point["storey_id"]].append(rotation)
 
