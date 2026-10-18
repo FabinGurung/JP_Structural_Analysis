@@ -284,7 +284,7 @@ def test_cqc_coefficient_is_symmetric_and_unity_for_identical_frequency():
 
 def test_cqc_response_and_explicit_torsional_probe_are_deterministic():
     kwargs = {
-        "direction": "X",
+        "direction": "Y",
         "modal_combination": "CQC",
         "response_points": [
             {"storey_id": "STY-BASE", "node_id": "N-B1"},
@@ -434,3 +434,39 @@ def test_seq9_orthogonal_envelope_rejects_model_and_storey_mismatches():
     second["case_results"][0]["combined"]["storey_displacement"][0]["storey_id"] = "STY-2"
     with pytest.raises(ResponseSpectrumError, match="identical storeys"):
         combine_orthogonal_direction_results(first, second, orthogonal_factor=0.3)
+
+
+
+def test_torsion_probes_reject_longitudinal_or_fake_separation():
+    # Two nodes along X cannot diagnose rotation about Z using Ux difference.
+    # They can provide a two-point Rz proxy only under Y excitation.
+    for axis, separation, reason in (
+        ("X", 4000.0, "transverse horizontal separation"),
+        ("Y", 5000.0, "must match transverse node geometry"),
+        ("Z", 4000.0, "horizontal X or Y"),
+    ):
+        with pytest.raises(ResponseSpectrumError, match=reason):
+            run_canonical_response_spectrum(
+                _model(), _spectrum(), 3, direction=axis,
+                torsion_points=[{
+                    "storey_id":"STY-ROOF","node_a_id":"N-T1",
+                    "node_b_id":"N-T2","separation":separation,
+                }],
+                eigen_solver="fullGenLapack",
+            )
+
+
+def test_orthogonal_result_rejects_same_label_different_model_hash():
+    a=run_canonical_response_spectrum(
+        _model(),_spectrum(),3,direction="X",eigen_solver="fullGenLapack")
+    b=run_canonical_response_spectrum(
+        _model(),_spectrum(),3,direction="Y",eigen_solver="fullGenLapack")
+    import copy
+    mismatch=copy.deepcopy(b)
+    mismatch["provenance"]["model_sha256"]="f"*64
+    with pytest.raises(ResponseSpectrumError,match="identical canonical model SHA256"):
+        combine_orthogonal_direction_results(a,mismatch,orthogonal_factor=.3)
+    mismatch=copy.deepcopy(b)
+    mismatch["units"]["length"]="m"
+    with pytest.raises(ResponseSpectrumError,match="identical unit contracts"):
+        combine_orthogonal_direction_results(a,mismatch,orthogonal_factor=.3)
