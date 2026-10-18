@@ -98,3 +98,37 @@ def test_shear_physical_failures_cannot_be_adopted():
 ])
 def test_unsupported_rc_input_fail_closed(call):
     with pytest.raises(RCBeamInputError): call()
+
+
+def test_table19_verified_source_rows_and_conservative_flooring():
+    from jp_structural.solvers.native.rc_beam_strength import conservative_table19_shear_strength as look
+    assert look(fck_MPa=20,tension_steel_percentage=.15)["tau_c_MPa"]==.28
+    assert look(fck_MPa=20,tension_steel_percentage=.25)["tau_c_MPa"]==.36
+    assert look(fck_MPa=20,tension_steel_percentage=.50)["tau_c_MPa"]==.48
+    assert look(fck_MPa=20,tension_steel_percentage=.74)["tau_c_MPa"]==.48
+    assert look(fck_MPa=25,tension_steel_percentage=3.2)["tau_c_MPa"]==.92
+    assert look(fck_MPa=40,tension_steel_percentage=3.0)["tau_c_MPa"]==1.01
+    with pytest.raises(RCBeamInputError):look(fck_MPa=17,tension_steel_percentage=.5)
+    with pytest.raises(RCBeamInputError):look(fck_MPa=20,tension_steel_percentage=0)
+
+
+def test_machine_table19_beam_shear_is_bounded_not_design_approval():
+    from jp_structural.solvers.native.rc_beam_strength import vertical_stirrup_shear_from_steel
+    a=vertical_stirrup_shear_from_steel(
+        width_mm=230,effective_depth_mm=450,fck_MPa=20,
+        tension_steel_area_mm2=2*math.pi*16**2/4,
+        factored_shear_kN=90,stirrup_fy_MPa=415,
+        stirrup_legs=2,stirrup_diameter_mm=8,provided_spacing_mm=125)
+    assert a["table19_numerical_lookup_machine_verified"] is True
+    assert a["table19_lookup"]["selected_floor_tension_steel_pct"]==.25
+    assert a["table19_lookup"]["tau_c_MPa"]==.36
+    assert all(a["checks"].values())
+    assert a["status"]=="BOUNDED_SHEAR_NUMERIC_CHECK_PASS_NOT_FULL_DESIGN"
+    assert a["full_RC_design_complete"] is False
+    assert a["engineering_approval"] is False
+    b=vertical_stirrup_shear_from_steel(
+        width_mm=230,effective_depth_mm=450,fck_MPa=20,
+        tension_steel_area_mm2=2*math.pi*16**2/4,
+        factored_shear_kN=400,stirrup_fy_MPa=415,
+        stirrup_legs=2,stirrup_diameter_mm=8,provided_spacing_mm=125)
+    assert b["status"]=="FAIL"
