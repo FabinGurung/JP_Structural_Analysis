@@ -71,3 +71,23 @@ def test_assembly_blocks_preexisting_mass_and_coordinate_drift():
     x=copy.deepcopy(m);x["units"]["force"]="N"
     with pytest.raises(LoadMassAdapterError,match="units.force"):
         bind_assembly_to_canonical_model(x,a)
+
+
+
+@pytest.mark.parametrize("mutator,pattern",[
+    (lambda a: a.update(total_seismic_weight_kN=1000),"source seismic"),
+    (lambda a: a["nodal_masses"][0].update(my=.01),"nodal my/mx"),
+    (lambda a: a["nodal_masses"][0].update(mx=-1),"nodal_mx"),
+    (lambda a: a["nodal_masses"][0].update(mrz=5),"rotational mass"),
+    (lambda a: a["gravity_nodal_loads"][0].update(downward_load_kN=0),"gravity_nodal_load"),
+    (lambda a: a["gravity_nodal_loads"][0].update(downward_load_kN=700),"nodal gravity"),
+    (lambda a: a["sources"][1].update(source_key="roof:DL"),"duplicate physical source"),
+    (lambda a: a["storeys"][0].update(center_mass_x_m=100),"storey centre inconsistent"),
+    (lambda a: a.update(status="UNVERIFIED"),"unverified load mass"),
+])
+def test_audited_solver_rejects_tampered_source_assembly(mutator,pattern):
+    model,assembly=_fixture()
+    a=copy.deepcopy(assembly)
+    mutator(a)
+    with pytest.raises(LoadMassAdapterError,match=pattern):
+        bind_assembly_to_canonical_model(model,a)
