@@ -127,12 +127,16 @@ def test_verified_current_cracked_flexural_modifiers():
 def test_verified_current_mass_and_frequency_limits():
     from jp_structural.solvers.native.nbc105_2025_actions import modal_mass_coverage_gate
     f=modal_mass_coverage_gate
-    modes=[{"mode_id":"1","frequency_hz":2.,"effective_mass_fraction":.60},
-           {"mode_id":"2","frequency_hz":4.,"effective_mass_fraction":.35}]
-    assert f(modes)["status"]=="PASS_BOUNDED"
-    assert f(modes[:1])["status"]=="HOLD_MASS_OR_FREQ_CORRECTION"
-    high=[{"mode_id":"1","frequency_hz":2.,"effective_mass_fraction":.92},
-          {"mode_id":"99","frequency_hz":34.,"effective_mass_fraction":.02}]
-    assert f(high)["status"]=="HOLD_MASS_OR_FREQ_CORRECTION"
-    assert f(high,missing_mass_correction_evidence_id="MODEL-MISSING-MASS-001")["status"]=="HOLD_MASS_OR_FREQ_CORRECTION"
+    modes=[{"mode_id":"1","direction":"X","frequency_hz":2.,"effective_mass_fraction":.60},
+           {"mode_id":"2","direction":"X","frequency_hz":4.,"effective_mass_fraction":.35}]
+    assert f(modes,direction="X")["status"]=="PASS_BOUNDED"
+    assert f(modes[:1],direction="X")["status"]=="HOLD_MASS_OR_FREQ_CORRECTION"
+    high=[{"mode_id":"1","direction":"X","frequency_hz":2.,"effective_mass_fraction":.92},
+          {"mode_id":"99","direction":"X","frequency_hz":34.,"effective_mass_fraction":.02}]
+    assert f(high,direction="X")["status"]=="HOLD_MASS_OR_FREQ_CORRECTION"
+    assert f(high,direction="X",missing_mass_correction_evidence_id="MODEL-MISSING-MASS-001")["status"]=="HOLD_MASS_OR_FREQ_CORRECTION"
+    with pytest.raises(NBCActionError,match="direction"):
+        f(modes,direction="Y")
+    with pytest.raises(NBCActionError,match="declared horizontal axis"):
+        f(modes,direction="Z")
     assert check_design_interstory_drift(0,3,"ULS",design_displacement_verified=True)["result"]=="PASS"

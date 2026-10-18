@@ -296,18 +296,23 @@ def effective_cracked_flexural_stiffness_factor(component: str, limit_state: str
 def modal_mass_coverage_gate(
     modal_participation_fractions: Sequence[Mapping],
     *,
+    direction: str,
     missing_mass_correction_evidence_id: str | None = None
 ) -> dict:
     """NBC105:2025 §7.3 at least 90% mass and <33Hz modes.
     Modes >=33 Hz need independently established missing-mass correction.
     This is a screening gate, not validation of the modal FE solution.
     """
+    if direction not in ("X","Y"):
+        raise NBCActionError("NBC 105:2025 modal mass coverage must be evaluated for one declared horizontal axis X/Y")
     if not isinstance(modal_participation_fractions,(list,tuple)) or not modal_participation_fractions:
         raise NBCActionError("nonempty independently extracted modal list required")
     seen=set(); included=0.;high=[]
     for r in modal_participation_fractions:
         if not isinstance(r,Mapping):
             raise NBCActionError("modal record must be mapping")
+        if r.get("direction") != direction:
+            raise NBCActionError("modal mass direction missing or inconsistent with selected axis")
         mid=r.get("mode_id")
         if not isinstance(mid,str) or not mid.strip() or mid in seen:
             raise NBCActionError("unique string modal ID required")
@@ -327,6 +332,6 @@ def modal_mass_coverage_gate(
     # A reference ID does not prove the missing-mass correction was numerically performed.
     status="PASS_BOUNDED" if included>=.9 and not high else "HOLD_MASS_OR_FREQ_CORRECTION"
     return {"code":CODE_EDITION,"clause":"7.3","source":SOURCE_URL,
-            "covered_mass_fraction_below_33Hz":included,"modes_33Hz_or_higher":high,
+            "direction":direction,"covered_mass_fraction_below_33Hz":included,"modes_33Hz_or_higher":high,
             "missing_mass_correction_evidence":missing_mass_correction_evidence_id if corrected else None,
             "status":status,"engineering_approval":False}
