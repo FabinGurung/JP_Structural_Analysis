@@ -201,6 +201,34 @@ def compare(data: dict[str, Any], result: dict[str, Any]) -> dict[str, Any]:
             }
         )
 
+    # Independently verify EACH source member's stored reactions against
+    # its own end moments. Whole-building ΣR=ΣW alone can conceal errors.
+    # MDM convention: near+far end moments are clockwise-positive;
+    # for uniform downward w: Rnear=wL/2-(Mnear+Mfar)/L,
+    #                         Rfar =wL-Rnear.
+    local_member_static_checks=[]
+    for member in ("AB","BC"):
+        source=stored_members[member]
+        span=float(source["member_length"])
+        udl=float(source["total_udl"])
+        if not math.isfinite(span) or span<=0 or not math.isfinite(udl) or udl<0:
+            raise ValueError("invalid source member span or UDL")
+        near_m=float(source["near_final_moment"])
+        far_m=float(source["far_final_moment"])
+        expected_near=udl*span/2-(near_m+far_m)/span
+        expected_far=udl*span-expected_near
+        observed_near=float(source["near_reaction"])
+        observed_far=float(source["far_reaction"])
+        local_member_static_checks.append({
+            "member":member,
+            "expected_near_from_stored_moments_kN":expected_near,
+            "expected_far_from_stored_moments_kN":expected_far,
+            "stored_near_reaction_kN":observed_near,
+            "stored_far_reaction_kN":observed_far,
+            "force_balance_pass":nearly_equal(observed_near+observed_far,udl*span),
+            "moment_balance_pass":nearly_equal(observed_near,expected_near) and nearly_equal(observed_far,expected_far),
+        })
+
     total_downward_load = sum(
         float(row["udl"]) * float(row["length"])
         for row in data["structural_model"]["members"]
@@ -230,6 +258,8 @@ def compare(data: dict[str, Any], result: dict[str, Any]) -> dict[str, Any]:
         "status": status,
         "moment_checks_pass": moment_pass,
         "reaction_checks_pass": reaction_pass,
+        "stored_member_local_statics_pass": all(x["moment_balance_pass"] and x["force_balance_pass"] for x in local_member_static_checks),
+        "stored_member_local_static_checks": local_member_static_checks,
         "moment_checks": moment_checks,
         "reaction_checks": reaction_checks,
         "equilibrium": equilibrium,
