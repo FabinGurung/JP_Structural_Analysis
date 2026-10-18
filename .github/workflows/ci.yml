@@ -31,6 +31,13 @@ jobs:
         run: |
           python scripts/build_calculation_coverage.py --check
           python scripts/check_site.py
+      - name: Build source-linked assumed RC numerical report
+        run: python scripts/build_rc_reference_case.py --output build/assumed_rc/reference_case.json
+      - name: Upload assumed RC numerical report (not approved design)
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: assumed-rc-numerical-calculations-not-approved
+          path: build/assumed_rc/reference_case.json
       - name: Upload sanitized SAR package
         uses: actions/upload-artifact@v7.0.1
         with:
