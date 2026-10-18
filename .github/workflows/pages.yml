@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: f91224b4f82bfec1440b97f2f8afaef09427eaa9
+          ref: 443b6b8c7d92b0885cd03cad350496d8af61fc46
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -35,6 +35,11 @@ jobs:
         run: python scripts/check_public_safety.py
       - name: Build sanitized SAR demo into Pages site
         run: python examples/sanitized/mdm_two_span/build_example.py --output site/demo
+      - name: Validate current report-first coverage and site navigation
+        run: |
+          python scripts/build_calculation_coverage.py --check
+          python scripts/check_site.py
+          node --check site/app.js
       - name: Write deployment metadata
         run: |
           python - <<'PY'
