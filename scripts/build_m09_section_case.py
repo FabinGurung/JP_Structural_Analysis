@@ -33,6 +33,36 @@ def build():
         compression_face=face, source_id=inp["source_id"], points=65,
         target_axial_kN=inp["Pu_kN"])
         for axis in ("X", "Y") for face in ("START", "END")]
+    # Independently published SP16 Chart31-related hand examples; these are
+    # NOT substitute digitized BIS chart ordinate values.
+    benchmark_bars = [{"x_mm": x, "y_mm": y, "area_mm2": 200.0}
+                      for x in (50, 350) for y in (25, 475)]
+    published = (
+        (0.25, 0.081575, 0.676601),
+        (0.44, 0.028979, 1.161766),
+    )
+    benchmark_rows = []
+    for axial_fraction, moment_reference, k_reference in published:
+        target_kN = axial_fraction * 20 * 400 * 500 / 1000
+        from jp_structural.solvers.native.rc_column_section import uniaxial_capacity_at_axial_load
+        row = uniaxial_capacity_at_axial_load(
+            width_mm=400, depth_mm=500, fck_MPa=20, fy_MPa=415,
+            bars=benchmark_bars, target_axial_kN=target_kN, axis="X",
+            compression_face="START", integration_slices=1024,
+            source_id="PUBLIC_SEFI_DESAI_2005_CHART31_HAND_EXAMPLE")
+        normalized = row["moment_capacity_kNm"] * 1e6 / (20 * 400 * 500**2)
+        k = row["section_resultants"]["neutral_axis_depth_mm"] / 500
+        if abs(normalized/moment_reference - 1) > 0.007 or abs(k/k_reference - 1) > 0.005:
+            raise RuntimeError("SP16 Chart31-related independent worked example mismatch")
+        benchmark_rows.append({
+            "Pu_over_fck_bD": axial_fraction,
+            "reference_normalized_Mu": moment_reference,
+            "computed_normalized_Mu": normalized,
+            "reference_neutral_axis_ratio": k_reference,
+            "computed_neutral_axis_ratio": k,
+            "fractional_moment_error": abs(normalized / moment_reference - 1),
+            "status": "WORKED_EXAMPLE_AGREEMENT_CHART_DIRECT_COMPARISON_PENDING",
+        })
     result = {
         "schema": "jp.structural.m09_column_section.v0.1",
         "case_id": "ASSUMED-M09-SECTION-001",
@@ -49,6 +79,11 @@ def build():
         },
         "steel_table_reference": STEEL_TABLE_SOURCE,
         "pm_curves": curves,
+        "independent_hand_example_benchmarks": {
+            "reference": "https://www.sefindia.org/forum/viewtopic.php?t=1979",
+            "original_SP16_Chart31_directly_verified": False,
+            "tests": benchmark_rows,
+        },
         "valid_case": normal,
         "intentionally_unsafe_case": overload,
         "engineering_approval": False,

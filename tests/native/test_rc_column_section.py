@@ -189,3 +189,36 @@ def test_pm_curve_bad_inputs_fail_closed(bad):
     args.update(bad)
     with pytest.raises(ColumnSectionError):
         uniaxial_pm_curve(**args)
+
+
+@pytest.mark.parametrize("axial_fraction,chart31_normalized_m,k_reference", [
+    (0.25, 0.081575, 0.676601),
+    (0.44, 0.028979, 1.161766),
+])
+def test_sp16_chart31_related_independent_hand_calculation_examples(
+    axial_fraction,chart31_normalized_m,k_reference
+):
+    """External SP16 Chart31 reconstruction examples (Desai, SEFI, Jan 2005).
+
+    A 400 x 500 mm M20 Fe415 section; d'/D=.05; p/fck=.02 (p=.4%).
+    Two opposite reinforcement rows, two 200-mm2 bars in each row.
+    Compare normalized moment and neutral-axis depth with independently
+    published hand-calculated examples associated with Chart31; do not claim
+    that the original BIS chart was digitally verified.
+
+    https://www.sefindia.org/forum/viewtopic.php?t=1979
+    """
+    b,D,fck=400,500,20
+    bars=[{"x_mm":x,"y_mm":y,"area_mm2":200}
+          for x in (50,350) for y in (25,475)]
+    target=axial_fraction*fck*b*D/1000
+    result=uniaxial_capacity_at_axial_load(width_mm=b,depth_mm=D,fck_MPa=fck,
+        fy_MPa=415,bars=bars,target_axial_kN=target,axis="X",
+        compression_face="START",source_id="SEFI_DESAI_2005_SP16_CHART31_EXAMPLE",
+        integration_slices=1024)
+    normalized=result["moment_capacity_kNm"]*1e6/(fck*b*D**2)
+    k=result["section_resultants"]["neutral_axis_depth_mm"]/D
+    assert normalized==pytest.approx(chart31_normalized_m,rel=.007)
+    assert k==pytest.approx(k_reference,rel=.005)
+    assert result["independently_SP16_benchmarked"] is False
+    assert result["engineering_approval"] is False
