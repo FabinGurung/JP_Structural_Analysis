@@ -116,6 +116,31 @@ def test_negative_axial_noncompression_cannot_be_turned_into_pmm_pass():
     m,c,k,b,col,j,s=_run()
     tampered=copy.deepcopy(s)
     tampered["combinations"][0]["local_end_resisting_actions"]["COL1"]["I"]["N"]=-50
-    with pytest.raises(DesignBridgeError,match="tension/zero"):
+    with pytest.raises(DesignBridgeError,match="signed action digest mismatch"):
         evaluate_m08_m09_m10(model=m,solved=tampered,
+            beam_bindings=b,column_bindings=col,joint_bindings=j)
+
+
+def test_recomputed_digest_still_rejects_true_column_axial_tension():
+    import hashlib
+    import json
+    m,c,k,b,col,j,s=_run()
+    tampered=copy.deepcopy(s)
+    tampered["combinations"][0]["local_end_resisting_actions"]["COL1"]["I"]["N"]=-50
+    # Even someone regenerating the checksum must not fabricate compression.
+    tampered["results_digest_sha256"]=hashlib.sha256(
+        json.dumps({"raw_cases":tampered["raw_cases"],
+                    "combinations":tampered["combinations"]},
+                   sort_keys=True,separators=(",",":"),allow_nan=False).encode()
+    ).hexdigest()
+    with pytest.raises(DesignBridgeError,match="signed combination algebra"):
+        evaluate_m08_m09_m10(model=m,solved=tampered,
+            beam_bindings=b,column_bindings=col,joint_bindings=j)
+
+
+def test_missing_solved_action_digest_rejects_precheck():
+    m,c,k,b,col,j,s=_run()
+    s.pop("results_digest_sha256")
+    with pytest.raises(DesignBridgeError,match="signed action digest mismatch"):
+        evaluate_m08_m09_m10(model=m,solved=s,
             beam_bindings=b,column_bindings=col,joint_bindings=j)

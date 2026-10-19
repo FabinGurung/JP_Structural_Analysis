@@ -11,7 +11,7 @@
     "DRAFT_UNVALIDATED": "Prototype or formula arithmetic exists, but code/reliability validation is not complete.",
     "MISSING": "No corresponding complete design/check engine is implemented."
   },
-  "live_pages_warning": "Public GitHub Pages is pinned to a separately validated published M09 numeric codex commit; this in-development D1B upgrade is not yet deployed to Pages.",
+  "live_pages_warning": "The deployed public Pages is immutably pinned to its separately validated old M09 demo source. This D2 signed FE integration and upgraded Table A solver live only in the experimental branch; not yet public site or approved release.",
   "requirements": [
     {
       "id": "M01",
@@ -62,10 +62,11 @@
       "priority": "P0",
       "implemented_paths": [
         "src/jp_structural/solvers/opensees/canonical_frame.py",
-        "src/jp_structural/solvers/native/direct_stiffness.py"
+        "src/jp_structural/solvers/native/direct_stiffness.py",
+        "src/jp_structural/solvers/opensees/member_design_bridge.py"
       ],
-      "remaining_scope": "Real building gravity/static cases, complete local member force diagrams, reaction-source benchmark, shell/release/offset parity.",
-      "validation_gate": "Independent free-body equilibrium, supported geometry benchmark and member P/V/M/T comparison."
+      "remaining_scope": "Real building gravity/static cases, complete local member force diagrams, reaction-source benchmark, shell/release/offset parity. Phase D2 now reads signed 12-component OpenSees 3D elasticBeamColumn localForce records with member I/J end IDs; solves separate source-identified nodal static cases; performs global 6-component free-body equilibrium; and algebraically combines concurrent signed force/moment components before taking demands. Explicit synthetic 2-column/2-beam-segment frame covered.",
+      "validation_gate": "Independent free-body equilibrium, supported geometry benchmark and member P/V/M/T comparison. D2 native signed member-end extraction, true OpenSees applied-load reversal, support F/M equilibrium, signed algebra, duplicated/unknown loads, schema and units tests in tests/opensees/test_member_design_bridge.py; no modal phase-coherent signs."
     },
     {
       "id": "M05",
@@ -116,10 +117,11 @@
       "implemented_paths": [
         "src/jp_structural/solvers/native/rc_detailing_checks.py",
         "src/jp_structural/solvers/native/rc_beam_strength.py",
-        "src/jp_structural/solvers/native/rc_report_kernels.py"
+        "src/jp_structural/solvers/native/rc_report_kernels.py",
+        "src/jp_structural/solvers/opensees/member_design_bridge.py"
       ],
-      "remaining_scope": "Bounded NBC105:2025 seismic beam end shear envelope now implemented using four source-identified end hinge strengths and FE/gravity actions; full bar layouts and signed force transfer/negative flexure/torsion still pending.",
-      "validation_gate": "CI synthetic stress-block equilibrium, inverse steel sizing, min/max steel, over-reinforced FAIL, Tables 19/20 spot checks, under-strength stirrup FAIL. Machine-verified Table19 is necessary but not a completed RC beam design: tension-bar continuity, NBC seismic detailing, actual envelopes and engineering signoff remain HOLD. Numeric reference and negative test: tests/native/test_rc_report_kernels.py; assumed machine report: scripts/build_rc_reference_case.py; F3 fail preservation: tests/native/test_f3_source_reconciliation.py."
+      "remaining_scope": "Bounded NBC105:2025 seismic beam end shear envelope now implemented using four source-identified end hinge strengths and FE/gravity actions; full bar layouts and signed force transfer/negative flexure/torsion still pending. D2 link now supplies same-member I/J FE signed local Vy/Vz shear per simultaneous combination, separate G-case end shears and explicit source-identified design hinge moments; automatic frame span and member ID closure. Hinges remain assumed/source-supplied, not generated FE capacities.",
+      "validation_gate": "CI synthetic stress-block equilibrium, inverse steel sizing, min/max steel, over-reinforced FAIL, Tables 19/20 spot checks, under-strength stirrup FAIL. Machine-verified Table19 is necessary but not a completed RC beam design: tension-bar continuity, NBC seismic detailing, actual envelopes and engineering signoff remain HOLD. Numeric reference and negative test: tests/native/test_rc_report_kernels.py; assumed machine report: scripts/build_rc_reference_case.py; F3 fail preservation: tests/native/test_f3_source_reconciliation.py. Signed H+/- cross-case end shear demand and model-only D2 trace tests. Retain independent end hinge capacities, stirrup/detailing verification and source model drift checks."
     },
     {
       "id": "M09",
@@ -130,10 +132,11 @@
       "implemented_paths": [
         "src/jp_structural/solvers/native/rc_detailing_checks.py",
         "src/jp_structural/solvers/native/rc_report_kernels.py",
-        "src/jp_structural/solvers/native/rc_column_section.py"
+        "src/jp_structural/solvers/native/rc_column_section.py",
+        "src/jp_structural/solvers/opensees/member_design_bridge.py"
       ],
-      "remaining_scope": "First-party M09 strain compatibility now integrates Fe415/Fe500 steel against digitized SP16 Table A/IS456 Fig23A total-strain points with linear interpolation and 4 signed X/Y compression-face P-M curves (65 neutral-axis samples plus c=D and target-Pu root). It computes factored Pu axial equilibria and §39.6 biaxial interaction. Published Table A knots independently checked in tests. Still PARTIAL: full published SP16 column interaction chart comparison, independent section capacity validation, signed FE action mapping, eccentricity/slenderness second order, NBC Annex A confinement and detailing, sourcing actual bars and professional approval remain HOLD. Two published SP16 Chart31-related independent hand examples are now matched within 0.7% normalized moment (and 0.5% neutral-axis ratio), with numeric benchmark JSON and hard CI gates; original BIS chart ordinate digitization is not yet checked.",
-      "validation_gate": "Fe415/500 SP16 Table A independent values, odd symmetry/continuity/monotonicity, rotation invariance of X/Y interaction curves, four signed compression faces and target Pu equilibrium, synthetic high-biaxial FAIL and bad-input rejection; tests/native/test_rc_column_section.py and scripts/build_m09_section_case.py. Independent published SP16 full column interaction-chart points and real source geometry are required before engineering approval. Two external worked examples for Fe415 Chart31 d'/D=.05, p/fck=.02 with Pu/fckbD=.25 and .44 must match independently published normalized moments .081575 and .028979 within 0.7% and roots within 0.5%. This is an independently derived hand-example benchmark, NOT directly digitized original SP16 chart data."
+      "remaining_scope": "First-party M09 strain compatibility now integrates Fe415/Fe500 steel against digitized SP16 Table A/IS456 Fig23A total-strain points with linear interpolation and 4 signed X/Y compression-face P-M curves (65 neutral-axis samples plus c=D and target-Pu root). It computes factored Pu axial equilibria and §39.6 biaxial interaction. Published Table A knots independently checked in tests. Still PARTIAL: full published SP16 column interaction chart comparison, independent section capacity validation, signed FE action mapping, eccentricity/slenderness second order, NBC Annex A confinement and detailing, sourcing actual bars and professional approval remain HOLD. Two published SP16 Chart31-related independent hand examples are now matched within 0.7% normalized moment (and 0.5% neutral-axis ratio), with numeric benchmark JSON and hard CI gates; original BIS chart ordinate digitization is not yet checked. D2 OpenSees handoff now produces Pu and mapped signed My/Mz from the SAME elastic combination at the SAME column end; converts axial compression with I/J resisting-force convention; accepts explicit section bar layout and refuses geometry drift, unsupported tension or unknown combinations. Section capacities are recalculated per actual synthetic scenario Pu. Original SP16 chart and edition parity remain UNVERIFIED.",
+      "validation_gate": "Fe415/500 SP16 Table A independent values, odd symmetry/continuity/monotonicity, rotation invariance of X/Y interaction curves, four signed compression faces and target Pu equilibrium, synthetic high-biaxial FAIL and bad-input rejection; tests/native/test_rc_column_section.py and scripts/build_m09_section_case.py. Independent published SP16 full column interaction-chart points and real source geometry are required before engineering approval. Two external worked examples for Fe415 Chart31 d'/D=.05, p/fck=.02 with Pu/fckbD=.25 and .44 must match independently published normalized moments .081575 and .028979 within 0.7% and roots within 0.5%. This is an independently derived hand-example benchmark, NOT directly digitized original SP16 chart data. 199+ D2 integration suite real OpenSees cases, signed moment mapping, end compression, direct M09 numerical call and no-approval states. Original SP16 Chart31 scanned PDF visually unavailable: no direct chart digitization accepted; independent worked examples only."
     },
     {
       "id": "M10",
@@ -143,10 +146,11 @@
       "priority": "P1",
       "implemented_paths": [
         "src/jp_structural/solvers/native/rc_detailing_checks.py",
-        "src/jp_structural/solvers/native/rc_report_kernels.py"
+        "src/jp_structural/solvers/native/rc_report_kernels.py",
+        "src/jp_structural/solvers/opensees/member_design_bridge.py"
       ],
-      "remaining_scope": "NBC105:2025 joint shear capacity and interior/exterior horizontal joint demand now executable with explicit effective joint area and confinement class; joint confinement/anchorage and strong-column hierarchy remain incomplete.",
-      "validation_gate": "Verified joint equilibrium, capacity ratios and detailing figures with code-traceable tests. Prechecks are NOT equivalent to full RC design. Numeric reference and negative test: tests/native/test_rc_report_kernels.py; assumed machine report: scripts/build_rc_reference_case.py; F3 fail preservation: tests/native/test_f3_source_reconciliation.py."
+      "remaining_scope": "NBC105:2025 joint shear capacity and interior/exterior horizontal joint demand now executable with explicit effective joint area and confinement class; joint confinement/anchorage and strong-column hierarchy remain incomplete. D2 now resolves physically connected source-identified beam and column at a canonical node, consumes signed column local shear per combination, feeds explicit joint steel, geometry and framing into bounded NBC Annex A joint shear. Source geometry/steel, capacity design, joint confinement and signs of real moment strength remain HOLD.",
+      "validation_gate": "Verified joint equilibrium, capacity ratios and detailing figures with code-traceable tests. Prechecks are NOT equivalent to full RC design. Numeric reference and negative test: tests/native/test_rc_report_kernels.py; assumed machine report: scripts/build_rc_reference_case.py; F3 fail preservation: tests/native/test_f3_source_reconciliation.py. Column-end joint-node and beam connectivity fail-closed tests, signed raw shear source ID, per-combination joint shear and conservative governing demand. Full joint confinement/hierarchy benchmarking still required."
     },
     {
       "id": "M11",
@@ -220,10 +224,11 @@
       "priority": "P0",
       "implemented_paths": [
         "src/jp_structural/qa/pre_solve.py",
-        "src/jp_structural/solvers/independent_registry.py"
+        "src/jp_structural/solvers/independent_registry.py",
+        "src/jp_structural/solvers/opensees/member_design_bridge.py"
       ],
-      "remaining_scope": "Independent solver adapter operationalization, source conflict gates, full numeric checks and immutable run identifiers.",
-      "validation_gate": "No unknown result marked PASS, report reaction discrepancy unresolved until reconciled."
+      "remaining_scope": "Independent solver adapter operationalization, source conflict gates, full numeric checks and immutable run identifiers. D2 signed static case and combination source SHA256, member-end raw action and output checksums, global six-component force/moment equilibrium and explicit design source linkage. Synthetic source action tampering and algebraic inconsistency rejection. No claim of tamper-proof cryptographic authority or real-project equivalence.",
+      "validation_gate": "No unknown result marked PASS, report reaction discrepancy unresolved until reconciled. D2 199+ test suite QA, same-case algebra checks, invalid/duplicate/missing load fail-closed, checksum and model geometry drift tests, code-status HOLD."
     },
     {
       "id": "S18",

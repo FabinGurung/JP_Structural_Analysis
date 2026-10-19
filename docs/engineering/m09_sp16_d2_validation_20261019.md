@@ -54,3 +54,12 @@ document axis scaling and digitization uncertainty, then record immutable
 chart ordinate fixtures and comparisons; validate IS456 amendments and
 NBC105:2025 Annex A detailing, actual FE signed seismic combinations,
 P-Delta and source report traceability.
+
+## Phase D2 verified synthetic run
+
+- GitHub CI signed OpenSees D2 run #39220388634: 199 tests pass.
+- M09 governing same-combination/end interaction utilization: 0.7614113923401873.
+- Explicit source model is a made-up two-column, two-segment-beam 3D elastic frame, with 3 m column height, 4 m total span, isolated G and HX nodal actions.
+- No site data or professionally accepted nonlinear RC member/connection force envelope.
+- Additional integrity gate: raw/case action digest and all signed combination values must agree with source results; mismatches reject before M08/M09/M10.
+- Original SP16 Chart 31, printed p.116, published IS456:1978-era scan also appears at https://law.resource.org/pub/in/bis/S03/is.sp.16.1980.pdf and https://img1.wsimg.com/blobby/go/8a137270-3dbc-4442-b0b6-8557ca55a5ff/downloads/SP16-1980.pdf ; each PDF download is too large for the available web fetch service. Direct original chart check remains HOLD.
