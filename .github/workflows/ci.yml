@@ -5,6 +5,7 @@ on:
     branches:
       - engine/opensees-sar-v0.1
       - feature/m09-sp16-table-a-curves-20261019
+      - feature/d2-signed-opensees-m08-m09-m10-20261019
   pull_request:
   workflow_dispatch:
 
@@ -46,6 +47,13 @@ jobs:
         with:
           name: m09-section-capacity-strain-compatibility-not-approved
           path: build/m09_section/section_case.json
+      - name: Build signed OpenSees D2 M08 M09 M10 synthetic design trace
+        run: python scripts/build_d2_signed_frame_case.py --output build/d2_signed_frame/design_trace.json
+      - name: Upload D2 signed structural-design trace (not approved)
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: d2-opensees-signed-m08-m09-m10-not-approved
+          path: build/d2_signed_frame/design_trace.json
       - name: Reconstruct source F3 and preserve unsafe result
         run: python scripts/reconcile_f3_source.py --output build/f3_source_reconciliation/f3.json
       - name: Upload source-F3 conflict comparison (unsafe retained)
