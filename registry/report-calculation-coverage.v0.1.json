@@ -11,7 +11,7 @@
     "DRAFT_UNVALIDATED": "Prototype or formula arithmetic exists, but code/reliability validation is not complete.",
     "MISSING": "No corresponding complete design/check engine is implemented."
   },
-  "live_pages_warning": "Current main Pages workflow checks out an older pinned commit. This draft dashboard is not evidence of live deployment.",
+  "live_pages_warning": "Public GitHub Pages is pinned to a separately validated published M09 numeric codex commit; this in-development D1B upgrade is not yet deployed to Pages.",
   "requirements": [
     {
       "id": "M01",
@@ -132,8 +132,8 @@
         "src/jp_structural/solvers/native/rc_report_kernels.py",
         "src/jp_structural/solvers/native/rc_column_section.py"
       ],
-      "remaining_scope": "First-party numerical section integration now derives four compression-face uniaxial P-M section capacity values at the supplied Pu from concrete stress-strain and explicit reinforcement coordinates, then supplies conservative capacities to existing §39.6 biaxial screen. Bounded ideal-elastic-plastic steel approximation is NOT the full published Fig23A curve; independent SP16/experimental benchmarking, confinement, signed FE action mapping, moment sign, slenderness second order, Annex A reinforcement and professional acceptance still HOLD.",
-      "validation_gate": "Numerical Fig22 concrete block analytic comparison, 4 face axial equilibrium roots, symmetry, unachievable axial and high-biaxial failure tests in tests/native/test_rc_column_section.py. Synthetic JSON output scripts/build_m09_section_case.py; steel Fig23A implementation and independent SP16 chart reference verification required before full design."
+      "remaining_scope": "First-party M09 strain compatibility now integrates Fe415/Fe500 steel against digitized SP16 Table A/IS456 Fig23A total-strain points with linear interpolation and 4 signed X/Y compression-face P-M curves (65 neutral-axis samples plus c=D and target-Pu root). It computes factored Pu axial equilibria and §39.6 biaxial interaction. Published Table A knots independently checked in tests. Still PARTIAL: full published SP16 column interaction chart comparison, independent section capacity validation, signed FE action mapping, eccentricity/slenderness second order, NBC Annex A confinement and detailing, sourcing actual bars and professional approval remain HOLD.",
+      "validation_gate": "Fe415/500 SP16 Table A independent values, odd symmetry/continuity/monotonicity, rotation invariance of X/Y interaction curves, four signed compression faces and target Pu equilibrium, synthetic high-biaxial FAIL and bad-input rejection; tests/native/test_rc_column_section.py and scripts/build_m09_section_case.py. Independent published SP16 full column interaction-chart points and real source geometry are required before engineering approval."
     },
     {
       "id": "M10",

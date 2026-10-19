@@ -98,3 +98,94 @@ def test_bars_are_net_of_displaced_concrete_for_compression():
     assert c["concrete_axial_kN"] > 0
     assert c["axial_kN"] == pytest.approx(
         c["concrete_axial_kN"] + c["steel_net_axial_kN"], rel=1.e-12)
+
+
+# Independent, published SP16 Table A data transcribed from Table 4.1 of
+# NRCMEC CE502PC RCC course notes p.10, not generated from the implementation.
+# Full SP16 interaction charts are not available as numerical QA fixtures yet.
+from jp_structural.solvers.native.rc_column_section import (
+    _steel_stress, uniaxial_pm_curve, SP16_STEEL_KNOTS,
+)
+
+@pytest.mark.parametrize("fy,eps,expected", [
+    (415, 0.00163, 306.7), (415, 0.00192, 324.8),
+    (415, 0.00241, 342.8), (415, 0.00276, 351.8),
+    (415, 0.00380, 360.9), (500, 0.00195, 369.6),
+    (500, 0.00226, 391.3), (500, 0.00277, 413.0),
+    (500, 0.00312, 423.9), (500, 0.00417, 434.8),
+])
+def test_sp16_table_a_steel_knots_against_independent_published_values(fy,eps,expected):
+    assert _steel_stress(eps, fy) == pytest.approx(expected, abs=0.10)
+    assert _steel_stress(-eps, fy) == pytest.approx(-expected, abs=0.10)
+
+@pytest.mark.parametrize("fy", [415, 500])
+def test_steel_curve_elastic_continuous_monotone_odd_symmetric(fy):
+    fyd=fy/1.15
+    limit=0.8*fyd/200000
+    assert _steel_stress(limit,fy)==pytest.approx(0.8*fyd,rel=1e-12)
+    assert _steel_stress(limit-1e-10,fy)==pytest.approx(.8*fyd-.00002,abs=.00001)
+    assert _steel_stress(.1,fy)==pytest.approx(fyd,rel=1e-12)
+    e=[i*.00001 for i in range(701)]
+    f=[_steel_stress(v,fy) for v in e]
+    assert all(a<=b+1e-9 for a,b in zip(f,f[1:]))
+    assert all(_steel_stress(-v,fy)==pytest.approx(-_steel_stress(v,fy)) for v in e)
+
+@pytest.mark.parametrize("fy", [415,500])
+def test_interpolated_steel_law_is_not_premature_ideal_plastic_plateau(fy):
+    # This was the previous regression bug: a bilinear 0.87fy stress cap
+    # reached as early as epsilon~0.0018/0.0022.
+    fyd=fy/1.15
+    stress=_steel_stress(.0025,fy)
+    assert stress < fyd
+    assert stress > .90*fyd
+
+def test_pm_four_faces_recover_target_points_and_signs():
+    cases=[]
+    for axis in ("X","Y"):
+        for face in ("START","END"):
+            curve=uniaxial_pm_curve(**BASIS,axis=axis,compression_face=face,
+                source_id="SYNTHETIC_PM_TABLE_A",points=33,
+                target_axial_kN=1200)
+            assert curve["status"].endswith("SP16_CHART_HOLD")
+            assert len(curve["points"])>=34
+            assert not curve["engineering_approval"]
+            assert not curve["independently_SP16_benchmarked"]
+            assert all(math.isfinite(p["axial_kN"]) and
+                       math.isfinite(p["signed_moment_kNm"])
+                       for p in curve["points"])
+            target=curve["target_equilibrium"]
+            assert abs(target["axial_kN"]-1200)<1e-5
+            assert target["target_equilibrium"]
+            cases.append(curve)
+    assert cases[0]["target_equilibrium"]["signed_moment_kNm"]==pytest.approx(
+        -cases[1]["target_equilibrium"]["signed_moment_kNm"],rel=1e-8)
+    assert cases[2]["target_equilibrium"]["signed_moment_kNm"]==pytest.approx(
+        -cases[3]["target_equilibrium"]["signed_moment_kNm"],rel=1e-8)
+    assert any(p["axial_kN"]<0 for p in cases[0]["points"])
+    assert any(p["axial_kN"]>1200 for p in cases[0]["points"])
+
+def test_pm_curve_axis_rotation_invariance_on_transposed_bar_layout():
+    swapped=[{"x_mm":bar["y_mm"],"y_mm":bar["x_mm"],
+              "area_mm2":bar["area_mm2"]} for bar in BARS]
+    a=uniaxial_pm_curve(**BASIS,axis="X",compression_face="START",
+        source_id="SYNTHETIC",points=33)
+    b=uniaxial_pm_curve(width_mm=500,depth_mm=400,fck_MPa=25,fy_MPa=415,
+        bars=swapped,axis="Y",compression_face="START",
+        source_id="SYNTHETIC",points=33)
+    assert len(a["points"])==len(b["points"])
+    for lhs,rhs in zip(a["points"],b["points"]):
+        assert lhs["axial_kN"]==pytest.approx(rhs["axial_kN"],rel=1e-10)
+        assert lhs["signed_moment_kNm"]==pytest.approx(
+            rhs["signed_moment_kNm"],rel=1e-10)
+
+@pytest.mark.parametrize("bad", [
+    {"points":0}, {"points":300}, {"points":True},
+    {"source_id":""},{"bars":BARS[:2]},
+    {"target_axial_kN":100000},
+])
+def test_pm_curve_bad_inputs_fail_closed(bad):
+    args=dict(**BASIS,axis="X",compression_face="START",
+              source_id="SYNTHETIC",points=33)
+    args.update(bad)
+    with pytest.raises(ColumnSectionError):
+        uniaxial_pm_curve(**args)

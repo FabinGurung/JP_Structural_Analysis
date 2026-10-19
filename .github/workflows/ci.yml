@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - engine/opensees-sar-v0.1
+      - feature/m09-sp16-table-a-curves-20261019
   pull_request:
   workflow_dispatch:
 

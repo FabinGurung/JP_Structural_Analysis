@@ -7,7 +7,7 @@ import math
 from pathlib import Path
 
 from jp_structural.solvers.native.rc_column_section import (
-    ENGINE_ID, biaxial_interaction_from_bars,
+    ENGINE_ID, biaxial_interaction_from_bars, uniaxial_pm_curve, STEEL_MODEL, STEEL_TABLE_SOURCE,
 )
 
 
@@ -28,6 +28,11 @@ def build():
         **(inp | {"Mux_kNm": 100000, "Muy_kNm": 100000}))
     if overload["status"] != "FAIL":
         raise RuntimeError("M09 unsafe-case regression failed")
+    curves = [uniaxial_pm_curve(width_mm=inp["width_mm"], depth_mm=inp["depth_mm"],
+        fck_MPa=inp["fck_MPa"], fy_MPa=inp["fy_MPa"], bars=bars, axis=axis,
+        compression_face=face, source_id=inp["source_id"], points=65,
+        target_axial_kN=inp["Pu_kN"])
+        for axis in ("X", "Y") for face in ("START", "END")]
     result = {
         "schema": "jp.structural.m09_column_section.v0.1",
         "case_id": "ASSUMED-M09-SECTION-001",
@@ -38,9 +43,12 @@ def build():
             "geometry": "400 x 500 mm; eight 25 mm bars with 50 mm centre offsets",
             "materials": "M25 concrete; Fe415 nominal steel",
             "load_case": "Pu=1200 kN, Mux=80 kNm, Muy=40 kNm",
-            "critical_limit": "Fig23A steel idealized as bilinear, NOT exact code curve",
-            "other_exclusions": "Confinement, slenderness second order, code detailing, signed FE actions, SP16 independent benchmarking"
+            "steel_law": STEEL_MODEL,
+            "critical_limit": "SP16 Table A interpolated steel points tested; full column interaction-chart parity NOT established",
+            "other_exclusions": "Confinement, slenderness second order, code detailing, signed FE actions, SP16 independent full-column chart benchmarking"
         },
+        "steel_table_reference": STEEL_TABLE_SOURCE,
+        "pm_curves": curves,
         "valid_case": normal,
         "intentionally_unsafe_case": overload,
         "engineering_approval": False,
