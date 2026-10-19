@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 2349678ff60f8f69d24643b62709b4e6d1207e1b
+          ref: 017e3bc0ee07956319f34941d522960888869b83
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -39,6 +39,8 @@ jobs:
         run: python scripts/build_m09_section_case.py --output site/data/m09-section-capacity.v0.1.json
       - name: Generate signed D2 OpenSees M08 M09 M10 synthetic evidence for site
         run: python scripts/build_d2_signed_frame_case.py --output site/data/d2_signed_frame.v0.1.json
+      - name: Regenerate original SP16 Chart31 source coordinate spot checks for public site
+        run: python scripts/build_sp16_chart31_spotcheck.py --output site/data/sp16_chart31_spotcheck.v0.1.json
       - name: Validate current report-first coverage and site navigation
         run: |
           python scripts/build_calculation_coverage.py --check
