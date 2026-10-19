@@ -397,16 +397,32 @@ def evaluate_m08_m09_m10(*, model: dict, solved: dict,
                 **props,
                 column_shear_kN=abs(col_end[shear]),
                 joint_geometry_source_id=_require_string(cfg, "source_id"))
+            # The classical subtractive V_col term presupposes the correct
+            # column-end and beam-bar force orientation at the joint. A raw
+            # signed local member shear does not by itself establish that
+            # orientation. Until full force-path acceptance, also test the
+            # adverse additive shear direction as an upper bound.
+            ast = _finite(props["Ast_top_mm2"], "Ast_top",positive=True)
+            if props["framing"] == "INTERIOR":
+                ast += _finite(props["Ast_bottom_mm2"], "Ast_bottom")
+            elif props["framing"] != "EXTERIOR":
+                raise DesignBridgeError("M10 framing must be INTERIOR/EXTERIOR")
+            v_upper = 1.25 * _finite(props["fy_MPa"], "fy",positive=True) * ast / 1000 + abs(col_end[shear])
+            upper_pass = v_upper <= r["nominal_Vjc_kN"]
             scenarios.append({"combination_id":cid,"signed_column_shear_kN":col_end[shear],
-                              "column_end":end,"check":r})
-        governing=max(scenarios,key=lambda x:x["check"]["factored_Vjh_kN"])
+                              "column_end":end,"check":r,
+                              "unresolved_shear_direction_upper_kN":v_upper,
+                              "upper_direction_bound_nominal_shear_pass":upper_pass})
+        governing=max(scenarios,key=lambda x:x["unresolved_shear_direction_upper_kN"])
         joints.append({"joint_node_id":node_id,"column_member_id":mid,
                        "beam_member_id":beam_id,"source_id":cfg["source_id"],
                        "shear_component":shear,"scenarios":scenarios,
                        "governing_combination_id":governing["combination_id"],
-                       "status":"FAIL" if any(not x["check"]["joint_nominal_shear_pass"]
-                                              for x in scenarios)
-                               else "PARTIAL_CONFINEMENT_AND_ANCHORAGE_HOLD"})
+                       "governing_uncertain_direction_shear_kN":governing["unresolved_shear_direction_upper_kN"],
+                       "status":"FAIL_UNCERTAIN_JOINT_FORCE_DIRECTION_BOUND"
+                           if any(not x["upper_direction_bound_nominal_shear_pass"]
+                                  or not x["check"]["joint_nominal_shear_pass"] for x in scenarios)
+                           else "PARTIAL_JOINT_FORCE_DIRECTION_CONFINEMENT_HOLD"})
     return {"schema":"jp.structural.m08_m09_m10_design_bridge.v0.1",
             "model_id":solved["model_id"],
             "source_action_digest":solved["input_bundle_sha256"],
