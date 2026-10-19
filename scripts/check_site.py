@@ -88,6 +88,33 @@ def verify_sp16_and_d2(problems):
     except (OSError,ValueError,KeyError,TypeError,IndexError,AssertionError) as exc:
         problems.append("SP16/D2 original-source and safety state malformed: "+str(exc))
 
+
+def verify_original_chart31_source_spots(problems):
+    import json
+    from math import isfinite
+    path=SITE/"data/sp16_chart31_spotcheck.v0.1.json"
+    if not path.is_file():
+        problems.append("Missing generated original SP16 Chart31 numerical point evidence")
+        return
+    try:
+        d=json.loads(path.read_text(encoding="utf-8"))
+        assert d["schema"]=="jp.structural.sp16.chart31.spot_comparison.v0.1"
+        assert d["original_sp16_pdf_sha256"]=="d2a6246a5dc7504568f4e55f310dd4be9d925fb1a8b04b6d7f5132c93f66c76e"
+        assert d["historical_code_basis"]=="IS456:1978" and d["current_engine_code_basis"]=="IS456:2000"
+        assert d["all_sampled_points_agree"] is True
+        assert d["full_sp16_chart31_curve_digitization_complete"] is False
+        assert d["code_edition_reconciliation"]["full_edition_parity_verified"] is False
+        assert d["engineering_approval"] is False and d["report_accepted"] is False
+        assert len(d["points"])==2
+        assert all(p["spot_agreement"] is True and
+                   isfinite(p["engine_mu_over_fck_bD2"]) and
+                   p["absolute_normalized_error"]<=p["visual_uncertainty_absolute_normalized_moment"]
+                   for p in d["points"])
+        for page in ("calculation-coverage.html","report.html"):
+            assert "data-sp16-benchmark=" in (SITE/page).read_text(encoding="utf-8")
+    except (ValueError,KeyError,IndexError,TypeError,AssertionError) as err:
+        problems.append("Original SP16 Chart31 source benchmark incorrect: "+str(err))
+
 def main():
     problems=[]
     for page in PAGES:
@@ -112,6 +139,7 @@ def main():
     if (SITE/"app.js").stat().st_size>12000:problems.append("Shared JS unexpectedly large")
     verify_m09_case(problems)
     verify_sp16_and_d2(problems)
+    verify_original_chart31_source_spots(problems)
     if problems:raise SystemExit("\n".join(problems))
     print("STRUCTURAL_SITE_QA_PASS: four pages, primary SP16 Table A, M09 and D2 signed generated evidence, shared theme and relative links")
 if __name__=="__main__":main()
