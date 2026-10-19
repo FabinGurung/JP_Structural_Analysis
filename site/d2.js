@@ -22,3 +22,36 @@ v.replaceChildren(el("p","TRUE OPENSees ELASTIC RESPONSE · SYNTHETIC INPUTS","m
 }
 }).catch(e=>views.forEach(v=>v.replaceChildren(el("p","D2 evidence HOLD: "+e.message,"m09-error"))));
 })();
+/* SP16 original Chart31: two coarse primary-source ordinate comparisons only. */
+(function(){
+"use strict";
+const views=[...document.querySelectorAll("[data-sp16-benchmark]")];
+if(!views.length)return;
+const el=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
+const num=x=>typeof x==="number"&&Number.isFinite(x)?x.toFixed(5):"unverified";
+fetch("data/sp16_chart31_spotcheck.v0.1.json",{cache:"no-store"})
+.then(r=>r.ok?r.json():Promise.reject(Error("Chart31 source benchmark unavailable")))
+.then(d=>{
+  if(d.schema!=="jp.structural.sp16.chart31.spot_comparison.v0.1"||
+     d.engineering_approval!==false||d.report_accepted!==false||
+     d.full_sp16_chart31_curve_digitization_complete!==false||
+     d.code_edition_reconciliation?.full_edition_parity_verified!==false||
+     d.all_sampled_points_agree!==true||d.points?.length!==2||
+     !d.points.every(p=>p.spot_agreement===true&&p.absolute_normalized_error<=p.visual_uncertainty_absolute_normalized_moment))
+    throw Error("original-source uncertainty and HOLD checks invalid");
+  for(const v of views){
+    const g=el("div",undefined,"m09-numbers");
+    for(const p of d.points){
+      const x=el("div",undefined,"m09-stat");
+      x.append(el("span","Pu/(fck·b·D) = "+p.source_chart_coordinate.pu_over_fck_bD),
+        el("strong",num(p.engine_mu_over_fck_bD2)),
+        el("small","Source visual ≈"+num(p.source_chart_coordinate.mu_over_fck_bD2)+" ± "+num(p.visual_uncertainty_absolute_normalized_moment)+" normalized Mu; coarse agreement"));
+      g.append(x);
+    }
+    v.replaceChildren(
+      el("p","ORIGINAL SP16:1980 PRINTED P116 · TWO COARSE CHART POINTS · NOT FULL CODE APPROVAL","m09-provenance"),
+      g,
+      el("p","IS456:1978 historical chart versus current IS456:2000 model; entire curve and edition parity remain on HOLD.","m09-provenance"));
+  }
+}).catch(e=>views.forEach(v=>v.replaceChildren(el("p","Original Chart31 evidence HOLD: "+e.message,"m09-error"))));
+})();
