@@ -2,10 +2,11 @@
 
 All lengths mm, areas mm2, stresses MPa, axial loads kN and moments kN m.
 Concrete: IS 456 Fig. 21 parabolic-rectangle idealization, 0.446 fck peak.
-Ultimate strain: Cl. 38.1 / Cl. 39.1. Rebar: BILINEAR APPROXIMATION
-of Fig. 23, not the exact cold-worked Fe415/Fe500 stress-strain curve.
-Accordingly the output is a mathematical PRECHECK, not an approved IS 456
-capacity table, independently SP16-benchmarked chart or complete design.
+Ultimate strain: Cl. 38.1 / Cl. 39.1. Rebar: Fe415/Fe500 design stress-strain
+from digitized SP16 Table A points (IS456 Fig.23A), linear interpolation between
+published total-strain knots and Es=200000 MPa below 0.8 fy / 1.15.
+The table is tested against published tabulations, but whole-column SP16
+chart parity and professional design acceptance are NOT yet established.
 """
 from __future__ import annotations
 
@@ -17,7 +18,20 @@ from jp_structural.solvers.native.rc_report_kernels import (
 )
 
 ENGINE_ID = "JP-M09-FIBER-SECTION-001"
-STEEL_MODEL = "IDEAL_ELASTIC_PLASTIC_APPROXIMATION_FIG23_VERIFICATION_HOLD"
+STEEL_MODEL = "SP16_TABLE_A_FE415_FE500_LINEAR_INTERPOLATION_CHART_VALIDATION_HOLD"
+STEEL_TABLE_SOURCE = ("SP16 Table A, Fe415/Fe500 design steel stress-strain; "
+    "cross-check: NRCMEC CE502PC RCC course, Table 4.1, p.10 "
+    "https://www.nrcmec.org/pdf/Course-Content/CIVIL/NR21/III-I/RCC/RCC_Course_Content.pdf")
+# Total strains for the fractions of design stress fy/1.15 at 0.85, 0.90,
+# 0.95, 0.975 and 1.0. The 0.80 tabular strain is rounded and replaced by
+# the exact elastic intercept 0.8 * (fy/1.15) / Es to avoid an artificial jump.
+SP16_STEEL_KNOTS = {
+    415: ((0.85, .00163), (0.90, .00192), (0.95, .00241),
+          (0.975, .00276), (1.0, .00380)),
+    500: ((0.85, .00195), (0.90, .00226), (0.95, .00277),
+          (0.975, .00312), (1.0, .00417)),
+}
+
 ES_MPA = 200_000.0
 CONCRETE_STRESS_FACTOR = 0.446
 CONCRETE_PARABOLIC_STRAIN = 0.002
@@ -72,7 +86,28 @@ def _concrete_stress(strain: float, fck: float) -> float:
 
 
 def _steel_stress(strain: float, fy: float) -> float:
-    return max(-0.87 * fy, min(0.87 * fy, ES_MPA * strain))
+    """IS456 Fig23A / SP16 Table A tabulated design stress in MPa.
+
+    Apply the same odd-symmetric design curve for reinforcement in compression
+    and tension. Values between total-strain tabulation points are linearly
+    interpolated; beyond the final table knot, stress is capped at fy/1.15.
+    This is NOT a claim of independently reproduced SP16 interaction charts.
+    """
+    if not math.isfinite(strain) or fy not in SP16_STEEL_KNOTS:
+        raise ColumnSectionError("unsupported steel stress/grade")
+    sign = -1.0 if strain < 0 else 1.0
+    e = abs(strain)
+    fyd = fy / 1.15
+    start_stress = 0.8 * fyd
+    elastic_strain = start_stress / ES_MPA
+    if e <= elastic_strain:
+        return sign * ES_MPA * e
+    knots = ((elastic_strain, start_stress),) + tuple(
+        (eps, fraction * fyd) for fraction, eps in SP16_STEEL_KNOTS[fy])
+    for (e0, f0), (e1, f1) in zip(knots, knots[1:]):
+        if e <= e1:
+            return sign * (f0 + (f1 - f0) * (e - e0) / (e1 - e0))
+    return sign * fyd
 
 
 def _extreme_strain(c: float, size: float) -> float:
@@ -147,9 +182,8 @@ def uniaxial_capacity_at_axial_load(
 ) -> dict:
     """Bisection for one section strain plane matching factored axial force.
 
-    Brackets are checked (never extrapolate). The returned section moment is
-    the computed equilibrium resultant; the steel law still needs independent
-    Fig. 23/SP16 verification before design acceptance.
+    Brackets are checked (never extrapolate). Section results use the SP16
+    Table A material law; chart-level SP16 verification remains pending.
     """
     b = _number(width_mm, "width_mm")
     d = _number(depth_mm, "depth_mm")
@@ -200,7 +234,9 @@ def uniaxial_capacity_at_axial_load(
         "signed_moment_kNm": result["moment_about_selected_axis_kNm"],
         "section_resultants": result,
         "steel_law": STEEL_MODEL,
-        "status": "BOUNDED_NUMERIC_SECTION_HOLD_STEEL_LAW_VALIDATION",
+        "steel_law_source": STEEL_TABLE_SOURCE,
+        "status": "BOUNDED_NUMERIC_SECTION_HOLD_SP16_CHART_VALIDATION",
+        "sp16_table_a_points_regression_tested": True,
         "independently_SP16_benchmarked": False, "engineering_approval": False,
     }
 
@@ -255,12 +291,94 @@ def biaxial_interaction_from_bars(
             "axial_and_biaxial_screen": interaction["status"] != "FAIL",
             "all_axial_equilibria": all(
                 abs(v["axial_equilibrium_residual_kN"]) < 1.e-4 for v in per_face),
-            "steel_curve_independently_verified": False,
+            "steel_table_a_knots_regression_tested": True,
+            "independent_full_sp16_column_chart_benchmark": False,
             "section_bar_layout_source_verified": False,
         },
         "status": "FAIL" if interaction["status"] == "FAIL"
-                  else "BOUNDED_NUMERICAL_PRECHECK_SP16_AND_STEEL_LAW_HOLD",
+                  else "BOUNDED_NUMERICAL_PRECHECK_SP16_CHART_AND_DETAILING_HOLD",
         "uniaxial_capacity_solver_implemented": True,
         "code_check_complete": False,
+        "engineering_approval": False,
+    }
+
+
+def uniaxial_pm_curve(
+    *, width_mm: float, depth_mm: float, fck_MPa: float, fy_MPa: float,
+    bars: Sequence[Mapping], axis: str, compression_face: str,
+    source_id: str, points: int = 65, integration_slices: int = 256,
+    target_axial_kN: float | None = None,
+) -> dict:
+    """Generate a source-linked uniaxial P-M curve from strain compatibility.
+
+    End strain follows IS456 Cl39.1 at each neutral-axis depth. This samples
+    both steel tension and compression regimes without assuming an arbitrary
+    axial zero intercept or extrapolating the section model. START/END moment
+    signs use a fixed global axis (START positive, END negative).
+
+    Neutral-axis sampling is logarithmic over c/section_depth=0.02..10000;
+    it is an engineering *sampled* curve, not a fully proven capacity envelope.
+    """
+    b = _number(width_mm, "width_mm")
+    d = _number(depth_mm, "depth_mm")
+    if not isinstance(source_id, str) or not source_id.strip():
+        raise ColumnSectionError("source_id required for P-M curve")
+    if (isinstance(points, bool) or not isinstance(points, int)
+            or not 17 <= points <= 257):
+        raise ColumnSectionError("curve points must be integer 17..257")
+    layout = _bars(bars, b, d, require_reinforced=True)
+    if len({(x, y) for x, y, _ in layout}) != len(layout):
+        raise ColumnSectionError("coincident bar centers unsupported")
+    size = d if axis == "X" else b
+    # Calls below also validate the axis, face and material grade.
+    opts = dict(width_mm=b, depth_mm=d, fck_MPa=fck_MPa, fy_MPa=fy_MPa,
+                bars=bars, axis=axis, compression_face=compression_face,
+                integration_slices=integration_slices)
+    sign = 1 if compression_face == "START" else -1
+    samples = []
+    neutral_axis_ratios = [0.02 * (10000.0 / 0.02) ** (i / (points - 1))
+                           for i in range(points)]
+    neutral_axis_ratios.append(1.0)  # preserve the c=section depth regime.
+    for ratio in sorted(set(neutral_axis_ratios)):
+        c = size * ratio
+        out = section_resultants(neutral_axis_depth_mm=c, **opts)
+        samples.append({
+            "neutral_axis_depth_mm": c,
+            "axial_kN": out["axial_kN"],
+            "signed_moment_kNm": sign * out["moment_about_selected_axis_kNm"],
+            "maximum_compression_strain": out["maximum_compression_strain"],
+            "target_equilibrium": False,
+        })
+    match = None
+    if target_axial_kN is not None:
+        root = uniaxial_capacity_at_axial_load(
+            **opts | {"target_axial_kN": target_axial_kN,
+                      "source_id": source_id})
+        result = root["section_resultants"]
+        match = {
+            "neutral_axis_depth_mm": result["neutral_axis_depth_mm"],
+            "axial_kN": result["axial_kN"],
+            "signed_moment_kNm": sign * result["moment_about_selected_axis_kNm"],
+            "maximum_compression_strain": result["maximum_compression_strain"],
+            "target_equilibrium": True,
+        }
+        samples.append(match)
+        samples.sort(key=lambda v: v["neutral_axis_depth_mm"])
+    return {
+        "engine": ENGINE_ID,
+        "source_id": source_id.strip(),
+        "code": "IS456:2000",
+        "axis": axis, "compression_face": compression_face,
+        "moment_sign_convention": "START_POSITIVE_END_NEGATIVE",
+        "steel_law": STEEL_MODEL,
+        "steel_law_source": STEEL_TABLE_SOURCE,
+        "width_mm": b, "depth_mm": d, "fck_MPa": float(fck_MPa),
+        "fy_MPa": float(fy_MPa),
+        "sampling_method": "LOG_NEUTRAL_AXIS_RATIO_0_02_TO_10000",
+        "integration_slices": integration_slices,
+        "target_equilibrium": match,
+        "points": samples,
+        "status": "BOUNDED_NUMERICAL_PM_CURVE_SP16_CHART_HOLD",
+        "independently_SP16_benchmarked": False,
         "engineering_approval": False,
     }

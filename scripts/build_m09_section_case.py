@@ -7,7 +7,7 @@ import math
 from pathlib import Path
 
 from jp_structural.solvers.native.rc_column_section import (
-    ENGINE_ID, biaxial_interaction_from_bars,
+    ENGINE_ID, biaxial_interaction_from_bars, uniaxial_pm_curve, STEEL_MODEL, STEEL_TABLE_SOURCE,
 )
 
 
@@ -28,6 +28,41 @@ def build():
         **(inp | {"Mux_kNm": 100000, "Muy_kNm": 100000}))
     if overload["status"] != "FAIL":
         raise RuntimeError("M09 unsafe-case regression failed")
+    curves = [uniaxial_pm_curve(width_mm=inp["width_mm"], depth_mm=inp["depth_mm"],
+        fck_MPa=inp["fck_MPa"], fy_MPa=inp["fy_MPa"], bars=bars, axis=axis,
+        compression_face=face, source_id=inp["source_id"], points=65,
+        target_axial_kN=inp["Pu_kN"])
+        for axis in ("X", "Y") for face in ("START", "END")]
+    # Independently published SP16 Chart31-related hand examples; these are
+    # NOT substitute digitized BIS chart ordinate values.
+    benchmark_bars = [{"x_mm": x, "y_mm": y, "area_mm2": 200.0}
+                      for x in (50, 350) for y in (25, 475)]
+    published = (
+        (0.25, 0.081575, 0.676601),
+        (0.44, 0.028979, 1.161766),
+    )
+    benchmark_rows = []
+    for axial_fraction, moment_reference, k_reference in published:
+        target_kN = axial_fraction * 20 * 400 * 500 / 1000
+        from jp_structural.solvers.native.rc_column_section import uniaxial_capacity_at_axial_load
+        row = uniaxial_capacity_at_axial_load(
+            width_mm=400, depth_mm=500, fck_MPa=20, fy_MPa=415,
+            bars=benchmark_bars, target_axial_kN=target_kN, axis="X",
+            compression_face="START", integration_slices=1024,
+            source_id="PUBLIC_SEFI_DESAI_2005_CHART31_HAND_EXAMPLE")
+        normalized = row["moment_capacity_kNm"] * 1e6 / (20 * 400 * 500**2)
+        k = row["section_resultants"]["neutral_axis_depth_mm"] / 500
+        if abs(normalized/moment_reference - 1) > 0.007 or abs(k/k_reference - 1) > 0.005:
+            raise RuntimeError("SP16 Chart31-related independent worked example mismatch")
+        benchmark_rows.append({
+            "Pu_over_fck_bD": axial_fraction,
+            "reference_normalized_Mu": moment_reference,
+            "computed_normalized_Mu": normalized,
+            "reference_neutral_axis_ratio": k_reference,
+            "computed_neutral_axis_ratio": k,
+            "fractional_moment_error": abs(normalized / moment_reference - 1),
+            "status": "WORKED_EXAMPLE_AGREEMENT_CHART_DIRECT_COMPARISON_PENDING",
+        })
     result = {
         "schema": "jp.structural.m09_column_section.v0.1",
         "case_id": "ASSUMED-M09-SECTION-001",
@@ -38,8 +73,16 @@ def build():
             "geometry": "400 x 500 mm; eight 25 mm bars with 50 mm centre offsets",
             "materials": "M25 concrete; Fe415 nominal steel",
             "load_case": "Pu=1200 kN, Mux=80 kNm, Muy=40 kNm",
-            "critical_limit": "Fig23A steel idealized as bilinear, NOT exact code curve",
-            "other_exclusions": "Confinement, slenderness second order, code detailing, signed FE actions, SP16 independent benchmarking"
+            "steel_law": STEEL_MODEL,
+            "critical_limit": "SP16 Table A interpolated steel points tested; full column interaction-chart parity NOT established",
+            "other_exclusions": "Confinement, slenderness second order, code detailing, signed FE actions, SP16 independent full-column chart benchmarking"
+        },
+        "steel_table_reference": STEEL_TABLE_SOURCE,
+        "pm_curves": curves,
+        "independent_hand_example_benchmarks": {
+            "reference": "https://www.sefindia.org/forum/viewtopic.php?t=1979",
+            "original_SP16_Chart31_directly_verified": False,
+            "tests": benchmark_rows,
         },
         "valid_case": normal,
         "intentionally_unsafe_case": overload,
