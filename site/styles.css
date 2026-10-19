@@ -13,3 +13,19 @@ html{overflow-x:clip}body{background:var(--bg);color:var(--fg);font-family:ui-sa
 @media(max-width:1020px){.header-inner{gap:8px}.guild-mode{padding:8px 10px}.navigation>a,.more-menu>summary{padding:8px 7px}.hero{padding-right:0}.guild-dream{opacity:.18;z-index:-1;right:0}}
 @media(max-width:680px){.nav-row{flex-wrap:wrap;gap:5px}.brand{min-width:0;flex:1}.navigation{order:3;flex-basis:100%}.guild-mode{font-size:11px}.hero{padding:48px 0}.guild-dream{display:none}.pipeline{grid-template-columns:repeat(5,minmax(0,1fr));gap:3px}.stage{padding:10px 4px}.stage h3{font-size:10px;line-height:1.3}.stage p,.stage small{display:none}.stage-num{font-size:19px}.guild-quest-detail{padding:14px 17px}.section-title{display:block}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+
+/* M09: report-first numerical showcase; uses the existing Engineering Guild palette. */
+.m09-codex{scroll-margin-top:35px}.m09-scope{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:16px;font-size:12px;color:var(--muted)}
+.m09-view{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:22px;box-shadow:var(--shadow)}
+.m09-bar-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:18px;font-size:11px;letter-spacing:.07em;color:var(--fg)}
+.m09-status{display:inline-flex;border:1px solid var(--gold);border-radius:99px;padding:5px 10px;color:var(--gold);font-size:10px;font-weight:750}
+.m09-numbers{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.m09-stat{background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:14px;min-width:0}
+.m09-stat span,.m09-stat small{display:block;color:var(--muted);font-size:11px}.m09-stat strong{display:block;font:700 clamp(18px,2vw,24px) Georgia,serif;margin:10px 0 4px;color:var(--accent);overflow-wrap:anywhere}
+.m09-util-track{height:9px;background:var(--line);border-radius:99px;overflow:hidden;margin:18px 0 7px}.m09-util-fill{display:block;height:100%;background:linear-gradient(90deg,var(--mint),var(--accent));border-radius:99px}
+.m09-evidence{margin-top:22px}.m09-evidence h3{font-size:18px}.m09-checks{list-style:none;padding:0;margin:9px 0;display:grid;grid-template-columns:1fr 1fr;gap:8px}.m09-checks li{border-top:1px solid var(--line);padding:12px 0;display:grid;gap:4px;font-size:12px}.m09-checks span{color:var(--muted)}
+.m09-assumptions{margin-top:12px;padding:12px 0;border-top:1px solid var(--line)}.m09-assumptions summary{cursor:pointer;color:var(--accent);font-weight:700;font-size:13px}.m09-assumptions p{font-size:12px;margin:12px 0 0;color:var(--muted)}
+.m09-provenance{overflow-wrap:anywhere;font:11px ui-monospace,monospace;color:var(--muted);margin:15px 0 0}.m09-hold{background:var(--surface2);border-left:3px solid var(--gold);padding:14px 16px;margin:16px 0;color:var(--muted);font-size:12px}.m09-hold strong{color:var(--fg)}
+.m09-links{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;font-weight:700}.m09-error{color:var(--gold)}
+@media(max-width:950px){.m09-numbers{grid-template-columns:1fr 1fr}}@media(max-width:540px){.m09-view{padding:14px}.m09-numbers,.m09-checks{grid-template-columns:1fr}}
