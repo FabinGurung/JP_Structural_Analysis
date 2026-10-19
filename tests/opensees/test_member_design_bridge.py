@@ -144,3 +144,19 @@ def test_missing_solved_action_digest_rejects_precheck():
     with pytest.raises(DesignBridgeError,match="signed action digest mismatch"):
         evaluate_m08_m09_m10(model=m,solved=s,
             beam_bindings=b,column_bindings=col,joint_bindings=j)
+
+
+def test_m10_adverse_signed_column_shear_direction_blocks_false_nominal_pass():
+    """A subtractive column-shear-only check must not create a fake pass."""
+    m,c,k,b,col,j,s=_run()
+    j[0]["joint"]["Ast_top_mm2"]=1200
+    j[0]["joint"]["Ast_bottom_mm2"]=700
+    result=evaluate_m08_m09_m10(model=m,solved=s,
+        beam_bindings=b,column_bindings=col,joint_bindings=j)
+    jn=result["joint_design"][0]
+    assert jn["status"]=="FAIL_UNCERTAIN_JOINT_FORCE_DIRECTION_BOUND"
+    assert any(x["check"]["joint_nominal_shear_pass"] for x in jn["scenarios"])
+    assert any(not x["upper_direction_bound_nominal_shear_pass"] for x in jn["scenarios"])
+    for row in jn["scenarios"]:
+        assert row["unresolved_shear_direction_upper_kN"] >= row["check"]["factored_Vjh_kN"]
+    assert not result["engineering_approval"]
