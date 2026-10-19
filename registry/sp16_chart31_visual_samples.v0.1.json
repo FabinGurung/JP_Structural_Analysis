@@ -1,0 +1,63 @@
+{
+  "schema": "jp.structural.sp16.chart31.visual_samples.v0.1",
+  "document": "SP16:1980 Design Aids for Reinforced Concrete to IS456:1978",
+  "edition": "SP16:1980 / IS456:1978-era design aids",
+  "original_pdf_sha256": "d2a6246a5dc7504568f4e55f310dd4be9d925fb1a8b04b6d7f5132c93f66c76e",
+  "physical_pdf_page": 139,
+  "printed_page": 116,
+  "chart_number": 31,
+  "geometry_basis": {
+    "width_mm": 400,
+    "depth_mm": 500,
+    "fck_mpa": 20,
+    "fy_mpa": 415,
+    "d_prime_over_D": 0.05,
+    "reinforcement_distribution": "equal steel on two opposing faces",
+    "p_over_fck": 0.02,
+    "total_reinforcement_percentage": 0.4,
+    "assumed_bars": "four equal 200 mm2 bar positions, 2 on each opposite face"
+  },
+  "scan_calibration": {
+    "render_zoom": 4,
+    "pixel_x_at_mu_zero": 465,
+    "pixel_x_at_mu_0_5": 1892,
+    "pixel_y_at_pu_zero": 2574,
+    "pixel_y_at_pu_1_4": 560,
+    "notes": "Estimates based on original chart image; red minor-grid and thick solid curve overlap; uncertain locations"
+  },
+  "digitization_method": "Manual visual reading of the original scan at y=0.25 and y=0.44, cross-checked against independent previously reported hand calculations; coarse ordinate only, not curve vectorization",
+  "sampling_uncertainty_note": "Readings intentionally rounded to 0.001-0.002 normalized moment; 0.010 absolute normalized moment acceptance band bounds crowding, curve identification and scan uncertainty. Do not interpret as exact full-curve verification.",
+  "points": [
+    {
+      "point_id": "SP16-CH31-FE415-TWO-FACES-P025",
+      "p_over_fck": 0.02,
+      "pu_over_fck_bD": 0.25,
+      "chart_read_mu_over_fck_bD2": 0.082,
+      "visual_read_absolute_tolerance": 0.01,
+      "independent_worked_example_mu_over_fck_bD2": 0.081575,
+      "source_pixel_estimate": {
+        "x": 699,
+        "y": 2214
+      }
+    },
+    {
+      "point_id": "SP16-CH31-FE415-TWO-FACES-P044",
+      "p_over_fck": 0.02,
+      "pu_over_fck_bD": 0.44,
+      "chart_read_mu_over_fck_bD2": 0.03,
+      "visual_read_absolute_tolerance": 0.01,
+      "independent_worked_example_mu_over_fck_bD2": 0.028979,
+      "source_pixel_estimate": {
+        "x": 551,
+        "y": 1941
+      }
+    }
+  ],
+  "acceptance": {
+    "scope": "TWO_DIRECT_CHART_SPOT_CHECKS_ONLY",
+    "full_chart_curves_digitized": false,
+    "IS456_1978_to_2000_clause_parity_verified": false,
+    "NBC105_2025_design_accepted": false,
+    "engineering_approval": false
+  }
+}
