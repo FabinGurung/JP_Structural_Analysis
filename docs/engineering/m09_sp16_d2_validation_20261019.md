@@ -65,3 +65,7 @@ P-Delta and source report traceability.
 - Original SP16 Chart 31, printed p.116, published IS456:1978-era scan also appears at https://law.resource.org/pub/in/bis/S03/is.sp.16.1980.pdf and https://img1.wsimg.com/blobby/go/8a137270-3dbc-4442-b0b6-8557ca55a5ff/downloads/SP16-1980.pdf ; each PDF download is too large for the available web fetch service. Direct original chart check remains HOLD.
 
 - M10 now retains signed column shear and evaluates an additional adverse-direction shear upper bound. A subtractive-only nominal shear PASS never substitutes for a sign-verified joint force path; a conservative upper-bound excess flags FAIL.
+
+
+## Primary SP16 source acquired (19 October 2026)
+Original PDF 255 pages; SHA256 d2a6246a5dc7504568f4e55f310dd4be9d925fb1a8b04b6d7f5132c93f66c76e. Physical p29/printed p6: original Table A, 12 verified Fe415/Fe500 stress-strain data. Physical p139/printed p116: visually inspected original Chart 31; fy415, d'/D=.05, reinforcement on two faces. Original PDF and derived complete SQLite/JSONL/page-render corpus preserved privately in governed Drive. Earlier text saying original scan was inaccessible is historical and now superseded. The curve intersections have NOT been independently digitized; IS456:1978/2000 chart applicability has NOT been reconciled. HOLD persists.

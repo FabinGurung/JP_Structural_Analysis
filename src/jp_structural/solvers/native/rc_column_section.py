@@ -19,9 +19,9 @@ from jp_structural.solvers.native.rc_report_kernels import (
 
 ENGINE_ID = "JP-M09-FIBER-SECTION-001"
 STEEL_MODEL = "SP16_TABLE_A_FE415_FE500_LINEAR_INTERPOLATION_CHART_VALIDATION_HOLD"
-STEEL_TABLE_SOURCE = ("SP16 Table A, Fe415/Fe500 design steel stress-strain; "
-    "cross-check: NRCMEC CE502PC RCC course, Table 4.1, p.10 "
-    "https://www.nrcmec.org/pdf/Course-Content/CIVIL/NR21/III-I/RCC/RCC_Course_Content.pdf")
+STEEL_TABLE_SOURCE = ("SP16:1980 original Table A, printed p6 / PDF physical p29; " 
+    "source SHA256 d2a6246a5dc7504568f4e55f310dd4be9d925fb1a8b04b6d7f5132c93f66c76e; " 
+    "original Chart31 ordinate QA and IS456 edition parity HOLD.")
 # Total strains for the fractions of design stress fy/1.15 at 0.85, 0.90,
 # 0.95, 0.975 and 1.0. The 0.80 tabular strain is rounded and replaced by
 # the exact elastic intercept 0.8 * (fy/1.15) / Es to avoid an artificial jump.

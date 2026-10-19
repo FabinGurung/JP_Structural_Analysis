@@ -1,0 +1,105 @@
+{
+  "schema": "jp.structural.sp16_primary_source.v0.1",
+  "document": "SP16:1980 Design Aids for Reinforced Concrete to IS456:1978 (eleventh reprint March 1999 with Amendment 1)",
+  "sha256": "d2a6246a5dc7504568f4e55f310dd4be9d925fb1a8b04b6d7f5132c93f66c76e",
+  "pages": 255,
+  "private_google_drive": "Original PDF and complete SQLite/JSONL page-image extraction in governed JP research-ingestion folders; no raw standards PDF published to this repository",
+  "table_a": {
+    "physical_page": 29,
+    "printed_page": 6,
+    "grades": [
+      415,
+      500
+    ],
+    "points": [
+      {
+        "fy_mpa": 415,
+        "fraction": 0.8,
+        "strain": 0.00144,
+        "stress_mpa": 288.7
+      },
+      {
+        "fy_mpa": 415,
+        "fraction": 0.85,
+        "strain": 0.00163,
+        "stress_mpa": 306.7
+      },
+      {
+        "fy_mpa": 415,
+        "fraction": 0.9,
+        "strain": 0.00192,
+        "stress_mpa": 324.8
+      },
+      {
+        "fy_mpa": 415,
+        "fraction": 0.95,
+        "strain": 0.00241,
+        "stress_mpa": 342.8
+      },
+      {
+        "fy_mpa": 415,
+        "fraction": 0.975,
+        "strain": 0.00276,
+        "stress_mpa": 351.8
+      },
+      {
+        "fy_mpa": 415,
+        "fraction": 1,
+        "strain": 0.0038,
+        "stress_mpa": 360.9
+      },
+      {
+        "fy_mpa": 500,
+        "fraction": 0.8,
+        "strain": 0.00174,
+        "stress_mpa": 347.8
+      },
+      {
+        "fy_mpa": 500,
+        "fraction": 0.85,
+        "strain": 0.00195,
+        "stress_mpa": 369.6
+      },
+      {
+        "fy_mpa": 500,
+        "fraction": 0.9,
+        "strain": 0.00226,
+        "stress_mpa": 391.3
+      },
+      {
+        "fy_mpa": 500,
+        "fraction": 0.95,
+        "strain": 0.00277,
+        "stress_mpa": 413
+      },
+      {
+        "fy_mpa": 500,
+        "fraction": 0.975,
+        "strain": 0.00312,
+        "stress_mpa": 423.9
+      },
+      {
+        "fy_mpa": 500,
+        "fraction": 1,
+        "strain": 0.00417,
+        "stress_mpa": 434.8
+      }
+    ],
+    "status": "DIRECT_PRIMARY_SOURCE_VALUES_TRANSCRIBED_AND_CODE_TESTED"
+  },
+  "chart31": {
+    "physical_page": 139,
+    "printed_page": 116,
+    "fy_mpa": 415,
+    "bar_location_ratio": 0.05,
+    "layout": "RECTANGULAR_TWO_FACES",
+    "axes": "Pu/(fck*b*D) versus Mu/(fck*b*D^2)",
+    "original_chart_visually_available": true,
+    "curve_points_independently_digitized": false,
+    "code_edition_compatibility_verified": false,
+    "engineering_approval": false
+  },
+  "full_pdf_image_pages_preserved": 255,
+  "charts_indexed": 92,
+  "engineering_approval": false
+}
