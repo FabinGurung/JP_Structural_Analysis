@@ -38,7 +38,7 @@ def verify_m09_case(problems):
             d["case_id"]=="ASSUMED-M09-SECTION-001",
             d["engineering_approval"] is False,
             d["report_accepted"] is False,
-            ref["status"]=="BOUNDED_NUMERICAL_PRECHECK_SP16_AND_STEEL_LAW_HOLD",
+            ref["status"]=="BOUNDED_NUMERICAL_PRECHECK_SP16_CHART_AND_DETAILING_HOLD",
             ref["code_check_complete"] is False,
             ref["legacy_interaction"]["engineering_approval"] is False,
             unsafe["status"]=="FAIL",
@@ -59,6 +59,35 @@ def verify_m09_case(problems):
     except (ValueError,KeyError,TypeError,IndexError) as exc:
         problems.append("Malformed generated M09 JSON: "+str(exc))
 
+
+def verify_sp16_and_d2(problems):
+    import json
+    from math import isfinite
+    try:
+        s=json.loads((SITE/"data/sp16_1980_primary_source.v0.1.json").read_text())
+        d=json.loads((SITE/"data/d2_signed_frame.v0.1.json").read_text())
+        assert s["schema"]=="jp.structural.sp16_primary_source.v0.1"
+        assert s["sha256"]=="d2a6246a5dc7504568f4e55f310dd4be9d925fb1a8b04b6d7f5132c93f66c76e"
+        assert s["pages"]==255 and s["charts_indexed"]==92
+        assert len(s["table_a"]["points"])==12
+        assert s["chart31"]["physical_page"]==139
+        assert s["chart31"]["original_chart_visually_available"] is True
+        assert s["chart31"]["curve_points_independently_digitized"] is False
+        assert s["chart31"]["engineering_approval"] is False
+        assert s["engineering_approval"] is False
+        assert d["schema"]=="jp.structural.d2_m08_m09_m10_synthetic_demo.v0.1"
+        assert d["engineering_approval"] is False
+        assert d["report_accepted"] is False
+        checks=d["design_checks"]
+        assert checks["engineering_approval"] is False
+        assert all(len(checks[k])==1 for k in ("beam_design","column_design","joint_design"))
+        assert all(x["global_equilibrium_pass"] for x in d["signed_fe_actions"]["raw_cases"])
+        assert isfinite(checks["column_design"][0]["governing_interaction_utilization"])
+        for page in ("calculation-coverage.html","report.html"):
+            assert "data-d2-view=" in (SITE/page).read_text()
+    except (OSError,ValueError,KeyError,TypeError,IndexError,AssertionError) as exc:
+        problems.append("SP16/D2 original-source and safety state malformed: "+str(exc))
+
 def main():
     problems=[]
     for page in PAGES:
@@ -67,7 +96,7 @@ def main():
         text=p.read_text(encoding="utf-8")
         parser=Parse();parser.feed(text)
         if parser.css!=["styles.css"]:problems.append(page+": inconsistent stylesheet")
-        if parser.scripts!=["app.js"]:problems.append(page+": inconsistent app script")
+        if parser.scripts!=(["app.js","d2.js"] if page in ("calculation-coverage.html","report.html") else ["app.js"]):problems.append(page+": inconsistent app scripts")
         if parser.mains!=1:problems.append(page+": expected one main")
         for target in ("index.html","calculation-coverage.html","report.html","more.html"):
             if target not in text:problems.append(page+": missing nav target "+target)
@@ -77,11 +106,12 @@ def main():
             local=(SITE/page).parent/unquote(u.path)
             if not local.is_file() and not (local in {SITE/"demo/SAR.html", SITE/"demo/validation_results.json"} and not (SITE/"demo").exists()):
                 problems.append(page+": broken local link "+url)
-    for path in ("styles.css","app.js","data/report-calculation-coverage.v0.1.json"):
+    for path in ("styles.css","app.js","d2.js","data/sp16_1980_primary_source.v0.1.json","data/report-calculation-coverage.v0.1.json"):
         if not (SITE/path).is_file():problems.append("Missing "+path)
     if (SITE/"styles.css").stat().st_size>28000:problems.append("Shared CSS unexpectedly large")
     if (SITE/"app.js").stat().st_size>12000:problems.append("Shared JS unexpectedly large")
     verify_m09_case(problems)
+    verify_sp16_and_d2(problems)
     if problems:raise SystemExit("\n".join(problems))
-    print("STRUCTURAL_SITE_QA_PASS: four pages, M09 generated reference, shared theme and relative links")
+    print("STRUCTURAL_SITE_QA_PASS: four pages, primary SP16 Table A, M09 and D2 signed generated evidence, shared theme and relative links")
 if __name__=="__main__":main()
