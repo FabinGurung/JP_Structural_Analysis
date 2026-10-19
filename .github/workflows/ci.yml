@@ -34,6 +34,8 @@ jobs:
         run: python scripts/build_m09_section_case.py --output site/data/m09-section-capacity.v0.1.json
       - name: Generate signed D2 OpenSees synthetic member design evidence
         run: python scripts/build_d2_signed_frame_case.py --output site/data/d2_signed_frame.v0.1.json
+      - name: Regenerate direct SP16 Chart31 sampled source evidence for website QA
+        run: python scripts/build_sp16_chart31_spotcheck.py --output site/data/sp16_chart31_spotcheck.v0.1.json
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
