@@ -6,6 +6,7 @@ on:
       - engine/opensees-sar-v0.1
       - site/m09-pm-publication-20261019
       - site/sp16-d2-evidence-20261019
+      - site/sp16-chart31-benchmark-20261019
   pull_request:
   workflow_dispatch:
 
@@ -51,6 +52,13 @@ jobs:
         with:
           name: m09-section-capacity-strain-compatibility-not-approved
           path: build/m09_section/section_case.json
+      - name: Build original-source SP16 Chart31 coarse ordinate benchmark
+        run: python scripts/build_sp16_chart31_spotcheck.py --output build/sp16_chart31/chart31_comparison.json
+      - name: Upload bounded Chart31 comparisons and code edition debt
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: sp16-1980-original-chart31-direct-spotchecks-not-approved
+          path: build/sp16_chart31/chart31_comparison.json
       - name: Archive D2 signed OpenSees M08 M09 M10 evidence (engineering HOLD)
         uses: actions/upload-artifact@v7.0.1
         with:
