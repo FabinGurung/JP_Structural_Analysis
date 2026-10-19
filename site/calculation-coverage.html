@@ -7,11 +7,23 @@
   <div class="section-title"><div><span class="eyebrow">M09 / COLUMN · CALCULATION SKILL</span><h2 id="m09-title">P–M section-capacity trial</h2></div><p>Derived from actual numerical engine results, not hand-entered report values.</p></div>
   <div class="m09-scope"><span class="pill partial">PARTIAL / VALIDATION HOLD</span><span>IS 456:2000 §§38.1, 39.1, 39.6 · synthetic 400 × 500 mm reinforced-concrete column</span></div>
   <div data-m09-view="full" class="m09-view" aria-live="polite"><p>Loading the machine-generated M09 numerical case…</p></div>
-  <div class="m09-hold"><strong>Not a certified design.</strong> Bilinear reinforcement idealization is not the verified complete Fig.23A material law. The outputs need independent SP16 comparison, complete NBC seismic detailing, signed FE load envelopes and professional approval.</div>
-  <div class="m09-links"><a href="data/m09-section-capacity.v0.1.json">Machine-readable calculation JSON ↗</a><a href="https://github.com/FabinGurung/JP_Structural_Analysis/actions/runs/39178072935/artifacts/12154064838">Source CI artifact ↗</a><a href="report.html#m09-report-case">How this fits the report →</a></div>
+  <div class="m09-hold"><strong>Not a certified design.</strong> Original SP16 Table A now has 12 directly verified stress-strain reference points. Chart 31 is readable, but direct numeric chart agreement, current-code compatibility, NBC detailing and professional approval remain open.</div>
+  <div class="m09-links"><a href="data/m09-section-capacity.v0.1.json">Machine-readable calculation JSON ↗</a><a href="https://github.com/FabinGurung/JP_Structural_Analysis/actions/runs/39221377110">Source CI artifact ↗</a><a href="report.html#m09-report-case">How this fits the report →</a></div>
 </section>
 
+
+<section class="section" id="sp16-primary" aria-labelledby="sp16-title">
+  <div class="section-title"><div><span class="eyebrow">SOURCE RELIC · ORIGINAL SP16:1980</span><h2 id="sp16-title">Code charts now traceable</h2></div><p>255-page original, indexed in private Drive; public metadata only.</p></div>
+  <div class="split"><div class="panel"><h3>12/12 original Table A points</h3><p>Fe415 and Fe500 stress–strain points, checked against the numerical section solver. Original printed page 6 / PDF page 29.</p><small>PRIMARY SOURCE DATA · REGRESSION GATE</small></div><div class="panel"><h3>Chart 31 · original located</h3><p>Fe415, d′/D = 0.05, rectangular column with two faces of bars. Original printed page 116 / PDF page 139.</p><small>CHART IMAGE AVAILABLE · DIRECT ORDINATE QA HOLD</small></div></div>
+  <p class="m09-links"><a href="data/sp16_1980_primary_source.v0.1.json">Machine-readable source record ↗</a><a href="report.html#d2-trace">View D2 report evidence →</a></p>
+</section>
+<section class="section m09-codex" id="d2-member-trace">
+ <div class="section-title"><div><span class="eyebrow">PHASE D2 · OPENSees → DESIGN</span><h2>Signed member-end actions</h2></div><p>Real engine-generated synthetic elastic-frame results and bounded M08/M09/M10 checks.</p></div>
+ <div class="m09-view" data-d2-view="calculation" aria-live="polite"><p>Loading signed FE design evidence…</p></div>
+ <div class="m09-hold"><strong>Engineering HOLD.</strong> Same-case signed load combinations are tested, but response-spectrum sign reconstruction, hinge capacities, complete joint forces, original Chart 31 ordinate acceptance and actual project verification remain open.</div>
+ <p class="m09-links"><a href="data/d2_signed_frame.v0.1.json">D2 source-calculated JSON ↗</a></p>
+</section>
 <div class="filterbar"><label for="search">Find a calculation<input id="search" type="search" placeholder="e.g. beam, period, footing, mass"></label><label for="status">Status<select id="status"><option value="">All statuses</option><option value="IMPLEMENTED_BOUNDED">Bounded</option><option value="PARTIAL">Partial</option><option value="DRAFT_UNVALIDATED">Draft</option><option value="MISSING">Missing</option></select></label></div>
 <div class="compact-count" id="count" aria-live="polite">Loading calculation registry…</div><div class="coverage-list" id="coverage-list" aria-label="Calculation module coverage"></div>
 <div class="panel subtle"><p><strong>Source authority:</strong> the public JSON projection is generated from <code>registry/report-calculation-coverage.v0.1.json</code>, with CI checks for path validity and reproducible content. Real project inputs and report extraction archives remain private in Drive.</p></div>
-</main><footer class="site-footer"><div class="wrap footer-inner"><span>JP Structural Analysis · OpenSees primary · Not an engineering approval</span><span id="build">Source snapshot · read-only public demonstration</span></div></footer><script src="app.js" defer></script></body></html>
+</main><footer class="site-footer"><div class="wrap footer-inner"><span>JP Structural Analysis · OpenSees primary · Not an engineering approval</span><span id="build">Source snapshot · read-only public demonstration</span></div></footer><script src="app.js" defer></script><script src="d2.js" defer></script></body></html>

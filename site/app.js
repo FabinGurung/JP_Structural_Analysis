@@ -123,7 +123,7 @@ list.forEach((el,i)=>{el.addEventListener('click',()=>activate(i));el.addEventLi
       if(d.schema!=="jp.structural.m09_column_section.v0.1"||
          d.engineering_approval!==false||d.report_accepted!==false||
          d.valid_case?.face_capacities?.length!==4||
-         d.valid_case?.status!=="BOUNDED_NUMERICAL_PRECHECK_SP16_AND_STEEL_LAW_HOLD"||
+         d.valid_case?.status!=="BOUNDED_NUMERICAL_PRECHECK_SP16_CHART_AND_DETAILING_HOLD"||
          d.intentionally_unsafe_case?.status!=="FAIL"||
          !Number.isFinite(d.valid_case?.legacy_interaction?.interaction_utilization))
          throw Error("M09 evidence schema or safety states invalid");
