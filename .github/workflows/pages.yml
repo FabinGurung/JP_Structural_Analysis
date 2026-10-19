@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: d10f82518c2a0afc2e5179b8a75e6f90fa6a0c5a
+          ref: 2349678ff60f8f69d24643b62709b4e6d1207e1b
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -37,11 +37,14 @@ jobs:
         run: python examples/sanitized/mdm_two_span/build_example.py --output site/demo
       - name: Generate engine-derived synthetic M09 evidence for public site
         run: python scripts/build_m09_section_case.py --output site/data/m09-section-capacity.v0.1.json
+      - name: Generate signed D2 OpenSees M08 M09 M10 synthetic evidence for site
+        run: python scripts/build_d2_signed_frame_case.py --output site/data/d2_signed_frame.v0.1.json
       - name: Validate current report-first coverage and site navigation
         run: |
           python scripts/build_calculation_coverage.py --check
           python scripts/check_site.py
           node --check site/app.js
+          node --check site/d2.js
       - name: Write deployment metadata
         run: |
           python - <<'PY'
