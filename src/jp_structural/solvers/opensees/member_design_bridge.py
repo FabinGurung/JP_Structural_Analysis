@@ -209,7 +209,7 @@ def solve_signed_member_cases(*, model: dict, cases: Sequence[dict],
         })
     payload = json.dumps({"model": model, "cases": cases, "combinations": combinations},
                          sort_keys=True, separators=(",", ":"), allow_nan=False)
-    return {
+    output = {
         "schema": _SCHEMA, "model_id": _require_string(model, "model_id"),
         "model_digest_sha256": _model_digest(model),
         "input_bundle_sha256": hashlib.sha256(payload.encode()).hexdigest(),
@@ -222,6 +222,46 @@ def solve_signed_member_cases(*, model: dict, cases: Sequence[dict],
         "status": "SIGNED_STATIC_ACTIONS_AND_EQUILIBRIUM_VERIFIED_NOT_DESIGN_APPROVAL",
         "modal_combinations_supported": False, "engineering_approval": False,
     }
+    output["results_digest_sha256"] = hashlib.sha256(
+        json.dumps({"raw_cases": raw, "combinations": combination_results},
+                   sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
+    ).hexdigest()
+    return output
+
+
+def _validate_solved_action_integrity(solved):
+    """Detect accidental editing of an already-tested FE result before design.
+
+    This checksum is an integrity trail, not cryptographic proof of trusted
+    OpenSees execution or professional acceptance.
+    """
+    rows = {"raw_cases": solved.get("raw_cases"),
+            "combinations": solved.get("combinations")}
+    try:
+        digest = hashlib.sha256(json.dumps(
+            rows,sort_keys=True,separators=(",", ":"),allow_nan=False
+        ).encode()).hexdigest()
+        if digest != solved.get("results_digest_sha256"):
+            raise DesignBridgeError("signed action digest mismatch")
+        by_case = {r["case_id"]: r for r in _records(rows["raw_cases"], "raw_cases")}
+        for combo in _records(rows["combinations"], "combinations"):
+            for mid, ends in combo["local_end_resisting_actions"].items():
+                for end in ("I","J"):
+                    for axis in _COMPONENTS:
+                        expected = math.fsum(
+                            _finite(r["factor"],"factor") *
+                            _finite(by_case[r["case_id"]]["local_end_resisting_actions"][mid][end][axis],
+                                    "raw member end")
+                            for r in combo["signed_factors"]
+                        )
+                        got = _finite(ends[end][axis], "combined member end")
+                        if not math.isclose(got, expected, rel_tol=1e-10, abs_tol=1e-7):
+                            raise DesignBridgeError("signed combination algebra failed integrity QA")
+        if any(r.get("global_equilibrium_pass") is not True for r in rows["raw_cases"]):
+            raise DesignBridgeError("solver free-body QA missing")
+    except (KeyError,TypeError,IndexError,OverflowError,ValueError) as exc:
+        if isinstance(exc,DesignBridgeError):raise
+        raise DesignBridgeError("signed member action integrity data malformed") from exc
 
 
 def evaluate_m08_m09_m10(*, model: dict, solved: dict,
@@ -231,6 +271,7 @@ def evaluate_m08_m09_m10(*, model: dict, solved: dict,
     """Consume same-case signed FE actions; external design inputs stay explicit."""
     if solved.get("schema") != _SCHEMA or solved.get("engineering_approval") is not False:
         raise DesignBridgeError("verified signed OpenSees result required")
+    _validate_solved_action_integrity(solved)
     if solved.get("model_digest_sha256") != _model_digest(model):
         raise DesignBridgeError("model differs from solved OpenSees source")
     members = _members(model)
