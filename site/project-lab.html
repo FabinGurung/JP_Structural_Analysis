@@ -16,7 +16,7 @@
  <span class="eyebrow">ACTIVE CASE STUDY · GOVERNED ENGINEERING PROJECT</span>
  <h1>G+1.5 · calculation journal</h1>
  <p>A real-source-derived structural calculation trail from the source report, through assumed geometry, loads, seismic response, member checks and engineering QA. This is <strong>not</strong> the synthetic benchmark or a construction certificate.</p>
- <div class="lab-actions"><a class="btn primary" href="#lab-journey">Explore each calculation gate ↓</a><a class="btn secondary" href="#lab-library">Calculation library</a><a class="btn secondary" href="#lab-private">Inspect private force cases ↓</a><a class="btn secondary" href="report.html">SAR structure →</a></div>
+ <div class="lab-actions"><a class="btn primary" href="#lab-journey">Explore each calculation gate ↓</a><a class="btn secondary" href="#lab-gate08">Gate08 sensitivity</a><a class="btn secondary" href="#lab-library">Calculation library</a><a class="btn secondary" href="#lab-private">Inspect private force cases ↓</a><a class="btn secondary" href="report.html">SAR structure →</a></div>
  <p class="lab-boundary"><strong>Public view:</strong> de-identified, curated numerical summaries only. Full drawings, original ETABS report, specific member force vectors and private coordinates remain in governed Google Drive. Values depend on assumed load paths and connections.</p>
 </section>
 <section class="section compact" aria-label="Current numerical project summary">
@@ -59,6 +59,40 @@
  </div>
 </section>
 
+
+<section class="section" id="lab-gate08">
+ <div class="section-title"><div><span class="eyebrow">GATE08 · ACTIVE SOURCE RECONCILIATION</span><h2>Actual source; alternative analytical models</h2></div><p>816 private FE case solves. Public graph uses QA-checked aggregate outputs, not the raw confidential model.</p></div>
+ <div class="lab-source-note" id="gate08-source-state" role="status">Loading de-identified source-linked Gate08 evidence…</div>
+ <div class="lab-kpis" id="gate08-kpis" aria-label="Gate08 calculations summary"></div>
+ <div class="lab-mass-grid" style="margin-top:20px">
+  <article class="panel"><h3>Floor area: documented versus proxies</h3>
+    <div id="gate08-footprint-rows"></div>
+    <p class="lab-chart-note">A column-grid convex hull (224.38 m²) is a nearer footprint proxy than the 263.13 m² bounding rectangle, but neither represents measured slab outlines, setbacks or openings.</p>
+  </article>
+  <article class="panel"><h3>Why the seismic mass remains open</h3>
+    <div id="gate08-mass-rows"></div>
+    <p class="lab-chart-note">Equivalent extra-wall/partition lengths are inverse arithmetic sensitivities, <strong>not evidence that those walls exist</strong>. Even covering the whole remaining grid perimeter does not independently reconcile W.</p>
+  </article>
+ </div>
+ <div class="section-title" style="margin-top:32px"><div><span class="eyebrow">PRIVATE FE / PUBLIC INTEGRITY-CHECKED PROJECTION</span><h2>Compare 16 solved scenarios</h2></div><p>Choose a state and response. Each bar represents one concurrent FE case family under its specific assumptions.</p></div>
+ <div class="lab-compare-controls">
+  <label for="gate08-state">Limit state</label><select id="gate08-state"><option value="ULS">ULS</option><option value="SLS">SLS</option></select>
+  <label for="gate08-metric">Response</label><select id="gate08-metric"><option value="drift_ratio">Design drift screening (%)</option><option value="roof_mm">Maximum roof movement (mm)</option><option value="max_member_end_moment_kNm">Maximum same-case end moment (kN·m)</option></select>
+  <label for="gate08-walls">Wall hypothesis</label><select id="gate08-walls"><option value="ALL">Compare both</option><option value="true">With walls</option><option value="false">Without walls</option></select>
+ </div>
+ <div class="panel">
+   <div id="gate08-chart" class="lab-response-chart" role="img" aria-label="Limit-state comparison of real-source Gate08 sensitivity scenarios"></div>
+   <p class="lab-chart-note" id="gate08-legend"></p>
+ </div>
+ <details class="lab-detail"><summary>View all 16 source-calculated variants, with same-case force maxima</summary>
+  <div class="lab-scroll"><table class="lab-table"><thead><tr><th>State</th><th>Diaphragm</th><th>Loading footprint</th><th>Wall trial</th><th>Roof (mm)</th><th>Drift</th><th>End moment (kN·m)</th><th>Numerical screen</th></tr></thead><tbody id="gate08-variant-rows"></tbody></table></div>
+ </details>
+ <div class="lab-finding panel lab-warn" style="margin-top:18px">
+  <small>ENGINEERING DECISION · NOT YET VERIFIED</small><h3>Keep both bounding diaphragm interpretations</h3>
+  <p>For design acceptance we need the actual floor/terrace boundary, openings, wall lengths and locations, mass-source rules and in-plane slab/collector stiffness. The nominal ULS drift limit is 2.5%, and the SLS limit 0.6%, but neither proxy is evidence of the constructed floor diaphragm. F3's independent one-way shear source failure is unchanged.</p>
+ </div>
+ <p class="lab-chart-note">Full 12-component signed member-end results for all 816 cases remain in the <a href="#lab-private">private local evidence viewer</a> and governed archive. This page never downloads or exposes the confidential case-model coordinates or member identifiers.</p>
+</section>
 <section class="section" id="lab-private">
  <div class="section-title"><div><span class="eyebrow">PRIVATE EVIDENCE VIEWER · LOCAL FILES ONLY</span><h2>Inspect every signed FE action locally</h2></div><p>Choose one or more private Gate06 full-analysis JSON files extracted from the archive. Nothing is uploaded to the repository or a server.</p></div>
  <div class="panel lab-private-panel">
@@ -81,5 +115,5 @@
 </section>
 </main>
 <footer class="site-footer"><div class="wrap footer-inner"><span>JP Structural Analysis · G+1.5 de-identified project journal · Engineering approval HOLD</span><span>Private source remains in Drive</span></div></footer>
-<script src="app.js" defer></script><script src="project-ledger.js" defer></script><script src="private-force-viewer.js" defer></script>
+<script src="app.js" defer></script><script src="project-ledger.js" defer></script><script src="gate08.js" defer></script><script src="private-force-viewer.js" defer></script>
 </body></html>
