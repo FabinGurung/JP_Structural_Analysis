@@ -60,6 +60,17 @@ jobs:
         run: |
           python scripts/build_calculation_coverage.py --check
           python scripts/check_site.py
+      - name: Check public project visualization scripts
+        run: |
+          node --check site/app.js
+          node --check site/project-ledger.js
+          node --check site/gate08.js
+          node --check site/private-force-viewer.js
+      - name: Publish anonymized Gate08 result evidence (not a structural approval)
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: g15-gate08-public-projection-not-approved
+          path: site/data/g15-gate08-reconciliation.v0.1.json
       - name: Build source-linked assumed RC numerical report
         run: python scripts/build_rc_reference_case.py --output build/assumed_rc/reference_case.json
       - name: Upload assumed RC numerical report (not approved design)
