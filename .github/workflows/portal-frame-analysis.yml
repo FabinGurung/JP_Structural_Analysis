@@ -1,0 +1,58 @@
+name: portal-frame-analysis
+
+on:
+  issues:
+    types: [opened]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  run-portal-frame:
+    if: github.event_name == 'workflow_dispatch' || (github.event.issue.user.login == 'FabinGurung' && startsWith(github.event.issue.title, '[JP Frame MVP]'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Checkout tested numerical engine (immutable snapshot)
+        uses: actions/checkout@v6
+        with:
+          ref: 8d804ec4df1a6052b7acfe2fda4a738a2bb4d1ca
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install verified OpenSees test stack
+        run: python -m pip install -e ".[test,opensees]"
+      - name: Run validated signed-frame OpenSees scenario
+        env:
+          RUN_MODE: ${{ github.event_name }}
+        run: |
+          if [ "$RUN_MODE" = "workflow_dispatch" ]; then
+            python scripts/run_portal_frame.py --sample --output build/portal-web/open_sees_result.json
+          else
+            python scripts/run_portal_frame.py --event-file "$GITHUB_EVENT_PATH" --output build/portal-web/open_sees_result.json
+          fi
+      - name: Retain source-labelled signed-member output
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: portal-open-sees-synthetic-run-${{ github.run_id }}
+          path: build/portal-web/open_sees_result.json
+          retention-days: 30
+      - name: Post issue result link after successful analysis
+        if: github.event_name == 'issues'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body = `✅ Synthetic OpenSees frame analysis completed. The job checked reactions and calculated three signed cases (gravity, +X, −X), with nine frame members in each. Download the **portal-open-sees-synthetic-run-${context.runId}** JSON artifact at ${runUrl}. This is an idealized 2D sample, **not** the private G+1.5 project, and is not an engineering approval.`;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body
+            });

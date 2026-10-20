@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 0379b1e5ecf048c07c019fc9b784e9fb95cd8304
+          ref: 8d804ec4df1a6052b7acfe2fda4a738a2bb4d1ca
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -49,6 +49,8 @@ jobs:
         run: python scripts/build_g15_public_ledger.py --output site/data/g15-project-ledger.v0.2.json
       - name: Regenerate de-identified real-source Gate08 sensitivity ledger
         run: python scripts/build_g15_gate08_public.py --output site/data/g15-gate08-reconciliation.v0.1.json
+      - name: Verify bounded configurable OpenSees scenario
+        run: python scripts/run_portal_frame.py --sample --output site/data/portal-reference-frame.v1.json
       - name: Validate current report-first coverage and site navigation
         run: |
           python scripts/build_calculation_coverage.py --check
@@ -58,6 +60,7 @@ jobs:
           node --check site/project-ledger.js
           node --check site/gate08.js
           node --check site/private-force-viewer.js
+          node --check site/analysis-studio.js
       - name: Write deployment metadata
         run: |
           python - <<'PY'
