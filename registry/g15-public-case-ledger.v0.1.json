@@ -1,0 +1,353 @@
+{
+  "schema": "jp.structural.deidentified.project_calculation_ledger.source.v0.1",
+  "case_id": "G15_REAL_REPORT_CASE_A",
+  "case_label": "G+1.5 source-linked structural study",
+  "publication": "USER_REQUESTED_DEIDENTIFIED_AGGREGATE_ONLY",
+  "source_visibility": "PRIVATE_DRIVE_SOURCE_NOT_PUBLISHED",
+  "source_qualification": "The calculations are real-source-derived but frame topology, loads and reinforcement are provisionally reconstructed; this is not an as-built model.",
+  "private_evidence_checksums": {
+    "gate06_summary_sha256": "df8c3bdcec79d6ac88528926411cfea7ea2cc8101ac6ad9208489b62dad2d5db",
+    "gate06_mass_sha256": "6ad1d678dd7ea0da77784c7d57b107234ed87b4d4faf4607c1fc8bc067d4bc14",
+    "gate07_private_archive_sha256": "35989464a2b1be37322ea2915a69295bb3c294849fbb8ba8783f0bc5cdd9b4ff"
+  },
+  "scope": {
+    "story_count_assumed": 3,
+    "node_count": 92,
+    "column_segments": 69,
+    "beam_segments": 96,
+    "member_count": 165,
+    "hypothetical_connector_count": 2,
+    "floor_shape_verified": false,
+    "diaphragm_verified": false,
+    "column_to_grid_mapping_verified": false,
+    "actual_site_hazard_verified": false
+  },
+  "workflow": [
+    {
+      "id": "G02",
+      "title": "Source geometry",
+      "subtitle": "Grid and report evidence",
+      "status": "PROVISIONAL",
+      "summary": "23 sourced column-grid marks; floor caption areas and material tables extracted. Floor outlines and storey classification remain unresolved."
+    },
+    {
+      "id": "G03",
+      "title": "Frame hypothesis",
+      "subtitle": "Connectivity",
+      "status": "ASSUMED",
+      "summary": "92 nodes, 69 column segments and 96 candidate beams. Two explicitly hypothetical connectors were approved for calculations, not confirmed on site."
+    },
+    {
+      "id": "G04",
+      "title": "Column / footing",
+      "subtitle": "M09 + foundations",
+      "status": "MIXED",
+      "summary": "C24 material and demand reconstruction with reinforcement sensitivity; source F3 one-way shear is unsafe and remains open."
+    },
+    {
+      "id": "G05",
+      "title": "Gravity + ESM",
+      "subtitle": "Signed force solve",
+      "status": "TESTED_WITH_ASSUMPTIONS",
+      "summary": "19 signed load and combination cases; ~895 kN historical-source ULS ESM base-shear trial, no complete source FE equivalence."
+    },
+    {
+      "id": "G06",
+      "title": "Eccentricity / mass",
+      "subtitle": "NBC 105 stiffness",
+      "status": "WARNING",
+      "summary": "153 3D-frame solves; gross, ULS and SLS stiffness, ±5% eccentricity, signed member-action envelopes and significant drift sensitivities."
+    },
+    {
+      "id": "G07",
+      "title": "Slab / wall / diaphragm",
+      "subtitle": "Load path study",
+      "status": "WARNING",
+      "summary": "204 additional cases; source-grid tributary shares, source-coefficient wall-edge hypothesis and flexible-vs-rigid diaphragm extremes. Seismic weight remains unreconciled."
+    }
+  ],
+  "calculation_families": [
+    {
+      "id": "M01",
+      "title": "Geometry and continuity",
+      "status": "PROVISIONAL",
+      "provenance": "Report drawing/G02/G03",
+      "note": "Source grid 23; storey polygons not verified",
+      "ref": "G02"
+    },
+    {
+      "id": "M02",
+      "title": "Gravity dead and imposed",
+      "status": "ASSUMED",
+      "provenance": "Report load tables / G05",
+      "note": "Member selfweight plus area-caption floor loads; wall paths provisional",
+      "ref": "G05"
+    },
+    {
+      "id": "M03",
+      "title": "Seismic mass",
+      "status": "OPEN",
+      "provenance": "ETABS W versus G06/G07 inventory",
+      "note": "Source-to-reconstruction mass discrepancy retained",
+      "ref": "G07"
+    },
+    {
+      "id": "M04",
+      "title": "3D frame and equilibrium",
+      "status": "BOUNDED",
+      "provenance": "Independent elastic FE / G05–G07",
+      "note": "336 assumed-frame cases after G05; 153 Gate06 + 204 Gate07",
+      "ref": "G07"
+    },
+    {
+      "id": "M05",
+      "title": "Base shear and NBC 105 ESM",
+      "status": "PROVISIONAL",
+      "provenance": "Official NBC 105:2025 / source coefficients",
+      "note": "Historical report coefficient carried as candidate; site hazard unverified",
+      "ref": "G05"
+    },
+    {
+      "id": "M06",
+      "title": "Eccentricity and cracked EI",
+      "status": "WARNING",
+      "provenance": "NBC 105:2025 §3.4, §5.6 / G06",
+      "note": "±5% and gross/ULS/SLS flexural stiffness comparisons",
+      "ref": "G06"
+    },
+    {
+      "id": "M07",
+      "title": "Interstorey drift",
+      "status": "WARNING",
+      "provenance": "NBC 105:2025 §5.5 / G06/G07",
+      "note": "Provisional drift exceedances in flexible frame; not established as-building FAIL",
+      "ref": "G07"
+    },
+    {
+      "id": "M08",
+      "title": "Beam shear and hinge capacity",
+      "status": "PARTIAL",
+      "provenance": "Signed D2 adapter",
+      "note": "Hinge capacities and ductile detailing require verification",
+      "ref": "G04"
+    },
+    {
+      "id": "M09",
+      "title": "Column P–M–M",
+      "status": "PARTIAL",
+      "provenance": "SP16 primary + C24 scenario",
+      "note": "Approximate Chart31 spot-checks, provisional source-reinforcement layout",
+      "ref": "G04"
+    },
+    {
+      "id": "M10",
+      "title": "Joint shear",
+      "status": "PARTIAL",
+      "provenance": "D2 signed column shear and joint geometry",
+      "note": "Adverse-direction bound; physical joint geometry still unverified",
+      "ref": "G04"
+    },
+    {
+      "id": "M12",
+      "title": "Footing F3 one-way shear",
+      "status": "FAIL_SOURCE",
+      "provenance": "Original source design worksheet",
+      "note": "NOT SAFE IN ONE WAY SHEAR; no redesign acceptance",
+      "ref": "G04"
+    },
+    {
+      "id": "G07D",
+      "title": "Diaphragm load paths",
+      "status": "HOLD",
+      "provenance": "New Gate07 MPC comparator",
+      "note": "Rigid and flexible are bounding assumptions; no mapped physical slabs",
+      "ref": "G07"
+    }
+  ],
+  "gravity_mass": {
+    "report_W_kN": 6831.9109,
+    "member_selfweight_kN": 1966.486,
+    "floor_added_dead_kN": 3295.536,
+    "seismic_live_share_kN": 258.462,
+    "gate06_reconstructed_kN": 5520.483743371731,
+    "gate06_gap_kN": 1311.4271566282687,
+    "wall_proxy_line_rate_kN_m": 9.24,
+    "wall_proxy_length_per_level_m": 29.188,
+    "wall_proxy_levels": 2,
+    "wall_trial_added_weight_kN": 539.39424,
+    "gate07_conditionally_reconstructed_kN": 6059.877983371731,
+    "gate07_remaining_gap_kN": 772.0329166282687,
+    "mass_reconciled": false
+  },
+  "base_shear": {
+    "ULS_kN": 894.9803,
+    "SLS_kN": 860.8208,
+    "source_load_coefficient_ref": "Legacy ETABS reported coefficients / NBC2025 check pending",
+    "approval": false
+  },
+  "gate05": {
+    "case_count": 19,
+    "signed_member_action_records": 3135,
+    "source_relation": "Provisional frame gravity and source-historical ESM coefficients",
+    "approval": false
+  },
+  "gate06": {
+    "case_count": 153,
+    "signed_member_action_records": 25245,
+    "source": "GATE06_SUMMARY private",
+    "stiffness": [
+      {
+        "id": "GROSS",
+        "roof_mm": 40.80032363178541,
+        "max_signed_end_moment_kNm": 106.48440259326844,
+        "EI_beam": 1,
+        "EI_col": 1
+      },
+      {
+        "id": "ULS",
+        "roof_mm": 71.56143598735642,
+        "max_signed_end_moment_kNm": 117.09394820974741,
+        "EI_beam": 0.35,
+        "EI_col": 0.7
+      },
+      {
+        "id": "SLS",
+        "roof_mm": 47.91275093282817,
+        "max_signed_end_moment_kNm": 109.97497289413992,
+        "EI_beam": 0.7,
+        "EI_col": 0.9
+      }
+    ],
+    "eccentric_scenarios": [
+      {
+        "state": "ULS",
+        "axis": "X",
+        "sign": "NEG",
+        "roof_mm": 60.61,
+        "design_drift": 0.033768
+      },
+      {
+        "state": "ULS",
+        "axis": "X",
+        "sign": "POS",
+        "roof_mm": 39.31,
+        "design_drift": 0.021951
+      },
+      {
+        "state": "ULS",
+        "axis": "Y",
+        "sign": "NEG",
+        "roof_mm": 39.59,
+        "design_drift": 0.021772
+      },
+      {
+        "state": "ULS",
+        "axis": "Y",
+        "sign": "POS",
+        "roof_mm": 71.56,
+        "design_drift": 0.039817
+      },
+      {
+        "state": "SLS",
+        "axis": "X",
+        "sign": "NEG",
+        "roof_mm": 39.89,
+        "design_drift": 0.005561
+      },
+      {
+        "state": "SLS",
+        "axis": "X",
+        "sign": "POS",
+        "roof_mm": 25.38,
+        "design_drift": 0.00354
+      },
+      {
+        "state": "SLS",
+        "axis": "Y",
+        "sign": "NEG",
+        "roof_mm": 25.42,
+        "design_drift": 0.003474
+      },
+      {
+        "state": "SLS",
+        "axis": "Y",
+        "sign": "POS",
+        "roof_mm": 47.91,
+        "design_drift": 0.006671
+      }
+    ],
+    "code_drift_limit": {
+      "ULS": 0.025,
+      "SLS": 0.006
+    },
+    "caveat": "Each ratio is an elastic assumed frame chord estimate, ULS scaled by Rmu=4; not verified interstorey drift of the project."
+  },
+  "gate07": {
+    "case_count": 204,
+    "signed_action_records": 33660,
+    "wall_edges": 7,
+    "diaphragm_status": "RIGID_AND_FLEXIBLE_ASSUMED_BOUNDS",
+    "variants": [
+      {
+        "id": "ULS tributary / flexible",
+        "state": "ULS",
+        "diaphragm": "FLEXIBLE",
+        "wall": false,
+        "roof_mm": 72.31703077730972,
+        "drift": 0.04033113211335374
+      },
+      {
+        "id": "ULS tributary + wall / flexible",
+        "state": "ULS",
+        "diaphragm": "FLEXIBLE",
+        "wall": true,
+        "roof_mm": 72.31703077730972,
+        "drift": 0.04033113211335374
+      },
+      {
+        "id": "ULS tributary + wall / rigid",
+        "state": "ULS",
+        "diaphragm": "RIGID_TRIAL",
+        "wall": true,
+        "roof_mm": 28.452023628661856,
+        "drift": 0.015824047820889257
+      },
+      {
+        "id": "SLS tributary + wall / rigid",
+        "state": "SLS",
+        "diaphragm": "RIGID_TRIAL",
+        "wall": true,
+        "roof_mm": 17.575914808696993,
+        "drift": 0.0024286170614065184
+      }
+    ],
+    "caveats": [
+      "Source floor area captions exist but physical slab polygons/openings are not mapped",
+      "Wall edge segments are inferred from convex hull of source grid, not from a measured wall plan",
+      "Rigid MPC trial constrains in-plane translations and rotations, not actual collector/slab stiffness",
+      "Wall trial increases assumed gravity load, but seismic lateral force still uses report W: added wall masses are not independently redistributed into ESM",
+      "No accepted P-Delta, CQC/RSA and building member design"
+    ]
+  },
+  "member_checks": {
+    "C24_reinforcement_candidate": "8 × Ø20 conditional C3 schedule",
+    "C24_nominal_bar_area_mm2": 2513.274,
+    "ETABS_required_area_mm2": 2134,
+    "C24_trial_pmm_utilization": 0.9513883,
+    "C24_true_mapping_verified": false,
+    "F3_source_status": "NOT SAFE IN ONE WAY SHEAR",
+    "F3_repaired": false
+  },
+  "safety": {
+    "actual_building_approved": false,
+    "report_accepted": false,
+    "full_sp16_chart_digitized": false,
+    "real_wall_locations_verified": false,
+    "slab_polygon_verified": false,
+    "soil_Vs30_verified": false,
+    "mass_reconciled": false,
+    "accidental_eccentricity_physically_validated": false,
+    "actual_diaphragm_verified": false,
+    "ETABS_full_model_parity_verified": false
+  }
+}
