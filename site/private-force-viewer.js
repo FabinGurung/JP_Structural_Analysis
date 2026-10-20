@@ -57,8 +57,18 @@ input.addEventListener("change",async()=>{
  for(const file of files){
   try{
    const d=JSON.parse(await file.text());
-   const frame=d.frame;
-   if(!frame||d.engineering_approval!==false||d.real_source_verified!==false||
+   // Gate08 is a full-analysis PRIVATE local file, same signed-member vectors
+   // as Gate06, but the FE data are at document root and never uploaded.
+   const gate08=d.source_report_sha256===
+      "f122904444a2e2f75230d9d4e41da0093d050da25c6e8140c86d466b7e37cc52" &&
+      d.trial_ESM_mass_basis==="RECONSTRUCTED_COMPONENTS" &&
+      d.variant && ["FLEXIBLE","RIGID_TRIAL"].includes(d.variant.diaphragm);
+   const frame=gate08?d:d.frame;
+   const approvedInput=gate08?
+      (frame.case_results?.length===51&&frame.element_actions?.length===8415&&
+       frame.variant.hypothetical_diagonal_bridges_retained===true):
+      (d.engineering_approval===false&&d.real_source_verified===false);
+   if(!frame||!approvedInput||
      !Array.isArray(frame.case_results)||!Array.isArray(frame.element_actions)||
      frame.case_results.length<1){
      skipped.push(file.name+": unsupported or missing engineering HOLD");continue;
@@ -79,7 +89,7 @@ input.addEventListener("change",async()=>{
  if(!registry.length){status.textContent="No compatible full-analysis JSON found. "+skipped.join(" | ");return;}
  cases.replaceChildren(...registry.map((r,i)=>{const x=make("option",r.key);x.value=String(i);return x;}));
  cases.disabled=false;
- status.textContent="Loaded "+accepted+" private dataset(s), "+registry.length+
+ status.textContent="Loaded "+accepted+" local Gate06/Gate08 private dataset(s), "+registry.length+
    " same-case solver records. Nothing transmitted or saved to the site."+
    (skipped.length?" Skipped: "+skipped.join(" | "):"");
  renderCase();
