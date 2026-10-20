@@ -215,6 +215,44 @@ def verify_real_project_calculation_ledger(problems):
     except (AssertionError,KeyError,ValueError,TypeError,OSError) as exc:
         problems.append("Real-project public ledger privacy/numerical QA FAILED: "+str(exc))
 
+
+def verify_deidentified_gate08(problems):
+    import json
+    from math import isclose,isfinite
+    path=SITE/"data/g15-gate08-reconciliation.v0.1.json"
+    if not path.is_file():
+        problems.append("Missing 16-case Gate08 source-derived projection")
+        return
+    try:
+        d=json.loads(path.read_text(encoding="utf-8"))
+        assert d["schema"]=="jp.structural.g15.gate08.public_source_reconciliation.v0.1"
+        assert d["gate08_private_summary_sha256"]=="37d3ab85d96953a74a773358fb9d56de1858ed163c896bb99de8e43844ee0a48"
+        assert d["cohort"]["variants"]==16
+        assert d["cohort"]["solved_cases"]==816
+        assert d["cohort"]["signed_member_end_action_records"]==134640
+        assert len(d["scenarios"])==16
+        assert d["f3_source_failure"]=="NOT SAFE IN ONE WAY SHEAR"
+        assert d["engineering_approval"] is False and d["report_accepted"] is False
+        assert d["seismic_mass_reconciled"] is False
+        assert d["exact_slab_edges_verified"] is False
+        assert d["grid_hull_used_as_slab_geometry"] is False
+        assert d["original_report_as_built_model_verified"] is False
+        m=d["mass_kN"]
+        assert isclose(m["source_ETABS_W"]-m["with_wall_hypothesis"],
+                       m["remaining_residual"],abs_tol=.00001)
+        assert m["remaining_residual"]>0
+        assert all(s["design_approved"] is False and
+                   isfinite(s["roof_mm"]) and isfinite(s["drift_ratio"]) for s in d["scenarios"])
+        page=(SITE/"project-lab.html").read_text(encoding="utf-8")
+        assert 'id="lab-gate08"' in page
+        assert 'src="gate08.js"' in page
+        assert "data/g15-gate08-reconciliation.v0.1.json" in (SITE/"gate08.js").read_text(encoding="utf-8")
+        txt=path.read_text(encoding="utf-8")
+        for banned in ("drive.google.com/file/d/","@gmail.com","full_grid_geometry_coordinates"):
+            assert banned not in txt
+    except (AssertionError,ValueError,KeyError,TypeError,OSError) as err:
+        problems.append("Gate08 derived source/equilibrium/engineering-HOLD QA failed: "+str(err))
+
 def main():
     problems=[]
     for page in PAGES:
@@ -223,7 +261,7 @@ def main():
         text=p.read_text(encoding="utf-8")
         parser=Parse();parser.feed(text)
         if parser.css!=["styles.css"]:problems.append(page+": inconsistent stylesheet")
-        if parser.scripts!=(["app.js","d2.js"] if page in ("calculation-coverage.html","report.html") else ["app.js","project-ledger.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
+        if parser.scripts!=(["app.js","d2.js"] if page in ("calculation-coverage.html","report.html") else ["app.js","project-ledger.js","gate08.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
         if parser.mains!=1:problems.append(page+": expected one main")
         for target in ("index.html","project-lab.html","calculation-coverage.html","report.html","more.html"):
             if target not in text:problems.append(page+": missing nav target "+target)
@@ -233,7 +271,7 @@ def main():
             local=(SITE/page).parent/unquote(u.path)
             if not local.is_file() and not (local in {SITE/"demo/SAR.html", SITE/"demo/validation_results.json"} and not (SITE/"demo").exists()):
                 problems.append(page+": broken local link "+url)
-    for path in ("styles.css","app.js","d2.js","data/sp16_1980_primary_source.v0.1.json","data/report-calculation-coverage.v0.1.json"):
+    for path in ("styles.css","app.js","d2.js","gate08.js","data/sp16_1980_primary_source.v0.1.json","data/report-calculation-coverage.v0.1.json"):
         if not (SITE/path).is_file():problems.append("Missing "+path)
     if (SITE/"styles.css").stat().st_size>28000:problems.append("Shared CSS unexpectedly large")
     if (SITE/"app.js").stat().st_size>12000:problems.append("Shared JS unexpectedly large")
@@ -243,6 +281,7 @@ def main():
     verify_synthetic_nbc105_esm(problems)
     verify_gate06_synthetic_source(problems)
     verify_real_project_calculation_ledger(problems)
+    verify_deidentified_gate08(problems)
     if problems:raise SystemExit("\n".join(problems))
     print("STRUCTURAL_SITE_QA_PASS: five pages, source-linked de-identified project journal, SP16, M09/D2, privacy checks and shared theme")
 if __name__=="__main__":main()
