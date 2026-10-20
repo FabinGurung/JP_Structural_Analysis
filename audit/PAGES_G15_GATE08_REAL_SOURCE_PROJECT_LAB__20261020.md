@@ -8,7 +8,7 @@
 - Cumulative Gate05–08 project cases: 1192. Gate05–07 historic subtotal remains 376.
 - Gate08 Google Drive authority checkpoint: https://docs.google.com/document/d/11O_3Sbj7vOExy-L5WES9mI0R3JygGWN6J65z0LGlHHw/edit
 - Development/source CI successful: https://github.com/FabinGurung/JP_Structural_Analysis/actions/runs/39409863795 ; 278 tests pass, public-data safety PASS, site QA PASS, JS syntax PASS.
-- The private ZIP is retained in personal Library; direct Drive ZIP transfer not confirmed.
+- Private ZIP uploaded and Drive metadata read back: ID 1YmnTl7Osg9fIhK9FnHCCp7r1ddrD8Itw, folder 12IkdSvbW7bOC00JKxrIYDYXmBh-tHqxa, 16,030,313 bytes. The full ZIP is also retained in personal ChatGPT Library.
 
 ## Published surface
 - Existing Pages URL: https://fabingurung.github.io/JP_Structural_Analysis/project-lab.html#lab-gate08
@@ -28,3 +28,9 @@
 Restore `main:.github/workflows/pages.yml` checkout ref from `1fd723d97100e5501d23a5ec6c2e589e259d9dab` to `125cbc1f26ce2ae66e0bdb464d9575048348a725`, reverse versioned G15 ledger build output and remove only Gate08 aggregate step + script syntax check. Trigger Pages workflow and confirm prior site build/deploy. Existing Git tags/releases and history are immutable.
 
 Deployment remains to be verified from a separate successful public Pages build-and-deploy run after this dispatcher commit.
+
+## Gate08 private local force reader hardening
+- Reader now accepts Gate06 and Gate08 user-selected local JSON and displays 12 same-case signed member-end components; no fetch/upload/storage by private reader.
+- Source release pinned at 0379b1e5ecf048c07c019fc9b784e9fb95cd8304 (updating prior source 1fd723d97100e5501d23a5ec6c2e589e259d9dab).
+- Gate08 final development CI: https://github.com/FabinGurung/JP_Structural_Analysis/actions/runs/39410529254 (278 tests PASS, JavaScript QA PASS).
+- Initial Gate08 Pages build-and-deploy success: https://github.com/FabinGurung/JP_Structural_Analysis/actions/runs/39410266701 . Updated reader requires separate final deployment validation.
