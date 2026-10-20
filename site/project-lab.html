@@ -16,7 +16,7 @@
  <span class="eyebrow">ACTIVE CASE STUDY · GOVERNED ENGINEERING PROJECT</span>
  <h1>G+1.5 · calculation journal</h1>
  <p>A real-source-derived structural calculation trail from the source report, through assumed geometry, loads, seismic response, member checks and engineering QA. This is <strong>not</strong> the synthetic benchmark or a construction certificate.</p>
- <div class="lab-actions"><a class="btn primary" href="#lab-journey">Explore each calculation gate ↓</a><a class="btn secondary" href="#lab-library">Calculation library</a><a class="btn secondary" href="report.html">SAR structure →</a></div>
+ <div class="lab-actions"><a class="btn primary" href="#lab-journey">Explore each calculation gate ↓</a><a class="btn secondary" href="#lab-library">Calculation library</a><a class="btn secondary" href="#lab-private">Inspect private force cases ↓</a><a class="btn secondary" href="report.html">SAR structure →</a></div>
  <p class="lab-boundary"><strong>Public view:</strong> de-identified, curated numerical summaries only. Full drawings, original ETABS report, specific member force vectors and private coordinates remain in governed Google Drive. Values depend on assumed load paths and connections.</p>
 </section>
 <section class="section compact" aria-label="Current numerical project summary">
@@ -58,6 +58,22 @@
  <a class="panel" href="report.html"><strong>Structural Analysis Report →</strong><small>Six-chapter SAR readiness and audit stages</small></a>
  </div>
 </section>
+
+<section class="section" id="lab-private">
+ <div class="section-title"><div><span class="eyebrow">PRIVATE EVIDENCE VIEWER · LOCAL FILES ONLY</span><h2>Inspect every signed FE action locally</h2></div><p>Choose one or more private Gate06 full-analysis JSON files extracted from the archive. Nothing is uploaded to the repository or a server.</p></div>
+ <div class="panel lab-private-panel">
+  <label class="lab-private-input" for="lab-private-files"><strong>Open full-analysis JSON</strong><span>Accepts GATE06_*_FULL_ANALYSIS_PRIVATE.json; multiple selections supported. All processing stays in this browser tab.</span>
+   <input id="lab-private-files" type="file" accept=".json,application/json" multiple></label>
+  <p class="lab-chart-note" id="lab-private-status" role="status">No local file selected. Download the authorized Gate06 private archive from your controlled Drive workspace, extract it, then choose a full-analysis JSON.</p>
+  <div class="lab-private-controls">
+    <label for="lab-private-case">Load case<select id="lab-private-case" disabled><option>No data loaded</option></select></label>
+    <label for="lab-private-member">Frame member<select id="lab-private-member" disabled><option>Select a case first</option></select></label>
+  </div>
+  <div id="lab-private-case-detail" aria-live="polite"></div>
+  <div class="lab-scroll"><table class="lab-table"><thead><tr><th>Signed local end component</th><th>Value</th><th>Unit</th></tr></thead><tbody id="lab-private-forces"></tbody></table></div>
+ </div>
+ <p class="lab-chart-note">The private viewer does not transmit input data. Browser-rendered local results are not independent reanalysis and do not override the project’s unresolved source mappings, drift concerns or F3 failure.</p>
+</section>
 <section class="section" id="lab-verdict">
  <div class="section-title"><div><span class="eyebrow">EVIDENCE BEFORE ACCEPTANCE</span><h2>Open engineering decisions</h2></div><p>Findings are classified by source evidence, scenario-only computation and unresolved QA.</p></div>
  <div id="lab-findings" class="lab-findings"></div>
@@ -65,5 +81,5 @@
 </section>
 </main>
 <footer class="site-footer"><div class="wrap footer-inner"><span>JP Structural Analysis · G+1.5 de-identified project journal · Engineering approval HOLD</span><span>Private source remains in Drive</span></div></footer>
-<script src="app.js" defer></script><script src="project-ledger.js" defer></script>
+<script src="app.js" defer></script><script src="project-ledger.js" defer></script><script src="private-force-viewer.js" defer></script>
 </body></html>
