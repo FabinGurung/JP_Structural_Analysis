@@ -4,7 +4,7 @@
 
 Site: https://fabingurung.github.io/JP_Structural_Analysis/project-lab.html
 Engine source branch: `site/g15-project-calculation-ledger-20261020`
-Pin: `da5a8b79bccf92cedec5239cc4ac3b41fc5d8524`
+Pin: `125cbc1f26ce2ae66e0bdb464d9575048348a725`
 Source CI: https://github.com/FabinGurung/JP_Structural_Analysis/actions/runs/39377286608
 Validation: 272 unit/regression tests PASS; public-data safety PASS; five-page navigation QA PASS; both page JS syntax checks PASS.
 Previous public source pin: `fdcfc27ff1d80026b759d8ac337a3610a368ad9f`.
@@ -36,3 +36,8 @@ Source footing F3 continues `NOT SAFE IN ONE WAY SHEAR`; no model assumption, fr
 
 Edit only `main:.github/workflows/pages.yml` to checkout immutable old source `fdcfc27ff1d80026b759d8ac337a3610a368ad9f`, and remove the public project ledger generator/new script checks, then verify Pages builds/deploys. No source history was deleted.
 PR #4 and frozen Seq9 are independent and must remain untouched.
+
+## Numerical ledger correction and final release pin
+Public M04 calculation count label reconciled to 153 Gate06 + 204 Gate07 = **357**, plus Gate05 19 = **376** across all three gates. No model calculations changed; this corrects only the human-readable label. Final corrected source CI: https://github.com/FabinGurung/JP_Structural_Analysis/actions/runs/39377788381 — SUCCESS, code/QA/public safety all pass. Exact Pages source pin updated to `125cbc1f26ce2ae66e0bdb464d9575048348a725`.
+
+The full private Gate07 reproducibility ZIP was subsequently uploaded to governed private Google Drive with provider-read filename, parent folder and 45,951-byte size; full ZIP remains excluded from this public site and source tree. Private checkpoint holds the authenticated Drive link and SHA256.
