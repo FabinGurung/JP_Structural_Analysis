@@ -7,6 +7,7 @@ on:
       - site/m09-pm-publication-20261019
       - site/sp16-d2-evidence-20261019
       - site/sp16-chart31-benchmark-20261019
+      - site/gate05-preview-20261020
   pull_request:
   workflow_dispatch:
 
@@ -36,6 +37,8 @@ jobs:
         run: python scripts/build_d2_signed_frame_case.py --output site/data/d2_signed_frame.v0.1.json
       - name: Regenerate direct SP16 Chart31 sampled source evidence for website QA
         run: python scripts/build_sp16_chart31_spotcheck.py --output site/data/sp16_chart31_spotcheck.v0.1.json
+      - name: Build strictly synthetic NBC105 equivalent-static numerical demo
+        run: python scripts/build_nbc105_esm_synthetic.py --output site/data/nbc105_esm_synthetic.v0.1.json
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
