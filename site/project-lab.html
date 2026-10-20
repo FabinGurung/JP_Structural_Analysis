@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f7f6ef"><meta name="description" content="Real-source G+1.5 structural project calculation ledger: gravity, seismic mass, drift, torsion, RC design and evidence status">
+<title>Project Lab · G+1.5 | JP Structural Analysis</title><link rel="stylesheet" href="styles.css"></head>
+<body data-guild-route="project">
+<header class="site-header"><div class="wrap nav-row">
+<a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">JP</span><span><strong>Structural Analysis</strong><small>ENGINEERING GUILD / REPORT ENGINE</small></span></a>
+<nav class="navigation" aria-label="Primary navigation">
+<a href="index.html">Overview</a><a aria-current="page" href="project-lab.html">Project lab</a><a href="calculation-coverage.html">Calculations</a><a href="report.html">Report</a>
+<details class="more-menu"><summary>More <span aria-hidden="true">⌄</span></summary><div class="more-panel"><a href="more.html">Tools & history</a><a href="demo/SAR.html">Legacy benchmark report</a><a href="https://github.com/FabinGurung/JP_Structural_Analysis/actions">GitHub Actions ↗</a><a href="https://github.com/FabinGurung/JP_Structural_Analysis/releases/tag/a9-seq9-phase-c-20261015">Frozen release ↗</a></div></details></nav>
+<button type="button" id="mode-toggle" class="guild-mode" aria-label="Toggle daylight and night raid modes" aria-pressed="false">◐ <span id="mode-label">Night raid</span></button>
+</div></header>
+<main class="wrap" id="main">
+<section class="page-intro lab-hero">
+ <span class="eyebrow">ACTIVE CASE STUDY · GOVERNED ENGINEERING PROJECT</span>
+ <h1>G+1.5 · calculation journal</h1>
+ <p>A real-source-derived structural calculation trail from the source report, through assumed geometry, loads, seismic response, member checks and engineering QA. This is <strong>not</strong> the synthetic benchmark or a construction certificate.</p>
+ <div class="lab-actions"><a class="btn primary" href="#lab-journey">Explore each calculation gate ↓</a><a class="btn secondary" href="#lab-library">Calculation library</a><a class="btn secondary" href="report.html">SAR structure →</a></div>
+ <p class="lab-boundary"><strong>Public view:</strong> de-identified, curated numerical summaries only. Full drawings, original ETABS report, specific member force vectors and private coordinates remain in governed Google Drive. Values depend on assumed load paths and connections.</p>
+</section>
+<section class="section compact" aria-label="Current numerical project summary">
+ <div class="lab-kpis" id="lab-kpis"><div class="lab-kpi"><small>Analysis cases</small><strong>—</strong></div><div class="lab-kpi"><small>Working frame members</small><strong>—</strong></div><div class="lab-kpi"><small>Mass mismatch</small><strong>—</strong></div><div class="lab-kpi"><small>Open source FAIL</small><strong>—</strong></div></div>
+ <div class="lab-source-note" id="lab-state" role="status">Loading the governed project ledger…</div>
+</section>
+<section class="section" id="lab-journey">
+ <div class="section-title"><div><span class="eyebrow">THE PROJECT · NOT A TEMPLATE</span><h2>How the calculations evolved</h2></div><p>Choose any gate to inspect its inputs, achieved computations and unresolved evidence.</p></div>
+ <div class="lab-timeline" id="lab-timeline" role="group" aria-label="Calculation gates"></div>
+ <article class="lab-selected panel" id="lab-selected" aria-live="polite"><h3>Select a gate</h3></article>
+</section>
+<section class="section" id="lab-mass">
+ <div class="section-title"><div><span class="eyebrow">GRAVITY + SEISMIC WEIGHT</span><h2>Mass reconciliation, without filling gaps</h2></div><p>Source load magnitudes and provisional tributary allocation; conditional wall trial is not measured construction.</p></div>
+ <div class="lab-mass-grid">
+  <div class="panel"><h3>Source versus reconstructed weight</h3><div id="lab-mass-graphic" aria-label="Mass reconciliation bar comparison"></div><p class="lab-chart-note" id="lab-mass-note"></p></div>
+  <div class="panel"><h3>Mass components and open balance</h3><table class="lab-table"><thead><tr><th>Inventory step</th><th>Weight (kN)</th></tr></thead><tbody id="lab-mass-rows"></tbody></table><p class="lab-chart-note">The trial wall count comes from source grid-hull segments, not a traced wall plan.</p></div>
+ </div>
+</section>
+<section class="section" id="lab-response">
+ <div class="section-title"><div><span class="eyebrow">SEISMIC · STIFFNESS · DIAPHRAGM</span><h2>See why the answers change</h2></div><p>Source-linked baseline and competing engineering assumptions; compare, do not cherry-pick.</p></div>
+ <div class="lab-compare-controls"><label for="lab-view-select">Compare outputs</label><select id="lab-view-select"><option value="roof">Maximum roof movement (mm)</option><option value="drift">Peak drift screening ratio (%)</option></select><span id="lab-limit-legend">ULS and SLS remain separately evaluated</span></div>
+ <div class="panel"><div id="lab-response-chart" class="lab-response-chart" role="img" aria-label="Scenario comparison bar chart"></div><p class="lab-chart-note" id="lab-response-note"></p></div>
+ <details class="lab-detail"><summary>Show signed eccentricity scenarios and exact screening values</summary>
+  <div class="lab-scroll"><table class="lab-table"><thead><tr><th>Stage</th><th>Case</th><th>Roof movement</th><th>Drift</th><th>Limit</th><th>Screen</th></tr></thead><tbody id="lab-response-rows"></tbody></table></div>
+ </details>
+</section>
+<section class="section" id="lab-library">
+ <div class="section-title"><div><span class="eyebrow">CODEX / NUMERICAL COVERAGE</span><h2>Calculation library for this project</h2></div><p>Every calculation family receives a status and an evidence trail. Select a filter to focus on unresolved work.</p></div>
+ <div class="lab-filters" role="group" aria-label="Calculation status filter">
+ <button class="lab-filter" type="button" data-status-filter="ALL" aria-pressed="true">All modules</button>
+ <button class="lab-filter" type="button" data-status-filter="WARNING" aria-pressed="false">Warnings & fail</button>
+ <button class="lab-filter" type="button" data-status-filter="OPEN" aria-pressed="false">Open assumptions</button>
+ </div>
+ <div class="lab-modules" id="lab-modules" aria-live="polite"><p>Reading calculation registry…</p></div>
+ <div class="lab-links">
+ <a class="panel" href="calculation-coverage.html#sp16-primary"><strong>SP16 and column P–M–M →</strong><small>Source points and material-law evidence</small></a>
+ <a class="panel" href="calculation-coverage.html#d2-member-trace"><strong>Signed OpenSees → M08/M09/M10 →</strong><small>Synthetic tool validation, linked to this project’s research path</small></a>
+ <a class="panel" href="calculation-coverage.html#gate06-torsion"><strong>NBC 105 eccentricity →</strong><small>Independent synthetic code demo and regression</small></a>
+ <a class="panel" href="report.html"><strong>Structural Analysis Report →</strong><small>Six-chapter SAR readiness and audit stages</small></a>
+ </div>
+</section>
+<section class="section" id="lab-verdict">
+ <div class="section-title"><div><span class="eyebrow">EVIDENCE BEFORE ACCEPTANCE</span><h2>Open engineering decisions</h2></div><p>Findings are classified by source evidence, scenario-only computation and unresolved QA.</p></div>
+ <div id="lab-findings" class="lab-findings"></div>
+ <div class="lab-endnote"><strong>No completed template yet.</strong> The current project is the learning and validation reference. After its calculation contracts and source mappings are reconciled, the reusable R&amp;D LaTeX / CAD-style template can be frozen as a separate version—without replacing this project's history.</div>
+</section>
+</main>
+<footer class="site-footer"><div class="wrap footer-inner"><span>JP Structural Analysis · G+1.5 de-identified project journal · Engineering approval HOLD</span><span>Private source remains in Drive</span></div></footer>
+<script src="app.js" defer></script><script src="project-ledger.js" defer></script>
+</body></html>
