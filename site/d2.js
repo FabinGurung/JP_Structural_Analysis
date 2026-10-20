@@ -86,3 +86,31 @@ for(const v of views){
 }
 }).catch(e=>views.forEach(v=>v.replaceChildren(el("p","ESM evidence HOLD: "+e.message,"m09-error"))));
 })();
+
+/* Gate06: public-facing anonymous synthetic data; private building not exported. */
+(function(){
+"use strict";
+const views=document.querySelectorAll("[data-gate06-demo]");if(!views.length)return;
+function node(tag,content,cls){const x=document.createElement(tag);if(content!==undefined)x.textContent=content;if(cls)x.className=cls;return x;}
+fetch("data/nbc105_gate06_synthetic.v0.1.json",{cache:"no-store"})
+.then(r=>r.ok?r.json():Promise.reject(Error("evidence not found")))
+.then(data=>{
+if(data.schema!=="jp.structural.public_synthetic_gate06.v0.1"||
+data.synthetic!==true||data.private_project_input_values_included!==false||
+data.engineering_approval!==false||data.report_accepted!==false||
+data.signed_accidental_eccentricity_cases?.length!==16||
+data.source_mass_reconciliation_demonstration?.source_to_trial_mass_closed!==false)
+throw Error("source verification failed");
+const values=[
+["ULS beam EI",data.effective_stiffness.ULS.beam_flexural_EI_over_EcIg,"fraction of gross"],
+["ULS column EI",data.effective_stiffness.ULS.column_flexural_EI_over_EcIg,"fraction of gross"],
+["Accidental torsion cases",data.signed_accidental_eccentricity_cases.length,"synthetic signed combinations"],
+["Seismic mass gap",data.source_mass_reconciliation_demonstration.residual_source_minus_trial_kN,"kN · synthetic reference"]];
+for(const view of views){
+const grid=node("div",undefined,"m09-numbers");
+for(const [name,value,unit] of values){const cell=node("div",undefined,"m09-stat");cell.append(node("span",name),node("strong",Number(value).toFixed(3)),node("small",unit));grid.append(cell);}
+view.replaceChildren(node("p","GATE06 · SYNTHETIC SOURCE-CALCULATED REGRESSION ONLY","m09-provenance"),grid,
+node("p","True diaphragm, source mass, effective torsional modelling and professional approval remain HOLD.","m09-provenance"));
+}
+}).catch(err=>{for(const v of views)v.replaceChildren(node("p","GATE06 HOLD: "+err.message,"m09-error"));});
+})();
