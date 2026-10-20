@@ -10,7 +10,7 @@ from urllib.parse import urlparse, unquote
 
 ROOT=Path(__file__).resolve().parents[1]
 SITE=ROOT/"site"
-PAGES=["index.html","project-lab.html","calculation-coverage.html","report.html","more.html"]
+PAGES=["index.html","project-lab.html","analysis-studio.html","calculation-coverage.html","report.html","more.html"]
 class Parse(HTMLParser):
     def __init__(self):
         super().__init__(convert_charrefs=True);self.links=[];self.css=[];self.scripts=[];self.mains=0
@@ -262,9 +262,9 @@ def main():
         text=p.read_text(encoding="utf-8")
         parser=Parse();parser.feed(text)
         if parser.css!=["styles.css"]:problems.append(page+": inconsistent stylesheet")
-        if parser.scripts!=(["app.js","d2.js"] if page in ("calculation-coverage.html","report.html") else ["app.js","project-ledger.js","gate08.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
+        if parser.scripts!=(["app.js","d2.js"] if page in ("calculation-coverage.html","report.html") else ["app.js","project-ledger.js","gate08.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
         if parser.mains!=1:problems.append(page+": expected one main")
-        for target in ("index.html","project-lab.html","calculation-coverage.html","report.html","more.html"):
+        for target in ("index.html","project-lab.html","analysis-studio.html","calculation-coverage.html","report.html","more.html"):
             if target not in text:problems.append(page+": missing nav target "+target)
         for url in parser.links+parser.css+parser.scripts:
             u=urlparse(url)
@@ -272,7 +272,7 @@ def main():
             local=(SITE/page).parent/unquote(u.path)
             if not local.is_file() and not (local in {SITE/"demo/SAR.html", SITE/"demo/validation_results.json"} and not (SITE/"demo").exists()):
                 problems.append(page+": broken local link "+url)
-    for path in ("styles.css","app.js","d2.js","gate08.js","data/sp16_1980_primary_source.v0.1.json","data/report-calculation-coverage.v0.1.json"):
+    for path in ("styles.css","app.js","analysis-studio.js","d2.js","gate08.js","data/sp16_1980_primary_source.v0.1.json","data/report-calculation-coverage.v0.1.json"):
         if not (SITE/path).is_file():problems.append("Missing "+path)
     if (SITE/"styles.css").stat().st_size>28000:problems.append("Shared CSS unexpectedly large")
     if (SITE/"app.js").stat().st_size>12000:problems.append("Shared JS unexpectedly large")
@@ -283,6 +283,14 @@ def main():
     verify_gate06_synthetic_source(problems)
     verify_real_project_calculation_ledger(problems)
     verify_deidentified_gate08(problems)
+    studio=(SITE/"analysis-studio.html").read_text(encoding="utf-8")
+    script=(SITE/"analysis-studio.js").read_text(encoding="utf-8")
+    if 'id="studio-form"' not in studio or 'id="studio-queue"' not in studio:
+        problems.append("Missing operable analysis-studio controls")
+    if "SYNTHETIC_FRAME_ONLY" not in script or "issues/new?" not in script:
+        problems.append("No authorized GitHub FE handoff or missing model boundary")
+    if "github_pat_" in script or "ghp_" in script or "localStorage" in script:
+        problems.append("Studio may not request or store GitHub tokens")
     if problems:raise SystemExit("\n".join(problems))
-    print("STRUCTURAL_SITE_QA_PASS: five pages, source-linked de-identified project journal, SP16, M09/D2, privacy checks and shared theme")
+    print("STRUCTURAL_SITE_QA_PASS: six pages including operable scenario workbench, source-linked de-identified project journal, SP16, M09/D2, privacy checks and shared theme")
 if __name__=="__main__":main()
