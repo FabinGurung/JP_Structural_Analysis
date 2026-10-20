@@ -48,7 +48,9 @@ jobs:
       - name: Validate original source-derived project projection boundaries
         run: python -m pytest -q tests/test_g15_public_ledger.py
       - name: Syntax-check interactive project journal
-        run: node --check site/project-ledger.js
+        run: |
+          node --check site/project-ledger.js
+          node --check site/private-force-viewer.js
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
