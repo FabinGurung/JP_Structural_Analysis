@@ -115,7 +115,7 @@ def run_opensees(request):
         area = w * depth
         inertia = w * depth**3 / 12
         # OpenSees model units kN, m, kN/m^2.
-        return area, d["Ec_MPa"] * 1000 * inertia * fact
+        return area, inertia * fact
 
     col_a, col_EI = section(d["column_width_m"], d["column_depth_m"], d["column_EI_factor"])
     beam_a, beam_EI = section(d["beam_width_m"], d["beam_depth_m"], d["beam_EI_factor"])
@@ -138,11 +138,11 @@ def run_opensees(request):
             members[f"C_R{floor}"] = 10 + floor
             members[f"B_L{floor}"] = 20 + floor
             ops.element("elasticBeamColumn", floor, 2 * floor-1, 2*floor+1,
-                        col_a, 1., col_EI, 1)
+                        col_a, d["Ec_MPa"] * 1000, col_EI, 1)
             ops.element("elasticBeamColumn", 10+floor, 2*floor, 2*floor+2,
                         col_a, 1., col_EI, 1)
             ops.element("elasticBeamColumn", 20+floor, 2*floor+1, 2*floor+2,
-                        beam_a, 1., beam_EI, 2)
+                        beam_a, d["Ec_MPa"] * 1000, beam_EI, 2)
         ops.timeSeries("Linear", 1)
         ops.pattern("Plain", 1, 1)
         for floor in range(1, 4):
