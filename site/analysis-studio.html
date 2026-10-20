@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f7f6ef"><meta name="description" content="Editable structural analysis scenario: instant NBC105:2025 equivalent-static calculation and GitHub Actions OpenSees FE handoff">
+<title>Run Analysis | JP Structural Analysis</title><link rel="stylesheet" href="styles.css"></head>
+<body data-guild-route="studio">
+<header class="site-header"><div class="wrap nav-row">
+<a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">JP</span><span><strong>Structural Analysis</strong><small>ENGINEERING GUILD / REPORT ENGINE</small></span></a>
+<nav class="navigation" aria-label="Primary navigation"><a href="index.html">Overview</a><a href="project-lab.html">Project lab</a><a aria-current="page" href="analysis-studio.html">Run analysis</a><a href="calculation-coverage.html">Calculations</a><a href="report.html">Report</a><details class="more-menu"><summary>More <span aria-hidden="true">⌄</span></summary><div class="more-panel"><a href="more.html">Tools & history</a><a href="demo/SAR.html">Legacy benchmark report</a><a href="https://github.com/FabinGurung/JP_Structural_Analysis/actions">GitHub Actions ↗</a><a href="https://github.com/FabinGurung/JP_Structural_Analysis/releases/tag/a9-seq9-phase-c-20261015">Frozen release ↗</a></div></details></nav>
+<button type="button" id="mode-toggle" class="guild-mode" aria-label="Toggle daylight and night raid modes" aria-pressed="false">◐ <span id="mode-label">Night raid</span></button></div></header>
+<main class="wrap" id="main">
+<section class="page-intro"><span class="eyebrow">ENGINEERING WORKBENCH / LIVE MVP</span><h1>Run an analysis.</h1>
+<p>Change a three-storey demonstration frame, compute the NBC 105:2025 equivalent-static forces immediately, then submit the scenario to a protected GitHub Actions OpenSees job for signed member-end forces. There is no installation or GitHub token in this website.</p>
+<p class="lab-boundary"><strong>Model boundary:</strong> this is a public <strong>single-bay 2D synthetic frame</strong>, not the private G+1.5 building's 165-member 3D frame. Do not enter client names, project addresses, private geometry, or real building files in the GitHub submission. No run is certified for construction.</p>
+<div class="actions"><a class="btn secondary" href="project-lab.html">← Real G+1.5 project journal</a><a class="btn secondary" href="#studio-results">Jump to results ↓</a></div>
+</section>
+<section class="section compact">
+ <div class="section-title"><div><span class="eyebrow">01 / EDIT MODEL</span><h2>Scenario parameters</h2></div><p>Every edit recalculates the public browser preview; the FE solve occurs only after GitHub submission.</p></div>
+ <form id="studio-form" class="studio-form">
+  <fieldset class="studio-fieldset"><legend>Frame geometry · elastic</legend>
+   <label>Single bay span (m)<input type="number" name="span_m" min="2" max="15" step="0.1" value="5" required></label>
+   <label>Storey height (m)<input type="number" name="storey_height_m" min="2.4" max="4.5" step="0.05" value="3" required></label>
+   <label>Beam width (m)<input type="number" name="beam_width_m" min=".2" max=".6" step=".01" value=".3" required></label>
+   <label>Beam depth (m)<input type="number" name="beam_depth_m" min=".3" max=".9" step=".01" value=".45" required></label>
+   <label>Column width (m)<input type="number" name="column_width_m" min=".25" max=".9" step=".01" value=".4" required></label>
+   <label>Column depth (m)<input type="number" name="column_depth_m" min=".25" max=".9" step=".01" value=".4" required></label>
+  </fieldset>
+  <fieldset class="studio-fieldset"><legend>NBC 105:2025 / seismic</legend>
+   <label>Floor 1 weight (kN)<input type="number" name="floor_1" min="20" max="10000" step="1" value="400" required></label>
+   <label>Floor 2 weight (kN)<input type="number" name="floor_2" min="20" max="10000" step="1" value="450" required></label>
+   <label>Roof weight (kN)<input type="number" name="floor_3" min="20" max="10000" step="1" value="350" required></label>
+   <label>Period T (s)<input type="number" name="period_s" min=".1" max="3" step=".01" value=".45" required></label>
+   <label>Elastic site coefficient C(T)<input type="number" name="elastic_site_C" min=".01" max="2" step=".0025" value=".7875" required></label>
+   <label>Ductility Rμ<input type="number" name="Rmu" min="1" max="6" step=".1" value="4" required></label>
+   <label>Overstrength Ωu<input type="number" name="overstrength" min="1" max="2.5" step=".05" value="1.5" required></label>
+   <label>Concrete modulus Ec (MPa)<input type="number" name="Ec_MPa" min="10000" max="50000" step="1" value="22360.68" required></label>
+   <label>Beam EI / gross EI<input type="number" name="beam_EI_factor" min=".1" max="1" step=".05" value=".35" required></label>
+   <label>Column EI / gross EI<input type="number" name="column_EI_factor" min=".1" max="1" step=".05" value=".7" required></label>
+  </fieldset>
+ </form>
+</section>
+<section class="section compact" id="studio-results">
+ <div class="section-title"><div><span class="eyebrow">02 / SOLVE EQUATIONS IN BROWSER</span><h2>Live ESM preview</h2></div><p>Exact deterministic coefficient / floor-distribution arithmetic, not a browser finite-element analysis.</p></div>
+ <p id="studio-error" role="alert" class="lab-chart-note">Enter a valid scenario to preview numerical values.</p>
+ <div class="lab-kpis" id="studio-kpis"><div class="lab-kpi"><small>Awaiting input</small><strong>—</strong></div></div>
+ <div class="lab-mass-grid" style="margin-top:18px">
+  <div class="panel"><h3>Frame and applied floor forces</h3><svg id="studio-frame" viewBox="0 0 480 380" width="100%" role="img" aria-label="Planar three-storey frame and lateral floor loads"></svg><p class="lab-chart-note">Schematic only; node geometry is derived from the entered single bay/span and level heights.</p></div>
+  <div class="panel"><h3>Force distribution and calculation</h3><div id="studio-force-bars" aria-label="Computed seismic lateral forces by floor"></div><div class="lab-scroll"><table class="lab-table"><thead><tr><th>Storey</th><th>Height (m)</th><th>Weight (kN)</th><th>ESM F (kN)</th></tr></thead><tbody id="studio-floor-table"></tbody></table></div></div>
+ </div>
+ <p class="lab-chart-note">Formulas: C<sub>d,ULS</sub> = C(T)/(RμΩu); V = C<sub>d</sub> W; F<sub>i</sub> = V·W<sub>i</sub>h<sub>i</sub><sup>k</sup>/Σ(W<sub>j</sub>h<sub>j</sub><sup>k</sup>). NBC 105:2025 §§6.1–6.3. This prototype does not compute site class, true 3D torsion, complete modal seismic actions, diaphragm behavior or design certification.</p>
+</section>
+<section class="section" id="studio-run">
+ <div class="section-title"><div><span class="eyebrow">03 / REQUEST REAL OPENSees SOLVE</span><h2>Send the configured scenario to GitHub Actions</h2></div><p>Authenticated GitHub account required; public issue body contains only the synthetic numeric scenario.</p></div>
+ <div class="panel">
+ <p>This website cannot directly invoke a private backend without credentials. Instead, <strong>Queue OpenSees run</strong> prepares a GitHub issue with the validated configuration. Review the issue, press <strong>Submit new issue</strong>, and the repository owner's authenticated submission triggers the 2D OpenSees job. The job uploads a reproducible JSON result and posts its run link in the issue.</p>
+ <div class="actions"><button type="button" class="btn primary" id="studio-queue" disabled>Queue OpenSees run on GitHub ↗</button>
+ <button type="button" class="btn secondary" id="studio-export" disabled>Download scenario JSON</button>
+ <button type="button" class="btn secondary" id="studio-reset">Restore demo values</button></div>
+ <p class="lab-chart-note" id="studio-queue-note" aria-live="polite">Submitting the GitHub issue is the confirmation step. The repository restricts the automatic job to its owner. No GitHub access token is requested or saved by this webpage.</p>
+ </div>
+</section>
+<section class="section">
+<div class="section-title"><div><span class="eyebrow">04 / CHECK EVIDENCE</span><h2>Results and approval boundaries</h2></div><p>Actual OpenSees artifacts come from Actions, not from the browser preview.</p></div>
+<div class="lab-links">
+ <a class="panel" href="https://github.com/FabinGurung/JP_Structural_Analysis/actions/workflows/portal-frame-analysis.yml"><strong>Open OpenSees run history →</strong><small>Download JSON artifact and view the issue-linked job log</small></a>
+ <a class="panel" href="project-lab.html#lab-gate08"><strong>G+1.5 project evidence →</strong><small>816 Gate08 assumption-sensitive project scenarios are preserved separately</small></a>
+ <a class="panel" href="report.html"><strong>Report QA status →</strong><small>Design and footing failures remain open</small></a>
+ <a class="panel" href="calculation-coverage.html#sp16-primary"><strong>Codal reference evidence →</strong><small>Original SP16 and NBC numerical regression</small></a>
+</div>
+<div class="lab-endnote"><strong>Release scope:</strong> first working scenario editor + instant NBC ESM calculator + secure full FE handoff. Not a replacement for 3D private project ingestion, soil validation, nonlinear analyses or an engineer's signoff. F3 source shear remains FAIL.</div>
+</section>
+</main><footer class="site-footer"><div class="wrap footer-inner"><span>JP Structural Analysis · Active numeric workbench · No engineering approval</span><span>GitHub Pages + GitHub Actions</span></div></footer>
+<script src="app.js" defer></script><script src="analysis-studio.js" defer></script>
+</body></html>
