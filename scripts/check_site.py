@@ -184,7 +184,8 @@ def verify_real_project_calculation_ledger(problems):
         assert d["schema"]=="jp.structural.deidentified.project_calculation_ledger.public.v0.2"
         assert d["source_visibility"]=="PRIVATE_DRIVE_SOURCE_NOT_PUBLISHED"
         assert d["publication"]=="USER_REQUESTED_DEIDENTIFIED_AGGREGATE_ONLY"
-        assert d["derived"]["total_gate05_gate06_gate07_case_solves"]==1192
+        assert d["derived"]["total_gate05_gate06_gate07_case_solves"]==376
+        assert d["derived"]["total_gate05_to_gate08_case_solves"]==1192
         assert d["scope"]["member_count"]==165
         assert len(d["workflow"])==7 and len(d["calculation_families"])>=13
         assert d["gate07"]["case_count"]==204
