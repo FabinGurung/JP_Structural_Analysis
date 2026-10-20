@@ -6,13 +6,13 @@ const create=(tag,text,cls)=>{const x=document.createElement(tag);if(text!==unde
 const num=(v,n=2)=>Number.isFinite(v)?Number(v).toLocaleString("en-US",{maximumFractionDigits:n,minimumFractionDigits:n}):"—";
 const pct=v=>num(v*100,2)+"%";
 const rows=(table,contents)=>table.replaceChildren(...contents);
-let data=null,stage="G07",filter="ALL",view="roof";
+let data=null,stage="G08",filter="ALL",view="roof";
 const stagesById={};
 function badge(status){return create("span",status.replaceAll("_"," "),"lab-status lab-status-"+status.toLowerCase());}
 function renderSummary(){
  const m=data.gravity_mass;
  const values=[
-  ["Solved FE cases",data.derived.total_gate05_gate06_gate07_case_solves.toLocaleString(),"G05–G07 trial scenarios"],
+  ["Solved FE cases",data.derived.total_gate05_to_gate08_case_solves.toLocaleString(),"G05–G08 trial scenarios"],
   ["Working elements",String(data.scope.member_count),"source-derived hypothetical frame"],
   ["Current mass gap",num(data.derived.conditional_gate07_mass_shortfall_pct,1)+"%","after conditional wall study"],
   ["Unresolved source FAIL","1","F3 one-way shear"]
@@ -30,7 +30,7 @@ function selectStage(id){
  const target=$("lab-selected");
  const top=create("div",undefined,"lab-selected-top");top.append(create("span",x.id+" / "+x.subtitle,"eyebrow"),badge(x.status));
  target.replaceChildren(top,create("h3",x.title),create("p",x.summary));
- const note=id==="G07"?"Latest study: grid-weighted floor loads, candidate exterior wall lines and flexible/rigid diaphragm bounds. No verified diaphragm polygons.":
+ const note=id==="G08"?"Latest work: reconstructed floor seismic mass, convex-hull vs bounding-box tributary loading and 16 stiffness/diaphragm/wall variants. Detail below; no physical slab model yet.":id==="G07"?"Latest study: grid-weighted floor loads, candidate exterior wall lines and flexible/rigid diaphragm bounds. No verified diaphragm polygons.":
    id==="G06"?"Results: 153 individual FE solves, ±5% accidental eccentricity, three elastic stiffness variants and signed same-case member actions.":
    id==="G05"?"Mass and ESM loads are anchored to report coefficients, not independently validated site hazard or soil profiles.":
    id==="G04"?"TF C24 steel schedule choice remains conditional and source footing F3 one-way shear remains explicitly unsafe.":
@@ -150,13 +150,13 @@ function verify(d){
     d.gravity_mass?.mass_reconciled!==false||
     d.member_checks?.F3_source_status!=="NOT SAFE IN ONE WAY SHEAR"||
     d.derived?.professional_design_approved!==false||
-    d.workflow?.length!==6||d.gate07?.variants?.length!==4)
+    d.workflow?.length!==7||d.gate07?.variants?.length!==4)
     throw Error("Journal integrity / approval-HOLD check failed");
  return d;
 }
 $("lab-view-select").addEventListener("change",e=>{view=e.target.value;renderResponse();});
 document.querySelectorAll(".lab-filter").forEach(x=>x.addEventListener("click",()=>{filter=x.dataset.statusFilter;renderModules();}));
-fetch("data/g15-project-ledger.v0.1.json",{cache:"no-store"})
+fetch("data/g15-project-ledger.v0.2.json",{cache:"no-store"})
 .then(r=>r.ok?r.json():Promise.reject(Error("project ledger unavailable")))
 .then(d=>{
  data=verify(d);renderSummary();renderStages();renderMass();renderResponse();renderTables();renderModules();renderFindings();
