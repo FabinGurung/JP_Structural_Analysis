@@ -11,6 +11,7 @@ on:
       - site/gate06-nbc105-torsion-mass-20261020
       - site/g15-project-calculation-ledger-20261020
       - site/g15-gate08-source-reconcile-20261020
+      - site/interactive-analysis-mvp-20261020
   pull_request:
   workflow_dispatch:
 
@@ -56,6 +57,17 @@ jobs:
         run: python scripts/build_g15_gate08_public.py --output site/data/g15-gate08-reconciliation.v0.1.json
       - name: Verify Gate08 source checksum, mass reconciliation and engineering HOLD
         run: python -m pytest -q tests/test_g15_public_ledger.py
+      - name: Execute real synthetic OpenSees portal regression scenario
+        run: python scripts/run_portal_frame.py --sample --output build/portal-mvp/open_sees_result.json
+      - name: Verify browser and secure scenario runner scripts
+        run: |
+          node --check site/analysis-studio.js
+          python -m pytest -q tests/test_portal_frame_mvp.py
+      - name: Upload reproducible bounded OpenSees web-run result
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: portal-synthetic-opensees-reference-not-approved
+          path: build/portal-mvp/open_sees_result.json
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
