@@ -10,7 +10,7 @@ from urllib.parse import urlparse, unquote
 
 ROOT=Path(__file__).resolve().parents[1]
 SITE=ROOT/"site"
-PAGES=["index.html","calculation-coverage.html","report.html","more.html"]
+PAGES=["index.html","project-lab.html","calculation-coverage.html","report.html","more.html"]
 class Parse(HTMLParser):
     def __init__(self):
         super().__init__(convert_charrefs=True);self.links=[];self.css=[];self.scripts=[];self.mains=0
@@ -171,6 +171,48 @@ def verify_gate06_synthetic_source(problems):
     except (KeyError,ValueError,IndexError,TypeError,AssertionError) as exc:
         problems.append("Gate06 public numeric source or safety HOLD invalid: "+str(exc))
 
+
+def verify_real_project_calculation_ledger(problems):
+    import json
+    from math import isclose, isfinite
+    p=SITE/"data/g15-project-ledger.v0.1.json"
+    if not p.is_file():
+        problems.append("Missing generated de-identified real-project calculation ledger")
+        return
+    try:
+        d=json.loads(p.read_text(encoding="utf-8"))
+        assert d["schema"]=="jp.structural.deidentified.project_calculation_ledger.public.v0.1"
+        assert d["source_visibility"]=="PRIVATE_DRIVE_SOURCE_NOT_PUBLISHED"
+        assert d["publication"]=="USER_REQUESTED_DEIDENTIFIED_AGGREGATE_ONLY"
+        assert d["derived"]["total_gate05_gate06_gate07_case_solves"]==376
+        assert d["scope"]["member_count"]==165
+        assert len(d["workflow"])==6 and len(d["calculation_families"])>=12
+        assert d["gate07"]["case_count"]==204
+        assert all(v is False for v in d["safety"].values())
+        assert d["member_checks"]["F3_source_status"]=="NOT SAFE IN ONE WAY SHEAR"
+        assert d["member_checks"]["F3_repaired"] is False
+        assert d["member_checks"]["C24_true_mapping_verified"] is False
+        mass=d["gravity_mass"]
+        assert mass["mass_reconciled"] is False
+        assert isclose(mass["report_W_kN"]-mass["gate07_conditionally_reconstructed_kN"],
+                       mass["gate07_remaining_gap_kN"],abs_tol=.001)
+        assert mass["gate07_remaining_gap_kN"]>0
+        assert len(d["gate06"]["eccentric_scenarios"])==8
+        assert len(d["gate07"]["variants"])==4
+        assert all(isfinite(row["roof_mm"]) for row in d["gate07"]["variants"])
+        assert "data-gate05-demo=" in (SITE/"calculation-coverage.html").read_text(encoding="utf-8")
+        page=(SITE/"project-lab.html").read_text(encoding="utf-8")
+        assert 'id="lab-response-chart"' in page and 'id="lab-modules"' in page
+        assert 'id="lab-mass-graphic"' in page
+        assert 'src="project-ledger.js"' in page
+        # The projection exposes non-identifying calculated aggregates only.
+        text=p.read_text(encoding="utf-8")
+        for blocked in ("drive.google.com/file/d/","drive.google.com/drive/folders/",
+                        "@gmail.com","Sankalp Singh", "Fabin Gurung", "ETABS License"):
+            assert blocked not in text
+    except (AssertionError,KeyError,ValueError,TypeError,OSError) as exc:
+        problems.append("Real-project public ledger privacy/numerical QA FAILED: "+str(exc))
+
 def main():
     problems=[]
     for page in PAGES:
@@ -179,9 +221,9 @@ def main():
         text=p.read_text(encoding="utf-8")
         parser=Parse();parser.feed(text)
         if parser.css!=["styles.css"]:problems.append(page+": inconsistent stylesheet")
-        if parser.scripts!=(["app.js","d2.js"] if page in ("calculation-coverage.html","report.html") else ["app.js"]):problems.append(page+": inconsistent app scripts")
+        if parser.scripts!=(["app.js","d2.js"] if page in ("calculation-coverage.html","report.html") else ["app.js","project-ledger.js"] if page=="project-lab.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
         if parser.mains!=1:problems.append(page+": expected one main")
-        for target in ("index.html","calculation-coverage.html","report.html","more.html"):
+        for target in ("index.html","project-lab.html","calculation-coverage.html","report.html","more.html"):
             if target not in text:problems.append(page+": missing nav target "+target)
         for url in parser.links+parser.css+parser.scripts:
             u=urlparse(url)
@@ -198,6 +240,7 @@ def main():
     verify_original_chart31_source_spots(problems)
     verify_synthetic_nbc105_esm(problems)
     verify_gate06_synthetic_source(problems)
+    verify_real_project_calculation_ledger(problems)
     if problems:raise SystemExit("\n".join(problems))
-    print("STRUCTURAL_SITE_QA_PASS: four pages, primary SP16 Table A, M09 and D2 signed generated evidence, shared theme and relative links")
+    print("STRUCTURAL_SITE_QA_PASS: five pages, source-linked de-identified project journal, SP16, M09/D2, privacy checks and shared theme")
 if __name__=="__main__":main()
