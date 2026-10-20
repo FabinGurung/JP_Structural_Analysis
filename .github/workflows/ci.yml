@@ -9,6 +9,7 @@ on:
       - site/sp16-chart31-benchmark-20261019
       - site/gate05-preview-20261020
       - site/gate06-nbc105-torsion-mass-20261020
+      - site/g15-project-calculation-ledger-20261020
   pull_request:
   workflow_dispatch:
 
@@ -42,6 +43,10 @@ jobs:
         run: python scripts/build_nbc105_esm_synthetic.py --output site/data/nbc105_esm_synthetic.v0.1.json
       - name: Build synthetic signed Gate06 eccentricity stiffness and mass data
         run: python scripts/build_gate06_synthetic.py --output site/data/nbc105_gate06_synthetic.v0.1.json
+      - name: Generate verified de-identified G+1.5 project calculation ledger
+        run: python scripts/build_g15_public_ledger.py --output site/data/g15-project-ledger.v0.1.json
+      - name: Validate original source-derived project projection boundaries
+        run: python -m pytest -q tests/test_g15_public_ledger.py
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
