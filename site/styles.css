@@ -66,3 +66,17 @@ html{overflow-x:clip}body{background:var(--bg);color:var(--fg);font-family:ui-sa
 .lab-private-value small,.lab-private-value span{display:block;font-size:11px;color:var(--muted)}
 .lab-private-value strong{display:block;font-size:18px;margin:6px 0}
 @media(max-width:730px){.lab-private-controls{grid-template-columns:1fr}.lab-private-values{grid-template-columns:repeat(2,1fr)}}
+
+/* Run Analysis MVP — inherits site's shared light/night Guild theme. */
+.studio-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.studio-fieldset{border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:18px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;min-width:0;align-content:start}
+.studio-fieldset legend{font-size:13px;font-weight:780;padding:0 9px;color:var(--fg)}
+.studio-fieldset label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:650;color:var(--muted)}
+.studio-fieldset input{width:100%;min-width:0;border:1px solid var(--line);border-radius:8px;color:var(--fg);background:var(--bg);padding:10px 11px;font-size:14px;font-family:inherit;font-variant-numeric:tabular-nums}
+.studio-fieldset input:focus{outline:2px solid var(--accent);outline-offset:1px}
+#studio-error{border-left:3px solid #aa7242;padding:8px 12px;background:var(--surface)}
+#studio-error.studio-good{border-left-color:var(--accent)}
+#studio-frame{color:var(--muted);max-height:380px}
+#studio-run button:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:830px){.studio-form{grid-template-columns:1fr}}
+@media(max-width:470px){.studio-fieldset{grid-template-columns:1fr}}
