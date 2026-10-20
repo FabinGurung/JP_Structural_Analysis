@@ -96,7 +96,7 @@
       "title": "3D frame and equilibrium",
       "status": "BOUNDED",
       "provenance": "Independent elastic FE / G05–G07",
-      "note": "336 assumed-frame cases after G05; 153 Gate06 + 204 Gate07",
+      "note": "357 assumed-frame solves across Gate06 (153) and Gate07 (204), plus 19 provisional Gate05 cases; no actual-model certification",
       "ref": "G07"
     },
     {
