@@ -115,6 +115,33 @@ def verify_original_chart31_source_spots(problems):
     except (ValueError,KeyError,IndexError,TypeError,AssertionError) as err:
         problems.append("Original SP16 Chart31 source benchmark incorrect: "+str(err))
 
+
+def verify_synthetic_nbc105_esm(problems):
+    import json
+    from math import isclose, isfinite
+    path=SITE/"data/nbc105_esm_synthetic.v0.1.json"
+    if not path.is_file():
+        problems.append("Missing native-generated synthetic NBC105 ESM data")
+        return
+    try:
+        d=json.loads(path.read_text(encoding="utf-8"))
+        assert d["schema"]=="jp.structural.synthetic_nbc105_2025_esm.v0.1"
+        assert d["synthetic"] is True
+        assert d["private_real_project_values_included"] is False
+        assert d["engineering_approval"] is False
+        assert d["report_accepted"] is False
+        assert all(x is False for x in d["safety_gates"].values())
+        assert d["cases"]["ULS"]["engineering_approval"] is False
+        assert d["guarded_drift_checks"]["ULS"]["engineering_approval"] is False
+        for mode in ("ULS","SLS"):
+            row=d["cases"][mode]
+            assert isfinite(row["base_shear_kN"])
+            assert isclose(sum(row["floor_forces_kN"]),row["base_shear_kN"],rel_tol=1e-10)
+        for page in ("calculation-coverage.html","report.html"):
+            assert 'data-gate05-demo=' in (SITE/page).read_text(encoding="utf-8")
+    except (AssertionError,KeyError,ValueError,TypeError) as e:
+        problems.append("Invalid synthetic NBC105 ESM case or safety gate: "+str(e))
+
 def main():
     problems=[]
     for page in PAGES:
@@ -140,6 +167,7 @@ def main():
     verify_m09_case(problems)
     verify_sp16_and_d2(problems)
     verify_original_chart31_source_spots(problems)
+    verify_synthetic_nbc105_esm(problems)
     if problems:raise SystemExit("\n".join(problems))
     print("STRUCTURAL_SITE_QA_PASS: four pages, primary SP16 Table A, M09 and D2 signed generated evidence, shared theme and relative links")
 if __name__=="__main__":main()
