@@ -14,17 +14,17 @@ import math
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
-SOURCE=ROOT/"registry"/"g15-public-case-ledger.v0.1.json"
+SOURCE=ROOT/"registry"/"g15-public-case-ledger.v0.2.json"
 
 def build():
     d=json.loads(SOURCE.read_text(encoding="utf-8"))
-    assert d["schema"]=="jp.structural.deidentified.project_calculation_ledger.source.v0.1"
+    assert d["schema"]=="jp.structural.deidentified.project_calculation_ledger.source.v0.2"
     assert d["publication"]=="USER_REQUESTED_DEIDENTIFIED_AGGREGATE_ONLY"
     assert d["scope"]["member_count"]==d["scope"]["column_segments"]+d["scope"]["beam_segments"]
     assert d["gate05"]["case_count"]+d["gate06"]["case_count"]+d["gate07"]["case_count"]==376
     assert d["gate07"]["case_count"]==4*51
-    assert len(d["workflow"])==6 and len(d["calculation_families"])>=12
-    assert set(v["id"] for v in d["workflow"])=={"G02","G03","G04","G05","G06","G07"}
+    assert len(d["workflow"])==7 and len(d["calculation_families"])>=13
+    assert set(v["id"] for v in d["workflow"])=={"G02","G03","G04","G05","G06","G07","G08"}
     w=d["gravity_mass"]
     assert math.isclose(w["member_selfweight_kN"]+w["floor_added_dead_kN"]+
        w["seismic_live_share_kN"],w["gate06_reconstructed_kN"],abs_tol=.01)
@@ -57,7 +57,12 @@ def build():
         assert v["roof_mm"]>0 and v["drift"]>0
         v["numerical_limit"]=gate["code_drift_limit"][v["state"]]
         v["screening_exceeds_limit"]=v["drift"]>v["numerical_limit"]
+    assert d["gate08"]["cases"]==816 and d["gate08"]["variant_count"]==16
+    assert d["gate08"]["signed_member_action_records"]==134640
+    assert d["gate08"]["source_sha256"]=="37d3ab85d96953a74a773358fb9d56de1858ed163c896bb99de8e43844ee0a48"
+    assert d["gate08"]["model_real_project_approved"] is False
     d["derived"]={
+       "total_gate05_to_gate08_case_solves":1192,
        "total_gate05_gate06_gate07_case_solves":376,
        "gate06_mass_shortfall_pct":100*w["gate06_gap_kN"]/w["report_W_kN"],
        "conditional_gate07_mass_shortfall_pct":100*w["gate07_remaining_gap_kN"]/w["report_W_kN"],
@@ -69,7 +74,7 @@ def build():
     }
     source_bytes=SOURCE.read_bytes()
     d["source_register_sha256"]=hashlib.sha256(source_bytes).hexdigest()
-    d["schema"]="jp.structural.deidentified.project_calculation_ledger.public.v0.1"
+    d["schema"]="jp.structural.deidentified.project_calculation_ledger.public.v0.2"
     # Deliberate privacy fail-closed test before publishing under public Pages.
     serialized=json.dumps(d,ensure_ascii=False,sort_keys=True,allow_nan=False)
     for token in ("drive.google.com/file/d/","drive.google.com/drive/folders/","@gmail.com",
