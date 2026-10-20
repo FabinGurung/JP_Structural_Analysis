@@ -55,3 +55,34 @@ fetch("data/sp16_chart31_spotcheck.v0.1.json",{cache:"no-store"})
   }
 }).catch(e=>views.forEach(v=>v.replaceChildren(el("p","Original Chart31 evidence HOLD: "+e.message,"m09-error"))));
 })();
+
+/* Gate05 code-readiness. Only an independently generated synthetic sample is public. */
+(function(){
+"use strict";
+const views=[...document.querySelectorAll("[data-gate05-demo]")];
+if(!views.length)return;
+const el=(tag,txt,cls)=>{const n=document.createElement(tag);if(txt!==undefined)n.textContent=txt;if(cls)n.className=cls;return n;};
+const fmt=n=>typeof n==="number"&&Number.isFinite(n)?n.toFixed(3):"unverified";
+fetch("data/nbc105_esm_synthetic.v0.1.json",{cache:"no-store"})
+.then(r=>r.ok?r.json():Promise.reject(Error("ESM evidence missing")))
+.then(d=>{
+if(d.schema!=="jp.structural.synthetic_nbc105_2025_esm.v0.1"||d.synthetic!==true||
+  d.private_real_project_values_included!==false||d.engineering_approval!==false||
+  d.report_accepted!==false||d.cases?.ULS?.engineering_approval!==false||
+  d.guarded_drift_checks?.ULS?.engineering_approval!==false||
+  Object.values(d.safety_gates||{}).some(v=>v!==false))
+    throw Error("ESM data provenance or design HOLD invalid");
+for(const v of views){
+ const grid=el("div",undefined,"m09-numbers");
+ for(const [label,val,units] of [
+  ["ULS base shear",d.cases.ULS.base_shear_kN,"kN · synthetic"],
+  ["SLS base shear",d.cases.SLS.base_shear_kN,"kN · synthetic"],
+  ["ULS design drift",d.guarded_drift_checks.ULS.calculated_design_drift_ratio*100,"% · Rμ-scaled, synthetic"],
+  ["Floor load sums",d.cases.ULS.floor_forces_kN.reduce((a,b)=>a+b,0),"kN · equilibrium"]]){
+    const box=el("div",undefined,"m09-stat");box.append(el("span",label),el("strong",fmt(val)),el("small",units));grid.append(box);
+ }
+ v.replaceChildren(el("p","NBC105:2025 · NUMERIC DEMO ONLY · PRIVATE PROJECT DATA EXCLUDED","m09-provenance"),grid,
+   el("p","Accidental eccentricity, effective stiffness, true site hazard/soil and approvals remain HOLD.","m09-provenance"));
+}
+}).catch(e=>views.forEach(v=>v.replaceChildren(el("p","ESM evidence HOLD: "+e.message,"m09-error"))));
+})();
