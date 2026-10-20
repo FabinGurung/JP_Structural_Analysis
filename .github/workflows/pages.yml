@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 3517c78efdedc84f102ba1c86372674ee35c4cfd
+          ref: fdcfc27ff1d80026b759d8ac337a3610a368ad9f
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -43,6 +43,8 @@ jobs:
         run: python scripts/build_sp16_chart31_spotcheck.py --output site/data/sp16_chart31_spotcheck.v0.1.json
       - name: Build source-calculated synthetic NBC105:2025 ESM for public site
         run: python scripts/build_nbc105_esm_synthetic.py --output site/data/nbc105_esm_synthetic.v0.1.json
+      - name: Regenerate synthetic Gate06 eccentricity and mass comparison for public site
+        run: python scripts/build_gate06_synthetic.py --output site/data/nbc105_gate06_synthetic.v0.1.json
       - name: Validate current report-first coverage and site navigation
         run: |
           python scripts/build_calculation_coverage.py --check
