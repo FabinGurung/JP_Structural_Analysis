@@ -142,6 +142,35 @@ def verify_synthetic_nbc105_esm(problems):
     except (AssertionError,KeyError,ValueError,TypeError) as e:
         problems.append("Invalid synthetic NBC105 ESM case or safety gate: "+str(e))
 
+
+def verify_gate06_synthetic_source(problems):
+    import json
+    from math import isfinite
+    p=SITE/"data/nbc105_gate06_synthetic.v0.1.json"
+    if not p.exists():
+        problems.append("Missing generated Gate06 synthetic public evidence")
+        return
+    try:
+        d=json.loads(p.read_text(encoding="utf-8"))
+        assert d["schema"]=="jp.structural.public_synthetic_gate06.v0.1"
+        assert d["synthetic"] is True
+        assert d["private_project_input_values_included"] is False
+        assert d["engineering_approval"] is False and d["report_accepted"] is False
+        assert len(d["signed_accidental_eccentricity_cases"])==16
+        assert set(d["effective_stiffness"])=={"GROSS","ULS","SLS"}
+        assert d["effective_stiffness"]["ULS"]["beam_flexural_EI_over_EcIg"]==.35
+        assert d["effective_stiffness"]["ULS"]["column_flexural_EI_over_EcIg"]==.70
+        assert d["effective_stiffness"]["SLS"]["beam_flexural_EI_over_EcIg"]==.70
+        assert d["effective_stiffness"]["SLS"]["column_flexural_EI_over_EcIg"]==.90
+        assert d["source_mass_reconciliation_demonstration"]["source_to_trial_mass_closed"] is False
+        assert d["source_mass_reconciliation_demonstration"]["missing_components_inferred"] is False
+        assert isfinite(d["source_mass_reconciliation_demonstration"]["residual_source_minus_trial_kN"])
+        assert d["same_case_member_action_selection"]["do_not_combine_independent_case_peaks"]
+        for page in ("calculation-coverage.html","report.html"):
+            assert "data-gate06-demo=" in (SITE/page).read_text(encoding="utf-8")
+    except (KeyError,ValueError,IndexError,TypeError,AssertionError) as exc:
+        problems.append("Gate06 public numeric source or safety HOLD invalid: "+str(exc))
+
 def main():
     problems=[]
     for page in PAGES:
@@ -168,6 +197,7 @@ def main():
     verify_sp16_and_d2(problems)
     verify_original_chart31_source_spots(problems)
     verify_synthetic_nbc105_esm(problems)
+    verify_gate06_synthetic_source(problems)
     if problems:raise SystemExit("\n".join(problems))
     print("STRUCTURAL_SITE_QA_PASS: four pages, primary SP16 Table A, M09 and D2 signed generated evidence, shared theme and relative links")
 if __name__=="__main__":main()
