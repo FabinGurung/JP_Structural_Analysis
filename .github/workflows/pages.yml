@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: fdcfc27ff1d80026b759d8ac337a3610a368ad9f
+          ref: da5a8b79bccf92cedec5239cc4ac3b41fc5d8524
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -45,12 +45,16 @@ jobs:
         run: python scripts/build_nbc105_esm_synthetic.py --output site/data/nbc105_esm_synthetic.v0.1.json
       - name: Regenerate synthetic Gate06 eccentricity and mass comparison for public site
         run: python scripts/build_gate06_synthetic.py --output site/data/nbc105_gate06_synthetic.v0.1.json
+      - name: Publish current de-identified source-linked G+1.5 calculation ledger
+        run: python scripts/build_g15_public_ledger.py --output site/data/g15-project-ledger.v0.1.json
       - name: Validate current report-first coverage and site navigation
         run: |
           python scripts/build_calculation_coverage.py --check
           python scripts/check_site.py
           node --check site/app.js
           node --check site/d2.js
+          node --check site/project-ledger.js
+          node --check site/private-force-viewer.js
       - name: Write deployment metadata
         run: |
           python - <<'PY'
