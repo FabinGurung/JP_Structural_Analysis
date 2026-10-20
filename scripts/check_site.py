@@ -175,19 +175,21 @@ def verify_gate06_synthetic_source(problems):
 def verify_real_project_calculation_ledger(problems):
     import json
     from math import isclose, isfinite
-    p=SITE/"data/g15-project-ledger.v0.1.json"
+    p=SITE/"data/g15-project-ledger.v0.2.json"
     if not p.is_file():
         problems.append("Missing generated de-identified real-project calculation ledger")
         return
     try:
         d=json.loads(p.read_text(encoding="utf-8"))
-        assert d["schema"]=="jp.structural.deidentified.project_calculation_ledger.public.v0.1"
+        assert d["schema"]=="jp.structural.deidentified.project_calculation_ledger.public.v0.2"
         assert d["source_visibility"]=="PRIVATE_DRIVE_SOURCE_NOT_PUBLISHED"
         assert d["publication"]=="USER_REQUESTED_DEIDENTIFIED_AGGREGATE_ONLY"
-        assert d["derived"]["total_gate05_gate06_gate07_case_solves"]==376
+        assert d["derived"]["total_gate05_gate06_gate07_case_solves"]==1192
         assert d["scope"]["member_count"]==165
-        assert len(d["workflow"])==6 and len(d["calculation_families"])>=12
+        assert len(d["workflow"])==7 and len(d["calculation_families"])>=13
         assert d["gate07"]["case_count"]==204
+        assert d["gate08"]["cases"]==816
+        assert d["gate08"]["model_real_project_approved"] is False
         assert all(v is False for v in d["safety"].values())
         assert d["member_checks"]["F3_source_status"]=="NOT SAFE IN ONE WAY SHEAR"
         assert d["member_checks"]["F3_repaired"] is False
