@@ -262,7 +262,7 @@ def main():
         text=p.read_text(encoding="utf-8")
         parser=Parse();parser.feed(text)
         if parser.css!=["styles.css"]:problems.append(page+": inconsistent stylesheet")
-        if parser.scripts!=(["app.js","d2.js"] if page in ("calculation-coverage.html","report.html") else ["app.js","project-ledger.js","gate08.js","gate09.js","gate10.js","gate11.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
+        if parser.scripts!=(["app.js","d2.js"] if page in ("calculation-coverage.html","report.html") else ["app.js","project-ledger.js","gate08.js","gate09.js","gate10.js","gate11.js","gate12.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
         if parser.mains!=1:problems.append(page+": expected one main")
         for target in ("index.html","project-lab.html","analysis-studio.html","g15-3d.html","calculation-coverage.html","report.html","more.html"):
             if target not in text:problems.append(page+": missing nav target "+target)
@@ -379,6 +379,31 @@ def main():
             assert 'id="lab-gate11"' in (SITE/"project-lab.html").read_text(encoding="utf-8")
         except (AssertionError,KeyError,ValueError,TypeError,OSError) as e:
             problems.append("Gate11 response provenance failed: "+str(e))
+    g12=SITE/"data/g15-gate12-diaphragm-fe.v0.1.json"
+    if not g12.exists():
+        problems.append("Source-grid 3D diaphragm FE comparison is missing")
+    else:
+        try:
+            d=json.loads(g12.read_text(encoding="utf-8"))
+            assert d["schema"]=="jp.structural.g15.gate12.diaphragm_openSees_comparison.v0.1"
+            assert len(d["cases"])==18 and len(d["comparisons"])==9
+            assert d["source_grid_members"]==165 and d["source_columns"]==23
+            assert d["engineering_approval"] is False
+            assert d["seismic_mass_reconciled"] is False
+            assert d["actual_slab_shell_elements"] is False
+            assert d["displacement_limit_compliance_verified"] is False
+            assert d["source_F3_one_way_shear"]=="NOT SAFE IN ONE WAY SHEAR"
+            assert {c["boundary"] for c in d["cases"]}=={"FLEXIBLE","RIGID_MPC_TRIAL"}
+            assert all(c["local_signed_member_action_count"]==165 and
+                c["reaction_equilibrium_verified"] is True and
+                c["max_force_equilibrium_residual_kN"]<.001 and
+                c["max_moment_equilibrium_residual_kNm"]<.001 and
+                len(c["governing_signed_local_12_actions"])==12
+                for c in d["cases"])
+            assert 'id="lab-gate12"' in (SITE/"project-lab.html").read_text(encoding="utf-8")
+            assert "g15-gate12-diaphragm-fe.v0.1.json" in (SITE/"gate12.js").read_text(encoding="utf-8")
+        except (AssertionError,KeyError,ValueError,TypeError,OSError) as e:
+            problems.append("Gate12 finite element source boundary QA failure: "+str(e))
     if problems:raise SystemExit("\n".join(problems))
     print("STRUCTURAL_SITE_QA_PASS: seven pages including open real-source 3D frame analysis, source-linked de-identified project journal, SP16, M09/D2, privacy checks and shared theme")
 if __name__=="__main__":main()
