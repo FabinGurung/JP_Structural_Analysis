@@ -52,8 +52,8 @@ def validate(p):
 def parse_issue(path):
     event=json.loads(Path(path).read_text(encoding="utf-8"))
     issue=event["issue"]
-    if issue.get("user",{}).get("login")!="FabinGurung":
-        raise ValueError("Unapproved GitHub Actions account; fork to run your own")
+    if issue.get("user",{}).get("login") not in ("FabinGurung","Kaksaveksaka"):
+        raise ValueError("Unapproved GitHub Actions submitter; fork to run your own")
     if not str(issue.get("title","")).startswith("[JP G15 3D]"):
         raise ValueError("Not a configured G15 3D run")
     body=issue.get("body","")
