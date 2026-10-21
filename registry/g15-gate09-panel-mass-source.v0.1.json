@@ -92,7 +92,27 @@
       "trace native floor-specific slab loops and openings from drawing or original ETABS area objects",
       "extract line load assignments and wall geometry from ETABS editable file or source model",
       "read original ETABS mass-source table, material densities and mass inclusion rules",
-      "assign unique non-overlapping mass categories and check individual floor totals"
+      "assign unique non-overlapping mass categories and check individual floor totals",
+      "resolve commercial ground-floor plan label versus report residential occupancy and floor live load; inspect ETABS occupancy live-load assignments and eligible live-load mass fraction"
     ]
+  },
+  "source_plan_occupancy_conflict": {
+    "ground_plan_page": 9,
+    "ground_floor_room_label": "COMMERCIAL SPACE",
+    "nominal_ground_commercial_dimensions_mm": [
+      14540,
+      11540
+    ],
+    "dimensions_status": "READ_FROM_ARCHITECTURAL_IMAGE_NOT_AN_ETABS_MASS_OBJECT",
+    "report_summary_occupancy": "Residential",
+    "report_gravity_loads_general_residential_kN_m2": 2,
+    "report_stair_corridor_load_kN_m2": 3,
+    "second_floor_plan_page": 11,
+    "second_floor_terrace_is_drawn": true,
+    "complete_upper_slab_extent_verified": false,
+    "ground_commercial_seismic_live_load_eligibility_verified": false,
+    "ground_commercial_load_intensity_verified": false,
+    "ground_room_footprint_verified": false,
+    "risk": "Source occupancy conflict; actual floor purpose and imposed load class require reconciliation before NBC105 seismic-mass compliance."
   }
 }
