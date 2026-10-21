@@ -115,6 +115,8 @@ jobs:
         with:
           name: gate12-g15-real-3d-diaphragm-signed-not-approved
           path: build/g15-gate12/full_signed_actions.json
+      - name: Validate Gate12 FE visualization
+        run: node --check site/gate12.js
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
