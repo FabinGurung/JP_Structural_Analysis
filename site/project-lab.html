@@ -131,6 +131,18 @@
 <div class="lab-scroll"><table class="lab-table"><thead><tr><th>Story</th><th>Signed force (kN)</th><th>Eccentricity (m)</th><th>Torsion (kN·m)</th><th>Maximum displacement proxy (mm)</th></tr></thead><tbody id="g11-table"></tbody></table></div>
 <p class="lab-chart-note" id="g11-note">Waiting for governed source-based sensitivity data.</p>
 </div></details>
+<section class="section compact" id="lab-gate12">
+<div class="section-title"><div><span class="eyebrow">GATE12 · REAL OPENSees 3D FRAME</span><h2>Flexible vs assumed rigid diaphragm</h2></div><p>Same 165-member, 92-node frame in 18 signed cases. The floor constraint changes; applied lateral force and torsional couple do not.</p></div>
+<div class="lab-kpis" id="g12-kpis"><div class="lab-kpi"><strong>Loading OpenSees results…</strong></div></div>
+<div class="panel">
+<label class="g15-field">Compare signed seismic case <select id="g12-choice" disabled></select></label>
+<div class="lab-scroll"><table class="lab-table"><thead><tr><th>Engineering response (elastic)</th><th>Flexible frame</th><th>Rigid in-plane MPC trial</th></tr></thead><tbody id="g12-compare"></tbody></table></div>
+<p class="lab-chart-note" id="g12-highlight"></p>
+<div class="lab-scroll"><table class="lab-table"><thead><tr><th>Case / support assumption</th><th>Max roof displacement (mm)</th><th>Max story chord ratio</th><th>Controlling end moment (kN·m)</th></tr></thead><tbody id="g12-overview"></tbody></table></div>
+<div class="actions"><a class="btn secondary" href="https://github.com/FabinGurung/JP_Structural_Analysis/actions/workflows/deploy-pages.yml">Open full OpenSees release run ↗</a>
+<a class="btn secondary" href="g15-3d.html">Inspect 3D frame editor →</a></div>
+<p class="lab-chart-note"><strong>Not an approved design:</strong> assumed polygons and 23 grid positions; no slab shell elements, independently verified mass source, response spectrum, P–Δ or actual foundation redesign. Drift values are elastic nodal chord ratios, not a code compliance verdict. Source footing F3: NOT SAFE IN ONE WAY SHEAR.</p>
+</div></section>
 <section class="section" id="lab-private">
  <div class="section-title"><div><span class="eyebrow">PRIVATE EVIDENCE VIEWER · LOCAL FILES ONLY</span><h2>Inspect every signed FE action locally</h2></div><p>Choose full-analysis JSON files from the private Gate06 or Gate08 archives. Examine load-case values, member IDs and all 12 local end-action components locally—nothing is uploaded to a server.</p></div>
  <div class="panel lab-private-panel">
@@ -153,5 +165,5 @@
 </section>
 </main>
 <footer class="site-footer"><div class="wrap footer-inner"><span>JP Structural Analysis · G+1.5 de-identified project journal · Engineering approval HOLD</span><span>Private source remains in Drive</span></div></footer>
-<script src="app.js" defer></script><script src="project-ledger.js" defer></script><script src="gate08.js" defer></script><script src="gate09.js" defer></script><script src="gate10.js" defer></script><script src="gate11.js" defer></script><script src="private-force-viewer.js" defer></script>
+<script src="app.js" defer></script><script src="project-ledger.js" defer></script><script src="gate08.js" defer></script><script src="gate09.js" defer></script><script src="gate10.js" defer></script><script src="gate11.js" defer></script><script src="gate12.js" defer></script><script src="private-force-viewer.js" defer></script>
 </body></html>
