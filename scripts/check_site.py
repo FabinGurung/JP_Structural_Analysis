@@ -262,7 +262,7 @@ def main():
         text=p.read_text(encoding="utf-8")
         parser=Parse();parser.feed(text)
         if parser.css!=["styles.css"]:problems.append(page+": inconsistent stylesheet")
-        if parser.scripts!=(["app.js","d2.js"] if page in ("calculation-coverage.html","report.html") else ["app.js","project-ledger.js","gate08.js","gate09.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
+        if parser.scripts!=(["app.js","d2.js"] if page in ("calculation-coverage.html","report.html") else ["app.js","project-ledger.js","gate08.js","gate09.js","gate10.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
         if parser.mains!=1:problems.append(page+": expected one main")
         for target in ("index.html","project-lab.html","analysis-studio.html","g15-3d.html","calculation-coverage.html","report.html","more.html"):
             if target not in text:problems.append(page+": missing nav target "+target)
@@ -343,6 +343,26 @@ def main():
             assert 'id="lab-gate09"' in (SITE/"project-lab.html").read_text(encoding="utf-8")
         except (AssertionError,KeyError,TypeError,ValueError,OSError) as e:
             problems.append("Gate09 source-audit QA fail: "+str(e))
+    g10=SITE/"data/g15-gate10-assumptions.v0.1.json"
+    if not g10.exists():
+        problems.append("Gate10 mass-assumption evidence missing")
+    else:
+        try:
+            d=json.loads(g10.read_text(encoding="utf-8"))
+            assert d["schema"]=="jp.structural.g15.gate10.assumption_sensitivity.v0.1"
+            assert d["engineering_approval"] is False
+            assert d["seismic_mass_source_reconciled"] is False
+            assert d["source_F3_one_way_shear"]=="NOT SAFE IN ONE WAY SHEAR"
+            assert len(d["footprints"]["assumed_per_floor"])==3
+            assert len(d["model_cases"])==9
+            assert all(x["seismic_mass_accepted"] is False for x in d["model_cases"])
+            assert all(len(x["floor_weights_kN"])==3 for x in d["model_cases"])
+            assert "G10_INVERSE_FIT" in [x["id"] for x in d["model_cases"]]
+            assert 'id="lab-gate10"' in (SITE/"project-lab.html").read_text(encoding="utf-8")
+            assert 'id="g15-assumption-note"' in (SITE/"g15-3d.html").read_text(encoding="utf-8")
+            assert "g15-gate10-assumptions.v0.1.json" in (SITE/"g15-3d.js").read_text(encoding="utf-8")
+        except (AssertionError,KeyError,TypeError,ValueError,OSError) as e:
+            problems.append("Gate10 source/mass assumption integrity failure: "+str(e))
     if problems:raise SystemExit("\n".join(problems))
     print("STRUCTURAL_SITE_QA_PASS: seven pages including open real-source 3D frame analysis, source-linked de-identified project journal, SP16, M09/D2, privacy checks and shared theme")
 if __name__=="__main__":main()
