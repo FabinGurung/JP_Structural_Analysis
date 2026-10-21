@@ -124,6 +124,51 @@ $("g15-queue").addEventListener("click",()=>{
  window.open(url,"_blank","noopener,noreferrer");
  $("g15-status").textContent="Prefilled GitHub issue opened. Submit it when signed into the repo owner account; GitHub Actions will post a link to the signed FE results.";
 });
+let solved=null;
+function renderReference(){
+ if(!solved)return;
+ const current=solved.cases[Number($("g15-solved-case").value)||0];
+ if(!current)return;
+ const elArr=current.member_signed_local_end_forces;
+ $("g15-solved-member").replaceChildren(...elArr.map((a,i)=>{
+   const o=make("option",a.id);o.value=String(i);return o;
+ }));
+ $("g15-solved-member").disabled=false;
+ $("g15-solved-summary").replaceChildren(...[
+   ["Load case",current.case],["Max roof movement",fmt(current.max_roof_horizontal_displacement_mm,3)+" mm"],
+   ["Signed frame ends",String(elArr.length)],["Reaction residual",fmt(current.equilibrium_residual_kN,7)+" kN"]
+ ].map(([key,v])=>{const box=make("div",undefined,"lab-kpi");box.append(make("small",key),make("strong",v));return box;}));
+ renderLocalForces();
+}
+function renderLocalForces(){
+ if(!solved)return;
+ const c=solved.cases[Number($("g15-solved-case").value)||0];
+ const m=c?.member_signed_local_end_forces[Number($("g15-solved-member").value)||0];
+ if(!m)return;
+ $("g15-member-components").replaceChildren(...m.local_components.map((k,i)=>{
+  const tr=make("tr");tr.append(make("td",k),make("td",fmt(m.signed[i],5)),
+    make("td",k.startsWith("N")||k.startsWith("V")?"kN":"kN·m"));
+  return tr;
+ }));
+ $("g15-solved-message").textContent="Original default source-derived 3D trial; "+m.id+
+  " in "+c.case+". These 12 signed end forces belong to one actual OpenSees load case. Engineering approval remains HOLD.";
+}
+$("g15-solved-case").addEventListener("change",renderReference);
+$("g15-solved-member").addEventListener("change",renderLocalForces);
+fetch("data/g15-open3d-reference.v1.json",{cache:"no-store"})
+ .then(r=>r.ok?r.json():Promise.reject(Error("OpenSees reference not generated")))
+ .then(d=>{
+  if(d.schema!=="jp.structural.g15.open3d.result.v1"||
+    d.model_counts?.members!==165||d.cases?.length!==5||
+    d.engineering_approval!==false||d.foundation_F3_one_way_shear!=="NOT SAFE IN ONE WAY SHEAR"||
+    d.cases.some(c=>c.member_signed_local_end_forces?.length!==165||c.equilibrium_residual_kN>=.001))
+    throw Error("Reference model count / numerical engineering HOLD invalid");
+  solved=d;
+  $("g15-solved-case").replaceChildren(...d.cases.map((c,i)=>{
+   const o=make("option",c.case);o.value=String(i);return o;
+  }));
+  $("g15-solved-case").disabled=false;renderReference();
+ }).catch(e=>$("g15-solved-message").textContent="OpenSees reference HOLD: "+e.message);
 fetch("data/g15-working-grid.public.v0.1.json",{cache:"no-store"}).then(x=>x.ok?x.json():Promise.reject(Error("model JSON unavailable"))).then(d=>{
  if(d.schema!=="jp.structural.g15.public_working_grid.v0.1"||
  d.column_positions_mm?.length!==23||d.beam_edges?.length!==32||
