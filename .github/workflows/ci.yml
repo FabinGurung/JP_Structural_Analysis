@@ -13,6 +13,7 @@ on:
       - site/g15-gate08-source-reconcile-20261020
       - site/interactive-analysis-mvp-20261020
       - site/g15-open-3d-analysis-20261021
+      - site/g15-gate09-source-panel-mass-audit-20261021
       - site/g15-debt-cleanup-20261021
   pull_request:
   workflow_dispatch:
@@ -83,6 +84,12 @@ jobs:
           path: build/g15_open_3d/open_source_3d_result.json
       - name: Build signed default 165-member G15 reference for public 3D viewer
         run: python scripts/run_g15_open_3d.py --sample --output site/data/g15-open3d-reference.v1.json
+      - name: Generate Gate09 source geometry and mass ledger
+        run: python scripts/build_g15_gate09_source_audit.py --output site/data/g15-gate09-source-audit.v0.1.json
+      - name: Validate Gate09 UI and calculations
+        run: |
+          node --check site/gate09.js
+          python -m pytest -q tests/test_g15_gate09_source_audit.py
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
