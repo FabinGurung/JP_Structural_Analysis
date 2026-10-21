@@ -1,0 +1,136 @@
+/* Public actual-source 3D working-frame editor; no login needed for viewing. */
+(()=>{
+"use strict";
+const $=id=>document.getElementById(id),ns="http://www.w3.org/2000/svg";
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toLocaleString("en-US",{maximumFractionDigits:d,minimumFractionDigits:d}):"—";
+const node=(name,attrs,txt)=>{const v=document.createElementNS(ns,name);for(const [k,val] of Object.entries(attrs))v.setAttribute(k,String(val));if(txt!==undefined)v.textContent=txt;return v;};
+const make=(name,txt,klass)=>{const v=document.createElement(name);if(txt!==undefined)v.textContent=txt;if(klass)v.className=klass;return v;};
+const refs=["g15-beam","g15-e","g15-stiff","g15-w1","g15-w2","g15-w3","g15-c","g15-t","g15-bridges"];
+const defaults=Object.fromEntries(refs.map(id=>[id,$(id).type==="checkbox"?$(id).checked:$(id).value]));
+let model=null,yaw=-.67,beamVisible=true,request=null;
+function bounds(v,name,lo,hi){
+ const x=Number(v);
+ if(String(v).trim()===""||!Number.isFinite(x)||x<lo||x>hi)throw Error(name+" must be "+lo+"–"+hi);
+ return x;
+}
+function read(){
+ return {schema:"jp.structural.g15.open3d.request.v1",
+ beam_width_mm:bounds($("g15-beam").value,"Beam width",200,650),
+ concrete_E_MPa:bounds($("g15-e").value,"Ec",10000,50000),
+ stiffness:$("g15-stiff").value,
+ bridges:$("g15-bridges").checked,
+ floor_weights_kN:[
+  bounds($("g15-w1").value,"Floor 1 weight",20,10000),
+  bounds($("g15-w2").value,"Floor 2 weight",20,10000),
+  bounds($("g15-w3").value,"Floor 3 weight",20,10000)],
+ C_design:bounds($("g15-c").value,"Cd",.01,.5),
+ T_seconds:bounds($("g15-t").value,"T",.1,3)};
+}
+function project(x,y,z){
+ const xr=x*Math.cos(yaw)-y*Math.sin(yaw),depth=x*Math.sin(yaw)+y*Math.cos(yaw);
+ return [275+xr*19, 320+depth*8-z*26];
+}
+function segment(scene,a,b,color,width,label){
+ const [x1,y1]=project(...a),[x2,y2]=project(...b);
+ const l=node("line",{x1,y1,x2,y2,stroke:color,"stroke-width":width,
+                       "stroke-linecap":"round","data-member":label,tabindex:0});
+ const choose=()=>$("g15-inspector").textContent=label+" · assumed elastic element centerline · source grid-based connectivity, not confirmed as-built.";
+ l.addEventListener("click",choose);l.addEventListener("keydown",e=>{if(e.key==="Enter")choose();});
+ scene.append(l);
+}
+function render(){
+ if(!model)return;
+ const c=model.column_positions_mm,
+ sections=Object.fromEntries(c.map(x=>[x[0],x])),
+ edgeList=model.beam_edges,stage=$("g15-scene");
+ stage.replaceChildren();
+ // Background is conceptual, not an architectural slab boundary.
+ stage.append(node("text",{x:12,y:24,fill:"currentColor","font-size":13},
+  "23 column grids · 3 levels · Source-derived 3D frame"));
+ for(const p of c){
+  const xyz=[p[1]/1000,p[2]/1000];
+  for(let level=0;level<3;level++){
+   segment(stage,[...xyz,3.048*level],[...xyz,3.048*(level+1)],
+        "#80bed2",3,"COLUMN "+p[0]+" @ L"+level+"–L"+(level+1));
+  }
+ }
+ if(beamVisible){
+  edgeList.forEach((e,i)=>{
+   if(i>=30&&!$("g15-bridges").checked)return;
+   const a=sections[e[0]],b=sections[e[1]];
+   for(let level=1;level<=3;level++){
+    segment(stage,[a[1]/1000,a[2]/1000,3.048*level],
+     [b[1]/1000,b[2]/1000,3.048*level],
+     i>=30?"#dc8256":"#47bb9e",i>=30?4:2.2,
+     "BEAM "+e[0]+"–"+e[1]+" / L"+level+(i>=30?" / HYPOTHETICAL CONNECTOR":""));
+   }
+  });
+ }
+ for(const p of c){
+  const [x,y]=project(p[1]/1000,p[2]/1000,9.144);
+  stage.append(node("circle",{cx:x,cy:y,r:3.3,fill:"#e5e9f3"}));
+  stage.append(node("text",{x:x+5,y:y-6,fill:"currentColor","font-size":10},p[0]));
+ }
+ const mem=69+( $("g15-bridges").checked?96:90);
+ $("g15-model-numbers").textContent="92 nodes · "+mem+" members · 69 columns · "+(mem-69)+" inferred beams · 23 column grid marks · 4 elevation planes";
+}
+function compute(){
+ try{
+ const d=read();
+ if(!model)throw Error("Public model not loaded");
+ if(!["ULS","SLS","GROSS"].includes(d.stiffness))throw Error("Bad stiffness option");
+ const W=d.floor_weights_kN.reduce((s,x)=>s+x,0);
+ const k=d.T_seconds<=.5?1:d.T_seconds>=2.5?2:1+(d.T_seconds-.5)/2;
+ const h=[3.048,6.096,9.144],fact=d.floor_weights_kN.map((w,i)=>w*h[i]**k);
+ const sum=fact.reduce((a,b)=>a+b,0),V=d.C_design*W;
+ const fi=fact.map(x=>V*x/sum);
+ if(Math.abs(fi.reduce((a,b)=>a+b,0)-V)>1e-7)throw Error("Force equilibrium failure");
+ request=d;
+ const cells=[["Seismic weight",fmt(W)+" kN"],["Base shear",fmt(V)+" kN"],
+   ["Exponent k",fmt(k,3)],["Model elements",String(69+(d.bridges?96:90))]];
+ $("g15-preview").replaceChildren(...cells.map(([key,val])=>{const box=make("div",undefined,"lab-kpi");box.append(make("small",key),make("strong",val));return box;}));
+ $("g15-forces").replaceChildren(...fi.map((x,i)=>{const tr=make("tr");for(const v of [i+1,fmt(d.floor_weights_kN[i]),fmt(h[i],3),fmt(x)])tr.append(make("td",v));return tr;}));
+ $("g15-equilibrium").textContent="NBC 105:2025 §6.3: Fi = V Wi hi^k / Σ Wj hj^k. ΣFi = "+fmt(fi.reduce((a,b)=>a+b,0))+" kN. PASS (arithmetic only). No verified code-site coefficient or diaphragm.";
+ $("g15-status").textContent="Inputs valid. Press Queue to submit authenticated 3D OpenSees analysis on GitHub; public model and source code require no Vercel.";
+ $("g15-queue").disabled=false;$("g15-export").disabled=false;
+ render();
+ }catch(e){request=null;$("g15-queue").disabled=true;$("g15-export").disabled=true;
+ $("g15-status").textContent="Cannot run: "+e.message;}
+}
+$("g15-turn-left").addEventListener("click",()=>{yaw-=Math.PI/8;render();});
+$("g15-turn-right").addEventListener("click",()=>{yaw+=Math.PI/8;render();});
+$("g15-fit").addEventListener("click",()=>{yaw=-.67;render();});
+$("g15-toggle-beams").addEventListener("click",()=>{
+ beamVisible=!beamVisible;$("g15-toggle-beams").textContent=beamVisible?"Hide beams":"Show beams";render();
+});
+$("g15-point").addEventListener("change",()=>{
+ const c=model?.column_positions_mm.find(v=>v[0]===$("g15-point").value);
+ if(c)$("g15-inspector").textContent=c[0]+": x="+fmt(c[1]/1000,3)+" m, y="+fmt(c[2]/1000,3)+" m; scheduled type "+c[3]+"; node exists on levels 0–3.";
+});
+for(const id of refs){$(id).addEventListener("input",compute);$(id).addEventListener("change",compute);}
+$("g15-reset").addEventListener("click",()=>{for(const id of refs){$(id).type==="checkbox"?$(id).checked=defaults[id]:$(id).value=defaults[id];}compute();});
+$("g15-export").addEventListener("click",()=>{
+ if(!request)return;
+ const u=URL.createObjectURL(new Blob([JSON.stringify(request,null,2)+"\n"],{type:"application/json"}));
+ const a=make("a");a.href=u;a.download="G15_3D_open_source_scenario.v1.json";a.click();URL.revokeObjectURL(u);
+});
+$("g15-queue").addEventListener("click",()=>{
+ if(!request)return;
+ const cfg=JSON.stringify(request);
+ if(cfg.length>1200)throw Error("Oversized source-safe numeric request");
+ const title="[JP G15 3D] source-derived 3D OpenSees trial";
+ const body="JP_G15_3D_RUN_V1\n"+cfg+"\n\nPublic 165-member source-derived working hypothesis. The authenticated repository owner must submit this GitHub issue to run Actions. Not a construction approval.";
+ const url="https://github.com/FabinGurung/JP_Structural_Analysis/issues/new?title="+encodeURIComponent(title)+"&body="+encodeURIComponent(body);
+ window.open(url,"_blank","noopener,noreferrer");
+ $("g15-status").textContent="Prefilled GitHub issue opened. Submit it when signed into the repo owner account; GitHub Actions will post a link to the signed FE results.";
+});
+fetch("data/g15-working-grid.public.v0.1.json",{cache:"no-store"}).then(x=>x.ok?x.json():Promise.reject(Error("model JSON unavailable"))).then(d=>{
+ if(d.schema!=="jp.structural.g15.public_working_grid.v0.1"||
+ d.column_positions_mm?.length!==23||d.beam_edges?.length!==32||
+ d.safety?.engineering_approval!==false||
+ d.safety?.F3_footing_one_way_shear!=="NOT SAFE IN ONE WAY SHEAR")
+ throw Error("Model integrity or required engineering HOLD failed");
+ model=d;$("g15-point").replaceChildren(...d.column_positions_mm.map(c=>{const o=make("option",c[0]);o.value=c[0];return o;}));
+ $("g15-point").dispatchEvent(new Event("change"));compute();
+}).catch(e=>$("g15-status").textContent="Model source unavailable: "+e.message);
+})();
