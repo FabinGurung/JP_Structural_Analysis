@@ -393,6 +393,10 @@ def main():
                        x["signed_member_action_count"]==165
                        for x in d["trial_signed_combinations"])
             assert 'id="g12-combinations"' in (SITE/"project-lab.html").read_text(encoding="utf-8")
+            assert 'id="g12-run-case"' in (SITE/"project-lab.html").read_text(encoding="utf-8")
+            assert 'id="g12-run-stiffness"' in (SITE/"project-lab.html").read_text(encoding="utf-8")
+            assert 'id="g12-run"' in (SITE/"project-lab.html").read_text(encoding="utf-8")
+            assert "JP_G15_GATE12_RUN_V1" in (SITE/"gate12.js").read_text(encoding="utf-8")
             assert d["source_grid_members"]==165 and d["source_columns"]==23
             assert d["engineering_approval"] is False
             assert d["seismic_mass_reconciled"] is False
