@@ -122,6 +122,15 @@
 <div id="g10-etabs"></div><p class="lab-chart-note">Mass Source: element self mass, additional masses and gravity load patterns must be accounted once. A coincident total weight does not reveal the original ETABS checkbox configuration.</p></details>
 <p class="lab-chart-note"><strong>F3 footing: NOT SAFE IN ONE WAY SHEAR.</strong> Physical slab outlines, openings, actual wall assignment, actual ETABS mass-source selection, true diaphragm and seismic site input remain unresolved.</p>
 </section>
+<details class="lab-detail" id="lab-gate11">
+<summary>Gate11 · Advanced torsion screen: ±5% accidental eccentricity and assumed diaphragm stiffness</summary>
+<div class="panel">
+<p class="lab-chart-note">Eight signed X/Y directions and offset permutations, computed using the Gate10 candidate floor areas and a 23-column independent-cantilever stiffness proxy. This is not an OpenSees diaphragm shell, response-spectrum run or drift compliance check.</p>
+<div id="g11-head" class="lab-kpis"></div>
+<label>Signed eccentricity case <select id="g11-case"></select></label>
+<div class="lab-scroll"><table class="lab-table"><thead><tr><th>Story</th><th>Signed force (kN)</th><th>Eccentricity (m)</th><th>Torsion (kN·m)</th><th>Maximum displacement proxy (mm)</th></tr></thead><tbody id="g11-table"></tbody></table></div>
+<p class="lab-chart-note" id="g11-note">Waiting for governed source-based sensitivity data.</p>
+</div></details>
 <section class="section" id="lab-private">
  <div class="section-title"><div><span class="eyebrow">PRIVATE EVIDENCE VIEWER · LOCAL FILES ONLY</span><h2>Inspect every signed FE action locally</h2></div><p>Choose full-analysis JSON files from the private Gate06 or Gate08 archives. Examine load-case values, member IDs and all 12 local end-action components locally—nothing is uploaded to a server.</p></div>
  <div class="panel lab-private-panel">
@@ -144,5 +153,5 @@
 </section>
 </main>
 <footer class="site-footer"><div class="wrap footer-inner"><span>JP Structural Analysis · G+1.5 de-identified project journal · Engineering approval HOLD</span><span>Private source remains in Drive</span></div></footer>
-<script src="app.js" defer></script><script src="project-ledger.js" defer></script><script src="gate08.js" defer></script><script src="gate09.js" defer></script><script src="gate10.js" defer></script><script src="private-force-viewer.js" defer></script>
+<script src="app.js" defer></script><script src="project-ledger.js" defer></script><script src="gate08.js" defer></script><script src="gate09.js" defer></script><script src="gate10.js" defer></script><script src="gate11.js" defer></script><script src="private-force-viewer.js" defer></script>
 </body></html>
