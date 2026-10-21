@@ -10,7 +10,7 @@ from urllib.parse import urlparse, unquote
 
 ROOT=Path(__file__).resolve().parents[1]
 SITE=ROOT/"site"
-PAGES=["index.html","project-lab.html","analysis-studio.html","calculation-coverage.html","report.html","more.html"]
+PAGES=["index.html","project-lab.html","analysis-studio.html","g15-3d.html","calculation-coverage.html","report.html","more.html"]
 class Parse(HTMLParser):
     def __init__(self):
         super().__init__(convert_charrefs=True);self.links=[];self.css=[];self.scripts=[];self.mains=0
@@ -262,9 +262,9 @@ def main():
         text=p.read_text(encoding="utf-8")
         parser=Parse();parser.feed(text)
         if parser.css!=["styles.css"]:problems.append(page+": inconsistent stylesheet")
-        if parser.scripts!=(["app.js","d2.js"] if page in ("calculation-coverage.html","report.html") else ["app.js","project-ledger.js","gate08.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
+        if parser.scripts!=(["app.js","d2.js"] if page in ("calculation-coverage.html","report.html") else ["app.js","project-ledger.js","gate08.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
         if parser.mains!=1:problems.append(page+": expected one main")
-        for target in ("index.html","project-lab.html","analysis-studio.html","calculation-coverage.html","report.html","more.html"):
+        for target in ("index.html","project-lab.html","analysis-studio.html","g15-3d.html","calculation-coverage.html","report.html","more.html"):
             if target not in text:problems.append(page+": missing nav target "+target)
         for url in parser.links+parser.css+parser.scripts:
             u=urlparse(url)
@@ -272,7 +272,7 @@ def main():
             local=(SITE/page).parent/unquote(u.path)
             if not local.is_file() and not (local in {SITE/"demo/SAR.html", SITE/"demo/validation_results.json"} and not (SITE/"demo").exists()):
                 problems.append(page+": broken local link "+url)
-    for path in ("styles.css","app.js","analysis-studio.js","d2.js","gate08.js","data/sp16_1980_primary_source.v0.1.json","data/report-calculation-coverage.v0.1.json"):
+    for path in ("styles.css","app.js","analysis-studio.js","g15-3d.js","data/g15-working-grid.public.v0.1.json","d2.js","gate08.js","data/sp16_1980_primary_source.v0.1.json","data/report-calculation-coverage.v0.1.json"):
         if not (SITE/path).is_file():problems.append("Missing "+path)
     if (SITE/"styles.css").stat().st_size>28000:problems.append("Shared CSS unexpectedly large")
     if (SITE/"app.js").stat().st_size>12000:problems.append("Shared JS unexpectedly large")
@@ -291,6 +291,18 @@ def main():
         problems.append("No authorized GitHub FE handoff or missing model boundary")
     if "github_pat_" in script or "ghp_" in script or "localStorage" in script:
         problems.append("Studio may not request or store GitHub tokens")
+    from math import isfinite
+    import json
+    m=json.loads((SITE/"data/g15-working-grid.public.v0.1.json").read_text(encoding="utf-8"))
+    if len(m["column_positions_mm"])!=23 or len(m["beam_edges"])!=32:
+        problems.append("G15 source-derived 3D model count incorrect")
+    if m["safety"]["engineering_approval"] is not False or m["safety"]["F3_footing_one_way_shear"]!="NOT SAFE IN ONE WAY SHEAR":
+        problems.append("G15 source engineering HOLD/F3 failure lost")
+    studio=(SITE/"g15-3d.html").read_text(encoding="utf-8")
+    if 'id="g15-scene"' not in studio or 'id="g15-queue"' not in studio or 'src="g15-3d.js"' not in studio:
+        problems.append("Missing 3D UI canvas or authenticated run handoff")
+    if "JP_G15_3D_RUN_V1" not in (SITE/"g15-3d.js").read_text(encoding="utf-8"):
+        problems.append("3D Actions handoff missing")
     if problems:raise SystemExit("\n".join(problems))
-    print("STRUCTURAL_SITE_QA_PASS: six pages including operable scenario workbench, source-linked de-identified project journal, SP16, M09/D2, privacy checks and shared theme")
+    print("STRUCTURAL_SITE_QA_PASS: seven pages including open real-source 3D frame analysis, source-linked de-identified project journal, SP16, M09/D2, privacy checks and shared theme")
 if __name__=="__main__":main()
