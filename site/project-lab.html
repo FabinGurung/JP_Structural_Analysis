@@ -143,7 +143,13 @@
 <div class="lab-scroll"><table class="lab-table"><thead><tr><th>Floor constraint</th><th>Trial factor</th><th>Controlling member</th><th>Signed local end moment (kN·m)</th></tr></thead><tbody id="g12-combinations"></tbody></table></div>
 </details>
 <div class="lab-scroll"><table class="lab-table"><thead><tr><th>Case / support assumption</th><th>Max roof displacement (mm)</th><th>Max story chord ratio</th><th>Controlling end moment (kN·m)</th></tr></thead><tbody id="g12-overview"></tbody></table></div>
-<div class="actions"><a class="btn secondary" href="https://github.com/FabinGurung/JP_Structural_Analysis/actions/workflows/pages.yml">Open full OpenSees release run ↗</a>
+<div class="g15-controls">
+<label>Run Gate12 with mass scenario<select id="g12-run-case" disabled><option>Loading scenarios…</option></select></label>
+<label>Section stiffness<select id="g12-run-stiffness"><option value="ULS">ULS assumed EI</option><option value="SLS">SLS assumed EI</option><option value="GROSS">Gross EI</option></select></label>
+</div>
+<p class="lab-chart-note" id="g12-queue-state">Hosted analysis will produce 18 real OpenSees cases and 32 provisional signed combination trials.</p>
+<div class="actions"><button type="button" class="btn primary" id="g12-run" disabled>Queue fresh Gate12 analysis ↗</button>
+<a class="btn secondary" href="https://github.com/FabinGurung/JP_Structural_Analysis/actions/workflows/g15-diaphragm-fe-analysis.yml">Gate12 hosted run history ↗</a>
 <a class="btn secondary" href="g15-3d.html">Inspect 3D frame editor →</a></div>
 <p class="lab-chart-note"><strong>Not an approved design:</strong> assumed polygons and 23 grid positions; no slab shell elements, independently verified mass source, response spectrum, P–Δ or actual foundation redesign. Drift values are elastic nodal chord ratios, not a code compliance verdict. Source footing F3: NOT SAFE IN ONE WAY SHEAR.</p>
 </div></section>
