@@ -153,6 +153,22 @@
 <a class="btn secondary" href="g15-3d.html">Inspect 3D frame editor →</a></div>
 <p class="lab-chart-note"><strong>Not an approved design:</strong> assumed polygons and 23 grid positions; no slab shell elements, independently verified mass source, response spectrum, P–Δ or actual foundation redesign. Drift values are elastic nodal chord ratios, not a code compliance verdict. Source footing F3: NOT SAFE IN ONE WAY SHEAR.</p>
 </div></section>
+<section class="section compact" id="lab-gate13">
+<div class="section-title"><div><span class="eyebrow">GATE13 · OPENSees SHELL + MASONRY LOAD PATHS</span><h2>Does a physical slab patch change the frame response?</h2></div><p>Same 165 original source-member segments. Compare an unsupported-floor frame, an actually modeled four-element slab patch, and the idealized rigid diaphragm.</p></div>
+<div class="lab-kpis" id="g13-kpis"></div>
+<div class="panel">
+<p class="lab-chart-note"><strong>Source-bounded slab:</strong> F–G/1–2 is one verified *sample bay*, 4.965 × 3.600 m, assumed at level 2. Four ShellMITC4 quadrilaterals use 125 mm thickness and 5.13 kN/m² gravity load (including selfweight, without automatic element selfweight). Seven explicitly assumed beam-edge masonry paths use 9.24 kN/m on levels 1 and 2. All spatial assignments remain hypothetical.</p>
+<label class="g15-field">Choose gravity or a signed ±5% seismic case <select id="g13-case" disabled></select></label>
+<div class="lab-scroll"><table class="lab-table"><thead><tr><th>Actual FE response</th><th>Frame + beam wall loads</th><th>ShellMITC4 sample bay</th><th>Rigid-floor reference</th></tr></thead><tbody id="g13-matrix"></tbody></table></div>
+<p id="g13-explain" class="lab-chart-note">Awaiting checked OpenSees numerical evidence.</p>
+<details class="lab-detail"><summary>Original source members vs computational subdivisions</summary>
+<p>165 physical source-frame member segments have been retained. Four slab shell elements are connected at a beam-line crossing and boundary midpoints; subdivision of existing beam lines gives 171 *computational beam segments*. This does not mean six new frame members or an as-built diaphragm.</p>
+<p>Unlike the earlier rigid-body proxy, the shell center receives gravity load and transmits it through the shell and beam edges. Its actual floor assignment, the rest of each slab, wall locations, openings, connection anchorage and full ETABS seismic mass remain unverified.</p>
+</details>
+<div class="actions"><a class="btn secondary" href="g15-3d.html">View the source-derived frame editor →</a>
+<a class="btn secondary" href="https://github.com/FabinGurung/JP_Structural_Analysis/actions">Open tested signed Actions archives ↗</a></div>
+<p class="lab-chart-note"><strong>Engineering HOLD:</strong> this is not a full-floor shell model, accepted wall placement, code drift check or P–Δ analysis. F3: NOT SAFE IN ONE WAY SHEAR.</p>
+</div></section>
 <section class="section" id="lab-private">
  <div class="section-title"><div><span class="eyebrow">PRIVATE EVIDENCE VIEWER · LOCAL FILES ONLY</span><h2>Inspect every signed FE action locally</h2></div><p>Choose full-analysis JSON files from the private Gate06 or Gate08 archives. Examine load-case values, member IDs and all 12 local end-action components locally—nothing is uploaded to a server.</p></div>
  <div class="panel lab-private-panel">
@@ -175,5 +191,5 @@
 </section>
 </main>
 <footer class="site-footer"><div class="wrap footer-inner"><span>JP Structural Analysis · G+1.5 de-identified project journal · Engineering approval HOLD</span><span>Private source remains in Drive</span></div></footer>
-<script src="app.js" defer></script><script src="project-ledger.js" defer></script><script src="gate08.js" defer></script><script src="gate09.js" defer></script><script src="gate10.js" defer></script><script src="gate11.js" defer></script><script src="gate12.js" defer></script><script src="private-force-viewer.js" defer></script>
+<script src="app.js" defer></script><script src="project-ledger.js" defer></script><script src="gate08.js" defer></script><script src="gate09.js" defer></script><script src="gate10.js" defer></script><script src="gate11.js" defer></script><script src="gate12.js" defer></script><script src="gate13.js" defer></script><script src="private-force-viewer.js" defer></script>
 </body></html>
