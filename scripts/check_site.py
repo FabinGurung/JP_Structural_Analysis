@@ -303,6 +303,21 @@ def main():
         problems.append("Missing 3D UI canvas or authenticated run handoff")
     if "JP_G15_3D_RUN_V1" not in (SITE/"g15-3d.js").read_text(encoding="utf-8"):
         problems.append("3D Actions handoff missing")
+    p=SITE/"data/g15-open3d-reference.v1.json"
+    if not p.is_file():
+        problems.append("Missing generated real-source 165-member OpenSees 3D reference")
+    else:
+        try:
+            d=json.loads(p.read_text(encoding="utf-8"))
+            assert d["schema"]=="jp.structural.g15.open3d.result.v1"
+            assert d["model_counts"]["members"]==165 and len(d["cases"])==5
+            assert d["engineering_approval"] is False
+            assert d["foundation_F3_one_way_shear"]=="NOT SAFE IN ONE WAY SHEAR"
+            assert all(len(c["member_signed_local_end_forces"])==165 and
+                       c["equilibrium_residual_kN"]<.001 for c in d["cases"])
+            assert "g15-open3d-reference.v1.json" in (SITE/"g15-3d.js").read_text(encoding="utf-8")
+        except (KeyError,ValueError,AssertionError,TypeError) as err:
+            problems.append("G15 OpenSees reference evidence malformed: "+str(err))
     if problems:raise SystemExit("\n".join(problems))
     print("STRUCTURAL_SITE_QA_PASS: seven pages including open real-source 3D frame analysis, source-linked de-identified project journal, SP16, M09/D2, privacy checks and shared theme")
 if __name__=="__main__":main()
