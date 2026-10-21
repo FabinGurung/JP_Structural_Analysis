@@ -11,10 +11,8 @@ fetch("data/g15-gate09-source-audit.v0.1.json",{cache:"no-store"})
 .then(d=>{
  const m=d.mass_reconciliation,p=d.panel;
  if(d.schema!=="jp.structural.g15.gate09.sample_panel_and_mass_audit.v0.1"||
- !d.engineering_approval||d.source_F3_status!=="NOT SAFE IN ONE WAY SHEAR"){
- // The approval flag must remain false. Reject it even if calculations look favorable.
- if(d.engineering_approval!==false||d.source_F3_status!=="NOT SAFE IN ONE WAY SHEAR")throw Error("Engineering HOLD failure");
- }
+    d.engineering_approval!==false||d.source_F3_status!=="NOT SAFE IN ONE WAY SHEAR")
+    throw Error("Evidence schema or engineering HOLD invalid");
  if(!p||!m||p.grid_vertices.length!==4||m.source_mass_reconciled!==false||
     p.illustrative_panel_loads.additional_weight_to_gate08_reconciliation_kN!==0)
     throw Error("Source/mass validation failed");
