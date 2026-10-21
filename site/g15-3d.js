@@ -211,4 +211,26 @@ fetch("data/g15-working-grid.public.v0.1.json",{cache:"no-store"}).then(x=>x.ok?
  model=d;$("g15-point").replaceChildren(...d.column_positions_mm.map(c=>{const o=make("option",c[0]);o.value=c[0];return o;}));
  $("g15-point").dispatchEvent(new Event("change"));compute();
 }).catch(e=>$("g15-status").textContent="Model source unavailable: "+e.message);
+
+const assumedId=new URLSearchParams(location.search).get("assumption");
+if(assumedId && /^G(?:08|10)_[A-Z0-9_]{2,35}$/.test(assumedId)){
+ fetch("data/g15-gate10-assumptions.v0.1.json",{cache:"no-store"})
+ .then(r=>r.ok?r.json():Promise.reject(Error("Gate10 source not deployed")))
+ .then(d=>{
+   if(d.schema!=="jp.structural.g15.gate10.assumption_sensitivity.v0.1"||
+      d.engineering_approval!==false||d.seismic_mass_source_reconciled!==false)
+        throw Error("Engineering source status invalid");
+   const selected=d.model_cases.find(x=>x.id===assumedId);
+   if(!selected||selected.seismic_mass_accepted!==false||
+       selected.floor_weights_kN?.length!==3||
+       selected.floor_weights_kN.some(x=>!Number.isFinite(x)||x<20||x>10000))
+       throw Error("Invalid provisional trial");
+   for(let i=0;i<3;i++)$("g15-w"+(i+1)).value=String(selected.floor_weights_kN[i]);
+   const tag=selected.classification==="INVERSE_NUMERICAL_FIT_NOT_EVIDENCE"?
+       "INVERSE FIT ONLY—NOT VERIFIED. ":"ASSUMED MODEL—NOT VERIFIED. ";
+   $("g15-assumption-note").textContent=tag+selected.label+
+     "; mass source, slab outlines, walls and diaphragm are not verified. F3 shear: NOT SAFE.";
+   compute();
+ }).catch(e=>$("g15-assumption-note").textContent="Cannot load Gate10 trial: "+e.message);
+}
 })();
