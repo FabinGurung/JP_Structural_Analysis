@@ -129,6 +129,8 @@ jobs:
         with:
           name: g15-gate13-shellmitc4-27-cases-original-f3-fail
           path: build/g15-gate13/full_signed_actions.json
+      - name: Browser syntax for Gate13 physical slab and wall path comparison
+        run: node --check site/gate13.js
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
