@@ -15,7 +15,7 @@ import tempfile
 import zipfile
 from functools import lru_cache
 from fastapi import FastAPI, HTTPException, Header, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from pydantic import BaseModel, Field, ConfigDict
 
 app=FastAPI(title="JP private G15 analysis",docs_url=None,redoc_url=None,openapi_url=None)
@@ -81,7 +81,7 @@ async def secure_headers(request:Request,call_next):
     response=await call_next(request)
     response.headers["Cache-Control"]="no-store"
     response.headers["X-Content-Type-Options"]="nosniff"
-    response.headers["Content-Security-Policy"]="default-src 'none'; frame-ancestors 'none'"
+    response.headers["Content-Security-Policy"]="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'"
     return response
 
 @app.get("/api/status")
@@ -126,3 +126,18 @@ def analyze(req:Scenario,authorization:str|None=Header(default=None)):
         if result.get("model_counts",{}).get("members")!=165 or not result.get("engineering_approval") is False:
             raise HTTPException(503,"Invalid model count or missing engineering HOLD")
         return result
+
+@app.get("/")
+def interface():
+    return FileResponse(pathlib.Path(__file__).with_name("index.html"),
+                        media_type="text/html")
+
+@app.get("/studio.js")
+def studio_script():
+    return FileResponse(pathlib.Path(__file__).with_name("studio.js"),
+                        media_type="text/javascript")
+
+@app.get("/studio.css")
+def studio_css():
+    return FileResponse(pathlib.Path(__file__).with_name("studio.css"),
+                        media_type="text/css")
