@@ -387,6 +387,12 @@ def main():
             d=json.loads(g12.read_text(encoding="utf-8"))
             assert d["schema"]=="jp.structural.g15.gate12.diaphragm_openSees_comparison.v0.1"
             assert len(d["cases"])==18 and len(d["comparisons"])==9
+            assert len(d["trial_signed_combinations"])==32
+            assert d["trial_factors_need_NBC_SOURCE_COMBINATION_VERIFICATION"] is True
+            assert all(x["not_a_confirmed_code_combination"] is True and
+                       x["signed_member_action_count"]==165
+                       for x in d["trial_signed_combinations"])
+            assert 'id="g12-combinations"' in (SITE/"project-lab.html").read_text(encoding="utf-8")
             assert d["source_grid_members"]==165 and d["source_columns"]==23
             assert d["engineering_approval"] is False
             assert d["seismic_mass_reconciled"] is False
