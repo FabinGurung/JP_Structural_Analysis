@@ -153,6 +153,7 @@ def build():
      "engineering_approval":False,
      "real_building_acceptance":False
     }
+    out["occupancy_conflict"]=reg["source_plan_occupancy_conflict"]
     return out
 
 def main():
