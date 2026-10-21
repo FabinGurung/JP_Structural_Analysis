@@ -318,13 +318,38 @@ def solve(request=None,case_id=CASE_ID,summary_only=False):
       "cases":cases,"comparisons":comparison,"trial_signed_combinations":combos
     }
 
+def parse_issue_event(event_path):
+    data=json.loads(Path(event_path).read_text(encoding="utf-8"))
+    issue=data.get("issue",{})
+    if issue.get("user",{}).get("login") not in ("FabinGurung","Kaksaveksaka"):
+        raise ValueError("Unapproved GitHub Actions submitter")
+    if not str(issue.get("title","")).startswith("[JP G15 G12]"):
+        raise ValueError("Not a governed Gate12 request")
+    raw=issue.get("body","")
+    if not isinstance(raw,str) or len(raw)>2000 or not raw.startswith("JP_G15_GATE12_RUN_V1\\n"):
+        raise ValueError("Gate12 request schema missing")
+    line=raw.splitlines()[1]
+    if len(line)>600:raise ValueError("Gate12 source selection too large")
+    params=json.loads(line)
+    if not isinstance(params,dict) or set(params)!= {"gate10_case","stiffness"}:
+        raise ValueError("Unsupported Gate12 request fields")
+    allowed={x["id"] for x in gate10()["model_cases"]}
+    if params["gate10_case"] not in allowed or params["stiffness"] not in ("ULS","SLS","GROSS"):
+        raise ValueError("Unknown Gate12 source or stiffness")
+    return params
+
 def main():
     a=argparse.ArgumentParser()
     a.add_argument("--output",type=Path,required=True)
+    a.add_argument("--event",type=Path)
     a.add_argument("--summary-only",action="store_true")
     a.add_argument("--gate10-case",default=CASE_ID)
     a.add_argument("--stiffness",default="ULS",choices=["ULS","SLS","GROSS"])
     opt=a.parse_args()
+    if opt.event:
+        submitted=parse_issue_event(opt.event)
+        opt.gate10_case=submitted["gate10_case"]
+        opt.stiffness=submitted["stiffness"]
     d=gate10()
     match=next(x for x in d["model_cases"] if x["id"]==opt.gate10_case)
     p=dict(SAMPLE)
