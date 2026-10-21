@@ -119,7 +119,7 @@ $("g15-queue").addEventListener("click",()=>{
  const cfg=JSON.stringify(request);
  if(cfg.length>1200)throw Error("Oversized source-safe numeric request");
  const title="[JP G15 3D] source-derived 3D OpenSees trial";
- const body="JP_G15_3D_RUN_V1\n"+cfg+"\n\nPublic 165-member source-derived working hypothesis. The authenticated repository owner must submit this GitHub issue to run Actions. Not a construction approval.";
+ const body="JP_G15_3D_RUN_V1\n"+cfg+"\n\nPublic 165-member source-derived working hypothesis. An authorized repository contributor must submit this GitHub issue to run Actions. Not a construction approval.";
  const url="https://github.com/FabinGurung/JP_Structural_Analysis/issues/new?title="+encodeURIComponent(title)+"&body="+encodeURIComponent(body);
  window.open(url,"_blank","noopener,noreferrer");
  $("g15-status").textContent="Prefilled GitHub issue opened. Submit it when signed into the repo owner account; GitHub Actions will post a link to the signed FE results.";
