@@ -55,3 +55,16 @@ def test_two_bridge_sensitivity_suppresses_exactly_six_beam_segments():
     out=solve(d)
     assert out["model_counts"]["members"]==159
     assert out["engineering_approval"] is False
+
+def test_authorized_github_contributors_are_allowed_without_user_edit_scripts(tmp_path):
+    import json
+    from scripts.run_g15_open_3d import parse_issue
+    for login in ("FabinGurung","Kaksaveksaka"):
+        event={"issue":{"title":"[JP G15 3D] verified case",
+          "user":{"login":login},"body":"JP_G15_3D_RUN_V1\\n"+json.dumps(SAMPLE)}}
+        path=tmp_path/"issue.json";path.write_text(json.dumps(event))
+        assert parse_issue(path)==validate(SAMPLE)
+    event["issue"]["user"]["login"]="random-public-user"
+    path.write_text(json.dumps(event))
+    with pytest.raises(ValueError):
+        parse_issue(path)
