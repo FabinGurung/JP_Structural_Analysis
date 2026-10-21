@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 8d804ec4df1a6052b7acfe2fda4a738a2bb4d1ca
+          ref: 04de562d6f94d0583c49a2f7907e7d9118444f9c
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -51,6 +51,8 @@ jobs:
         run: python scripts/build_g15_gate08_public.py --output site/data/g15-gate08-reconciliation.v0.1.json
       - name: Verify bounded configurable OpenSees scenario
         run: python scripts/run_portal_frame.py --sample --output site/data/portal-reference-frame.v1.json
+      - name: Build full 3D real-source signed OpenSees result for the public studio
+        run: python scripts/run_g15_open_3d.py --sample --output site/data/g15-open3d-reference.v1.json
       - name: Validate current report-first coverage and site navigation
         run: |
           python scripts/build_calculation_coverage.py --check
@@ -61,6 +63,7 @@ jobs:
           node --check site/gate08.js
           node --check site/private-force-viewer.js
           node --check site/analysis-studio.js
+          node --check site/g15-3d.js
       - name: Write deployment metadata
         run: |
           python - <<'PY'
