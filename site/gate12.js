@@ -85,4 +85,34 @@ fetch("data/g15-gate12-diaphragm-fe.v0.1.json",{cache:"no-store"})
  }));
  pairs();
 }).catch(e=>$("g12-kpis").replaceChildren(el("p","Gate12 engineering data unavailable or invalid: "+e.message)));
+}
+const queueButton=$("g12-run");
+fetch("data/g15-gate10-assumptions.v0.1.json",{cache:"no-store"})
+.then(r=>r.ok?r.json():Promise.reject(Error("Gate10 source case list unavailable")))
+.then(d=>{
+ if(d.schema!=="jp.structural.g15.gate10.assumption_sensitivity.v0.1"||
+    d.model_cases?.length!==9||d.engineering_approval!==false||
+    d.seismic_mass_source_reconciled!==false)
+    throw Error("Gate10 source model integrity failed");
+ $("g12-run-case").replaceChildren(...d.model_cases.map(c=>{
+  const o=el("option",c.label);o.value=c.id;return o;
+ }));
+ $("g12-run-case").value="G10_EDGE_COMM";
+ $("g12-run-case").disabled=false;queueButton.disabled=false;
+}).catch(err=>$("g12-queue-state").textContent="Gate12 Actions handoff HOLD: "+err.message);
+queueButton.addEventListener("click",()=>{
+ if(queueButton.disabled)return;
+ const params={gate10_case:$("g12-run-case").value,
+               stiffness:$("g12-run-stiffness").value};
+ if(!/^G(?:08|10)_[A-Z0-9_]{2,35}$/.test(params.gate10_case)||
+    !["ULS","SLS","GROSS"].includes(params.stiffness))return;
+ const title="[JP G15 G12] 3D diaphragm "+params.gate10_case+" "+params.stiffness;
+ const body="JP_G15_GATE12_RUN_V1"+String.fromCharCode(10)+JSON.stringify(params)+
+  String.fromCharCode(10)+"Source-derived 165-member OpenSees trial. Flexible/rigid MPC; engineering approval HOLD. Do not accept signed trial factors as proven code combinations. F3 one-way shear source FAIL.";
+ const url="https://github.com/FabinGurung/JP_Structural_Analysis/issues/new?title="+
+   encodeURIComponent(title)+"&body="+encodeURIComponent(body);
+ const tab=window.open(url,"_blank","noopener,noreferrer");
+ if(!tab)window.location.href=url;
+ $("g12-queue-state").textContent="GitHub issue opened. Submit it while signed in as an authorized repository contributor; the Actions artifact will contain 18 FE cases and 32 provisional signed combinations.";
+});
 })();
