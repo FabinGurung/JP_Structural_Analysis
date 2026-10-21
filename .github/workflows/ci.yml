@@ -97,6 +97,12 @@ jobs:
         run: python scripts/build_g15_gate10_assumptions.py --output site/data/g15-gate10-assumptions.v0.1.json
       - name: Check proposed assumption UI
         run: node --check site/gate10.js
+      - name: Test assumed rigid diaphragm accidental torsion
+        run: python -m pytest -q tests/test_g15_gate11_torsion_proxy.py
+      - name: Generate source-labelled signed ±5 percent torsion sensitivity
+        run: python scripts/build_g15_gate11_torsion_proxy.py --output site/data/g15-gate11-diaphragm-proxy.v0.1.json
+      - name: Validate advanced torsion UI syntax
+        run: node --check site/gate11.js
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
