@@ -71,3 +71,23 @@ def test_same_member_signed_action_superposition_not_maxima_assemblage():
         assert actual["id"]==gravity["id"]==eq["id"]
         assert all(math.isclose(v,1.2*x+y,rel_tol=1e-12,abs_tol=1e-8)
           for v,x,y in zip(actual["signed"],gravity["signed"],eq["signed"]))
+
+def test_auth_scope_and_whitelisted_issue_payload(tmp_path):
+    import json
+    import pytest
+    from scripts.run_g15_gate12_diaphragm_fe import parse_issue_event
+    data={"issue":{"title":"[JP G15 G12] source model study",
+      "user":{"login":"Kaksaveksaka"},
+      "body":"JP_G15_GATE12_RUN_V1"+chr(10)+json.dumps({"gate10_case":"G10_EDGE_COMM","stiffness":"SLS"})}}
+    path=tmp_path/"event.json"
+    path.write_text(json.dumps(data))
+    assert parse_issue_event(path)=={"gate10_case":"G10_EDGE_COMM","stiffness":"SLS"}
+    data["issue"]["user"]["login"]="unknown-user"
+    path.write_text(json.dumps(data))
+    with pytest.raises(ValueError,match="Unapproved"):
+        parse_issue_event(path)
+    data["issue"]["user"]["login"]="FabinGurung"
+    data["issue"]["body"]="JP_G15_GATE12_RUN_V1"+chr(10)+json.dumps({"gate10_case":"UNKNOWN","stiffness":"ULS"})
+    path.write_text(json.dumps(data))
+    with pytest.raises(ValueError,match="Unknown"):
+        parse_issue_event(path)
