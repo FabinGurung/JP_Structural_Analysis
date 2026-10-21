@@ -20,6 +20,15 @@ def test_actual_3d_opensees_solves_signed_gravity_and_orthogonal_cases():
        "GRAVITY","EQ_PLUS_X","EQ_MINUS_X","EQ_PLUS_Y","EQ_MINUS_Y"]
     assert all(len(x["member_signed_local_end_forces"])==165 for x in d["cases"])
     assert all(x["equilibrium_residual_kN"]<.001 for x in d["cases"])
+    assert all(x["equilibrium_moment_residual_kNm"]<.001 for x in d["cases"])
+    assert all(x["roof_displacement_metric"]=="MAX_NODE_HORIZONTAL_EUCLIDEAN_NORM"
+               for x in d["cases"])
+    assert all(
+       x["max_roof_horizontal_displacement_mm"]==
+       pytest.approx(max(math.hypot(v["ux_mm"],v["uy_mm"])
+                         for v in x["node_displacements"] if v["level"]==3),
+                     abs=1e-7)
+       for x in d["cases"])
     assert all(len(f["signed"])==12 for x in d["cases"]
                for f in x["member_signed_local_end_forces"])
     assert d["cases"][0]["reaction_kN_xyz"][2]==pytest.approx(sum(SAMPLE["floor_weights_kN"]),abs=.001)
