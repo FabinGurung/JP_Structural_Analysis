@@ -1,0 +1,10 @@
+/* Secure structural analysis studio */
+body{background:#101923;color:#eef5fa;font-family:system-ui;margin:16px}
+.panel{padding:18px;border:1px solid #384452;border-radius:9px;margin:18px auto;max-width:1000px}
+.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+input,select{display:block;width:100%;padding:8px}
+button{padding:12px;margin:8px}
+.table-scroller{overflow:auto;max-height:360px}
+table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid #465460;padding:8px;text-align:left}
+.metrics{display:flex;gap:15px}.metrics article{padding:12px;border:1px solid #465460}.metrics strong{display:block}
+@media(max-width:700px){.fields{grid-template-columns:1fr}}
