@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: bdfde13577d75f0641b2d2ba306a8dd35d1f38d6
+          ref: f84b6cc2529c5336ade7244321df6bdf67daad17
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
