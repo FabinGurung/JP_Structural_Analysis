@@ -124,7 +124,24 @@ $("g15-queue").addEventListener("click",()=>{
  window.open(url,"_blank","noopener,noreferrer");
  $("g15-status").textContent="Prefilled GitHub issue opened. Submit it when signed into the repo owner account; GitHub Actions will post a link to the signed FE results.";
 });
-let solved=null;
+let solved=null,baselineSolved=null,resultOrigin="Published baseline";
+function validResult(d){
+ const count=d?.model_counts?.members;
+ if(d?.schema!=="jp.structural.g15.open3d.result.v1"||
+   ![159,165].includes(count)||d?.model_counts?.nodes!==92||
+   d?.cases?.length!==5||d?.engineering_approval!==false||
+   d?.report_accepted!==false||
+   d?.foundation_F3_one_way_shear!=="NOT SAFE IN ONE WAY SHEAR")return false;
+ const cases=["GRAVITY","EQ_PLUS_X","EQ_MINUS_X","EQ_PLUS_Y","EQ_MINUS_Y"];
+ return d.cases.every((c,i)=>
+  c.case===cases[i] && c.member_signed_local_end_forces?.length===count &&
+  Number.isFinite(c.max_roof_horizontal_displacement_mm) &&
+  Number.isFinite(c.equilibrium_residual_kN) && c.equilibrium_residual_kN<.001 &&
+  Number.isFinite(c.equilibrium_moment_residual_kNm) && c.equilibrium_moment_residual_kNm<.001 &&
+  c.roof_displacement_metric==="MAX_NODE_HORIZONTAL_EUCLIDEAN_NORM" &&
+  c.member_signed_local_end_forces.every(m=>m.local_components?.length===12&&
+    m.signed?.length===12&&m.signed.every(Number.isFinite)));
+}
 function renderReference(){
  if(!solved)return;
  const current=solved.cases[Number($("g15-solved-case").value)||0];
@@ -136,7 +153,7 @@ function renderReference(){
  $("g15-solved-member").disabled=false;
  $("g15-solved-summary").replaceChildren(...[
    ["Load case",current.case],["Max roof movement",fmt(current.max_roof_horizontal_displacement_mm,3)+" mm"],
-   ["Signed frame ends",String(elArr.length)],["Reaction residual",fmt(current.equilibrium_residual_kN,7)+" kN"]
+   ["Signed member ends",String(elArr.length)],["Force residual",fmt(current.equilibrium_residual_kN,7)+" kN"]
  ].map(([key,v])=>{const box=make("div",undefined,"lab-kpi");box.append(make("small",key),make("strong",v));return box;}));
  renderLocalForces();
 }
@@ -150,25 +167,41 @@ function renderLocalForces(){
     make("td",k.startsWith("N")||k.startsWith("V")?"kN":"kN·m"));
   return tr;
  }));
- $("g15-solved-message").textContent="Original default source-derived 3D trial; "+m.id+
-  " in "+c.case+". These 12 signed end forces belong to one actual OpenSees load case. Engineering approval remains HOLD.";
+ $("g15-solved-message").textContent=resultOrigin+" · "+m.id+" in "+c.case+
+ ". 12 signed end actions from one OpenSees case; force residual "+fmt(c.equilibrium_residual_kN,7)+
+ " kN, moment residual "+fmt(c.equilibrium_moment_residual_kNm,7)+
+ " kN·m. F3 source FAIL retained. Engineering approval HOLD.";
 }
 $("g15-solved-case").addEventListener("change",renderReference);
 $("g15-solved-member").addEventListener("change",renderLocalForces);
-fetch("data/g15-open3d-reference.v1.json",{cache:"no-store"})
- .then(r=>r.ok?r.json():Promise.reject(Error("OpenSees reference not generated")))
- .then(d=>{
-  if(d.schema!=="jp.structural.g15.open3d.result.v1"||
-    d.model_counts?.members!==165||d.cases?.length!==5||
-    d.engineering_approval!==false||d.foundation_F3_one_way_shear!=="NOT SAFE IN ONE WAY SHEAR"||
-    d.cases.some(c=>c.member_signed_local_end_forces?.length!==165||c.equilibrium_residual_kN>=.001))
-    throw Error("Reference model count / numerical engineering HOLD invalid");
-  solved=d;
-  $("g15-solved-case").replaceChildren(...d.cases.map((c,i)=>{
-   const o=make("option",c.case);o.value=String(i);return o;
-  }));
+
+$("g15-load-result").addEventListener("change",async()=>{
+ const file=$("g15-load-result").files?.[0];
+ if(!file)return;
+ try{
+  if(file.size<100||file.size>20000000)throw Error("Select extracted results.json (max 20 MB), not the Actions ZIP");
+  const d=JSON.parse(await file.text());
+  if(!validResult(d))throw Error("Results require five complete signed OpenSees cases, source counts, 3D vector drift and full force/moment equilibrium; older artifacts must be rerun");
+  solved=d;resultOrigin="Local result: "+file.name;
+  $("g15-solved-case").replaceChildren(...d.cases.map((c,i)=>{const o=make("option",c.case);o.value=String(i);return o;}));
   $("g15-solved-case").disabled=false;renderReference();
- }).catch(e=>$("g15-solved-message").textContent="OpenSees reference HOLD: "+e.message);
+ }catch(e){$("g15-solved-message").textContent="Local result rejected: "+e.message;}
+ finally{$("g15-load-result").value="";}
+});
+$("g15-restore-reference").addEventListener("click",()=>{
+ if(!baselineSolved){$("g15-solved-message").textContent="Baseline not loaded yet.";return;}
+ solved=baselineSolved;resultOrigin="Published baseline";renderReference();
+});
+fetch("data/g15-open3d-reference.v1.json",{cache:"no-store"})
+.then(r=>r.ok?r.json():Promise.reject(Error("Baseline OpenSees result unavailable")))
+.then(d=>{
+ if(!validResult(d))throw Error("Baseline source/counts/HOLD or force/moment equilibrium invalid");
+ baselineSolved=d;solved=d;resultOrigin="Published baseline";
+ $("g15-solved-case").replaceChildren(...d.cases.map((c,i)=>{
+  const o=make("option",c.case);o.value=String(i);return o;
+ }));
+ $("g15-solved-case").disabled=false;renderReference();
+}).catch(e=>$("g15-solved-message").textContent="OpenSees baseline HOLD: "+e.message);
 fetch("data/g15-working-grid.public.v0.1.json",{cache:"no-store"}).then(x=>x.ok?x.json():Promise.reject(Error("model JSON unavailable"))).then(d=>{
  if(d.schema!=="jp.structural.g15.public_working_grid.v0.1"||
  d.column_positions_mm?.length!==23||d.beam_edges?.length!==32||
