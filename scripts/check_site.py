@@ -262,7 +262,7 @@ def main():
         text=p.read_text(encoding="utf-8")
         parser=Parse();parser.feed(text)
         if parser.css!=["styles.css"]:problems.append(page+": inconsistent stylesheet")
-        if parser.scripts!=(["app.js","d2.js"] if page in ("calculation-coverage.html","report.html") else ["app.js","project-ledger.js","gate08.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
+        if parser.scripts!=(["app.js","d2.js"] if page in ("calculation-coverage.html","report.html") else ["app.js","project-ledger.js","gate08.js","gate09.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
         if parser.mains!=1:problems.append(page+": expected one main")
         for target in ("index.html","project-lab.html","analysis-studio.html","g15-3d.html","calculation-coverage.html","report.html","more.html"):
             if target not in text:problems.append(page+": missing nav target "+target)
@@ -324,6 +324,25 @@ def main():
             assert "validResult(d)" in (SITE/"g15-3d.js").read_text(encoding="utf-8")
         except (KeyError,ValueError,AssertionError,TypeError) as err:
             problems.append("G15 OpenSees reference evidence malformed: "+str(err))
+    from math import isclose
+    g09=SITE/"data/g15-gate09-source-audit.v0.1.json"
+    if not g09.is_file():
+        problems.append("Gate09 source slab/mass audit missing")
+    else:
+        try:
+            d=json.loads(g09.read_text(encoding="utf-8"))
+            assert d["schema"]=="jp.structural.g15.gate09.sample_panel_and_mass_audit.v0.1"
+            assert isclose(d["panel"]["area_m2"],17.874,abs_tol=.0001)
+            assert len(d["panel"]["candidate_beam_line_support"])==4
+            assert d["panel"]["whole_building_polygon_coverage"] is False
+            assert d["mass_reconciliation"]["source_supported_new_mass_kN"]==0
+            assert isclose(d["mass_reconciliation"]["unexplained_W_kN"],772.0329166282687,abs_tol=.001)
+            assert d["mass_reconciliation"]["source_mass_reconciled"] is False
+            assert d["source_F3_status"]=="NOT SAFE IN ONE WAY SHEAR"
+            assert d["engineering_approval"] is False
+            assert 'id="lab-gate09"' in (SITE/"project-lab.html").read_text(encoding="utf-8")
+        except (AssertionError,KeyError,TypeError,ValueError,OSError) as e:
+            problems.append("Gate09 source-audit QA fail: "+str(e))
     if problems:raise SystemExit("\n".join(problems))
     print("STRUCTURAL_SITE_QA_PASS: seven pages including open real-source 3D frame analysis, source-linked de-identified project journal, SP16, M09/D2, privacy checks and shared theme")
 if __name__=="__main__":main()
