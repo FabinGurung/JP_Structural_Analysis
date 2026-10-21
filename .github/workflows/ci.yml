@@ -15,6 +15,7 @@ on:
       - site/g15-open-3d-analysis-20261021
       - site/g15-gate09-source-panel-mass-audit-20261021
       - site/g15-gate10-assumed-floor-wall-mass-20261021
+      - site/g15-gate12-opensees-diaphragm-20261022
       - site/g15-debt-cleanup-20261021
   pull_request:
   workflow_dispatch:
@@ -103,6 +104,17 @@ jobs:
         run: python scripts/build_g15_gate11_torsion_proxy.py --output site/data/g15-gate11-diaphragm-proxy.v0.1.json
       - name: Validate advanced torsion UI syntax
         run: node --check site/gate11.js
+      - name: Execute Gate12 real-frame OpenSees flexible vs rigid MPC numerical tests
+        run: python -m pytest -q tests/test_g15_gate12_diaphragm_fe.py
+      - name: Build Gate12 flexible and rigid diaphragm comparison for the website
+        run: python scripts/run_g15_gate12_diaphragm_fe.py --summary-only --output site/data/g15-gate12-diaphragm-fe.v0.1.json
+      - name: Archive Gate12 all 18 x 165 signed 12-component member actions
+        run: python scripts/run_g15_gate12_diaphragm_fe.py --output build/g15-gate12/full_signed_actions.json
+      - name: Upload Gate12 source-grid member force comparison (design HOLD)
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: gate12-g15-real-3d-diaphragm-signed-not-approved
+          path: build/g15-gate12/full_signed_actions.json
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
