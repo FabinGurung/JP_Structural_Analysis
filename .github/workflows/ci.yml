@@ -12,6 +12,7 @@ on:
       - site/g15-project-calculation-ledger-20261020
       - site/g15-gate08-source-reconcile-20261020
       - site/interactive-analysis-mvp-20261020
+      - site/g15-open-3d-analysis-20261021
   pull_request:
   workflow_dispatch:
 
@@ -68,6 +69,17 @@ jobs:
         with:
           name: portal-synthetic-opensees-reference-not-approved
           path: build/portal-mvp/open_sees_result.json
+      - name: Validate real 165-member G15 OpenSees source case
+        run: python -m pytest -q tests/test_g15_open3d.py
+      - name: Generate public-source OpenSees signed G15 five-case reference
+        run: python scripts/run_g15_open_3d.py --sample --output build/g15_open_3d/open_source_3d_result.json
+      - name: Check public 3D model editor JavaScript
+        run: node --check site/g15-3d.js
+      - name: Upload G15 3D open model signed calculation artifact (engineering HOLD)
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: g15-public-source-165-member-opensees-not-approved
+          path: build/g15_open_3d/open_source_3d_result.json
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
