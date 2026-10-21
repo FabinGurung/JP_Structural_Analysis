@@ -35,6 +35,6 @@ fetch("data/g15-gate09-source-audit.v0.1.json",{cache:"no-store"})
  const track=mk("div",undefined,"lab-meter-track"),fill=mk("span",undefined,"lab-meter-fill "+(i===2?"lab-ref":"lab-new"));
  fill.style.width=(100*val/source)+"%";track.append(fill);box.append(head,track);return box;
  }));
- $("g09-mass-text").textContent=fmt(m.unexplained_pct_source_W)+"% unresolved. Source sample adds zero new mass (already represented in assumed floor loads). Main/partition inverse lengths are diagnostic only; none is mapped to actual wall geometry.";
+ $("g09-mass-text").textContent=fmt(m.unexplained_pct_source_W)+"% unresolved. Sample slab weight is already counted; no phantom wall mass admitted. OCCUPANCY CONFLICT: page 9 labels commercial space, while the report specifies residential gravity loading; actual ETABS live loads and eligible mass share need verification.";
  }).catch(err=>$("g09-summary").replaceChildren(mk("p","Gate09 evidence HOLD: "+err.message)));
 })();
