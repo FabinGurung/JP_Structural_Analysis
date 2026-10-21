@@ -163,9 +163,40 @@ def solve(request):
                 else [-sign*esm["base_shear_kN"] if axis=="X" else 0,
                       -sign*esm["base_shear_kN"] if axis=="Y" else 0,0])
         residual=max(abs(total[j]-target[j]) for j in range(3))
-        if residual>1e-3:raise RuntimeError(f"Global equilibrium mismatch {label}: {residual}")
-        maxroof=max((abs(x["ux_mm"])+abs(x["uy_mm"])) for x in disp if x["level"]==3)
+        if residual>1e-3:raise RuntimeError(f"Global force equilibrium mismatch {label}: {residual}")
+        # Check all three components of static moment equilibrium about the
+        # global grid origin. Force-only reaction balance is not sufficient for
+        # an asymmetric source-derived 3D frame.
+        applied_moment=[0.,0.,0.]
+        for level in range(1,4):
+            for cc in cols:
+                x,y,_=coords[cc[0]]
+                z=m["floor_levels_mm"][level]/1000.
+                load_val=p["floor_weights_kN"][level-1]/len(cols)
+                shear_val=sign*esm["floor_forces_kN"][level-1]/len(cols)
+                fx=(shear_val if axis=="X" else 0.)
+                fy=(shear_val if axis=="Y" else 0.)
+                fz=(-load_val if label=="GRAVITY" else 0.)
+                applied_moment[0]+=y*fz-z*fy
+                applied_moment[1]+=z*fx-x*fz
+                applied_moment[2]+=x*fy-y*fx
+        support_moment=[0.,0.,0.]
+        for cc in cols:
+            x,y,_=coords[cc[0]]
+            n=nodes[(cc[0],0)]
+            rx,ry,rz=[ops.nodeReaction(n,j) for j in (1,2,3)]
+            mx,my,mz=[ops.nodeReaction(n,j) for j in (4,5,6)]
+            support_moment[0]+=y*rz+mx
+            support_moment[1]+=-x*rz+my
+            support_moment[2]+=x*ry-y*rx+mz
+        moment_residual=max(abs(a+b) for a,b in zip(applied_moment,support_moment))
+        if moment_residual>1e-3:
+            raise RuntimeError(f"Global moment equilibrium mismatch {label}: {moment_residual}")
+        # Horizontal displacement is the vector magnitude, not |Ux|+|Uy|.
+        maxroof=max(math.hypot(x["ux_mm"],x["uy_mm"]) for x in disp if x["level"]==3)
         out.append({"case":label,"reaction_kN_xyz":total,"equilibrium_residual_kN":residual,
+                    "equilibrium_moment_residual_kNm":moment_residual,
+                    "roof_displacement_metric":"MAX_NODE_HORIZONTAL_EUCLIDEAN_NORM",
                     "max_roof_horizontal_displacement_mm":maxroof,
                     "node_displacements":disp,
                     "member_signed_local_end_forces":forces})
