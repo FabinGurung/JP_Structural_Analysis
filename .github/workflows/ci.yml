@@ -16,6 +16,7 @@ on:
       - site/g15-gate09-source-panel-mass-audit-20261021
       - site/g15-gate10-assumed-floor-wall-mass-20261021
       - site/g15-gate12-opensees-diaphragm-20261022
+      - site/g15-gate13-shell-wall-20261022
       - site/g15-debt-cleanup-20261021
   pull_request:
   workflow_dispatch:
@@ -117,6 +118,17 @@ jobs:
           path: build/g15-gate12/full_signed_actions.json
       - name: Validate Gate12 FE visualization
         run: node --check site/gate12.js
+      - name: Verify Gate13 actual source-bay ShellMITC4 and assumed masonry beam line-load FE
+        run: python -m pytest -q tests/test_g15_gate13_shell_wall.py
+      - name: Publish Gate13 matching 27-case shell/frame/rigid numerical summary
+        run: python scripts/run_g15_gate13_shell_wall.py --output site/data/g15-gate13-shell-wall.v0.1.json
+      - name: Archive all signed Gate13 member actions
+        run: python scripts/run_g15_gate13_shell_wall.py --full --output build/g15-gate13/full_signed_actions.json
+      - name: Upload shell gravity and masonry wall source sensitivity artifact (engineering HOLD)
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: g15-gate13-shellmitc4-27-cases-original-f3-fail
+          path: build/g15-gate13/full_signed_actions.json
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
