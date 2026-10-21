@@ -85,7 +85,6 @@ fetch("data/g15-gate12-diaphragm-fe.v0.1.json",{cache:"no-store"})
  }));
  pairs();
 }).catch(e=>$("g12-kpis").replaceChildren(el("p","Gate12 engineering data unavailable or invalid: "+e.message)));
-}
 const queueButton=$("g12-run");
 fetch("data/g15-gate10-assumptions.v0.1.json",{cache:"no-store"})
 .then(r=>r.ok?r.json():Promise.reject(Error("Gate10 source case list unavailable")))
