@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   solve-source-derived-3d:
-    if: github.event_name == 'workflow_dispatch' || (github.event.issue.user.login == 'FabinGurung' && startsWith(github.event.issue.title, '[JP G15 3D]'))
+    if: github.event_name == 'workflow_dispatch' || ((github.event.issue.user.login == 'FabinGurung' || github.event.issue.user.login == 'Kaksaveksaka') && startsWith(github.event.issue.title, '[JP G15 3D]'))
     runs-on: ubuntu-latest
     timeout-minutes: 12
     permissions:
@@ -20,7 +20,7 @@ jobs:
       - name: Checkout pinned tested open-source 3D engine and model
         uses: actions/checkout@v6
         with:
-          ref: 04de562d6f94d0583c49a2f7907e7d9118444f9c
+          ref: c4353c564a256c49fe0d2680f68d89814bef16a0
           persist-credentials: false
       - uses: actions/setup-python@v6
         with:
