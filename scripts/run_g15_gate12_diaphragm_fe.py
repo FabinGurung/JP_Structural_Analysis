@@ -96,6 +96,7 @@ def solve(request=None,case_id=CASE_ID,summary_only=False):
                    axis,sign,eccentricity_sign))
     assert len(specs)==9
     cases=[]
+    signed_for_superposition={}
     for boundary in ("FLEXIBLE","RIGID_MPC_TRIAL"):
         for name,axis,sign,esgn in specs:
             ops.wipe()
@@ -242,6 +243,7 @@ def solve(request=None,case_id=CASE_ID,summary_only=False):
                 "applied_accidental_eccentricity_sign":esgn if axis else 0,
                 "reaction_equilibrium_verified":True
             }
+            signed_for_superposition[(boundary,name)]=signed
             if not summary_only:record["full_local_member_signed_actions"]=signed
             cases.append(record)
             ops.wipe()
@@ -261,6 +263,37 @@ def solve(request=None,case_id=CASE_ID,summary_only=False):
            "rigid_governing_end_moment_kNm":b["governing_absolute_member_end_moment_kNm"],
            "force_equilibrium_both":a["reaction_equilibrium_verified"] and b["reaction_equilibrium_verified"]
         })
+    # Explicitly assumed factors for sensitivity, NOT accepted NBC design
+    # combinations. Within each boundary, ALL 165 signed component vectors
+    # are superimposed before selecting a controlling member. Never combine
+    # absolute moments, envelope maxima, or independent governing members.
+    combos=[]
+    for boundary in ("FLEXIBLE","RIGID_MPC_TRIAL"):
+        g=signed_for_superposition[(boundary,"GRAVITY")]
+        for gravity_factor,tag in ((1.2,"G1P2_PLUS_EQ"),(.9,"G0P9_PLUS_EQ")):
+            for name,axis,sign,esgn in specs[1:]:
+                eq=signed_for_superposition[(boundary,name)]
+                full=[]
+                for gv,ev in zip(g,eq):
+                    assert gv["id"]==ev["id"]
+                    v=[gravity_factor*x+y for x,y in zip(gv["signed"],ev["signed"])]
+                    full.append({"id":gv["id"],"components":COMPONENTS,"signed":v})
+                top=max(full,key=lambda x:max(abs(x["signed"][j]) for j in (4,5,10,11)))
+                idx=max((4,5,10,11),key=lambda j:abs(top["signed"][j]))
+                comb={
+                  "boundary":boundary,"seismic_case":name,
+                  "trial_combination":tag,
+                  "gravity_factor_assumed":gravity_factor,"seismic_factor_assumed":1.,
+                  "signed_member_action_count":len(full),
+                  "governing_member":top["id"],"governing_local_component":COMPONENTS[idx],
+                  "governing_signed_end_moment_kNm":top["signed"][idx],
+                  "governing_moment_abs_kNm":abs(top["signed"][idx]),
+                  "not_a_confirmed_code_combination":True
+                }
+                if not summary_only:
+                    comb["full_local_member_signed_actions"]=full
+                combos.append(comb)
+    assert len(combos)==32
     return {
       "schema":"jp.structural.g15.gate12.diaphragm_openSees_comparison.v0.1",
       "run_kind":"SAME_SOURCE_FRAME_ALTERNATIVE_MPC_LINEAR_STATIC_FE",
@@ -277,11 +310,12 @@ def solve(request=None,case_id=CASE_ID,summary_only=False):
       "accidental_eccentricity_physical":"SIGNED_EQUIVALENT_NODAL_FORCE_COUPLES",
       "interstorey_measure":"MAX_PLAN_COLUMN_ELASTIC_CHORD_OVER_STORY_HEIGHT",
       "displacement_limit_compliance_verified":False,
-      "signed_combinations_implemented":"INDEPENDENT_GRAVITY_AND_EIGHT_EQ_LOAD_CASES; NO_DESIGN_ULS_COMBINATIONS",
+      "signed_combinations_implemented":"32_PROVISIONAL_LINEAR_SUPERPOSITION_TRIALS_NOT_CODE_ACCEPTED",
+      "trial_factors_need_NBC_SOURCE_COMBINATION_VERIFICATION":True,
       "P_delta_and_foundation_check_included":False,
       "source_F3_one_way_shear":"NOT SAFE IN ONE WAY SHEAR",
       "seismic_mass_reconciled":False,"engineering_approval":False,
-      "cases":cases,"comparisons":comparison
+      "cases":cases,"comparisons":comparison,"trial_signed_combinations":combos
     }
 
 def main():
