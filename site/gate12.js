@@ -25,6 +25,14 @@ function pairs(){
  $("g12-compare").replaceChildren(...rows.map(cols=>{
    const tr=el("tr");cols.forEach(v=>tr.append(el("td",v)));return tr;
  }));
+ const combos=data.trial_signed_combinations.filter(c=>c.seismic_case===option.case);
+ $("g12-combinations").replaceChildren(...combos.map(c=>{
+   const tr=el("tr");
+   [c.boundary,c.trial_combination,c.governing_member,
+    c.governing_local_component+" "+num(c.governing_signed_end_moment_kNm,3)]
+      .forEach(v=>tr.append(el("td",v)));
+   return tr;
+ }));
  const r=left.max_elastic_roof_horizontal_vector_mm>0?
   right.max_elastic_roof_horizontal_vector_mm/left.max_elastic_roof_horizontal_vector_mm:null;
  $("g12-highlight").textContent="Source-derived trial "+option.case+
@@ -37,6 +45,9 @@ function validate(d){
     d.actual_slab_shell_elements!==false||d.displacement_limit_compliance_verified!==false||
     d.source_F3_one_way_shear!=="NOT SAFE IN ONE WAY SHEAR"||
     d.cases?.length!==18||d.comparisons?.length!==9||
+    d.trial_signed_combinations?.length!==32||
+    d.trial_factors_need_NBC_SOURCE_COMBINATION_VERIFICATION!==true||
+    d.trial_signed_combinations.some(c=>c.not_a_confirmed_code_combination!==true||c.signed_member_action_count!==165)||
     d.source_grid_members!==165||d.source_columns!==23)return false;
  const keys=new Set(d.cases.map(c=>c.boundary+":"+c.case));
  if(keys.size!==18)return false;
