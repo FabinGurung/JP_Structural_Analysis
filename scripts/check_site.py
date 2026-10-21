@@ -262,7 +262,7 @@ def main():
         text=p.read_text(encoding="utf-8")
         parser=Parse();parser.feed(text)
         if parser.css!=["styles.css"]:problems.append(page+": inconsistent stylesheet")
-        if parser.scripts!=(["app.js","d2.js"] if page in ("calculation-coverage.html","report.html") else ["app.js","project-ledger.js","gate08.js","gate09.js","gate10.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
+        if parser.scripts!=(["app.js","d2.js"] if page in ("calculation-coverage.html","report.html") else ["app.js","project-ledger.js","gate08.js","gate09.js","gate10.js","gate11.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
         if parser.mains!=1:problems.append(page+": expected one main")
         for target in ("index.html","project-lab.html","analysis-studio.html","g15-3d.html","calculation-coverage.html","report.html","more.html"):
             if target not in text:problems.append(page+": missing nav target "+target)
@@ -363,6 +363,22 @@ def main():
             assert "g15-gate10-assumptions.v0.1.json" in (SITE/"g15-3d.js").read_text(encoding="utf-8")
         except (AssertionError,KeyError,TypeError,ValueError,OSError) as e:
             problems.append("Gate10 source/mass assumption integrity failure: "+str(e))
+    g11=SITE/"data/g15-gate11-diaphragm-proxy.v0.1.json"
+    if not g11.exists():problems.append("Missing governed Gate11 torsion response")
+    else:
+        try:
+            d=json.loads(g11.read_text(encoding="utf-8"))
+            assert d["schema"]=="jp.structural.g15.gate11.rigid_diaphragm_proxy.v0.1"
+            assert len(d["cases"])==8
+            assert all(len(c["floors"])==3 for c in d["cases"])
+            assert all(f["force_and_moment_equilibrium_verified"] is True for c in d["cases"] for f in c["floors"])
+            assert d["mass_source_reconciled"] is False
+            assert d["actual_story_drift_accepted"] is False
+            assert d["engineering_approval"] is False
+            assert d["foundation_F3_source"]=="NOT SAFE IN ONE WAY SHEAR"
+            assert 'id="lab-gate11"' in (SITE/"project-lab.html").read_text(encoding="utf-8")
+        except (AssertionError,KeyError,ValueError,TypeError,OSError) as e:
+            problems.append("Gate11 response provenance failed: "+str(e))
     if problems:raise SystemExit("\n".join(problems))
     print("STRUCTURAL_SITE_QA_PASS: seven pages including open real-source 3D frame analysis, source-linked de-identified project journal, SP16, M09/D2, privacy checks and shared theme")
 if __name__=="__main__":main()
