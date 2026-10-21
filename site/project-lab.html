@@ -138,6 +138,10 @@
 <label class="g15-field">Compare signed seismic case <select id="g12-choice" disabled></select></label>
 <div class="lab-scroll"><table class="lab-table"><thead><tr><th>Engineering response (elastic)</th><th>Flexible frame</th><th>Rigid in-plane MPC trial</th></tr></thead><tbody id="g12-compare"></tbody></table></div>
 <p class="lab-chart-note" id="g12-highlight"></p>
+<details class="lab-detail"><summary>Provisional signed gravity + seismic combinations (not yet code-accepted)</summary>
+<p class="lab-chart-note">Factors 1.2G+1.0E and 0.9G+1.0E are explicit sensitivity assumptions, not verified project design combinations. For each member, the solver adds all twelve signed local actions before identifying a maximum. Do not use them as a seismic design approval.</p>
+<div class="lab-scroll"><table class="lab-table"><thead><tr><th>Floor constraint</th><th>Trial factor</th><th>Controlling member</th><th>Signed local end moment (kN·m)</th></tr></thead><tbody id="g12-combinations"></tbody></table></div>
+</details>
 <div class="lab-scroll"><table class="lab-table"><thead><tr><th>Case / support assumption</th><th>Max roof displacement (mm)</th><th>Max story chord ratio</th><th>Controlling end moment (kN·m)</th></tr></thead><tbody id="g12-overview"></tbody></table></div>
 <div class="actions"><a class="btn secondary" href="https://github.com/FabinGurung/JP_Structural_Analysis/actions/workflows/pages.yml">Open full OpenSees release run ↗</a>
 <a class="btn secondary" href="g15-3d.html">Inspect 3D frame editor →</a></div>
