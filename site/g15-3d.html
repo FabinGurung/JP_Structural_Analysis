@@ -22,4 +22,13 @@
 <div class="actions"><button type="button" class="btn primary" id="g15-queue" disabled>Queue full 3D run on GitHub ↗</button><button type="button" class="btn secondary" id="g15-export" disabled>Export scenario JSON</button><button type="button" class="btn secondary" id="g15-reset">Restore original trial inputs</button></div>
 <p class="lab-chart-note" id="g15-status" role="status">Validating open-source geometry and inputs…</p></div>
 <div class="lab-links"><a class="panel" href="https://github.com/FabinGurung/JP_Structural_Analysis/actions/workflows/g15-open-3d-analysis.yml"><strong>Signed 3D calculation runs →</strong><small>Download numerical case results and member-force artifacts</small></a><a class="panel" href="project-lab.html"><strong>Engineering evidence journal →</strong><small>Gates02–08, drift sensitivity, mass discrepancy and F3 HOLD</small></a></div>
+</section>
+<section class="section" id="g15-solved">
+<div class="section-title"><div><span class="eyebrow">04 · SOLVED REFERENCE / OPENSEES</span><h2>Inspect signed results from the default 3D model</h2></div><p>Five OpenSees source-grid cases regenerated in every deployment. After you change inputs, queue a new solve to update the calculation; this reference remains the immutable default.</p></div>
+<div class="panel">
+<div class="g15-controls"><label>Reference load case<select id="g15-solved-case" disabled></select></label><label>Frame element<select id="g15-solved-member" disabled></select></label></div>
+<div id="g15-solved-summary" class="lab-kpis"><div class="lab-kpi"><strong>Loading signed OpenSees result…</strong></div></div>
+<div class="lab-scroll"><table class="lab-table"><thead><tr><th>Local component</th><th>Signed result</th><th>Unit</th></tr></thead><tbody id="g15-member-components"></tbody></table></div>
+<p id="g15-solved-message" class="lab-chart-note">Checking 3D source member counts, signed actions and F3 engineering HOLD…</p>
+</div>
 </section></main><footer class="site-footer"><div class="wrap footer-inner"><span>JP Structural Analysis · Public source-derived model · Structural approval HOLD</span><span>GitHub Pages + GitHub Actions · No Vercel required</span></div></footer><script src="app.js" defer></script><script src="g15-3d.js" defer></script></body></html>
