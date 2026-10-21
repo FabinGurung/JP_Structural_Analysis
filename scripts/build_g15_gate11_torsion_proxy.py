@@ -9,7 +9,9 @@ forces are balanced through 23 elastic node springs for X/Y and ±5% eccentricit
 import argparse
 import json
 import math
+import sys
 from pathlib import Path
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from scripts.build_g15_gate10_assumptions import build as gate10
 
 ROOT=Path(__file__).resolve().parents[1]
