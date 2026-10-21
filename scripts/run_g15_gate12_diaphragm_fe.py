@@ -326,8 +326,9 @@ def parse_issue_event(event_path):
     if not str(issue.get("title","")).startswith("[JP G15 G12]"):
         raise ValueError("Not a governed Gate12 request")
     raw=issue.get("body","")
-    if not isinstance(raw,str) or len(raw)>2000 or not raw.startswith("JP_G15_GATE12_RUN_V1\\n"):
+    if not isinstance(raw,str) or len(raw)>2000 or not raw.splitlines() or raw.splitlines()[0]!="JP_G15_GATE12_RUN_V1":
         raise ValueError("Gate12 request schema missing")
+    if len(raw.splitlines())<2:raise ValueError("Missing Gate12 request body")
     line=raw.splitlines()[1]
     if len(line)>600:raise ValueError("Gate12 source selection too large")
     params=json.loads(line)
