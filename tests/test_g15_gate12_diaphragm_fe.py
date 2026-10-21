@@ -24,7 +24,9 @@ def test_same_165_member_frame_flexible_vs_rigid_opensees():
     assert d["seismic_mass_reconciled"] is False
     assert d["actual_slab_shell_elements"] is False
     assert d["displacement_limit_compliance_verified"] is False
-    assert d["signed_combinations_implemented"].startswith("INDEPENDENT_")
+    assert len(d["trial_signed_combinations"])==32
+    assert d["trial_factors_need_NBC_SOURCE_COMBINATION_VERIFICATION"] is True
+    assert all(c["not_a_confirmed_code_combination"] is True for c in d["trial_signed_combinations"])
 
 def test_signed_case_reversal_and_accidental_torsion():
     d=solve(summary_only=True)
@@ -52,3 +54,20 @@ def test_full_signed_record_is_preserved_for_actions_artifact():
     assert all(len(f["signed"])==12 for c in d["cases"]
                for f in c["full_local_member_signed_actions"])
     assert any(c["governing_absolute_member_end_moment_kNm"]>0 for c in d["cases"])
+
+def test_same_member_signed_action_superposition_not_maxima_assemblage():
+    d=solve(summary_only=False)
+    c=next(z for z in d["trial_signed_combinations"]
+      if z["boundary"]=="RIGID_MPC_TRIAL" and z["seismic_case"]=="EQ_X_POS_EPOS"
+      and z["gravity_factor_assumed"]==1.2)
+    g=next(z for z in d["cases"]
+      if z["boundary"]=="RIGID_MPC_TRIAL" and z["case"]=="GRAVITY")
+    e=next(z for z in d["cases"]
+      if z["boundary"]=="RIGID_MPC_TRIAL" and z["case"]=="EQ_X_POS_EPOS")
+    assert len(c["full_local_member_signed_actions"])==165
+    for actual,gravity,eq in zip(c["full_local_member_signed_actions"],
+                                 g["full_local_member_signed_actions"],
+                                 e["full_local_member_signed_actions"]):
+        assert actual["id"]==gravity["id"]==eq["id"]
+        assert all(math.isclose(v,1.2*x+y,rel_tol=1e-12,abs_tol=1e-8)
+          for v,x,y in zip(actual["signed"],gravity["signed"],eq["signed"]))
