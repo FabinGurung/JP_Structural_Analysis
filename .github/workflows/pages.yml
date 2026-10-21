@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 181852bcfdce91db7c5d61101608c00d2c1a15f3
+          ref: b0eba2743dbfb7fae8552ea23adc371302432eb0
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -59,6 +59,8 @@ jobs:
         run: python scripts/build_g15_gate10_assumptions.py --output site/data/g15-gate10-assumptions.v0.1.json
       - name: Generate bounded Gate11 signed accidental-torsion model
         run: python scripts/build_g15_gate11_torsion_proxy.py --output site/data/g15-gate11-diaphragm-proxy.v0.1.json
+      - name: Generate Gate12 actual 3D OpenSees flexible-versus-rigid diaphragm FE comparison
+        run: python scripts/run_g15_gate12_diaphragm_fe.py --summary-only --output site/data/g15-gate12-diaphragm-fe.v0.1.json
       - name: Validate current report-first coverage and site navigation
         run: |
           python scripts/build_calculation_coverage.py --check
@@ -70,6 +72,7 @@ jobs:
           node --check site/gate09.js
           node --check site/gate10.js
           node --check site/gate11.js
+          node --check site/gate12.js
           node --check site/private-force-viewer.js
           node --check site/analysis-studio.js
           node --check site/g15-3d.js

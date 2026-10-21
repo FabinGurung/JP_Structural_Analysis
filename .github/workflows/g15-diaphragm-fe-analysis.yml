@@ -1,0 +1,58 @@
+name: g15-diaphragm-fe-analysis
+
+on:
+  issues:
+    types: [opened]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  solve-source-3d-diaphragm:
+    if: github.event_name == 'workflow_dispatch' || ((github.event.issue.user.login == 'FabinGurung' || github.event.issue.user.login == 'Kaksaveksaka') && startsWith(github.event.issue.title, '[JP G15 G12]'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Checkout immutable tested G15 Gate12 solver
+        uses: actions/checkout@v6
+        with:
+          ref: b0eba2743dbfb7fae8552ea23adc371302432eb0
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install governed OpenSees runtime
+        run: python -m pip install -e ".[test,opensees]"
+      - name: Execute governed signed diaphragm FE comparison
+        env:
+          RUN_MODE: ${{ github.event_name }}
+        run: |
+          if [ "$RUN_MODE" = "workflow_dispatch" ]; then
+            python scripts/run_g15_gate12_diaphragm_fe.py --output build/g12-hosted/full_signed_actions.json
+          else
+            python scripts/run_g15_gate12_diaphragm_fe.py --event "$GITHUB_EVENT_PATH" --output build/g12-hosted/full_signed_actions.json
+          fi
+      - name: Upload 18 real 3D FE cases and 32 signed trial combinations
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: g15-gate12-18cases-32trial-combos-${{ github.run_id }}-engineering-hold
+          path: build/g12-hosted/full_signed_actions.json
+          retention-days: 30
+      - name: Link result to authorized GitHub issue
+        if: github.event_name == 'issues'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const url = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body = `✅ Gate12 OpenSees completed: source-derived 165-member frame, 18 elastic FE cases (flexible/rigid in-plane MPC), ±5% signed accidental eccentricity, 32 explicitly *unapproved* gravity/EQ combination trials. Open ${url} and download the signed actions artifact. Slab shells, mass-source verification, P-Delta, codal drift and source F3 footing failure remain engineering HOLD.`;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body
+            });
