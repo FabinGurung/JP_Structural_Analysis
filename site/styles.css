@@ -80,3 +80,16 @@ html{overflow-x:clip}body{background:var(--bg);color:var(--fg);font-family:ui-sa
 #studio-run button:disabled{opacity:.45;cursor:not-allowed}
 @media(max-width:830px){.studio-form{grid-template-columns:1fr}}
 @media(max-width:470px){.studio-fieldset{grid-template-columns:1fr}}
+
+/* source-derived public 3D structural workbench */
+.g15-view-toolbar{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+.g15-view-toolbar button{padding:8px 10px;border-radius:7px;border:1px solid var(--line);background:var(--surface2);color:var(--fg);font:600 12px system-ui;cursor:pointer}
+.g15-view-toolbar button:hover{border-color:var(--accent)}
+.g15-scene{width:100%;height:auto;min-height:280px;background:var(--surface2);border-radius:12px}
+.g15-scene line{cursor:pointer}.g15-scene line:focus{stroke-width:6;outline:none}
+.g15-controls{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:16px 0}
+.g15-controls label,.g15-field{display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:12px;font-weight:600;margin:10px 0}
+.g15-controls input,.g15-field input:not([type=checkbox]),.g15-field select{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:10px;color:var(--fg);font:inherit}
+.g15-field:has(input[type=checkbox]){flex-direction:row;align-items:center}
+.g15-readouts{border:1px solid var(--line);background:var(--surface2);padding:12px;border-radius:8px;font-size:13px}
+@media(max-width:900px){.g15-controls{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:560px){.g15-controls{grid-template-columns:1fr 1fr}}
