@@ -20,7 +20,7 @@ jobs:
       - name: Checkout pinned tested open-source 3D engine and model
         uses: actions/checkout@v6
         with:
-          ref: c4353c564a256c49fe0d2680f68d89814bef16a0
+          ref: 7e9ee03194710ea4ae06d82214fc72ed6aa2d8b0
           persist-credentials: false
       - uses: actions/setup-python@v6
         with:
