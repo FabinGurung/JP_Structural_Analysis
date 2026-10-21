@@ -314,8 +314,14 @@ def main():
             assert d["engineering_approval"] is False
             assert d["foundation_F3_one_way_shear"]=="NOT SAFE IN ONE WAY SHEAR"
             assert all(len(c["member_signed_local_end_forces"])==165 and
-                       c["equilibrium_residual_kN"]<.001 for c in d["cases"])
+                       c["equilibrium_residual_kN"]<.001 and
+                       c["equilibrium_moment_residual_kNm"]<.001 and
+                       c["roof_displacement_metric"]=="MAX_NODE_HORIZONTAL_EUCLIDEAN_NORM"
+                       for c in d["cases"])
             assert "g15-open3d-reference.v1.json" in (SITE/"g15-3d.js").read_text(encoding="utf-8")
+            assert 'id="g15-load-result"' in (SITE/"g15-3d.html").read_text(encoding="utf-8")
+            assert 'id="g15-restore-reference"' in (SITE/"g15-3d.html").read_text(encoding="utf-8")
+            assert "validResult(d)" in (SITE/"g15-3d.js").read_text(encoding="utf-8")
         except (KeyError,ValueError,AssertionError,TypeError) as err:
             problems.append("G15 OpenSees reference evidence malformed: "+str(err))
     if problems:raise SystemExit("\n".join(problems))
