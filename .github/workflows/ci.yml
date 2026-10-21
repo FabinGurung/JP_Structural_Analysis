@@ -13,6 +13,7 @@ on:
       - site/g15-gate08-source-reconcile-20261020
       - site/interactive-analysis-mvp-20261020
       - site/g15-open-3d-analysis-20261021
+      - site/g15-debt-cleanup-20261021
   pull_request:
   workflow_dispatch:
 
