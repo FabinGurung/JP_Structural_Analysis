@@ -1,0 +1,73 @@
+{
+  "schema": "jp.structural.g15.gate18.source_mass_f3_provenance.v0.1",
+  "source_pdf": {
+    "drive_id": "1TpWUmOdrcQqOpkN6qvmhZ12KrYaNABBM",
+    "sha256": "f122904444a2e2f75230d9d4e41da0093d050da25c6e8140c86d466b7e37cc52",
+    "title": "new nbc2025 report REVISED(1).pdf",
+    "source_copy_policy": "ORIGINAL_REMAINS_IN_PRIVATE_DRIVE"
+  },
+  "source_mass_table": {
+    "pdf_physical_page": 34,
+    "printed_page": 34,
+    "section": "5.10 MASS IRREGULARITY CHECK",
+    "report_printed_table_heading": "MASS X or Y",
+    "units_explicitly_printed": false,
+    "inferred_units_for_exact_match": "kg",
+    "g_m_s2_for_inference": 9.80665,
+    "rounding_display_mass_precision": 0.01,
+    "reported_stories": [
+      {
+        "storey": "Story 1",
+        "printed_mass_value": 270076.47
+      },
+      {
+        "storey": "Story 2",
+        "printed_mass_value": 274062.74
+      },
+      {
+        "storey": "Story 3",
+        "printed_mass_value": 152521.81
+      }
+    ],
+    "base_entry": {
+      "storey": "Base",
+      "printed_mass_value": 18434.33,
+      "included_in_report_automatic_seismic_weight_by_table_sum": false
+    },
+    "etabs_weight_kN": 6831.9109,
+    "etabs_reference_pdf_page": 25,
+    "units_inferred_not_ETABS_verified": true
+  },
+  "f3_source": {
+    "pdf_physical_page": 61,
+    "printed_page": 61,
+    "section": "Design of Footing(F3)",
+    "as_issued_one_way_shear_verdict": "NOT SAFE IN ONE WAY SHEAR",
+    "sheet_column_size_m": 0.36,
+    "sheet_footing_plan_m": [
+      2.1,
+      2.1
+    ],
+    "sheet_overall_D_mm": 450,
+    "sheet_effective_depth_d_mm": 423.46278,
+    "reconstruction_previous_assumed_d_mm": 394,
+    "sheet_column_axial_kN": 571,
+    "sheet_with_selfweight_kN": 600,
+    "sheet_nominal_upward_factored_kPa": 194.22,
+    "sheet_SBC_kPa": 160,
+    "sheet_rebar": "12 mm @ 150 mm",
+    "sheet_one_way_permissible_shear_rounded_MPa": 0.2,
+    "sheet_one_way_nominal_shear_rounded_MPa": 0.2,
+    "sheet_maximum_one_way_shear_kN": 172.3,
+    "sheet_shear_stresses_rounding_cannot_override_explicit_fail": true,
+    "source_effective_depth_conflict_with_footing_cover": true
+  },
+  "verification": {
+    "exact_mass_value_with_g_is_arithmetic_not_mass_source_composition": true,
+    "base_mass_omitted_from_observed_etabs_weight_sum": true,
+    "source_E2K_file_confirmed_for_this_building": false,
+    "soil_site_verified": false,
+    "f3_approved": false,
+    "engineering_approval": false
+  }
+}

@@ -170,6 +170,19 @@ jobs:
         with:
           name: g15-gate17-source-mass-report-conflicts-not-approved
           path: build/g15-gate17/gate17_source_audit.json
+      - name: Gate18 original ETABS storey mass and unsafe F3 regression
+        run: python -m pytest -q tests/test_g15_gate18_mass_f3.py
+      - name: Publish source-verified Gate18 storey-mass arithmetic and conditional F3 screen
+        run: python scripts/build_g15_gate18_mass_f3.py --output site/data/g15-gate18-source-mass-f3.v0.1.json
+      - name: Archive full Gate18 source mass and F3 preliminary numerical report
+        run: python scripts/build_g15_gate18_mass_f3.py --output build/g15-gate18/source_mass_f3_evidence.json
+      - name: Upload mass-source and F3 fail-closed Gate18 evidence
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: g15-gate18-original-storey-mass-unsafe-f3-no-approval
+          path: build/g15-gate18/source_mass_f3_evidence.json
+      - name: Validate Gate18 source mass and F3 public frontend
+        run: node --check site/gate18.js
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check

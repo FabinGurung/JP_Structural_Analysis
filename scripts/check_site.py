@@ -262,7 +262,7 @@ def main():
         text=p.read_text(encoding="utf-8")
         parser=Parse();parser.feed(text)
         if parser.css!=["styles.css"]:problems.append(page+": inconsistent stylesheet")
-        if parser.scripts!=(["app.js","d2.js"] if page in ("calculation-coverage.html","report.html") else ["app.js","project-ledger.js","gate08.js","gate09.js","gate10.js","gate11.js","gate12.js","gate13.js","gate14.js","gate15.js","gate16.js","gate17.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
+        if parser.scripts!=(["app.js","d2.js"] if page in ("calculation-coverage.html","report.html") else ["app.js","project-ledger.js","gate08.js","gate09.js","gate10.js","gate11.js","gate12.js","gate13.js","gate14.js","gate15.js","gate16.js","gate17.js","gate18.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
         if parser.mains!=1:problems.append(page+": expected one main")
         for target in ("index.html","project-lab.html","analysis-studio.html","g15-3d.html","calculation-coverage.html","report.html","more.html"):
             if target not in text:problems.append(page+": missing nav target "+target)
@@ -538,6 +538,28 @@ def main():
             assert "g15-gate17-source-audit.v0.1.json" in (SITE/"gate17.js").read_text(encoding="utf-8")
         except (AssertionError,KeyError,TypeError,ValueError,OSError) as e:
             problems.append("Gate17 report fidelity or structural safety HOLD failed: "+str(e))
+    g18=SITE/"data/g15-gate18-source-mass-f3.v0.1.json"
+    if not g18.exists():
+        problems.append("Gate18 source storey-mass and F3 safety reconciliation missing")
+    else:
+        try:
+            d=json.loads(g18.read_text(encoding="utf-8"))
+            assert d["schema"]=="jp.structural.g15.gate18.story_mass_and_f3_safety.v0.1"
+            assert d["reported_mass_table_units_printed"] is False
+            assert d["kilograms_inferred_not_native_ETABS_verified"] is True
+            assert d["ETABS_source_mass_settings_observed"] is False
+            assert d["mass_source_reconciled"] is False
+            assert d["f3_source_explicit_verdict"]=="NOT SAFE IN ONE WAY SHEAR"
+            assert d["f3_current_design_accepted"] is False
+            assert d["engineering_approval"] is False
+            assert abs(d["reported_minus_story_table_W_kN"])<=d["max_rounding_bound_kN"]
+            assert len(d["source_floor_conditional_weights"])==3
+            assert len(d["f3_hypothetical_depth_trials"])==4
+            assert all(c["redesign_accepted"] is False for c in d["f3_hypothetical_depth_trials"])
+            assert 'id="lab-gate18"' in (SITE/"project-lab.html").read_text(encoding="utf-8")
+            assert "g15-gate18-source-mass-f3.v0.1.json" in (SITE/"gate18.js").read_text(encoding="utf-8")
+        except (AssertionError,KeyError,TypeError,ValueError,OSError) as ex:
+            problems.append("Gate18 mass-source or F3 safety QA failed: "+str(ex))
     if problems:raise SystemExit("\n".join(problems))
     print("STRUCTURAL_SITE_QA_PASS: seven pages including open real-source 3D frame analysis, source-linked de-identified project journal, SP16, M09/D2, privacy checks and shared theme")
 if __name__=="__main__":main()

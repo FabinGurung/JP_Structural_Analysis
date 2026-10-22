@@ -229,6 +229,20 @@
 <div class="actions"><a class="btn secondary" href="https://github.com/FabinGurung/JP_Structural_Analysis/issues/7">Review live engineering blockers ↗</a><a class="btn secondary" href="#lab-gate16">Earlier physical mesh sensitivity →</a></div>
 <p class="lab-chart-note"><strong>HOLD:</strong> Gate17 is a source evidence audit—not source-matched slab loading, resolved seismic mass, reliable drift compliance or construction approval. F3 is still NOT SAFE IN ONE WAY SHEAR.</p>
 </div></section>
+<section class="section compact" id="lab-gate18">
+<div class="section-title"><div><span class="eyebrow">GATE18 · SOURCE STOREY MASS AND F3 SAFETY</span><h2>Original seismic weight reconstructed by storey—foundation F3 remains unsafe</h2></div><p>Numerically check the source PDF's printed mass table and isolate F3 design failure from conditional calculations.</p></div>
+<div id="g18-kpis" class="lab-kpis"><div class="lab-kpi"><strong>Loading source report and safety evidence…</strong></div></div>
+<div class="panel">
+<p class="lab-chart-note"><strong>Important discovery:</strong> mass-irregularity table on original PDF physical page 34 lists three storeys, whose values give near-exact published 6,831.9109 kN when treated as kg at standard gravity (9.80665 m/s²). The report table does <strong>not explicitly show mass units</strong>, and its separate Base entry is excluded from the matching total. This proves an arithmetic compatibility only—not the concrete, slabs, walls or true ETABS Mass Source assignment.</p>
+<div class="lab-scroll"><table class="lab-table"><thead><tr><th>Source storey</th><th>Printed mass value (unit not shown)</th><th>Conditional seismic weight (kN)</th></tr></thead><tbody id="g18-floor"></tbody></table></div>
+<p class="lab-chart-note" id="g18-note">Loading conditional comparison.</p>
+<h3>Footing F3 — explicit source failure</h3>
+<p class="lab-chart-note">The original PDF footing F3 worksheet (physical p.61) states <strong>NOT SAFE IN ONE WAY SHEAR</strong>. Both the printed nominal and permissible stresses are displayed to only 0.1 MPa, obscuring their exact comparison. Its reported effective depth 423.46278 mm differs from the prior reconstruction's 394 mm assumption. No reinterpretation of displayed equality overturns the source's FAIL.</p>
+<div class="lab-scroll"><table class="lab-table"><thead><tr><th>Conditional D (mm)</th><th>Assumed service bearing (kPa)</th><th>Simplified kernel status</th><th>Structural acceptance</th></tr></thead><tbody id="g18-f3"></tbody></table></div>
+<p class="lab-chart-note">The depth cases are mathematical sensitivity screens using a 2,100 mm square plan and hypothetical selfweight/load factor, <strong>not candidate construction dimensions</strong>. Actual column footing connection, design loading, seismic moment/eccentricity, punching, settlement and soil support remain unverified.</p>
+<details class="lab-detail"><summary>Physical evidence needed before passing P0/P1</summary><p>Obtain the actual .edb/.e2k export for this G+1.5 building, show ETABS Mass Source settings and storey mass unit, then reconcile individual element/area/line loads and real slab/terrace polygons. Review as-built footing F3 foundation details and soil report; independent engineer must redesign and sign off the failure.</p></details>
+<div class="actions"><a class="btn secondary" href="https://github.com/FabinGurung/JP_Structural_Analysis/issues/7">Engineering HOLD register ↗</a><a class="btn secondary" href="#lab-gate17">Gate17 source baseline →</a></div>
+</div></section>
 <section class="section" id="lab-private">
  <div class="section-title"><div><span class="eyebrow">PRIVATE EVIDENCE VIEWER · LOCAL FILES ONLY</span><h2>Inspect every signed FE action locally</h2></div><p>Choose full-analysis JSON files from the private Gate06 or Gate08 archives. Examine load-case values, member IDs and all 12 local end-action components locally—nothing is uploaded to a server.</p></div>
  <div class="panel lab-private-panel">
@@ -251,5 +265,5 @@
 </section>
 </main>
 <footer class="site-footer"><div class="wrap footer-inner"><span>JP Structural Analysis · G+1.5 de-identified project journal · Engineering approval HOLD</span><span>Private source remains in Drive</span></div></footer>
-<script src="app.js" defer></script><script src="project-ledger.js" defer></script><script src="gate08.js" defer></script><script src="gate09.js" defer></script><script src="gate10.js" defer></script><script src="gate11.js" defer></script><script src="gate12.js" defer></script><script src="gate13.js" defer></script><script src="gate14.js" defer></script><script src="gate15.js" defer></script><script src="gate16.js" defer></script><script src="gate17.js" defer></script><script src="private-force-viewer.js" defer></script>
+<script src="app.js" defer></script><script src="project-ledger.js" defer></script><script src="gate08.js" defer></script><script src="gate09.js" defer></script><script src="gate10.js" defer></script><script src="gate11.js" defer></script><script src="gate12.js" defer></script><script src="gate13.js" defer></script><script src="gate14.js" defer></script><script src="gate15.js" defer></script><script src="gate16.js" defer></script><script src="gate17.js" defer></script><script src="gate18.js" defer></script><script src="private-force-viewer.js" defer></script>
 </body></html>
