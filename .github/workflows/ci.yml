@@ -131,6 +131,19 @@ jobs:
           path: build/g15-gate14/full_signed_actions.json
       - name: Browser syntax for Gate14 comparison
         run: node --check site/gate14.js
+      - name: Gate15 shell refinement and hypothetical opening regression
+        run: python -m pytest -q tests/test_g15_gate15_mesh_opening.py
+      - name: Generate Gate15 27 actual OpenSees FEM responses
+        run: python scripts/run_g15_gate15_mesh_opening.py --output site/data/g15-gate15-mesh-opening.v0.1.json
+      - name: Archive full signed Gate15 frame actions
+        run: python scripts/run_g15_gate15_mesh_opening.py --full --output build/g15-gate15/full_signed_actions.json
+      - name: Upload Gate15 source-bounded mesh/opening study (no approval)
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: g15-gate15-shell-mesh-and-hypothetical-opening-not-approved
+          path: build/g15-gate15/full_signed_actions.json
+      - name: Gate15 frontend syntax
+        run: node --check site/gate15.js
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check

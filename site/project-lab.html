@@ -183,6 +183,21 @@
 </details>
 <div class="actions"><a class="btn secondary" href="https://github.com/FabinGurung/JP_Structural_Analysis/actions">Review signed numerical CI artifacts ↗</a><a class="btn secondary" href="g15-3d.html">View 3D source frame →</a></div>
 </div></section>
+<section class="section compact" id="lab-gate15">
+<div class="section-title"><div><span class="eyebrow">GATE15 · ACTUAL FINITE ELEMENT MESH REFINEMENT</span><h2>How sensitive is the assumed slab bay to mesh density and a hypothetical opening?</h2></div><p>Three 3D OpenSees shell models × 9 load cases. Physical floor boundaries and openings are unverified.</p></div>
+<div class="lab-kpis" id="g15-mesh-kpis"><div class="lab-kpi"><strong>Loading Gate15 signed FE evidence…</strong></div></div>
+<div class="panel">
+<p class="lab-chart-note">Compare 2×2 full-sample-bay shells, 4×4 full-sample-bay shells and 4×4 shells with a deliberately <strong>hypothetical centered 25%-area void</strong>. The original F–G/1–2 4.965 × 3.600 m dimension is source-reported; repeating this bay at two levels is an assumption. Shell nodes are attached to subdivided frame beams. No full floor or terrace geometry is claimed.</p>
+<label class="g15-field">Choose gravity or a signed seismic eccentricity case <select id="g15-mesh-case" disabled></select></label>
+<div class="lab-scroll"><table class="lab-table"><thead><tr><th>Numerical response</th><th>2×2 full patch</th><th>4×4 full patch</th><th>4×4 with central void</th></tr></thead><tbody id="g15-mesh-matrix"></tbody></table></div>
+<p id="g15-mesh-comment" class="lab-chart-note">Waiting for validated OpenSees data.</p>
+<details class="lab-detail"><summary>Assumption, mass and structural QA boundaries</summary>
+<p>The void hypothesis removes 4.4685 m² of the slab sample per level; its conditional 45.84681 kN dead/mass reduction over two levels is only meaningful if the previous assumed mass ledger included this exact patch. The opening's structural trim reinforcement and gravity load path are unverified. The actual terrace location is not reconstructed.</p>
+<p>Mesh refinement from 2×2 to 4×4 provides a sensitivity comparison, <strong>not proof of convergence</strong>. The void case also changes the assumed lateral mass, so it cannot isolate geometric stiffness effects. Existing 7 wall-line assignments remain assumed; they are not source-verified walls. P–Δ, NBC design drift and member detailing are open.</p>
+<p><strong>Footing F3: NOT SAFE IN ONE WAY SHEAR.</strong> No engineering acceptance or construction approval.</p>
+</details>
+<div class="actions"><a class="btn secondary" href="https://github.com/FabinGurung/JP_Structural_Analysis/actions">Full signed action artifacts ↗</a><a class="btn secondary" href="#lab-gate14">Compare earlier Gate14 →</a></div>
+</div></section>
 <section class="section" id="lab-private">
  <div class="section-title"><div><span class="eyebrow">PRIVATE EVIDENCE VIEWER · LOCAL FILES ONLY</span><h2>Inspect every signed FE action locally</h2></div><p>Choose full-analysis JSON files from the private Gate06 or Gate08 archives. Examine load-case values, member IDs and all 12 local end-action components locally—nothing is uploaded to a server.</p></div>
  <div class="panel lab-private-panel">
@@ -205,5 +220,5 @@
 </section>
 </main>
 <footer class="site-footer"><div class="wrap footer-inner"><span>JP Structural Analysis · G+1.5 de-identified project journal · Engineering approval HOLD</span><span>Private source remains in Drive</span></div></footer>
-<script src="app.js" defer></script><script src="project-ledger.js" defer></script><script src="gate08.js" defer></script><script src="gate09.js" defer></script><script src="gate10.js" defer></script><script src="gate11.js" defer></script><script src="gate12.js" defer></script><script src="gate13.js" defer></script><script src="gate14.js" defer></script><script src="private-force-viewer.js" defer></script>
+<script src="app.js" defer></script><script src="project-ledger.js" defer></script><script src="gate08.js" defer></script><script src="gate09.js" defer></script><script src="gate10.js" defer></script><script src="gate11.js" defer></script><script src="gate12.js" defer></script><script src="gate13.js" defer></script><script src="gate14.js" defer></script><script src="gate15.js" defer></script><script src="private-force-viewer.js" defer></script>
 </body></html>
