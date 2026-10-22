@@ -1,0 +1,11 @@
+# Gate16 · third FE mesh and actual architectural drawing evidence
+
+This is an implementation/engineering sensitivity checkpoint, not an accepted structural design.
+
+- **Verified source**: original 68-page report downloaded from the existing Google Drive source file; SHA-256 `f122904444a2e2f75230d9d4e41da0093d050da25c6e8140c86d466b7e37cc52`. PDF page 9 = ground architectural plan labeled COMMERCIAL SPACE; page 10 = first-floor offices/rooms; page 11 = second-floor terrace. These are visual architectural facts only: **slab panel boundaries, terrace structural opening and entire diaphragm remain unverified**.
+- **Conflicting source densities**: original summary page 4 reports concrete unit weight **20 kN/m³**, material Table 1 page 6 reports **25 kN/m³ reinforced concrete** (24 plain). This is added to a versioned source audit; the current mass ledger has NOT been silently modified or reverse-fitted to 6,831.9109 kN.
+- **FE improvement**: 3 full F–G/1–2 source dimensional sample-bay resolutions 2×2, 4×4, and 8×8 ShellMITC4 (8, 32, 128 shells across two assumed levels), with the prior 4×4 speculative 25% central opening case (24 shells). Four models × nine real signed static OpenSees cases = **36 FE cases**. Signed local end vectors for every computational frame segment are preserved in Actions artifacts.
+- **Metrics**: equal lateral and gravity inputs across the three no-void meshes; compare horizontal roof movement and the exact same COLUMN member signed Mzi `COL-F1-L0-1`, not maxima from changing unrelated members. Numerical residuals force and moment strictly less than 0.001.
+- **Limit**: three FE densities yield useful trends but do not independently prove mesh convergence (other geometries/diaphragm assumptions absent). The central void scenario changes both rigidity and CONDITIONAL source mass—never compare it as pure stiffness.
+- **Source truth still required**: ETABS actual area object and openings export, wall member assignments, mass-source settings, concrete materials, floor-by-floor live loads, terrace construction details and site-specific seismic parameters. **F3 remains NOT SAFE IN ONE WAY SHEAR**.
+- **Rollback**: Gate15 immutable source `15ea84a59ce1f15c8c21598f414b5c1cd6f1e8c0` retained.

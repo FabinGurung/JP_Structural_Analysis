@@ -262,7 +262,7 @@ def main():
         text=p.read_text(encoding="utf-8")
         parser=Parse();parser.feed(text)
         if parser.css!=["styles.css"]:problems.append(page+": inconsistent stylesheet")
-        if parser.scripts!=(["app.js","d2.js"] if page in ("calculation-coverage.html","report.html") else ["app.js","project-ledger.js","gate08.js","gate09.js","gate10.js","gate11.js","gate12.js","gate13.js","gate14.js","gate15.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
+        if parser.scripts!=(["app.js","d2.js"] if page in ("calculation-coverage.html","report.html") else ["app.js","project-ledger.js","gate08.js","gate09.js","gate10.js","gate11.js","gate12.js","gate13.js","gate14.js","gate15.js","gate16.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
         if parser.mains!=1:problems.append(page+": expected one main")
         for target in ("index.html","project-lab.html","analysis-studio.html","g15-3d.html","calculation-coverage.html","report.html","more.html"):
             if target not in text:problems.append(page+": missing nav target "+target)
@@ -493,6 +493,28 @@ def main():
             assert "g15-gate15-mesh-opening.v0.1.json" in (SITE/"gate15.js").read_text(encoding="utf-8")
         except (AssertionError,KeyError,TypeError,ValueError,OSError) as e:
             problems.append("Gate15 FEM mesh, source boundary or HOLD violated: "+str(e))
+    g16=SITE/"data/g15-gate16-source-mesh.v0.1.json"
+    if not g16.exists():
+        problems.append("Gate16 source audited FE numerical artifact missing")
+    else:
+        try:
+            d=json.loads(g16.read_text(encoding="utf-8"))
+            assert d["schema"]=="jp.structural.g15.gate16.third_resolution_source_mass_review.v0.1"
+            assert len(d["cases"])==36 and len(d["comparisons"])==9
+            assert [m["element_count_two_levels"] for m in d["models"]]==[8,32,128,24]
+            assert d["mass_source_reconciled"] is False
+            assert d["mesh_convergence_accepted"] is False
+            assert d["source_concrete_unit_weight_conflict_unresolved"] is True
+            assert d["source_full_slab_and_terrace_boundaries_verified"] is False
+            assert d["F3_one_way_shear"]=="NOT SAFE IN ONE WAY SHEAR"
+            assert d["engineering_approval"] is False
+            assert all(c["force_and_moment_equilibrium_pass"] is True and
+                       c["force_equilibrium_error_kN"]<.001 and
+                       c["moment_equilibrium_error_kNm"]<.001 for c in d["cases"])
+            assert 'id="lab-gate16"' in (SITE/"project-lab.html").read_text()
+            assert "g15-gate16-source-mesh.v0.1.json" in (SITE/"gate16.js").read_text()
+        except (KeyError,AssertionError,TypeError,ValueError,OSError) as e:
+            problems.append("Gate16 FEM/source check/HOLD error: "+str(e))
     if problems:raise SystemExit("\n".join(problems))
     print("STRUCTURAL_SITE_QA_PASS: seven pages including open real-source 3D frame analysis, source-linked de-identified project journal, SP16, M09/D2, privacy checks and shared theme")
 if __name__=="__main__":main()

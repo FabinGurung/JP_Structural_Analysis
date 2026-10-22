@@ -144,6 +144,19 @@ jobs:
           path: build/g15-gate15/full_signed_actions.json
       - name: Gate15 frontend syntax
         run: node --check site/gate15.js
+      - name: Gate16 third mesh and source register engineering tests
+        run: python -m pytest -q tests/test_g15_gate16_three_mesh.py
+      - name: Generate Gate16 matched 2x2, 4x4 and 8x8 OpenSees result
+        run: python scripts/run_g15_gate16_three_mesh.py --output site/data/g15-gate16-source-mesh.v0.1.json
+      - name: Archive all Gate16 signed frame 12-component actions (engineering HOLD)
+        run: python scripts/run_g15_gate16_three_mesh.py --full --output build/g15-gate16/full_signed_actions.json
+      - name: Upload Gate16 36-case 3-resolution and source-conflict artifact
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: g15-gate16-third-shell-mesh-and-source-conflicts-not-approved
+          path: build/g15-gate16/full_signed_actions.json
+      - name: Syntax check Gate16 public comparison
+        run: node --check site/gate16.js
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check

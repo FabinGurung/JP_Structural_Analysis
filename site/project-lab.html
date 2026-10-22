@@ -198,6 +198,22 @@
 </details>
 <div class="actions"><a class="btn secondary" href="https://github.com/FabinGurung/JP_Structural_Analysis/actions">Full signed action artifacts ↗</a><a class="btn secondary" href="#lab-gate14">Compare earlier Gate14 →</a></div>
 </div></section>
+<section class="section compact" id="lab-gate16">
+<div class="section-title"><div><span class="eyebrow">GATE16 · SOURCE DRAWINGS + THIRD FE MESH</span><h2>Third shell resolution and actual architectural-source conflicts</h2></div><p>Review drawing evidence, track a consistent column moment, and compare matched 2×2 / 4×4 / 8×8 OpenSees meshes.</p></div>
+<div id="g16-kpis" class="lab-kpis"><div class="lab-kpi"><strong>Loading source-audited FE results…</strong></div></div>
+<div class="panel">
+<p class="lab-chart-note">Source report PDF SHA-256 <code>f1229044…37cc52</code> verified. Its PDF pages 9–11 show a ground-floor <strong>COMMERCIAL SPACE</strong> label, upper-floor offices and residential rooms, and a labeled <strong>TERRACE</strong> on the second-floor architectural plan. However, no exact source ETABS slab mesh polygons, cutout coordinates, mass-source definitions or real wall line-load assignments were recovered.</p>
+<p class="lab-chart-note"><strong>Concrete unit weight discrepancy:</strong> source summary reports 20 kN/m³ (PDF p.4) but material table reports 25 kN/m³ for RC (p.6). Neither source value is silently substituted into the current trial solver.</p>
+<label class="g15-field">Compare same signed gravity/seismic scenario <select id="g16-case" disabled></select></label>
+<div class="lab-scroll"><table class="lab-table"><thead><tr><th>Actual OpenSees response</th><th>2×2 full bay</th><th>4×4 full bay</th><th>8×8 full bay</th><th>4×4 void (conditional load)</th></tr></thead><tbody id="g16-table"></tbody></table></div>
+<p class="lab-chart-note" id="g16-note">Waiting for strict equilibrium, mesh and provenance checks.</p>
+<details class="lab-detail"><summary>Source tracing, numerical limitations and unresolved foundation</summary>
+<p>The full-bay alternatives use identical assumed floor masses, wall loads and signed seismic eccentricities. Each uses real ShellMITC4 elements: 8, 32 or 128 over two assumed levels. The fourth 24-element scenario has an invented center void and conditionally subtracts 45.84681 kN total; it <strong>cannot</strong> measure pure mesh stiffness difference.</p>
+<p>Three mesh densities provide a numerical trend, not independent convergence certification or verification of a whole-floor diaphragm. All coordinates outside the source F–G/1–2 dimensional sample bay are still hypothetical. The source contains a terrace LABEL, not the authenticated ETABS area-object boundaries. Structural occupancy, slab continuity, ETABS mass source, wall assignments, code combinations and P–Δ remain unresolved.</p>
+<p><strong>Engineering HOLD: F3 NOT SAFE IN ONE WAY SHEAR.</strong> The report and numerical tests are not construction approval.</p>
+</details>
+<div class="actions"><a class="btn secondary" href="https://github.com/FabinGurung/JP_Structural_Analysis/issues/7">Engineering issue and source debt ↗</a><a class="btn secondary" href="#lab-gate15">Previous Gate15 study →</a></div>
+</div></section>
 <section class="section" id="lab-private">
  <div class="section-title"><div><span class="eyebrow">PRIVATE EVIDENCE VIEWER · LOCAL FILES ONLY</span><h2>Inspect every signed FE action locally</h2></div><p>Choose full-analysis JSON files from the private Gate06 or Gate08 archives. Examine load-case values, member IDs and all 12 local end-action components locally—nothing is uploaded to a server.</p></div>
  <div class="panel lab-private-panel">
@@ -220,5 +236,5 @@
 </section>
 </main>
 <footer class="site-footer"><div class="wrap footer-inner"><span>JP Structural Analysis · G+1.5 de-identified project journal · Engineering approval HOLD</span><span>Private source remains in Drive</span></div></footer>
-<script src="app.js" defer></script><script src="project-ledger.js" defer></script><script src="gate08.js" defer></script><script src="gate09.js" defer></script><script src="gate10.js" defer></script><script src="gate11.js" defer></script><script src="gate12.js" defer></script><script src="gate13.js" defer></script><script src="gate14.js" defer></script><script src="gate15.js" defer></script><script src="private-force-viewer.js" defer></script>
+<script src="app.js" defer></script><script src="project-ledger.js" defer></script><script src="gate08.js" defer></script><script src="gate09.js" defer></script><script src="gate10.js" defer></script><script src="gate11.js" defer></script><script src="gate12.js" defer></script><script src="gate13.js" defer></script><script src="gate14.js" defer></script><script src="gate15.js" defer></script><script src="gate16.js" defer></script><script src="private-force-viewer.js" defer></script>
 </body></html>

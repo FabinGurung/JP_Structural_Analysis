@@ -1,0 +1,65 @@
+{
+  "schema": "jp.structural.g15.gate16.source_drawing_mass_review.v0.1",
+  "source_pdf_google_drive_id": "1TpWUmOdrcQqOpkN6qvmhZ12KrYaNABBM",
+  "source_pdf_sha256": "f122904444a2e2f75230d9d4e41da0093d050da25c6e8140c86d466b7e37cc52",
+  "source_pdf_verified_access_date": "2026-10-22",
+  "review": {
+    "architectural_plan_pdf_pages": [
+      9,
+      10,
+      11
+    ],
+    "ground_floor_pdf_page": 9,
+    "first_floor_pdf_page": 10,
+    "second_floor_pdf_page": 11,
+    "ground_drawing_occupancy_label": "COMMERCIAL SPACE",
+    "first_floor_occupancies_visible": [
+      "OFFICE",
+      "BEDROOM",
+      "LIVING ROOM",
+      "KITCHEN"
+    ],
+    "second_floor_terrace_label_visually_present": true,
+    "second_floor_terrace_visual_zone_approximate": "west/upper-left relative to building image, near plan grids B–F and 2–7; NOT a traced polygon",
+    "original_floor_area_captions_m2": [
+      218.68,
+      212.09,
+      188.11
+    ],
+    "full_slab_polygons_source_verified": false,
+    "actual_slab_voids_source_verified": false,
+    "second_floor_terrace_structural_open_to_sky_or_slab_properties_verified": false,
+    "source_report_etabs_area_object_polygons_found": false,
+    "drawing_is_architectural_not_canonical_etabs_area_export": true,
+    "source_sample_bay_F_G_1_2_dimensions_m": [
+      4.965,
+      3.6
+    ],
+    "source_sample_bay_actual_story_assignment_verified": false,
+    "statement": "Observations are visible architectural labels/area captions. Do not equate room edges or terrace label with verified structural slab mesh, openings, diaphragm or wall load paths."
+  },
+  "concrete_unit_weight_conflict": {
+    "summary_pdf_page": 4,
+    "summary_kN_m3": 20,
+    "table_pdf_page": 6,
+    "table_plain_concrete_kN_m3": 24,
+    "table_rc_kN_m3": 25,
+    "conflict": "Executive structural-features concrete unit weight 20 kN/m3 differs from material Table 1 RC density 25 kN/m3; both must be reconciled with original ETABS material properties and mass source.",
+    "resolved": false,
+    "applied_to_mass_solver": false
+  },
+  "mass_truth": {
+    "reported_ETABS_seismic_weight_kN": 6831.9109,
+    "conditional_gate08_reconstructed_kN": 6059.877983371731,
+    "difference_kN": 772.032916628269,
+    "ETABS_mass_source_setting_observed": false,
+    "source_member_density_verified": false,
+    "original_report_full_floor_masses_verified": false,
+    "no_mass_plugging": true
+  },
+  "foundation": {
+    "source_F3_one_way_shear": "NOT SAFE IN ONE WAY SHEAR",
+    "accepted_redesign": false
+  },
+  "engineering_approval": false
+}
