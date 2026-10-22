@@ -169,6 +169,20 @@
 <a class="btn secondary" href="https://github.com/FabinGurung/JP_Structural_Analysis/actions">Open tested signed Actions archives ↗</a></div>
 <p class="lab-chart-note"><strong>Engineering HOLD:</strong> this is not a full-floor shell model, accepted wall placement, code drift check or P–Δ analysis. F3: NOT SAFE IN ONE WAY SHEAR.</p>
 </div></section>
+<section class="section compact" id="lab-gate14">
+<div class="section-title"><div><span class="eyebrow">GATE14 · MULTI-LEVEL SHELL SENSITIVITY</span><h2>What changes if the known sample bay is repeated on two floors?</h2></div><p>27 real 3D OpenSees cases comparing flexible, 8 connected shell elements over two assumed levels, and rigid-floor reference. Assumption study, not reconstructed complete slabs.</p></div>
+<div class="lab-kpis" id="g14-kpis"><div class="lab-kpi"><strong>Loading numerical evidence…</strong></div></div>
+<div class="panel">
+<p class="lab-chart-note"><strong>Assumption boundary:</strong> the source F–G/1–2 sample bay is mathematically repeated at elevated levels 1 and 2, with 4 ShellMITC4 quads per level (8 total) attached to split frame beam lines. The physical second bay, storey assignment, opening geometry and floor-wide membrane are not verified. No shell body-weight duplication; seven candidate wall beam paths remain unverified.</p>
+<label class="g15-field">Matched gravity and signed ±5% seismic case <select id="g14-case" disabled></select></label>
+<div class="lab-scroll"><table class="lab-table"><thead><tr><th>Real FE response</th><th>Flexible frame</th><th>Two-level shell bay</th><th>Rigid-floor reference</th></tr></thead><tbody id="g14-matrix"></tbody></table></div>
+<p id="g14-explain" class="lab-chart-note">Waiting for validated Gate14 results.</p>
+<details class="lab-detail"><summary>Mesh/mass provenance and structural acceptance limits</summary>
+<p>165 source-frame segments remain intact; dividing support lines at two levels yields 177 computational beam/column pieces, not 12 newly inferred physical frame members. The assumed bay area is 17.874 m² per level, and the two-floor gravity patch load is 183.38124 kN; the source G10 seismic-weight model is held fixed rather than recalibrated to fit ETABS.</p>
+<p>Two partial bay patches are not full diaphragms. Mesh refinement, complete slab polygons, actual wall assignment, code-correct combinations, P–Δ and design drift remain open. <strong>Footing F3 remains NOT SAFE IN ONE WAY SHEAR.</strong></p>
+</details>
+<div class="actions"><a class="btn secondary" href="https://github.com/FabinGurung/JP_Structural_Analysis/actions">Review signed numerical CI artifacts ↗</a><a class="btn secondary" href="g15-3d.html">View 3D source frame →</a></div>
+</div></section>
 <section class="section" id="lab-private">
  <div class="section-title"><div><span class="eyebrow">PRIVATE EVIDENCE VIEWER · LOCAL FILES ONLY</span><h2>Inspect every signed FE action locally</h2></div><p>Choose full-analysis JSON files from the private Gate06 or Gate08 archives. Examine load-case values, member IDs and all 12 local end-action components locally—nothing is uploaded to a server.</p></div>
  <div class="panel lab-private-panel">
@@ -191,5 +205,5 @@
 </section>
 </main>
 <footer class="site-footer"><div class="wrap footer-inner"><span>JP Structural Analysis · G+1.5 de-identified project journal · Engineering approval HOLD</span><span>Private source remains in Drive</span></div></footer>
-<script src="app.js" defer></script><script src="project-ledger.js" defer></script><script src="gate08.js" defer></script><script src="gate09.js" defer></script><script src="gate10.js" defer></script><script src="gate11.js" defer></script><script src="gate12.js" defer></script><script src="gate13.js" defer></script><script src="private-force-viewer.js" defer></script>
+<script src="app.js" defer></script><script src="project-ledger.js" defer></script><script src="gate08.js" defer></script><script src="gate09.js" defer></script><script src="gate10.js" defer></script><script src="gate11.js" defer></script><script src="gate12.js" defer></script><script src="gate13.js" defer></script><script src="gate14.js" defer></script><script src="private-force-viewer.js" defer></script>
 </body></html>

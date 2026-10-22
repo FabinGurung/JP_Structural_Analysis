@@ -118,6 +118,19 @@ jobs:
           path: build/g15-gate13/full_signed_actions.json
       - name: Browser syntax for Gate13 physical slab and wall path comparison
         run: node --check site/gate13.js
+      - name: Gate14 two-level ShellMITC4 source-bay FE and gravity equivalence
+        run: python -m pytest -q tests/test_g15_gate14_multilevel_shell.py
+      - name: Generate Gate14 27 matched numerical cases
+        run: python scripts/run_g15_gate14_multilevel_shell.py --output site/data/g15-gate14-multilevel-shell.v0.1.json
+      - name: Archive Gate14 177 signed frame actions for all 27 cases
+        run: python scripts/run_g15_gate14_multilevel_shell.py --full --output build/g15-gate14/full_signed_actions.json
+      - name: Upload Gate14 multilevel shell numerical artifact (source physicality HOLD)
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: g15-gate14-two-assumed-floors-shellmitc4-signed-not-approved
+          path: build/g15-gate14/full_signed_actions.json
+      - name: Browser syntax for Gate14 comparison
+        run: node --check site/gate14.js
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
