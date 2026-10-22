@@ -262,7 +262,7 @@ def main():
         text=p.read_text(encoding="utf-8")
         parser=Parse();parser.feed(text)
         if parser.css!=["styles.css"]:problems.append(page+": inconsistent stylesheet")
-        if parser.scripts!=(["app.js","d2.js"] if page in ("calculation-coverage.html","report.html") else ["app.js","project-ledger.js","gate08.js","gate09.js","gate10.js","gate11.js","gate12.js","gate13.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
+        if parser.scripts!=(["app.js","d2.js"] if page in ("calculation-coverage.html","report.html") else ["app.js","project-ledger.js","gate08.js","gate09.js","gate10.js","gate11.js","gate12.js","gate13.js","gate14.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
         if parser.mains!=1:problems.append(page+": expected one main")
         for target in ("index.html","project-lab.html","analysis-studio.html","g15-3d.html","calculation-coverage.html","report.html","more.html"):
             if target not in text:problems.append(page+": missing nav target "+target)
@@ -440,6 +440,35 @@ def main():
             assert "g15-gate13-shell-wall.v0.1.json" in (SITE/"gate13.js").read_text(encoding="utf-8")
         except (AssertionError,KeyError,ValueError,TypeError,OSError) as e:
             problems.append("Gate13 physical shell source/provenance error: "+str(e))
+    g14=SITE/"data/g15-gate14-multilevel-shell.v0.1.json"
+    if not g14.exists():
+        problems.append("Gate14 multi-level ShellMITC4 result missing")
+    else:
+        try:
+            d=json.loads(g14.read_text(encoding="utf-8"))
+            assert d["schema"]=="jp.structural.g15.gate14.multilevel_bay_shell_wall.v0.1"
+            assert d["chosen_assumed_panel_levels"]==[1,2]
+            assert d["source_grid_3d_beam_column_segments"]==165
+            assert d["subdivided_3d_frame_segments"]==177
+            assert d["shell_elements_across_assumed_levels"]==8
+            assert d["source_bay_geometry_repeated_on_real_floor_verified"] is False
+            assert d["shells_represent_complete_building"] is False
+            assert d["real_wall_locations_verified"] is False
+            assert d["seismic_mass_reconciled"] is False
+            assert d["engineering_approval"] is False
+            assert d["source_F3_one_way_shear"]=="NOT SAFE IN ONE WAY SHEAR"
+            assert len(d["cases"])==27 and len(d["comparisons"])==9
+            assert {x["mode"] for x in d["cases"]}=={
+                "FRAME_POINT_PATCH_2F","SHELLMITC4_PATCH_2F",
+                "FULL_RIGID_MPC_REFERENCE_2F"}
+            assert all(x["frame_local_signed_action_count"]==177 and
+                x["force_and_moment_equilibrium_pass"] is True and
+                x["force_equilibrium_error_kN"]<.001 and
+                x["moment_equilibrium_error_kNm"]<.001 for x in d["cases"])
+            assert 'id="lab-gate14"' in (SITE/"project-lab.html").read_text(encoding="utf-8")
+            assert "g15-gate14-multilevel-shell.v0.1.json" in (SITE/"gate14.js").read_text(encoding="utf-8")
+        except (AssertionError,KeyError,ValueError,TypeError,OSError) as e:
+            problems.append("Gate14 shell numerical or public safety QA failed: "+str(e))
     if problems:raise SystemExit("\n".join(problems))
     print("STRUCTURAL_SITE_QA_PASS: seven pages including open real-source 3D frame analysis, source-linked de-identified project journal, SP16, M09/D2, privacy checks and shared theme")
 if __name__=="__main__":main()
