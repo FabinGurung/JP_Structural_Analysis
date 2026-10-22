@@ -157,6 +157,19 @@ jobs:
           path: build/g15-gate16/full_signed_actions.json
       - name: Syntax check Gate16 public comparison
         run: node --check site/gate16.js
+      - name: Regression test Gate17 source provenance and seismic-mass reconciliation
+        run: python -m pytest -q tests/test_g15_gate17_source_audit.py
+      - name: Publish source audited Gate17 unresolved mass ledger
+        run: python scripts/build_g15_gate17_source_audit.py --output site/data/g15-gate17-source-audit.v0.1.json
+      - name: Archive Gate17 source audit and check source safety
+        run: |
+          python scripts/build_g15_gate17_source_audit.py --output build/g15-gate17/gate17_source_audit.json
+          node --check site/gate17.js
+      - name: Upload Gate17 reproducible source gap (not engineering approval)
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: g15-gate17-source-mass-report-conflicts-not-approved
+          path: build/g15-gate17/gate17_source_audit.json
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check

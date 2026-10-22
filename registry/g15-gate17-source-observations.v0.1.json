@@ -1,0 +1,184 @@
+{
+  "schema": "jp.structural.g15.gate17.source_observations.v0.1",
+  "basis": {
+    "source_id": "1TpWUmOdrcQqOpkN6qvmhZ12KrYaNABBM",
+    "sha256": "f122904444a2e2f75230d9d4e41da0093d050da25c6e8140c86d466b7e37cc52",
+    "source": "new nbc2025 report REVISED(1).pdf",
+    "visibility": "PRESERVE_ORIGINAL_PRIVATE_REPORT_PUBLISH_NUMERIC_PROVENANCE_ONLY",
+    "source_editor_native_ETABS_file_identified": false,
+    "structural_DXF_of_this_specific_report_verified": false
+  },
+  "observations": [
+    {
+      "id": "G17-M01",
+      "section": "Auto seismic load, Table 5.1.1",
+      "line_reference": "source text L1413-L1447",
+      "reported_ETABS_seismic_weight_kN": 6831.9109,
+      "category": "SOURCE_REPORTED",
+      "status": "RECORDED"
+    },
+    {
+      "id": "G17-M02",
+      "section": "Material Properties Table 1",
+      "line_reference": "source text L443-L463",
+      "reported_RCC_density_kN_m3": 25,
+      "reported_plain_concrete_density_kN_m3": 24,
+      "category": "SOURCE_REPORTED",
+      "status": "RECORDED"
+    },
+    {
+      "id": "G17-M03",
+      "section": "Executive Summary / structural features",
+      "line_reference": "source text L280-L285",
+      "reported_concrete_density_kN_m3": 20,
+      "category": "SOURCE_REPORTED",
+      "status": "CONFLICT_WITH_TABLE_1"
+    },
+    {
+      "id": "G17-S01",
+      "section": "Sample two-way slab, printed page 55",
+      "line_reference": "source text L3119-L3189",
+      "reported_thickness_mm": 125,
+      "reported_selfweight_kPa": 3.13,
+      "reported_total_dead_kPa": 5.13,
+      "reported_finishes_kPa": 1,
+      "reported_partition_kPa": 1,
+      "reported_live_kPa": 2,
+      "category": "SOURCE_REPORTED",
+      "status": "SAMPLE_NOT_ALL_FLOORS"
+    },
+    {
+      "id": "G17-S02",
+      "section": "General structural information schedule",
+      "line_reference": "source text L1257-L1265",
+      "reported_floor_slab_mm": 120,
+      "category": "SOURCE_REPORTED",
+      "status": "CONFLICT_WITH_SAMPLE_125MM"
+    },
+    {
+      "id": "G17-L01",
+      "section": "General building floor usage",
+      "line_reference": "source text L245-L248 and architectural visual PDF page 9",
+      "summary_occupancy": "Residential",
+      "architectural_ground_label": "COMMERCIAL SPACE",
+      "category": "SOURCE_REPORTED_PLUS_PLAN_VISUAL",
+      "status": "OCCUPANCY_ASSIGNMENT_UNVERIFIED"
+    },
+    {
+      "id": "G17-L02",
+      "section": "Live loads 2.6.2",
+      "line_reference": "source text L697-L722",
+      "reported_residential_live_kPa": 2,
+      "reported_terrace_live_kPa": 1.5,
+      "reported_corridor_stair_live_kPa": 3,
+      "commercial_live_load_listed": false,
+      "category": "SOURCE_REPORTED",
+      "status": "MISSING_COMMERCIAL_CLASS"
+    },
+    {
+      "id": "G17-A01",
+      "section": "Architectural plan 2.5",
+      "line_reference": "architectural source PDF page 9–11 and Gate09 source area register",
+      "plan_area_captions_m2": [
+        218.68,
+        212.09,
+        188.11
+      ],
+      "section_has_verified_ETABS_area_object_boundaries": false,
+      "category": "SOURCE_VISUAL",
+      "status": "CAPTION_NOT_SLAB_POLYGON"
+    },
+    {
+      "id": "G17-D01",
+      "section": "Modal participation table 5.5",
+      "line_reference": "source text L1538-L1618",
+      "narrative_90_percent_modes": 6,
+      "table_first_mode_period_sec": 0.618,
+      "reported_corresponding_period_sec": 0.185,
+      "table_mode5_cumulative_UX": 0.9297,
+      "table_mode5_cumulative_UY": 0.9538,
+      "table_mode6_cumulative_RZ": 0.961,
+      "category": "SOURCE_REPORTED",
+      "status": "PERIOD_DEFINITION_AND_MODAL_SCREEN_REVIEW_REQUIRED"
+    },
+    {
+      "id": "G17-F01",
+      "section": "Isolated footing F3 one-way shear",
+      "line_reference": "source text L3849-L3872",
+      "source_verdict": "NOT SAFE IN ONE WAY SHEAR",
+      "category": "SOURCE_REPORTED",
+      "status": "STRUCTURAL_FAIL"
+    },
+    {
+      "id": "G17-W01",
+      "section": "Wall load data section 2.6.3",
+      "line_reference": "source text L733-L759",
+      "reported_main_wall_kN_m": 9.24,
+      "reported_partition_wall_kN_m": 4.47,
+      "reported_parapet_wall_kN_m": 2.1,
+      "source_segment_assignments_documented": false,
+      "category": "SOURCE_REPORTED",
+      "status": "LOAD_RATES_ONLY_NO_LINE_PATHS"
+    }
+  ],
+  "source_file_manifest": {
+    "observed_source_report": {
+      "id": "1TpWUmOdrcQqOpkN6qvmhZ12KrYaNABBM",
+      "classification": "ORIGINAL_PDF"
+    },
+    "source_editable_report": {
+      "id": "19q3h_rBHMP14fbkVcZ424iNJpomR7Wyz",
+      "classification": "DOCX_REPORT_NOT_NATIVE_ETABS_MODEL"
+    },
+    "private_gate08_archive": {
+      "id": "1YmnTl7Osg9fIhK9FnHCCp7r1ddrD8Itw",
+      "classification": "DERIVED_ANALYSIS_ZIP_NOT_ETABS_SOURCE"
+    },
+    "unrelated_e2k_narayani": {
+      "id": "1FdTJ_DPzKU8GYBY5R-WXjWCdOc4c9yL3",
+      "classification": "OTHER_PROJECT_DO_NOT_IMPORT"
+    },
+    "source_ETABS_binary_or_e2k_confirmed": false,
+    "current_project_beam_slab_wall_assignment_export_confirmed": false
+  },
+  "decision_gates": [
+    {
+      "gate": "GEOMETRY",
+      "status": "BLOCKED_SOURCE",
+      "requirement": "native ETABS area objects and validated grid polygons/voids with elevations",
+      "ready": false
+    },
+    {
+      "gate": "MASS",
+      "status": "BLOCKED_SOURCE",
+      "requirement": "ETABS Mass Source settings, material selfweight, area/line load assignments, floor-wise live shares",
+      "ready": false
+    },
+    {
+      "gate": "OCCUPANCY",
+      "status": "BLOCKED_SOURCE",
+      "requirement": "legal ground occupancy, room live-load category, actual seismic-live participation",
+      "ready": false
+    },
+    {
+      "gate": "DRIFT_AND_P_DELTA",
+      "status": "BLOCKED_UPSTREAM",
+      "requirement": "verified geometry and mass, site hazard, source combinations, second-order verification",
+      "ready": false
+    },
+    {
+      "gate": "FOOTING_F3",
+      "status": "FAILED_REDESIGN_REQUIRED",
+      "requirement": "source verified geometry/site geotechnics and licensed structural redesign/check",
+      "ready": false
+    }
+  ],
+  "approval": {
+    "source_mass_reconciled": false,
+    "physical_slab_geometries_verified": false,
+    "actual_wall_paths_verified": false,
+    "code_drift_accepted": false,
+    "F3_structurally_acceptable": false,
+    "engineering_approval": false
+  }
+}
