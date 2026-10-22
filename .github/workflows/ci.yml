@@ -4,20 +4,7 @@ on:
   push:
     branches:
       - engine/opensees-sar-v0.1
-      - site/m09-pm-publication-20261019
-      - site/sp16-d2-evidence-20261019
-      - site/sp16-chart31-benchmark-20261019
-      - site/gate05-preview-20261020
-      - site/gate06-nbc105-torsion-mass-20261020
-      - site/g15-project-calculation-ledger-20261020
-      - site/g15-gate08-source-reconcile-20261020
-      - site/interactive-analysis-mvp-20261020
-      - site/g15-open-3d-analysis-20261021
-      - site/g15-gate09-source-panel-mass-audit-20261021
-      - site/g15-gate10-assumed-floor-wall-mass-20261021
-      - site/g15-gate12-opensees-diaphragm-20261022
-      - site/g15-gate13-shell-wall-20261022
-      - site/g15-debt-cleanup-20261021
+      - 'site/**'
   pull_request:
   workflow_dispatch:
 
