@@ -7,11 +7,11 @@ mass-source and individual area, line, and member objects are available.
 A total match cannot establish a valid mass-source model.
 """
 from __future__ import annotations
-import argparse,json,math
+import argparse,json,math,sys
 from pathlib import Path
-from scripts.build_g15_gate10_assumptions import build as gate10
-
 ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT))
+from scripts.build_g15_gate10_assumptions import build as gate10
 REG=ROOT/"registry/g15-gate17-source-observations.v0.1.json"
 G09=ROOT/"registry/g15-gate09-panel-mass-source.v0.1.json"
 G16=ROOT/"registry/g15-gate16-drawing-mass-review.v0.1.json"
