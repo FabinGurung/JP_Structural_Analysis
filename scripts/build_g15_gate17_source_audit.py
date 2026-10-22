@@ -47,7 +47,8 @@ def build():
     reported_dead=records["G17-S01"]["reported_selfweight_kPa"]
     implied=thickness*w25
     assert math.isclose(implied,3.125,abs_tol=1e-10)
-    assert math.isclose(reported_dead,round(implied,2),abs_tol=1e-10)
+    # The printed report uses 3.13 for 3.125 kPa; do not use Python ties-to-even round().
+    assert math.isclose(reported_dead,implied,abs_tol=.005000001)
     source_modal=records["G17-D01"]
     assert source_modal["table_mode5_cumulative_UX"]>=.9
     assert source_modal["table_mode5_cumulative_UY"]>=.9
