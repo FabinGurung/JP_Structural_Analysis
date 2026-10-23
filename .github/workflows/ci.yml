@@ -183,6 +183,19 @@ jobs:
           path: build/g15-gate18/source_mass_f3_evidence.json
       - name: Validate Gate18 source mass and F3 public frontend
         run: node --check site/gate18.js
+      - name: Gate19 full source identity and E2K geometry/mass-source gate tests
+        run: python -m pytest -q tests/test_g15_gate19_e2k.py
+      - name: Build Gate19 ORIGINAL MODEL MISSING audited readiness data
+        run: python scripts/screen_g15_gate19_e2k.py --output site/data/g15-gate19-e2k-readiness.v0.1.json
+      - name: Verify local browser E2K triage regressions
+        run: |
+          node --check site/gate19.js
+          node --test tests/browser/test_gate19.cjs
+      - name: Upload metadata-only original model intake (NO E2K)
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: g15-gate19-etabs-source-missing-and-original-f3-hold
+          path: site/data/g15-gate19-e2k-readiness.v0.1.json
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check

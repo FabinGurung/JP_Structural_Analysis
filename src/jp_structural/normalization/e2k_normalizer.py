@@ -210,7 +210,7 @@ def normalize(path:Path):
     area_loads=[load_record(x,True) for x in nb("SHELL OBJECT LOADS") if x.startswith("AREALOAD ")]
 
     mass_lines=nb("MASS SOURCE")
-    mass={"definition":next((x for x in mass_lines if x.startswith("MASSSOURCE  ")),None),"load_factors":[]}
+    mass={"definition":next((x for x in mass_lines if x.startswith("MASSSOURCE ")),None),"load_factors":[]}
     for x in mass_lines:
         if x.startswith("MASSSOURCELOAD"):
             q=qs(x); nums=re.findall(r'([-+0-9.eE]+)\s*$',x)

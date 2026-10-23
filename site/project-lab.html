@@ -243,6 +243,16 @@
 <details class="lab-detail"><summary>Physical evidence needed before passing P0/P1</summary><p>Obtain the actual .edb/.e2k export for this G+1.5 building, show ETABS Mass Source settings and storey mass unit, then reconcile individual element/area/line loads and real slab/terrace polygons. Review as-built footing F3 foundation details and soil report; independent engineer must redesign and sign off the failure.</p></details>
 <div class="actions"><a class="btn secondary" href="https://github.com/FabinGurung/JP_Structural_Analysis/issues/7">Engineering HOLD register ↗</a><a class="btn secondary" href="#lab-gate17">Gate17 source baseline →</a></div>
 </div></section>
+<section class="section compact" id="lab-gate19">
+<div class="section-title"><div><span class="eyebrow">GATE19 · ETABS SOURCE RECOVERY</span><h2>Original model intake with source identity and mass-source gates</h2></div><p>Uses the existing ETABS E2K inventory and normalizer. Original-source authentication remains mandatory.</p></div>
+<div class="panel">
+<p id="g19-status" class="lab-chart-note">Checking original ETABS readiness…</p>
+<p class="lab-chart-note">The G+1.5 report alone is not the editable ETABS model. No EDB/E2K for this exact building was authenticated in the connected Drive inventory. The input below is <strong>local-only</strong> and does not upload your file to a server, GitHub or Drive. Its early structure check does not verify model identity or geometry.</p>
+<label class="lab-private-input" for="g19-file"><strong>Screen a local ETABS E2K file</strong><span>Original model export only; expected N/MM format, up to 40MB</span><input id="g19-file" type="file" accept=".e2k,text/plain"></label>
+<p id="g19-local" class="lab-chart-note" role="status">No local model selected. Structural acceptance remains HOLD.</p>
+<details class="lab-detail"><summary>How the deeper reproducible validation works</summary><p>After obtaining the ORIGINAL source from the model custodian, independently record SHA-256 and run locally: <code>python scripts/screen_g15_gate19_e2k.py --e2k /private/original.e2k --expected-sha256 YOUR_SHA256 --output /private/screen.json</code>. This uses existing E2K inventory, coordinate/area/line normalizer, mass-source discovery and fails on unrelated models or broken references. Even a correctly parsed candidate requires independently authenticated project identity, verified load/mass composition and engineer acceptance.</p><p><strong>F3: NOT SAFE IN ONE WAY SHEAR.</strong> Source import does not change the failure.</p></details>
+<div class="actions"><a class="btn secondary" href="https://github.com/FabinGurung/JP_Structural_Analysis/issues/7">Engineering source requirements ↗</a><a class="btn secondary" href="#lab-gate18">Gate18 original seismic mass →</a></div>
+</div></section>
 <section class="section" id="lab-private">
  <div class="section-title"><div><span class="eyebrow">PRIVATE EVIDENCE VIEWER · LOCAL FILES ONLY</span><h2>Inspect every signed FE action locally</h2></div><p>Choose full-analysis JSON files from the private Gate06 or Gate08 archives. Examine load-case values, member IDs and all 12 local end-action components locally—nothing is uploaded to a server.</p></div>
  <div class="panel lab-private-panel">
@@ -265,5 +275,5 @@
 </section>
 </main>
 <footer class="site-footer"><div class="wrap footer-inner"><span>JP Structural Analysis · G+1.5 de-identified project journal · Engineering approval HOLD</span><span>Private source remains in Drive</span></div></footer>
-<script src="app.js" defer></script><script src="project-ledger.js" defer></script><script src="gate08.js" defer></script><script src="gate09.js" defer></script><script src="gate10.js" defer></script><script src="gate11.js" defer></script><script src="gate12.js" defer></script><script src="gate13.js" defer></script><script src="gate14.js" defer></script><script src="gate15.js" defer></script><script src="gate16.js" defer></script><script src="gate17.js" defer></script><script src="gate18.js" defer></script><script src="private-force-viewer.js" defer></script>
+<script src="app.js" defer></script><script src="project-ledger.js" defer></script><script src="gate08.js" defer></script><script src="gate09.js" defer></script><script src="gate10.js" defer></script><script src="gate11.js" defer></script><script src="gate12.js" defer></script><script src="gate13.js" defer></script><script src="gate14.js" defer></script><script src="gate15.js" defer></script><script src="gate16.js" defer></script><script src="gate17.js" defer></script><script src="gate18.js" defer></script><script src="gate19.js" defer></script><script src="private-force-viewer.js" defer></script>
 </body></html>
