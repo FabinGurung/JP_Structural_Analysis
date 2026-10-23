@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 0e26648400c8450f8b2673234ed0347aacff94c1
+          ref: 7abc1c1e4bcb6923254c485526469427c8bfeba8
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -79,6 +79,10 @@ jobs:
         run: |
           node --check site/gate19.js
           node --test tests/browser/test_gate19.cjs
+      - name: Publish Gate20 source-to-model acceptance register and unsafe F3 audit
+        run: python scripts/build_g15_gate20_crosswalk.py --output site/data/g15-gate20-crosswalk.v0.1.json
+      - name: Syntax check Gate20 source-proof table
+        run: node --check site/gate20.js
       - name: Validate current report-first coverage and site navigation
         run: |
           python scripts/build_calculation_coverage.py --check
@@ -98,6 +102,7 @@ jobs:
           node --check site/gate17.js
           node --check site/gate18.js
           node --check site/gate19.js
+          node --check site/gate20.js
           node --check site/private-force-viewer.js
           node --check site/analysis-studio.js
           node --check site/g15-3d.js

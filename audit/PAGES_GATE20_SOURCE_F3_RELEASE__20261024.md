@@ -1,0 +1,7 @@
+# Gate20 immutable Pages release · 24 October 2026
+
+- [Original tested source `7abc1c1e4bcb6923254c485526469427c8bfeba8`](https://github.com/FabinGurung/JP_Structural_Analysis/commit/7abc1c1e4bcb6923254c485526469427c8bfeba8) — [351 green regression tests and engineering source artifact](https://github.com/FabinGurung/JP_Structural_Analysis/actions/runs/40040535373).
+- Previous immutable Gate19 source `0e26648400c8450f8b2673234ed0347aacff94c1`; previous main release `59807ac69a811187e7fa6320dc37a3e7b35bba25` preserved for rollback.
+- Source crosswalk: 15 evidence obligations with stable IDs, source observation foreign keys, prerequisite DAG, exact acceptance criteria, responsible domain roles, and independent review flags. **0/15 accepted**, original ETABS model missing, no false parity. Machine-readable public data `site/data/g15-gate20-crosswalk.v0.1.json`; public `site/project-lab.html#lab-gate20`.
+- Source F3 2.1×2.1m plan area=4.41m2; printed q_u=194.22kPa is from 1.5×571kN/4.41m2 (194.217687kPa), not 1.5×600kN/4.41m2 (204.081633kPa); difference 9.863946kPa. Printed d=423.46278mm vs prior 394mm trial (29.46278mm). Source verdict **NOT SAFE IN ONE WAY SHEAR** governs. No soil bearing/settlement, signed actions, alternate design or structural approval asserted.
+- No public original PDF, original ETABS source, signed raw model, coordinates or private material. All source files and frozen Seq9 preserved. Both Pages BUILD and DEPLOY must be individually verified.
