@@ -1,0 +1,348 @@
+{
+  "schema": "jp.structural.g15.gate20.crosswalk_contract.v0.1",
+  "original_report_drive_id": "1TpWUmOdrcQqOpkN6qvmhZ12KrYaNABBM",
+  "source_report_sha256": "f122904444a2e2f75230d9d4e41da0093d050da25c6e8140c86d466b7e37cc52",
+  "authority_rule": "Original private Drive PDF + independently authenticated native ETABS/geotechnical sources govern; journal and synthetic numerics do not constitute design truth",
+  "drive_inventory_scope": "Connected Drive exact .edb/.e2k name filters and prior G15 source folder, checked 2026-10-24. Other-project models not admissible.",
+  "original_g15_native_etabs_edb_e2k_confirmed": false,
+  "source_model_identity_confirmed": false,
+  "original_seismic_weight_kN": 6831.9109,
+  "original_storey_mass_unit_inferred": "kg (unprinted inference)",
+  "g08_trial_gap_kN": 772.032916628269,
+  "g10_trial_gap_kN": 715.467677,
+  "source_F3_status": "NOT SAFE IN ONE WAY SHEAR",
+  "no_source_mass_plugging": true,
+  "gates": [
+    {
+      "id": "G20-SRC-001",
+      "key": "ORIGINAL_ETABS_CUSTODY",
+      "priority": "P0",
+      "domain": "MODEL_IDENTITY",
+      "status": "BLOCKED_SOURCE",
+      "required_by_role": "Original model custodian",
+      "evidence_needed": "Native EDB/E2K for this specific G+1.5 building, independently documented SHA256, identity and version",
+      "acceptance_test": "Authenticated source ID+SHA-256, owner attestation; Gate19 import clean; never use other-project E2K",
+      "source_observation_ids": [
+        "G17-M01"
+      ],
+      "depends_on": [
+        "GATE19"
+      ],
+      "evidence_type": "MODEL_CUSTODY",
+      "evidence_received": false,
+      "source_provider_readback": false,
+      "independent_review_passed": false,
+      "accepted": false
+    },
+    {
+      "id": "G20-GEO-002",
+      "key": "GRID_MEMBER_STORY_MAPPING",
+      "priority": "P0",
+      "domain": "GEOMETRY",
+      "status": "BLOCKED_SOURCE",
+      "required_by_role": "Original structural modeller",
+      "evidence_needed": "Object-level joint, frame, section and story assignments; relate 23 source column candidates to actual native ETABS IDs",
+      "acceptance_test": "All members have verifiable story/grid foreign keys, dimensions and source object IDs, no inferred connectors",
+      "source_observation_ids": [
+        "G17-A01"
+      ],
+      "depends_on": [
+        "G20-SRC-001"
+      ],
+      "evidence_type": "MODEL_GEOMETRY",
+      "evidence_received": false,
+      "source_provider_readback": false,
+      "independent_review_passed": false,
+      "accepted": false
+    },
+    {
+      "id": "G20-GEO-003",
+      "key": "SLAB_TERRACE_OPENINGS",
+      "priority": "P0",
+      "domain": "GEOMETRY",
+      "status": "BLOCKED_SOURCE",
+      "required_by_role": "Original structural modeller",
+      "evidence_needed": "ETABS slab polygon vertices, slab offsets/openings, stair/terrace geometry, diaphragm assignment and load directions",
+      "acceptance_test": "Polygons closed/non-self intersecting, area provenance and elevation match model/export; not report captions/hulls",
+      "source_observation_ids": [
+        "G17-A01",
+        "G17-S01",
+        "G17-S02"
+      ],
+      "depends_on": [
+        "G20-SRC-001",
+        "G20-GEO-002"
+      ],
+      "evidence_type": "SLAB_GEOMETRY",
+      "evidence_received": false,
+      "source_provider_readback": false,
+      "independent_review_passed": false,
+      "accepted": false
+    },
+    {
+      "id": "G20-MAT-004",
+      "key": "CONCRETE_UNIT_WEIGHT",
+      "priority": "P0",
+      "domain": "MATERIAL",
+      "status": "CONFLICT_UNRESOLVED",
+      "required_by_role": "Original structural modeller",
+      "evidence_needed": "Native concrete material property records resolve reported 20 vs 25 kN/m³ and source construction material grades",
+      "acceptance_test": "Native verified material densities and assignments reconcile inconsistent executive summary and source Table 1",
+      "source_observation_ids": [
+        "G17-M02",
+        "G17-M03",
+        "G17-S01"
+      ],
+      "depends_on": [
+        "G20-SRC-001"
+      ],
+      "evidence_type": "MATERIAL_MASS",
+      "evidence_received": false,
+      "source_provider_readback": false,
+      "independent_review_passed": false,
+      "accepted": false
+    },
+    {
+      "id": "G20-LOAD-005",
+      "key": "WALL_ASSIGNMENT",
+      "priority": "P0",
+      "domain": "LOAD",
+      "status": "BLOCKED_SOURCE",
+      "required_by_role": "Original structural modeller",
+      "evidence_needed": "ETABS line/area wall load objects, rate, story, span, overlapping partition allowance and omitted openings",
+      "acceptance_test": "Complete source wall path and load-pattern foreign keys; distinguish 9.24,4.47,2.10 kN/m rates from actual segments",
+      "source_observation_ids": [
+        "G17-W01"
+      ],
+      "depends_on": [
+        "G20-GEO-002"
+      ],
+      "evidence_type": "WALL_LOADS",
+      "evidence_received": false,
+      "source_provider_readback": false,
+      "independent_review_passed": false,
+      "accepted": false
+    },
+    {
+      "id": "G20-LOAD-006",
+      "key": "AREA_DEAD_AND_LIVE_LOADS",
+      "priority": "P0",
+      "domain": "LOAD",
+      "status": "BLOCKED_SOURCE",
+      "required_by_role": "Original structural modeller",
+      "evidence_needed": "Slab surface assigned selfweight, finishes, partition, terrace and live loads with exact load patterns",
+      "acceptance_test": "Every area object has unambiguous load class and footprint; 120 vs 125 mm schedule conflict reconciled",
+      "source_observation_ids": [
+        "G17-S01",
+        "G17-S02",
+        "G17-L02"
+      ],
+      "depends_on": [
+        "G20-GEO-003",
+        "G20-MAT-004"
+      ],
+      "evidence_type": "AREA_LOADS",
+      "evidence_received": false,
+      "source_provider_readback": false,
+      "independent_review_passed": false,
+      "accepted": false
+    },
+    {
+      "id": "G20-USE-007",
+      "key": "COMMERCIAL_OCCUPANCY",
+      "priority": "P0",
+      "domain": "USE_AND_CODE",
+      "status": "CONFLICT_UNRESOLVED",
+      "required_by_role": "Architect/client and engineer",
+      "evidence_needed": "Legally authorized ground occupancy and imposed load classification versus report summary Residential",
+      "acceptance_test": "Document actual commercial/residential/terrace use, appropriate code load and eligible seismic live share",
+      "source_observation_ids": [
+        "G17-L01",
+        "G17-L02"
+      ],
+      "depends_on": [
+        "G20-GEO-003"
+      ],
+      "evidence_type": "OCCUPANCY",
+      "evidence_received": false,
+      "source_provider_readback": false,
+      "independent_review_passed": false,
+      "accepted": false
+    },
+    {
+      "id": "G20-MASS-008",
+      "key": "MASS_SOURCE_SETTINGS",
+      "priority": "P0",
+      "domain": "MASS",
+      "status": "BLOCKED_SOURCE",
+      "required_by_role": "Original ETABS modeller",
+      "evidence_needed": "Native mass source: element masses, explicit/additional masses, pattern coefficients and selfweight multiplier",
+      "acceptance_test": "Explicit mass-source settings with no duplicate dead/selfweight and versioned load-pattern provenance",
+      "source_observation_ids": [
+        "G17-M01",
+        "G17-M02"
+      ],
+      "depends_on": [
+        "G20-SRC-001",
+        "G20-MAT-004",
+        "G20-LOAD-006"
+      ],
+      "evidence_type": "MASS_DEFINITION",
+      "evidence_received": false,
+      "source_provider_readback": false,
+      "independent_review_passed": false,
+      "accepted": false
+    },
+    {
+      "id": "G20-MASS-009",
+      "key": "STORY_COMPONENT_PARITY",
+      "priority": "P0",
+      "domain": "MASS",
+      "status": "BLOCKED_SOURCE",
+      "required_by_role": "Structural analyst",
+      "evidence_needed": "Native ETABS story mass table and per-story member/slab/wall/dead/live attribution",
+      "acceptance_test": "Reproduce source Story1/Story2/Story3 mass with native units, original 6831.9109 kN W, quantify 715–772 kN trial gaps without mass plugs",
+      "source_observation_ids": [
+        "G17-M01"
+      ],
+      "depends_on": [
+        "G20-MASS-008",
+        "G20-LOAD-005",
+        "G20-USE-007"
+      ],
+      "evidence_type": "MASS_PARITY",
+      "evidence_received": false,
+      "source_provider_readback": false,
+      "independent_review_passed": false,
+      "accepted": false
+    },
+    {
+      "id": "G20-SITE-010",
+      "key": "SEISMIC_SOIL_AND_SITE",
+      "priority": "P1",
+      "domain": "DESIGN",
+      "status": "BLOCKED_SOURCE",
+      "required_by_role": "Geotechnical engineer and structural engineer",
+      "evidence_needed": "Confirmed project site, hazard zone/site class, boreholes and applicable NBC105 edition",
+      "acceptance_test": "Document 2025 code parameter provenance and independent soil site category, not copied old soil class",
+      "source_observation_ids": [
+        "G17-D01"
+      ],
+      "depends_on": [
+        "G20-SRC-001"
+      ],
+      "evidence_type": "SITE_PARAMETERS",
+      "evidence_received": false,
+      "source_provider_readback": false,
+      "independent_review_passed": false,
+      "accepted": false
+    },
+    {
+      "id": "G20-DYN-011",
+      "key": "DRIFT_MODAL_P_DELTA",
+      "priority": "P1",
+      "domain": "DESIGN",
+      "status": "BLOCKED_UPSTREAM",
+      "required_by_role": "Structural engineer",
+      "evidence_needed": "Source-matched storeys, diaphragms, modal periods, eccentric actions, signed design cases and P-Delta",
+      "acceptance_test": "Resolve 0.618s vs 0.185s report statement and check signed drift/second-order on verified mass/geometry",
+      "source_observation_ids": [
+        "G17-D01"
+      ],
+      "depends_on": [
+        "G20-MASS-009",
+        "G20-SITE-010"
+      ],
+      "evidence_type": "STRUCTURAL_RESPONSE",
+      "evidence_received": false,
+      "source_provider_readback": false,
+      "independent_review_passed": false,
+      "accepted": false
+    },
+    {
+      "id": "G20-F3-012",
+      "key": "F3_GEO_BEARING_SETTLEMENT",
+      "priority": "P0",
+      "domain": "FOOTING_F3",
+      "status": "BLOCKED_SOURCE",
+      "required_by_role": "Geotechnical engineer",
+      "evidence_needed": "Foundation F3 geotechnical borehole data, design SBC, water table, settlement limits and site bearing",
+      "acceptance_test": "Independent soil/bearing/settlement criteria confirm or reject printed SBC=160 kPa",
+      "source_observation_ids": [
+        "G17-F01"
+      ],
+      "depends_on": [],
+      "evidence_type": "F3_SOIL",
+      "evidence_received": false,
+      "source_provider_readback": false,
+      "independent_review_passed": false,
+      "accepted": false
+    },
+    {
+      "id": "G20-F3-013",
+      "key": "F3_DRAWING_REBAR_DEPTH",
+      "priority": "P0",
+      "domain": "FOOTING_F3",
+      "status": "CONFLICT_UNRESOLVED",
+      "required_by_role": "Foundation engineer",
+      "evidence_needed": "Issued footing 2.1 m plan/thickness, column position, reinforcement, cover and actual effective depth",
+      "acceptance_test": "Resolve 423.46278 mm source worksheet against 394 mm historical assumed d and 450 mm overall D; verify detailed reinforcement",
+      "source_observation_ids": [
+        "G17-F01"
+      ],
+      "depends_on": [],
+      "evidence_type": "F3_GEOMETRY",
+      "evidence_received": false,
+      "source_provider_readback": false,
+      "independent_review_passed": false,
+      "accepted": false
+    },
+    {
+      "id": "G20-F3-014",
+      "key": "F3_LOAD_COMBINATIONS",
+      "priority": "P0",
+      "domain": "FOOTING_F3",
+      "status": "CONFLICT_UNRESOLVED",
+      "required_by_role": "Structural engineer",
+      "evidence_needed": "Signed F3 reactions, moments and combinations (service & ultimate), base and footing selfweight rules",
+      "acceptance_test": "Reconcile 571 kN vs 600 kN and the printed 194.22 kPa (uses 1.5×571/4.41, not 1.5×600/4.41)",
+      "source_observation_ids": [
+        "G17-F01"
+      ],
+      "depends_on": [
+        "G20-SRC-001"
+      ],
+      "evidence_type": "F3_REACTIONS",
+      "evidence_received": false,
+      "source_provider_readback": false,
+      "independent_review_passed": false,
+      "accepted": false
+    },
+    {
+      "id": "G20-F3-015",
+      "key": "F3_DESIGN_RECHECK",
+      "priority": "P1",
+      "domain": "FOOTING_F3",
+      "status": "FAILED_SOURCE_ONE_WAY_SHEAR",
+      "required_by_role": "Licensed structural engineer",
+      "evidence_needed": "Independently checked F3 redesign with actual geotech, load combinations, punching, one-way shear, flexure, anchorage and settlement",
+      "acceptance_test": "Separate engineer reviews and signs full design; until then original NOT SAFE IN ONE WAY SHEAR verdict remains",
+      "source_observation_ids": [
+        "G17-F01"
+      ],
+      "depends_on": [
+        "G20-F3-012",
+        "G20-F3-013",
+        "G20-F3-014"
+      ],
+      "evidence_type": "F3_APPROVAL",
+      "evidence_received": false,
+      "source_provider_readback": false,
+      "independent_review_passed": false,
+      "accepted": false
+    }
+  ],
+  "original_sources_preserved": true,
+  "no_other_project_etabs_source_imported": true,
+  "engineering_approval": false
+}

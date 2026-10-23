@@ -262,7 +262,7 @@ def main():
         text=p.read_text(encoding="utf-8")
         parser=Parse();parser.feed(text)
         if parser.css!=["styles.css"]:problems.append(page+": inconsistent stylesheet")
-        if parser.scripts!=(["app.js","d2.js"] if page in ("calculation-coverage.html","report.html") else ["app.js","project-ledger.js","gate08.js","gate09.js","gate10.js","gate11.js","gate12.js","gate13.js","gate14.js","gate15.js","gate16.js","gate17.js","gate18.js","gate19.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
+        if parser.scripts!=(["app.js","d2.js"] if page in ("calculation-coverage.html","report.html") else ["app.js","project-ledger.js","gate08.js","gate09.js","gate10.js","gate11.js","gate12.js","gate13.js","gate14.js","gate15.js","gate16.js","gate17.js","gate18.js","gate19.js","gate20.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
         if parser.mains!=1:problems.append(page+": expected one main")
         for target in ("index.html","project-lab.html","analysis-studio.html","g15-3d.html","calculation-coverage.html","report.html","more.html"):
             if target not in text:problems.append(page+": missing nav target "+target)
@@ -578,6 +578,25 @@ def main():
             assert 'id="lab-gate19"' in (SITE/"project-lab.html").read_text()
         except (KeyError,AssertionError,ValueError,TypeError,OSError) as exc:
             problems.append("Gate19 ETABS source/structural safety failed: "+str(exc))
+    g20=SITE/"data/g15-gate20-crosswalk.v0.1.json"
+    if not g20.is_file():
+        problems.append("Gate20 P0/P1 evidence crosswalk is missing")
+    else:
+        try:
+            d=json.loads(g20.read_text(encoding="utf-8"))
+            assert d["schema"]=="jp.structural.g15.gate20.crosswalk_F3_reconciliation.v0.1"
+            assert d["gate_count"]==15 and d["accepted_gate_count"]==0
+            assert d["upstream_native_ETABS_model_found"] is False
+            assert d["native_ETABS_mass_unit_and_source_definition_verified"] is False
+            assert d["component_mass_reconciliation_complete"] is False
+            assert d["f3"]["source_verdict"]=="NOT SAFE IN ONE WAY SHEAR"
+            assert d["f3"]["F3_redesign_verified"] is False
+            assert d["engineering_approval"] is False
+            assert not any(x["accepted"] for x in d["gates"])
+            assert 'id="lab-gate20"' in (SITE/"project-lab.html").read_text()
+            assert "g15-gate20-crosswalk.v0.1.json" in (SITE/"gate20.js").read_text()
+        except (KeyError,AssertionError,ValueError,TypeError,OSError) as ex:
+            problems.append("Gate20 engineering evidence safety violation: "+str(ex))
     if problems:raise SystemExit("\n".join(problems))
     print("STRUCTURAL_SITE_QA_PASS: seven pages including open real-source 3D frame analysis, source-linked de-identified project journal, SP16, M09/D2, privacy checks and shared theme")
 if __name__=="__main__":main()
