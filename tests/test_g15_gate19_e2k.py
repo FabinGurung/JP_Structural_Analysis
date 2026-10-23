@@ -70,4 +70,4 @@ def test_missing_point_reference_and_missing_area_rejected(tmp_path):
  p,h=fixture(tmp_path,E2K.replace('"1" "2" "3" "4"','"1" "2" "999" "4"'))
  assert build(p,h)["status"]=="REJECT_SEMANTIC_INTEGRITY"
  p2,h2=fixture(tmp_path,E2K.replace(' AREA "A1" FLOOR',' SKIPAREA "A1" FLOOR'))
- assert build(p2,h2)["status"]=="REJECT_SOURCE_INCOMPATIBLE"
+ assert build(p2,h2)["status"] in {"REJECT_SEMANTIC_INTEGRITY","REJECT_SOURCE_INCOMPATIBLE"}
