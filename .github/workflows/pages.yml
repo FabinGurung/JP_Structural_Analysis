@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 572250f7dc874a125110674ce6a5940fdd4660fb
+          ref: 0e26648400c8450f8b2673234ed0347aacff94c1
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -73,6 +73,12 @@ jobs:
         run: python scripts/build_g15_gate17_source_audit.py --output site/data/g15-gate17-source-audit.v0.1.json
       - name: Publish original ETABS reported storey weight match and unsafe F3 screen
         run: python scripts/build_g15_gate18_mass_f3.py --output site/data/g15-gate18-source-mass-f3.v0.1.json
+      - name: Publish original ETABS source intake readiness (metadata only)
+        run: python scripts/screen_g15_gate19_e2k.py --output site/data/g15-gate19-e2k-readiness.v0.1.json
+      - name: Verify local only E2K syntax and regression tests
+        run: |
+          node --check site/gate19.js
+          node --test tests/browser/test_gate19.cjs
       - name: Validate current report-first coverage and site navigation
         run: |
           python scripts/build_calculation_coverage.py --check
@@ -91,6 +97,7 @@ jobs:
           node --check site/gate16.js
           node --check site/gate17.js
           node --check site/gate18.js
+          node --check site/gate19.js
           node --check site/private-force-viewer.js
           node --check site/analysis-studio.js
           node --check site/g15-3d.js
