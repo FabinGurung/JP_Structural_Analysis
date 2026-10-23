@@ -25,14 +25,15 @@
       "source_observation_ids": [
         "G17-M01"
       ],
-      "depends_on": [
-        "GATE19"
-      ],
+      "depends_on": [],
       "evidence_type": "MODEL_CUSTODY",
       "evidence_received": false,
       "source_provider_readback": false,
       "independent_review_passed": false,
-      "accepted": false
+      "accepted": false,
+      "upstream_existing_systems": [
+        "GATE19_LOCAL_ETABS_INGESTION_TOOL_NOT_AN_ACCEPTED_EVIDENCE_GATE"
+      ]
     },
     {
       "id": "G20-GEO-002",
