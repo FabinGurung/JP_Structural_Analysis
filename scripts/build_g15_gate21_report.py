@@ -201,7 +201,7 @@ def export(directory,request_file=None):
     js.write_text(json.dumps(d,indent=2,allow_nan=False)+"\n",encoding="utf-8")
     ht.write_text(report_html(d),encoding="utf-8");md.write_text(report_md(d),encoding="utf-8")
     with csvpath.open("w",encoding="utf-8",newline="") as f:
-        w=csv.DictWriter(f,fieldnames=["case","member"]+PARTS)
+        w=csv.DictWriter(f,fieldnames=["case","member"]+list(PARTS))
         w.writeheader();w.writerows(forces)
     files={p.name:{"sha256":digest(p),"bytes":p.stat().st_size} for p in (js,ht,md,csvpath)}
     manifest={"schema":"jp.structural.g15.gate21.manifest.v0.1","files":files,
