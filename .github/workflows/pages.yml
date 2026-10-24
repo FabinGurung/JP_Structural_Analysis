@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 7abc1c1e4bcb6923254c485526469427c8bfeba8
+          ref: 6e1ecbb2036b10337e933b4af158d7ead3634b6a
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -83,6 +83,23 @@ jobs:
         run: python scripts/build_g15_gate20_crosswalk.py --output site/data/g15-gate20-crosswalk.v0.1.json
       - name: Syntax check Gate20 source-proof table
         run: node --check site/gate20.js
+      - name: Generate real cited OpenSees chaptered analysis report for GitHub Pages
+        run: python scripts/build_g15_gate21_report.py --output-dir site/reports
+      - name: Verify mandatory open signed report and source-preserving safety flags
+        run: |
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path("site/reports")
+          d=json.loads((p/"g15-gate21-report.v0.1.json").read_text())
+          m=json.loads((p/"g15-gate21-manifest.json").read_text())
+          assert d["case_count"]==5 and d["signed_end_action_count"]==825
+          assert d["F3_verdict"]=="NOT SAFE IN ONE WAY SHEAR" and not d["engineering_approval"]
+          assert not d["model_ETABS_source_verified"] and not d["p_delta_performed"]
+          for f,details in m["files"].items():
+              assert hashlib.sha256((p/f).read_bytes()).hexdigest()==details["sha256"]
+          print("OPEN_G15_GATE21_SAR_REPRODUCIBILITY_PASS")
+          PY
       - name: Validate current report-first coverage and site navigation
         run: |
           python scripts/build_calculation_coverage.py --check
