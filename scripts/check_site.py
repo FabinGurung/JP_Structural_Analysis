@@ -617,6 +617,20 @@ def main():
             assert 'id="lab-gate21"' in (SITE/"project-lab.html").read_text()
         except (KeyError,AssertionError,ValueError,TypeError,OSError) as ex:
             problems.append("Gate21 real source-cited report validation failed: "+str(ex))
+    book=(SITE/"report.html").read_text(encoding="utf-8")
+    for i in range(1,8):
+        if f'id="chapter-{i:02d}"' not in book:
+            problems.append("Report book chapter missing: "+str(i))
+    if 'id="report-contents"' not in book or 'id="rb-print"' not in book:
+        problems.append("Continuous report contents and PDF-print interaction missing")
+    if book.count('class="rb-chapter"')!=7:
+        problems.append("Continuous report expected exactly seven chapters")
+    if 'report-book.js' not in book or not (SITE/"report-book.js").is_file():
+        problems.append("Report book live OpenSees data reader absent")
+    if not (SITE/"report-book.css").is_file():
+        problems.append("Report book responsive and print styles missing")
+    if 'id="m09-report-case"' not in book or 'id="d2-trace"' not in book:
+        problems.append("Existing section-capacity and signed-force references not preserved")
     if problems:raise SystemExit("\n".join(problems))
     print("STRUCTURAL_SITE_QA_PASS: seven pages including open real-source 3D frame analysis, source-linked de-identified project journal, SP16, M09/D2, privacy checks and shared theme")
 if __name__=="__main__":main()

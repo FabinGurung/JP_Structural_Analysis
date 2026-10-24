@@ -218,6 +218,10 @@ jobs:
         with:
           name: g15-gate21-open-opensees-sar-cited-not-approved
           path: site/reports/g15-gate21-*
+      - name: Verify chapter-first continuous-scroll master structural report
+        run: |
+          python -m pytest -q tests/test_g15_report_book.py
+          node --check site/report-book.js
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
