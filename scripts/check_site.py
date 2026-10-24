@@ -53,7 +53,7 @@ def verify_m09_case(problems):
             d["provenance"].startswith("All geometry/bars/forces are synthetic."),
         ]
         if not all(checks):problems.append("Invalid M09 result or acceptance metadata")
-        for page in ("calculation-coverage.html","report.html"):
+        for page in ("calculation-coverage.html","more.html"):
             if 'data-m09-view=' not in (SITE/page).read_text(encoding="utf-8"):
                 problems.append(page+": missing M09 evidence section")
     except (ValueError,KeyError,TypeError,IndexError) as exc:
@@ -83,7 +83,7 @@ def verify_sp16_and_d2(problems):
         assert all(len(checks[k])==1 for k in ("beam_design","column_design","joint_design"))
         assert all(x["global_equilibrium_pass"] for x in d["signed_fe_actions"]["raw_cases"])
         assert isfinite(checks["column_design"][0]["governing_interaction_utilization"])
-        for page in ("calculation-coverage.html","report.html"):
+        for page in ("calculation-coverage.html","more.html"):
             assert "data-d2-view=" in (SITE/page).read_text()
     except (OSError,ValueError,KeyError,TypeError,IndexError,AssertionError) as exc:
         problems.append("SP16/D2 original-source and safety state malformed: "+str(exc))
@@ -110,7 +110,7 @@ def verify_original_chart31_source_spots(problems):
                    isfinite(p["engine_mu_over_fck_bD2"]) and
                    p["absolute_normalized_error"]<=p["visual_uncertainty_absolute_normalized_moment"]
                    for p in d["points"])
-        for page in ("calculation-coverage.html","report.html"):
+        for page in ("calculation-coverage.html","more.html"):
             assert "data-sp16-benchmark=" in (SITE/page).read_text(encoding="utf-8")
     except (ValueError,KeyError,IndexError,TypeError,AssertionError) as err:
         problems.append("Original SP16 Chart31 source benchmark incorrect: "+str(err))
@@ -137,7 +137,7 @@ def verify_synthetic_nbc105_esm(problems):
             row=d["cases"][mode]
             assert isfinite(row["base_shear_kN"])
             assert isclose(sum(row["floor_forces_kN"]),row["base_shear_kN"],rel_tol=1e-10)
-        for page in ("calculation-coverage.html","report.html"):
+        for page in ("calculation-coverage.html","more.html"):
             assert 'data-gate05-demo=' in (SITE/page).read_text(encoding="utf-8")
     except (AssertionError,KeyError,ValueError,TypeError) as e:
         problems.append("Invalid synthetic NBC105 ESM case or safety gate: "+str(e))
@@ -166,7 +166,7 @@ def verify_gate06_synthetic_source(problems):
         assert d["source_mass_reconciliation_demonstration"]["missing_components_inferred"] is False
         assert isfinite(d["source_mass_reconciliation_demonstration"]["residual_source_minus_trial_kN"])
         assert d["same_case_member_action_selection"]["do_not_combine_independent_case_peaks"]
-        for page in ("calculation-coverage.html","report.html"):
+        for page in ("calculation-coverage.html","more.html"):
             assert "data-gate06-demo=" in (SITE/page).read_text(encoding="utf-8")
     except (KeyError,ValueError,IndexError,TypeError,AssertionError) as exc:
         problems.append("Gate06 public numeric source or safety HOLD invalid: "+str(exc))
@@ -262,7 +262,7 @@ def main():
         text=p.read_text(encoding="utf-8")
         parser=Parse();parser.feed(text)
         if parser.css!=(["styles.css","report-book.css"] if page=="report.html" else ["styles.css","more-guide.css"] if page=="more.html" else ["styles.css"]):problems.append(page+": inconsistent stylesheet")
-        if parser.scripts!=(["app.js","report-book.js","d2.js"] if page=="report.html" else ["app.js","d2.js"] if page=="calculation-coverage.html" else ["app.js","project-ledger.js","gate08.js","gate09.js","gate10.js","gate11.js","gate12.js","gate13.js","gate14.js","gate15.js","gate16.js","gate17.js","gate18.js","gate19.js","gate20.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
+        if parser.scripts!=(["app.js","report-book.js"] if page=="report.html" else ["app.js","d2.js"] if page=="more.html" else ["app.js","d2.js"] if page=="calculation-coverage.html" else ["app.js","project-ledger.js","gate08.js","gate09.js","gate10.js","gate11.js","gate12.js","gate13.js","gate14.js","gate15.js","gate16.js","gate17.js","gate18.js","gate19.js","gate20.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
         if parser.mains!=1:problems.append(page+": expected one main")
         nav=text.split('<nav class="navigation" aria-label="Primary navigation">',1)
         if len(nav)!=2 or "</nav>" not in nav[1]:
@@ -625,7 +625,7 @@ def main():
             assert all(x["force_residual_kN"]<.001 and x["moment_residual_kNm"]<.001 for x in d["cases"])
             for name,item in m["files"].items():
                 assert hashlib.sha256((SITE/"reports"/name).read_bytes()).hexdigest()==item["sha256"]
-            assert 'id="gate21-report-engine"' in (SITE/"report.html").read_text()
+            assert 'id="gate21-report-engine"' in (SITE/"more.html").read_text()
             assert 'id="lab-gate21"' in (SITE/"project-lab.html").read_text()
         except (KeyError,AssertionError,ValueError,TypeError,OSError) as ex:
             problems.append("Gate21 real source-cited report validation failed: "+str(ex))
@@ -641,8 +641,14 @@ def main():
         problems.append("Report book live OpenSees data reader absent")
     if not (SITE/"report-book.css").is_file():
         problems.append("Report book responsive and print styles missing")
-    if 'id="m09-report-case"' not in book or 'id="d2-trace"' not in book:
-        problems.append("Existing section-capacity and signed-force references not preserved")
+    if any('id="'+mid+'"' in book for mid in ("m09-report-case","d2-trace","gate05-report","gate06-report","gate21-report-engine")):
+        problems.append("Out-of-sequence R&D panels remain in the original report")
+    shelf=(SITE/"more.html").read_text(encoding="utf-8")
+    for mid in ("m09-report-case","d2-trace","gate05-report","gate06-report","gate21-report-engine"):
+        if shelf.count('id="'+mid+'"')!=1:
+            problems.append("R&D panel missing or duplicated in More shelf: "+mid)
+    if 'id="chapter-01-input-check"' not in book:
+        problems.append("Chapter 1 sequential source review missing")
     guide=(SITE/"more.html").read_text(encoding="utf-8")
     for marker in ("guide-map","guide-3d","guide-run","guide-lab","guide-skills","guide-machines","guide-selftest"):
         if f'id="{marker}"' not in guide:

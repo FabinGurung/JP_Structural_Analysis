@@ -32,17 +32,19 @@ def test_report_is_one_continuous_chaptered_document():
  assert "6 chapters + annex" in html
  assert "2.0 General Data for Structural Analysis" in html
 
-def test_previous_report_evidence_and_navigation_retained():
+def test_report_chapters_are_clean_and_experiments_preserved_in_more():
  html=(SITE/"report.html").read_text()
- s=Inspect();s.feed(html)
+ more=(SITE/"more.html").read_text()
  for id in ("m09-report-case","d2-trace","gate05-report","gate06-report","gate21-report-engine"):
-  assert id in s.ids, "Legacy source evidence removed: "+id
- for token in ('data-m09-view="report"','data-d2-view="report"',
-  'data-sp16-benchmark="report"','data-gate05-demo="report"',
-  'data-gate06-demo="report"','F3','NOT SAFE IN ONE WAY SHEAR'):
-  assert token in html
- for path in ("g15-3d.html","project-lab.html#lab-gate20","reports/g15-gate21-calculation-report.html"):
-  assert path in html
+  assert ('id="'+id+'"') not in html
+  assert more.count('id="'+id+'"')==1, "R&D evidence missing or duplicated: "+id
+ assert 'id="guide-rd-shelf"' in more
+ assert 'id="chapter-01-input-check"' in html
+ assert 'data-m09-view="more"' in more
+ assert 'data-d2-view="more"' in more
+ assert "F3" in html and "NOT SAFE IN ONE WAY SHEAR" in html
+ assert "reports/g15-gate21-calculation-report.html" in html
+ assert "g15-3d.html" in html
 
 def test_all_chapters_have_internal_links_and_machine_data_checks():
  html=(SITE/"report.html").read_text()

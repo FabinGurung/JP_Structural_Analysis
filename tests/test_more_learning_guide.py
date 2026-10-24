@@ -61,3 +61,15 @@ def test_primary_navigation_remains_only_home_report_more():
  for f in ("index.html","report.html","more.html"):assert 'href="'+f+'"' in nav
  for old in ("g15-3d.html","project-lab.html","analysis-studio.html","calculation-coverage.html"):
   assert 'href="'+old+'"' not in nav
+
+
+def test_original_engine_explained_and_unsorted_artifacts_in_more():
+ h=(SITE/"more.html").read_text()
+ assert 'id="guide-opensees-engine"' in h
+ assert "OpenSeesPy" in h and "OpenSees command manual" in h
+ assert "Support reaction forces and moments" in h
+ assert "Axial, shear, bending, torsion" in h
+ assert 'id="guide-rd-shelf"' in h
+ for item in ("gate05-report","gate06-report","m09-report-case","d2-trace","gate21-report-engine"):
+  assert h.count('id="'+item+'"')==1
+ assert "data-m09-view" in h and "data-d2-view" in h

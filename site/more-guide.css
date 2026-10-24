@@ -83,3 +83,19 @@ body[data-guild-route="more"] .site-footer{background:#fff;color:#55707d;border-
 @media(max-width:950px){.guide-layout{grid-template-columns:1fr}.guide-side{position:static;max-height:none}.guide-side nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:650px){.guide-summary-strip{grid-template-columns:repeat(2,minmax(0,1fr))}.guide-toc-grid,.guide-worker-grid{grid-template-columns:1fr}.guide-side nav{grid-template-columns:repeat(2,minmax(0,1fr))}.guide-flow{flex-direction:column}.guide-arrow{transform:rotate(90deg)}.guide-flow-node{width:100%}.guide-contrast,.guide-paired,.guide-experiment,.guide-glossary-grid,.guide-resource-list{grid-template-columns:1fr}.guide-factline{grid-template-columns:repeat(2,1fr)}.guide-skill-grid{grid-template-columns:repeat(6,1fr)}.guide-math>div{flex-direction:column;align-items:start}.guide-paper{gap:17px}.guide-lesson-top{gap:13px}}
 @media print{body[data-guild-route="more"]{background:#fff!important}.site-header,.site-footer,.guide-side,.guide-controls,.guide-toc{display:none!important}.guide-layout{display:block}.guide-cover,.guide-lesson,.guide-paper,.guide-figure{border-color:#bbb!important;box-shadow:none!important}.guide-cover{break-after:page}.guide-lesson{break-before:page}.guide-lesson-top{background:#fff}.guide-check:not([open]){display:none}.guide-appendix{display:none}.guide-contrast>div,.guide-worker-grid>div{break-inside:avoid}}
+
+/* Preserved laboratory shelf is visually subordinate to six educational lessons. */
+.guide-opensees-lesson{border-top:1px solid #d9e5e7;background:#f8fbfa;padding:24px;margin:0 25px 15px;border-radius:4px}
+.guide-opensees-lesson .guide-flow{margin:12px 0}
+.guide-rd-shelf{margin-top:24px}
+.guide-rd-shelf>p{color:#4d6874;font-size:13px;line-height:1.7}
+.guide-rd-module{border-top:1px solid #dce6e7;padding:22px 0;margin-top:12px;color:#1e3c4b}
+.guide-rd-module>h3{font-family:Georgia,serif;font-size:20px;color:#1b4b5e;margin:0 0 6px}
+.guide-rd-module>p{color:#557180;font-size:13px;line-height:1.6}
+.guide-rd-module .rb-deep{border:1px solid #cee0e1;background:#f7fbfa;padding:10px}
+.guide-rd-module .rb-deep>summary{color:#0b6073;cursor:pointer;font-weight:750}
+.guide-rd-module .section,.guide-rd-module .panel,.guide-rd-module .m09-codex{background:#fff!important;color:#1c3847!important;border:1px solid #dce6e7;padding:17px;border-radius:4px;margin:12px 0}
+.guide-rd-module .section h2,.guide-rd-module .section h3,.guide-rd-module p,.guide-rd-module strong{color:#234959!important}
+.guide-rd-module .m09-hold{background:#fff3f0;border-left:3px solid #ac554d;padding:11px;color:#6f302d}
+.guide-rd-module a{color:#0b6275}
+@media(max-width:700px){.guide-opensees-lesson{padding:15px;margin:0 15px 10px}}

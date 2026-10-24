@@ -1,0 +1,8 @@
+# Chapter-first R&D separation / OpenSees in plain language / 2026-10-25
+
+Governing user decision: build the original G+1.5 report sequentially, starting Chapter 1 then Chapter 2; reproduce engineering procedures and calculate the team's own OpenSees results. Do NOT force approximate ETABS number matching or invent missing source observations.
+
+- Moved five independent development demonstrations unchanged in substance from site/report.html to **site/more.html#guide-rd-shelf**: Gate05 equivalent static demo, Gate06 mass/torsion demo, M09 synthetic column section, D2 signed synthetic bridge, Gate21 generator control panel. All source data, code, Git history, old labs and numerical report exports preserved. Experimental panels remain accessible inside collapsed More page, and existing dynamic M09/D2 renderers follow their home.
+- Chapter 1 now has an explicit source-readiness table for §§1.1–1.3 and original occupancy/design identity gaps. The main report still follows the six chapters plus annex. Real 3D OpenSees live tables and source citations remain in chapters 2–5, with design state on HOLD in chapter 6.
+- The More guide now explains OpenSees's actual FE responsibilities, outputs and limitations, with source manual URLs and inline diagram. OpenSeesPy provides modelling and numerical solution; our separate code/design layer implements code checks, reinforcement choices, drawings and report formatting.
+- Engineering basis: actual source .edb/.e2k has not been recovered. Original foundation F3 **NOT SAFE IN ONE WAY SHEAR**. Keep all original source/privacy boundaries and checksums. No source-match and no engineering-approval claims.
