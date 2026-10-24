@@ -1,18 +1,183 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f7f6ef"><meta name="description" content="Supporting structural engineering benchmarks, developer sources, history, releases and actions"><title>More | JP Structural Analysis</title><link rel="stylesheet" href="styles.css"></head>
-<body data-guild-route="more"><header class="site-header"><div class="wrap nav-row"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">JP</span><span><strong>Structural Analysis</strong><small>STRUCTURAL ANALYSIS · ENGINEERING REPORT</small></span></a><nav class="navigation" aria-label="Primary navigation"><a href="index.html">Home <small>L0</small></a><a href="report.html">Report <small>L1</small></a><a aria-current="page" href="more.html">More <small>L1</small></a></nav><button type="button" id="mode-toggle" class="guild-mode" aria-label="Toggle daylight and night raid modes" aria-pressed="false">◐ <span id="mode-label">Night raid</span></button></div></header><main class="wrap" id="main">
-<section class="page-intro"><span class="eyebrow">SUPPORTING ENGINEERING PAGES</span><h1>Engineering resources & tools.</h1><p>Useful engineering history and developer references stay accessible here. They no longer compete with the report workflow on the homepage.</p></section>
-<section class="section" id="engineering-tools"><div class="section-title"><div><span class="eyebrow">SUPPORTING PAGES · FOUND UNDER MORE</span><h2>Engineering tools and development records</h2></div><p>These tools stay available, but the public reading journey is the Report. Nothing has been removed.</p></div><div class="archive-grid">
-<article class="panel"><h3><a href="project-lab.html">Project Lab</a></h3><p>Development history, source comparisons, sensitivity studies and provenance audits.</p></article>
-<article class="panel"><h3><a href="g15-3d.html">3D Structural Studio</a></h3><p>Inspect the provisional frame and its beam/column connectivity.</p></article>
-<article class="panel"><h3><a href="analysis-studio.html">Run a numerical analysis</a></h3><p>Configure bounded scenarios and launch authorized solver workflows.</p></article>
-<article class="panel"><h3><a href="calculation-coverage.html">Calculation Coverage</a></h3><p>Read which engineering kernels are implemented, partial or missing.</p></article>
-<article class="panel"><h3><a href="https://github.com/FabinGurung/JP_Structural_Analysis/actions">GitHub Actions ↗</a></h3><p>Inspect calculation tests, build artifacts and website deployments.</p></article>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f7f6ef"><meta name="description" content="Learn in simple language what the JP Structural Analysis website has built: 3D Studio, analysis runner, experiments, calculation skills, GitHub Actions, Pages, demos, reports and history."><title>How Our Structural Engineering System Works | More</title><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="more-guide.css"></head>
+<body data-guild-route="more"><header class="site-header"><div class="wrap nav-row"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">JP</span><span><strong>Structural Analysis</strong><small>STRUCTURAL ANALYSIS · ENGINEERING REPORT</small></span></a><nav class="navigation" aria-label="Primary navigation"><a href="index.html">Home <small>L0</small></a><a href="report.html">Report <small>L1</small></a><a aria-current="page" href="more.html">More <small>L1</small></a></nav><button type="button" id="mode-toggle" class="guild-mode" aria-label="Toggle daylight and night raid modes" aria-pressed="false">◐ <span id="mode-label">Night raid</span></button></div></header>
+<main class="wrap guide-root" id="main">
+<section class="guide-cover" id="guide-top" aria-labelledby="guide-title">
+<div class="guide-kicker">JP STRUCTURAL ANALYSIS <span>·</span> THE WORKSHOP HANDBOOK</div>
+<p class="guide-edition">L1 / MORE · GUIDE 01 · PRESENT SYSTEM</p>
+<h1 id="guide-title">How our structural engineering<br>system actually works.</h1>
+<p class="guide-intro">Imagine we are building a robot that studies a building, solves maths problems, checks its answers and writes an engineering report. <strong>More</strong> is where we explain the robot’s tools—not where you have to open ten other pages to understand them.</p>
+<div class="guide-summary-strip"><span><strong>6</strong> lessons</span><span><strong>18</strong> engineering skills tracked</span><span><strong>5</strong> OpenSees frame cases</span><span><strong>1</strong> report to build toward</span></div>
+<div class="guide-controls"><a href="#guide-map">Start with the big picture ↓</a><a href="#guide-glossary">Understand the words</a></div>
+<p class="guide-cover-foot">Read from top to bottom. The diagrams, examples and explanations are on <em>this page</em>.</p>
+</section>
+
+<section class="guide-caution" aria-label="Safety and accuracy boundary"><strong>What our robot is NOT:</strong> It has not proved that the real building is safe. Our working model contains assumptions. The original report says foundation F3 is <strong>NOT SAFE IN ONE WAY SHEAR</strong>; that finding stays open. Passing a software test does not mean passing an engineering safety check.</section>
+
+<section class="guide-toc" aria-labelledby="toc-title"><div class="guide-eyebrow">HOW TO READ THIS GUIDE</div><h2 id="toc-title">Six lessons. One connected story.</h2><p>Start with the picture, then follow one imaginary building through the tools. Each lesson asks a small question you can answer without memorising special words.</p>
+<div class="guide-toc-grid">
+<a href="#guide-map"><span>01</span><strong>The big picture</strong><small>Why the tools exist</small></a>
+<a href="#guide-3d"><span>02</span><strong>3D Structural Studio</strong><small>Seeing the building</small></a>
+<a href="#guide-run"><span>03</span><strong>Run Analysis</strong><small>Asking “what if?”</small></a>
+<a href="#guide-lab"><span>04</span><strong>Project Lab</strong><small>Remembering experiments</small></a>
+<a href="#guide-skills"><span>05</span><strong>Calculation Coverage</strong><small>What we know and do not know</small></a>
+<a href="#guide-machines"><span>06</span><strong>Actions, Pages and examples</strong><small>Who does the work and keeps history</small></a>
 </div></section>
-<section class="section compact"><div class="archive-grid">
-<article class="panel"><span class="eyebrow">BENCHMARK / LEGACY</span><h2>Two-span reference beam</h2><p>Original sanitized example, force/moment comparison and explicit reaction-reconciliation HOLD. Important for regression testing, not the primary product workflow.</p><a class="text-link" href="demo/SAR.html">Open sanitized SAR →</a><a class="text-link" href="demo/validation_results.json">Validation JSON →</a></article>
-<article class="panel"><span class="eyebrow">ENGINE STATE</span><h2>GitHub Actions</h2><p>Regressions, the public-data safety scan and generated benchmark evidence; a successful CI run does not certify member designs.</p><a class="text-link" href="https://github.com/FabinGurung/JP_Structural_Analysis/actions">View workflows and runs ↗</a><a class="text-link" href="https://github.com/FabinGurung/JP_Structural_Analysis/pull/4">Open development PR ↗</a></article>
-<article class="panel"><span class="eyebrow">IMMUTABLE HISTORY</span><h2>Frozen Seq9 milestone</h2><p>Released analysis milestone stays tagged and unchanged. Older homepage graphics and layouts are available through commit history; nothing was erased from Git.</p><a class="text-link" href="https://github.com/FabinGurung/JP_Structural_Analysis/releases/tag/a9-seq9-phase-c-20261015">Milestone release ↗</a><a class="text-link" href="https://github.com/FabinGurung/JP_Structural_Analysis/blob/f91224b4f82bfec1440b97f2f8afaef09427eaa9/site/index.html">Earlier homepage source ↗</a></article>
-<article class="panel"><span class="eyebrow">DEVELOPERS</span><h2>Data and design methods</h2><p>Canonical models, source lineage, NBC clause inventory, regression scripts and the R&D document template. E2K remains an optional legacy importer, not the future model prerequisite.</p><a class="text-link" href="https://github.com/FabinGurung/JP_Structural_Analysis/blob/feature/post-seq9-first-party-no-e2k-20261015/registry/nbc105-verified-rule-inventory.v0.1.json">NBC rule inventory ↗</a><a class="text-link" href="https://github.com/FabinGurung/JP_Structural_Analysis">Repository source ↗</a></article>
-</div></section><section class="section bottom-note"><h2>Why not load everything on the homepage?</h2><p>Historical demos, solver internals and raw JSON are valuable for debugging and audit. Keeping them on demand makes daily navigation shorter without deleting evidence or changing the underlying numerical engine.</p></section>
-</main><footer class="site-footer"><div class="wrap footer-inner"><span>JP Structural Analysis · OpenSees primary · Not an engineering approval</span><span id="build">Source snapshot · read-only public demonstration</span></div></footer><script src="app.js" defer></script></body></html>
+
+<div class="guide-layout"><aside class="guide-side" aria-label="On-page guide navigation">
+<div class="guide-side-label">THIS PAGE</div>
+<nav><a href="#guide-top">Cover</a><a href="#guide-map">01 · Overview</a><a href="#guide-3d">02 · 3D Studio</a><a href="#guide-run">03 · Run Analysis</a><a href="#guide-lab">04 · Project Lab</a><a href="#guide-skills">05 · Calculation Coverage</a><a href="#guide-machines">06 · Automation and archives</a><a href="#guide-glossary">Word dictionary</a><a href="#guide-selftest">Test your understanding</a></nav>
+<div class="guide-side-note"><strong>Golden rule</strong><p>A number may be calculated correctly from an assumption that turns out to be wrong. Always ask where the input came from.</p></div></aside>
+<div class="guide-body">
+
+<section class="guide-lesson" id="guide-map" aria-labelledby="map-title">
+<div class="guide-lesson-top"><span class="guide-number">01</span><div><div class="guide-eyebrow">THE BIG PICTURE</div><h2 id="map-title">One robot. Several different jobs.</h2><p>Think of a school science project. First you draw something; then you try an experiment; then you record what happened; finally you write a report.</p></div></div>
+<div class="guide-paper">
+<figure class="guide-figure"><figcaption><strong>Figure 1.</strong> Where information goes, from source to report</figcaption>
+<div class="guide-flow" role="img" aria-label="Original report and drawings lead to a working 3D model, inputs go to the OpenSees calculator, experiments are checked in GitHub Actions, and the resulting findings are presented in a report.">
+<div class="guide-flow-node"><span class="guide-flow-id">A</span><strong>Original source</strong><small>Drawings, loads, rules</small></div><span class="guide-arrow" aria-hidden="true">→</span>
+<div class="guide-flow-node"><span class="guide-flow-id">B</span><strong>Working model</strong><small>Beams, columns, assumptions</small></div><span class="guide-arrow" aria-hidden="true">→</span>
+<div class="guide-flow-node"><span class="guide-flow-id">C</span><strong>OpenSees</strong><small>Real mathematical solve</small></div><span class="guide-arrow" aria-hidden="true">→</span>
+<div class="guide-flow-node"><span class="guide-flow-id">D</span><strong>Report</strong><small>Results, caveats, source proof</small></div>
+</div><div class="guide-figure-key"><span><i class="guide-dot guide-dot-source"></i> Reported source</span><span><i class="guide-dot guide-dot-assumed"></i> Provisional model</span><span><i class="guide-dot guide-dot-solved"></i> Solved mathematics</span><span><i class="guide-dot guide-dot-held"></i> Safety held</span></div></figure>
+<div class="guide-explain"><h3>And who does which job?</h3><p><strong>3D Studio</strong> lets you see the working building. <strong>Run Analysis</strong> is a small practice playground. <strong>Project Lab</strong> is our experiment notebook. <strong>Calculation Coverage</strong> is the list of lessons our robot has learned. <strong>GitHub Actions</strong> is the automatic computer worker. <strong>GitHub Pages</strong> displays the website. <strong>Report</strong> is the readable result at the end.</p></div>
+</div>
+<div class="guide-example"><span class="guide-example-label">ONE IMPORTANT DIFFERENCE</span><p>Making a beautiful drawing of a bridge does not prove the bridge is strong. In the same way, seeing our building in 3D does <strong>not</strong> mean we have checked every beam, slab and footing.</p></div>
+<details class="guide-check"><summary>Check your understanding: Which tool is the final notebook, and which tool is the workshop diary?</summary><p><strong>Report</strong> is the final notebook. <strong>Project Lab</strong> is the workshop diary. Both are valuable, but they answer different questions.</p></details>
+</section>
+
+<section class="guide-lesson" id="guide-3d" aria-labelledby="three-title">
+<div class="guide-lesson-top"><span class="guide-number">02</span><div><div class="guide-eyebrow">THE DIGITAL LEGO MODEL</div><h2 id="three-title">3D Structural Studio: what does the building look like?</h2><p>This is like building a house from straight LEGO sticks. The upright sticks are <strong>columns</strong>. The sideways sticks are <strong>beams</strong>. They connect to make a frame.</p></div></div>
+<div class="guide-paper">
+<figure class="guide-figure"><figcaption><strong>Figure 2.</strong> A teaching sketch of a frame—not the actual G+1.5 geometry</figcaption>
+<svg class="guide-frame-diagram" viewBox="0 0 660 272" role="img" aria-label="Illustration of two vertical columns and three horizontal beams forming three floors above the ground. Arrows label a column, beam and ground support.">
+<g stroke="#456c79" stroke-width="7" stroke-linecap="round" fill="none"><path d="M130 35V225M385 35V225M130 42H385M130 102H385M130 162H385"/></g>
+<g fill="#e2f1ef" stroke="#0d6373" stroke-width="2"><rect x="117" y="222" width="26" height="14" rx="1"/><rect x="372" y="222" width="26" height="14" rx="1"/></g>
+<path d="M90 238H420" stroke="#96aab0" stroke-width="2"/>
+<g stroke="#0d6879" stroke-width="1.7" fill="none"><path d="M445 46H525"/><path d="M395 101L520 142"/><path d="M126 170L48 184"/></g>
+<g fill="#244653" font-family="system-ui, sans-serif" font-size="14"><text x="532" y="51">Beam</text><text x="525" y="148">Column</text><text x="9" y="204">Floor</text><text x="124" y="257">Support</text><text x="368" y="257">Support</text></g>
+</svg>
+<div class="guide-figure-key"><span>Beams = horizontal members</span><span>Columns = upright members</span><span>Slabs = floors; not shown as verified 3D panels</span></div>
+</figure>
+<div class="guide-factline"><div><strong>23</strong><span>Working grid positions</span></div><div><strong>92</strong><span>Frame nodes</span></div><div><strong>165</strong><span>Working members</span></div><div><strong>5</strong><span>Default solved cases</span></div></div>
+<h3>What we actually built</h3><p>Our larger working model uses source-derived column locations and a proposed connecting frame. You can rotate it, choose a beam or column, change trial stiffness and loads, and inspect signed numerical results. An authorized GitHub job can solve the selected configuration using OpenSees.</p><p>Some beam connections were inferred, and two additional connectors are specifically hypothetical. The preview does not yet include a verified full slab, diaphragm or wall-load map. <strong>It is a model under investigation, not a finished digital copy of the building.</strong></p>
+<div class="guide-contrast"><div><strong>Can do</strong><p>Show the proposed frame; inspect members; run bounded analysis; export result JSON.</p></div><div><strong>Cannot claim</strong><p>That all drawing dimensions, floor openings, wall positions, material assignments or foundations match the real building.</p></div></div>
+</div>
+<div class="guide-example"><span class="guide-example-label">ANALOGY TO REMEMBER</span><p>The 3D Studio is like a model airplane. You can hold it and understand where the wings are, but before flying a real aircraft you must verify every part—not just how the model looks.</p></div>
+<details class="guide-check"><summary>Try explaining: If I rotate the model and it looks perfect, is the structural design approved?</summary><p>No. Turning a model is a <strong>display</strong> action. The design still needs correct source inputs, loading, analysis, reinforcement and independent engineering checks.</p></details>
+</section>
+
+<section class="guide-lesson" id="guide-run" aria-labelledby="run-title">
+<div class="guide-lesson-top"><span class="guide-number">03</span><div><div class="guide-eyebrow">THE PRACTICE CALCULATOR</div><h2 id="run-title">Run Analysis: what happens if we push the building?</h2><p>Imagine a toy tower. What happens if you make it heavier, taller or less stiff, then push from one side? We use maths and a computer to investigate questions like that.</p></div></div>
+<div class="guide-paper">
+<div class="guide-contrast"><div><strong>Practice runner: 2D</strong><p>One small single-bay, three-level teaching frame viewed from one direction. You can edit its heights, widths, weights and earthquake parameters.</p></div><div><strong>3D Studio: larger frame</strong><p>A provisional project-inspired frame with members across two horizontal directions. It is a different model, not an automatically enlarged copy of the 2D toy.</p></div></div>
+<h3>There are two stages: a quick answer and a serious calculation</h3>
+<div class="guide-paired">
+<div class="guide-step-card"><span>STAGE A · INSTANT PREVIEW</span><h4>A small calculation in the web browser</h4><p>When you change a number, JavaScript works out an <em>equivalent-static earthquake force</em>. It does not solve the complete frame. Think of it as a pocket calculator.</p></div>
+<div class="guide-step-card"><span>STAGE B · SUBMITTED SOLVE</span><h4>OpenSees on a GitHub computer</h4><p>Submitting an authorized synthetic case starts a GitHub Actions job that runs the actual finite-element mathematics, producing support reactions and member-end forces in a downloadable result.</p></div>
+</div>
+<figure class="guide-figure"><figcaption><strong>Figure 3.</strong> A tiny made-up earthquake example. These are <em>teaching numbers</em>, not G+1.5 building values.</figcaption>
+<div class="guide-math">
+<div><span>Weight on each of 3 floors</span><strong>100 kN + 100 kN + 100 kN</strong></div>
+<div><span>Total seismic weight W</span><strong>300 kN</strong></div>
+<div><span>Assumed seismic coefficient C<sub>d</sub></span><strong>0.10</strong></div>
+<div class="guide-math-result"><span>Base force V = C<sub>d</sub> × W</span><strong>0.10 × 300 = 30 kN</strong></div>
+</div><p class="guide-smallprint">For an illustrative distribution with equal floor weights, heights 3, 6 and 9 m, and k = 1: the three forces are 5, 10 and 15 kN. They add up to 30 kN. This arithmetic can be checked by hand, and none of these numbers is a building design recommendation.</p></figure>
+<h3>Why not run everything inside the website?</h3><p>The website can show a fast formula, but OpenSees is a separate engineering program. For the real solve, the website helps prepare a safe numerical request; an authenticated GitHub issue and an authorized Actions workflow run the solver. A public visitor cannot secretly trigger expensive or private calculations merely by scrolling.</p>
+</div>
+<details class="guide-check"><summary>Prediction: If W changes from 300 kN to 600 kN, and C<sub>d</sub> stays 0.10, what happens to V?</summary><p><strong>It doubles</strong>: 0.10 × 600 = 60 kN. That is a fact about this equation. It does not say the real building will behave in exactly the same way when other assumptions change.</p></details>
+</section>
+
+<section class="guide-lesson" id="guide-lab" aria-labelledby="lab-title">
+<div class="guide-lesson-top"><span class="guide-number">04</span><div><div class="guide-eyebrow">THE SCIENCE NOTEBOOK</div><h2 id="lab-title">Project Lab: what have we tried, and what did we discover?</h2><p>A scientist doesn't erase the experiment that went wrong. They write down what they tried, what they expected and what they actually saw. <strong>Project Lab is our memory of the engineering investigation.</strong></p></div></div>
+<div class="guide-paper">
+<figure class="guide-figure"><figcaption><strong>Figure 4.</strong> Every experiment should tell the same simple story</figcaption>
+<div class="guide-experiment"><div><span>1 · QUESTION</span><strong>“Does the floor act like a stiff plate?”</strong></div><div><span>2 · CHANGE ONE ASSUMPTION</span><strong>Try rigid versus flexible diaphragm models</strong></div><div><span>3 · RUN BOTH</span><strong>Calculate the movement and forces</strong></div><div><span>4 · WRITE THE LIMIT</span><strong>Which assumption is still unverified?</strong></div></div>
+</figure>
+<h3>Our real experiments, explained</h3>
+<div class="guide-history">
+<div><span>Gates 08–10</span><strong>Where does the weight come from?</strong><p>We compared source reports with assumed walls, footprints and floor weights. Making the totals match by inventing a wall would be cheating, so unresolved mass stays unresolved.</p></div>
+<div><span>Gates 11–16</span><strong>Does the model change when the floor changes?</strong><p>We tested assumed diaphragm stiffness, slab shells, meshes, openings and torsion. These are sensitivity studies, not evidence that the original floor shape has been recovered.</p></div>
+<div><span>Gates 17–20</span><strong>Can we trace the source and the foundation failure?</strong><p>We documented the original report's conflicting numbers, missing ETABS model, seismic weight and footing F3. Fifteen source-to-model evidence obligations were defined and remain open.</p></div>
+<div><span>Gate 21</span><strong>Can the software write an actual calculation report?</strong><p>Yes: it runs five static OpenSees frame cases and generates a seven-part preliminary numerical report and machine files. The master reading page follows the original six-chapter TOC plus annex.</p></div>
+</div>
+<div class="guide-factline"><div><strong>16</strong><span>Published Gate08 scenario variants</span></div><div><strong>816</strong><span>Gate08 source-study FE cases</span></div><div><strong>15</strong><span>Evidence obligations still open</span></div><div><strong>0</strong><span>Accepted source-model gates</span></div></div>
+<p class="guide-smallprint">The 816 FE cases belong to a defined previous sensitivity study, not 816 independent confirmations of the actual building. The 15 evidence items track missing source facts rather than additional completed calculations.</p>
+</div>
+<div class="guide-example"><span class="guide-example-label">WHY THIS MATTERS</span><p>If two computer models disagree, Project Lab helps us find <em>which assumption changed</em>. It does not let us simply choose whichever answer looks safer.</p></div>
+<details class="guide-check"><summary>What should our robot do if a load value is missing?</summary><p>Label it <strong>unknown</strong>, or use a clearly stated, cited <strong>trial assumption</strong> for exploration. Never pretend the assumption came from the original ETABS file.</p></details>
+</section>
+
+<section class="guide-lesson" id="guide-skills" aria-labelledby="skills-title">
+<div class="guide-lesson-top"><span class="guide-number">05</span><div><div class="guide-eyebrow">THE ROBOT'S LESSON CHECKLIST</div><h2 id="skills-title">Calculation Coverage: which maths can our robot really do?</h2><p>Imagine a student with eighteen different lessons to master. Being good at two lessons does not mean the student knows all eighteen.</p></div></div>
+<div class="guide-paper">
+<figure class="guide-figure"><figcaption><strong>Figure 5.</strong> The existing 18-item engineering capability register</figcaption>
+<div class="guide-skill-grid" role="img" aria-label="18 capability tiles: two bounded implementations, eleven partial, one draft and four missing.">
+<span class="guide-sk-bounded" title="Bounded">01</span><span class="guide-sk-bounded" title="Bounded">02</span><span class="guide-sk-partial" title="Partial">03</span><span class="guide-sk-partial" title="Partial">04</span><span class="guide-sk-partial" title="Partial">05</span><span class="guide-sk-partial" title="Partial">06</span><span class="guide-sk-partial" title="Partial">07</span><span class="guide-sk-partial" title="Partial">08</span><span class="guide-sk-partial" title="Partial">09</span><span class="guide-sk-partial" title="Partial">10</span><span class="guide-sk-partial" title="Partial">11</span><span class="guide-sk-partial" title="Partial">12</span><span class="guide-sk-partial" title="Partial">13</span><span class="guide-sk-draft" title="Draft">14</span><span class="guide-sk-missing" title="Missing">15</span><span class="guide-sk-missing" title="Missing">16</span><span class="guide-sk-missing" title="Missing">17</span><span class="guide-sk-missing" title="Missing">18</span>
+</div><div class="guide-figure-key"><span><i class="guide-dot guide-dot-solved"></i> 2 bounded</span><span><i class="guide-dot guide-dot-assumed"></i> 11 partial</span><span><i class="guide-dot guide-dot-source"></i> 1 draft</span><span><i class="guide-dot guide-dot-held"></i> 4 missing</span></div>
+<p class="guide-smallprint">These are source-registry statuses, not a percentage score and not proof that the actual building satisfies design codes.</p></figure>
+<div class="guide-table-wrap"><table><thead><tr><th>Simple description</th><th>Some current examples</th><th>What the labels mean</th></tr></thead><tbody>
+<tr><td><strong>Bounded implementation</strong></td><td>3D elastic frame forces; bounded modal/response-spectrum modules</td><td>Can do a real calculation in a clearly limited scenario; not yet a source-matched approved design.</td></tr>
+<tr><td><strong>Partial</strong></td><td>Material inputs, loads, combinations, beam and column design, slabs, some foundation formulas and source audits</td><td>Pieces work, but inputs, validation or full checks are still missing.</td></tr>
+<tr><td><strong>Draft</strong></td><td>Complete final report/PDF projection</td><td>Useful framework exists, but does not yet meet the full engineering report acceptance requirements.</td></tr>
+<tr><td><strong>Missing</strong></td><td>Full raft/subgrade FE, complete staircase design, special loads, independent wind screening</td><td>These modules are not yet implemented to the required scope.</td></tr>
+</tbody></table></div>
+<h3>What is the difference between *calculated* and *safe*?</h3><p>If a calculator tells us a beam has a bending moment of 25 kN·m, it has answered <strong>“What force is happening?”</strong> It has not yet answered <strong>“Can the actual beam and its steel reinforcement resist that force?”</strong> That second question needs the correct member, material, reinforcement, load combinations and design rules.</p>
+<div class="guide-contrast"><div><strong>Structural analysis</strong><p>Find the forces and movements when loads act on a model.</p></div><div><strong>Structural design</strong><p>Check or choose real beams, columns, slabs and reinforcement that can resist the required forces under applicable rules.</p></div></div>
+</div>
+<details class="guide-check"><summary>Can we mark every column “SAFE” just because OpenSees finished without an error?</summary><p><strong>No.</strong> A solver finishing is like a calculator returning a number. We still need the right physical model, load combinations and independent capacity/detailing checks.</p></details>
+</section>
+
+<section class="guide-lesson" id="guide-machines" aria-labelledby="machines-title">
+<div class="guide-lesson-top"><span class="guide-number">06</span><div><div class="guide-eyebrow">THE AUTOMATIC WORKER AND THE LIBRARY</div><h2 id="machines-title">GitHub Actions, Pages, examples, demos and old versions</h2><p>Here is the easiest memory trick: <strong>GitHub stores the instructions, Actions does the work, and Pages displays the result.</strong></p></div></div>
+<div class="guide-paper">
+<figure class="guide-figure"><figcaption><strong>Figure 6.</strong> Three very different GitHub jobs</figcaption>
+<div class="guide-worker-grid">
+<div><span class="guide-worker-no">01</span><h3>Code repository</h3><p>The recipe book. It stores Python scripts, OpenSees model definitions, tests, the report layout, source references and change history.</p></div>
+<div><span class="guide-worker-no">02</span><h3>GitHub Actions</h3><p>The kitchen robot. It reads the recipe, runs tests, calculates numbers, builds HTML/JSON/CSV and prepares the public site.</p></div>
+<div><span class="guide-worker-no">03</span><h3>GitHub Pages</h3><p>The serving table. It shows finished web files. Simply scrolling down a page does <strong>not</strong> start another OpenSees solve.</p></div>
+</div></figure>
+<h3>There are really three kinds of automatic jobs</h3>
+<div class="guide-job-rows"><div><span>TEST</span><strong>“Did we break the software?”</strong><p>Regression tests compare code against expected numerical results and safety flags.</p></div><div><span>ANALYZE</span><strong>“What did this chosen model calculate?”</strong><p>Authorized solver jobs run OpenSees and publish machine-readable results, member forces and logs.</p></div><div><span>PUBLISH</span><strong>“What can the reader see now?”</strong><p>The Pages build checks a pinned tested source version, regenerates allowed report outputs and deploys the website.</p></div></div>
+<h3>Why are there old examples and demo files?</h3>
+<div class="guide-history">
+<div><span>Sanitized two-span beam</span><strong>A small practice question with known context</strong><p>Imagine two bridge spans sharing a middle support. We use that clean example to compare forces, moments and reactions, and to detect calculation mistakes. It has a recorded reaction-reconciliation HOLD; it is <strong>not</strong> the G+1.5 building.</p></div>
+<div><span>Demo report · SAR</span><strong>A sample of the final writing format</strong><p>It shows how a Structural Analysis Report can present methods, calculations and results. A nice report layout does not certify the example or the real project.</p></div>
+<div><span>JSON and CSV files</span><strong>The robot's written arithmetic</strong><p>JSON stores labelled model inputs and numerical outputs. CSV gives rows of member actions in a spreadsheet-friendly format. Checksums help confirm that a file has not changed unexpectedly.</p></div>
+<div><span>Frozen Seq9 release and Git history</span><strong>Saved photos of older versions</strong><p>A tag is like putting an old, working robot in a glass cabinet. We can inspect or restore its source without deleting what we built afterward. Commits explain what changed and when.</p></div>
+<div><span>Developer rules and code inventories</span><strong>The robot's instruction manual</strong><p>These contain the typed model structures, standards references, numerical tests and rules for connecting evidence to results. An old ETABS E2K file can be imported when available, but we do not pretend one exists.</p></div>
+</div>
+<div class="guide-example"><span class="guide-example-label">A COMMON CONFUSION</span><p>If GitHub says <strong>“360 tests passed,”</strong> it means the software passed those tests. It does <strong>not</strong> mean the building passed 360 different safety inspections. A green computer check and a signed engineering design are not the same thing.</p></div>
+</div>
+<details class="guide-check"><summary>Explain this to someone else: Are GitHub Actions and GitHub Pages the same thing?</summary><p>No. <strong>Actions is the worker</strong> that runs programs and produces files. <strong>Pages is the bookshelf</strong> where visitors read the finished website. The repository keeps the recipes and history.</p></details>
+</section>
+
+<section class="guide-lesson" id="guide-glossary" aria-labelledby="glossary-title"><div class="guide-lesson-top"><span class="guide-number guide-number-alt">?</span><div><div class="guide-eyebrow">SMALL DICTIONARY</div><h2 id="glossary-title">Ten words that were making this confusing.</h2><p>You don't have to memorise them; use them when you find them in our report.</p></div></div>
+<div class="guide-paper guide-glossary-grid">
+<div><strong>Model</strong><p>A mathematical copy of a structure. It may use assumptions.</p></div>
+<div><strong>Solver</strong><p>The program that solves the structural maths, like OpenSees.</p></div>
+<div><strong>Finite element</strong><p>A small piece of a bigger structure that the computer uses to calculate forces and movements.</p></div>
+<div><strong>Load</strong><p>A force or weight acting on the building.</p></div>
+<div><strong>Reaction</strong><p>The push back from a support when a structure is loaded.</p></div>
+<div><strong>Drift</strong><p>How much one floor moves sideways compared with the floor below it.</p></div>
+<div><strong>Source</strong><p>The original drawing, report, rule or measurement that supports an input.</p></div>
+<div><strong>Assumption</strong><p>A clearly named guess used for a trial because the real value is unavailable.</p></div>
+<div><strong>Regression test</strong><p>A repeatable check that an old feature still behaves as expected after software changes.</p></div>
+<div><strong>Engineering approval</strong><p>An actual professional design acceptance based on verified evidence—not just a green computer message.</p></div>
+</div></section>
+
+<section class="guide-lesson" id="guide-selftest" aria-labelledby="selftest-title"><div class="guide-lesson-top"><span class="guide-number guide-number-alt">✓</span><div><div class="guide-eyebrow">REMEMBER THE CONNECTIONS</div><h2 id="selftest-title">One-minute teach-back challenge.</h2><p>Before opening an answer, try explaining it out loud as if you were teaching a younger child.</p></div></div><div class="guide-paper">
+<details class="guide-check"><summary>1. Which page is our experiment diary, and which page shows the report?</summary><p>Project Lab records the trials and uncertainties. Report arranges the current evidence in the original source chapter order.</p></details>
+<details class="guide-check"><summary>2. Why do the practice 2D frame and working 3D building give different answers?</summary><p>They have different shapes, loading and assumptions. The small one teaches methods; the provisional 3D one explores the actual project's source-derived frame.</p></details>
+<details class="guide-check"><summary>3. Can a number be mathematically correct and still be unsuitable for construction?</summary><p>Yes. For example, a correct formula using an invented slab thickness may produce a correct answer for the invented slab, not the real slab.</p></details>
+<details class="guide-check"><summary>4. What will make the robot closer to a real structural design engine?</summary><p>Verified drawings and load paths; authenticated materials, mass and soil; complete governing load combinations; modal/drift and second-order checks; RC member/slab/foundation design; independent reconciliation and review. In particular, the original F3 shear failure needs a separately verified correction.</p></details>
+<div class="guide-end"><strong>The one sentence worth remembering:</strong><p><em>We built a real numerical calculator, a trial 3D building, an experiment notebook and an automatic report factory—but the inputs and full structural design still need to be proven.</em></p></div>
+</div></section>
+
+<details class="guide-appendix" id="guide-resources"><summary>Advanced appendix · Open the actual tools, demos, releases and source files (optional)</summary>
+<p>You do not need any of these links to understand the guide above. They are kept here for when you later want to use or audit the machinery.</p>
+<div class="guide-resource-list"><a href="g15-3d.html">3D Structural Studio</a><a href="analysis-studio.html">Run Analysis</a><a href="project-lab.html">Project Lab</a><a href="calculation-coverage.html">Calculation Coverage</a><a href="demo/SAR.html">Sanitized two-span SAR example</a><a href="demo/validation_results.json">Demo validation JSON</a><a href="https://github.com/FabinGurung/JP_Structural_Analysis/actions">GitHub Actions run history ↗</a><a href="https://github.com/FabinGurung/JP_Structural_Analysis/pull/4">Historical development PR ↗</a><a href="https://github.com/FabinGurung/JP_Structural_Analysis/releases/tag/a9-seq9-phase-c-20261015">Frozen Seq9 release ↗</a><a href="https://github.com/FabinGurung/JP_Structural_Analysis/blob/f91224b4f82bfec1440b97f2f8afaef09427eaa9/site/index.html">Earlier homepage source ↗</a><a href="https://github.com/FabinGurung/JP_Structural_Analysis/blob/feature/post-seq9-first-party-no-e2k-20261015/registry/nbc105-verified-rule-inventory.v0.1.json">NBC rules inventory ↗</a><a href="https://github.com/FabinGurung/JP_Structural_Analysis">GitHub source repository ↗</a></div>
+</details>
+</div></div>
+<section class="guide-coda"><strong>What belongs on the main navigation?</strong><p>Home is our front door. Report is the primary engineering document. <strong>More is this explanation and the supporting workshop.</strong> The workshop can keep growing without making the Report harder to read.</p><a href="#guide-top">Back to start ↑</a></section>
+</main><footer class="site-footer"><div class="wrap footer-inner"><span>JP Structural Analysis · OpenSees primary · Not an engineering approval</span><span id="build">Source snapshot · public explanation</span></div></footer><script src="app.js" defer></script></body></html>

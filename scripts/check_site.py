@@ -261,7 +261,7 @@ def main():
         if not p.is_file():problems.append("Missing "+page);continue
         text=p.read_text(encoding="utf-8")
         parser=Parse();parser.feed(text)
-        if parser.css!=(["styles.css","report-book.css"] if page=="report.html" else ["styles.css"]):problems.append(page+": inconsistent stylesheet")
+        if parser.css!=(["styles.css","report-book.css"] if page=="report.html" else ["styles.css","more-guide.css"] if page=="more.html" else ["styles.css"]):problems.append(page+": inconsistent stylesheet")
         if parser.scripts!=(["app.js","report-book.js","d2.js"] if page=="report.html" else ["app.js","d2.js"] if page=="calculation-coverage.html" else ["app.js","project-ledger.js","gate08.js","gate09.js","gate10.js","gate11.js","gate12.js","gate13.js","gate14.js","gate15.js","gate16.js","gate17.js","gate18.js","gate19.js","gate20.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
         if parser.mains!=1:problems.append(page+": expected one main")
         nav=text.split('<nav class="navigation" aria-label="Primary navigation">',1)
@@ -643,6 +643,16 @@ def main():
         problems.append("Report book responsive and print styles missing")
     if 'id="m09-report-case"' not in book or 'id="d2-trace"' not in book:
         problems.append("Existing section-capacity and signed-force references not preserved")
+    guide=(SITE/"more.html").read_text(encoding="utf-8")
+    for marker in ("guide-map","guide-3d","guide-run","guide-lab","guide-skills","guide-machines","guide-selftest"):
+        if f'id="{marker}"' not in guide:
+            problems.append("Missing integrated More learning chapter "+marker)
+    if guide.count('<details class="guide-check">')<10:
+        problems.append("More teach-back content lost")
+    if 'NOT SAFE IN ONE WAY SHEAR' not in guide or "825" not in guide:
+        problems.append("More guide engineering limitations changed unexpectedly")
+    if not (SITE/"more-guide.css").is_file():
+        problems.append("More guide stylesheet not shipped")
     if problems:raise SystemExit("\n".join(problems))
     print("STRUCTURAL_SITE_QA_PASS: seven pages including open real-source 3D frame analysis, source-linked de-identified project journal, SP16, M09/D2, privacy checks and shared theme")
 if __name__=="__main__":main()
