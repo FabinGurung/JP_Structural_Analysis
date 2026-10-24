@@ -264,8 +264,20 @@ def main():
         if parser.css!=(["styles.css","report-book.css"] if page=="report.html" else ["styles.css"]):problems.append(page+": inconsistent stylesheet")
         if parser.scripts!=(["app.js","report-book.js","d2.js"] if page=="report.html" else ["app.js","d2.js"] if page=="calculation-coverage.html" else ["app.js","project-ledger.js","gate08.js","gate09.js","gate10.js","gate11.js","gate12.js","gate13.js","gate14.js","gate15.js","gate16.js","gate17.js","gate18.js","gate19.js","gate20.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
         if parser.mains!=1:problems.append(page+": expected one main")
-        for target in ("index.html","project-lab.html","analysis-studio.html","g15-3d.html","calculation-coverage.html","report.html","more.html"):
-            if target not in text:problems.append(page+": missing nav target "+target)
+        nav=text.split('<nav class="navigation" aria-label="Primary navigation">',1)
+        if len(nav)!=2 or "</nav>" not in nav[1]:
+            problems.append(page+": missing primary navigation")
+        else:
+            primary=nav[1].split("</nav>",1)[0]
+            for target in ("index.html","report.html","more.html"):
+                if primary.count('href="'+target+'"')!=1:
+                    problems.append(page+": missing or duplicated primary nav target "+target)
+            for extra in ("project-lab.html","analysis-studio.html","g15-3d.html","calculation-coverage.html"):
+                if 'href="'+extra+'"' in primary:
+                    problems.append(page+": tool incorrectly appears at primary navigation level "+extra)
+        if page=="more.html":
+            for target in ("project-lab.html","analysis-studio.html","g15-3d.html","calculation-coverage.html"):
+                if 'href="'+target+'"' not in text:problems.append("More directory missing "+target)
         for url in parser.links+parser.css+parser.scripts:
             u=urlparse(url)
             if u.scheme or url.startswith("//") or url.startswith("#") or url.startswith("mailto:"):continue

@@ -29,6 +29,8 @@ def test_report_is_one_continuous_chaptered_document():
  assert "report-book.js" in s.scripts
  assert (SITE/"report-book.css").is_file()
  assert html.count('class="rb-chapter"')==7
+ assert "6 chapters + annex" in html
+ assert "2.0 General Data for Structural Analysis" in html
 
 def test_previous_report_evidence_and_navigation_retained():
  html=(SITE/"report.html").read_text()
@@ -64,3 +66,21 @@ def test_report_export_print_and_source_privacy():
  assert "Original report" in html or "original report" in html
  assert '<img src="https://drive.google.com/' not in html
  assert "source-reported" in html.lower()
+
+
+def test_original_pdf_table_of_contents_and_simplified_navigation():
+ from html.parser import HTMLParser
+ html=(SITE/"report.html").read_text()
+ parsed=Inspect();parsed.feed(html)
+ sections=["toc-1-1","toc-1-2","toc-1-3","toc-2-1","toc-2-2","toc-2-3","toc-2-4","toc-2-5","toc-2-6","toc-2-6-1","toc-2-6-2","toc-2-6-3","toc-2-6-4","toc-2-6-5","toc-2-7","toc-2-8","toc-4-1","toc-4-2","toc-4-2-1","toc-4-2-2","toc-5-1","toc-5-2","toc-5-3","toc-5-4","toc-5-5","toc-5-6","toc-5-7","toc-5-8","toc-5-9","toc-5-10","toc-5-11","toc-5-12","toc-5-13","toc-5-14","toc-6-1","toc-6-2","toc-6-3","toc-6-4","toc-6-5"]
+ assert all(i in parsed.ids for i in sections)
+ assert len(sections)==len(set(sections))
+ order=[parsed.ids.index("chapter-"+str(i).zfill(2)) for i in range(1,8)]
+ assert order==sorted(order)
+ assert 'id="report-contents"' in html and 'rb-original-toc' in html
+ assert "Original report" in html or "original report" in html
+ for p in ("index.html","report.html","more.html","project-lab.html","analysis-studio.html","g15-3d.html","calculation-coverage.html"):
+  page=(SITE/p).read_text()
+  nav=page.split('<nav class="navigation" aria-label="Primary navigation">',1)[1].split("</nav>",1)[0]
+  for expected in ("index.html","report.html","more.html"):assert 'href="'+expected+'"' in nav
+  for hidden in ("project-lab.html","g15-3d.html","analysis-studio.html","calculation-coverage.html"):assert 'href="'+hidden+'"' not in nav

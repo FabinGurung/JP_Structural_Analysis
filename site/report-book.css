@@ -31,3 +31,91 @@
 @media(max-width:950px){.rb-reader{grid-template-columns:1fr}.rb-side{position:relative;top:auto;max-height:none;overflow:visible}.rb-side nav{grid-template-columns:repeat(4,minmax(0,1fr))}.rb-side-info{display:none}}
 @media(max-width:660px){.rb-cover{min-height:520px;padding:25px 20px}.rb-cover-top,.rb-cover-bottom{font-size:9px;flex-wrap:wrap}.rb-two,.rb-download-grid{grid-template-columns:1fr}.rb-contents-rows a{grid-template-columns:28px 1fr 16px;gap:10px}.rb-contents-rows small{display:none}.rb-side nav{grid-template-columns:repeat(2,minmax(0,1fr))}.rb-chapter-header{padding:23px 18px}.rb-card{padding:15px}.rb-cover-summary{gap:10px}.rb-cover-summary div{min-width:110px}}
 @media print{body{background:white;color:black}.site-header,.site-footer,.rb-side,.rb-actionbar,.rb-next,.rb-key{display:none!important}.wrap,.rb-main{width:100%;max-width:none;padding:0;margin:0}.rb-root{display:block}.rb-cover{min-height:240mm;break-after:page;background:white!important;border:0;color:black;padding:25px 0}.rb-cover *{color:black!important}.rb-cover::after{display:none}.rb-critical{border:1px solid #a44;background:white;color:black}.rb-contents{break-after:page;background:white;color:black;border:0}.rb-contents *{color:black!important}.rb-reader{display:block}.rb-chapter,.rb-card,.rb-chapter-header{background:white!important;color:black;border-color:#bbb}.rb-chapter-header *,.rb-card *{color:black!important}.rb-chapter{break-before:page;margin-top:20px}.rb-card{break-inside:avoid;margin:9px 0}.rb-deep:not([open])>section{display:block!important}.rb-deep>summary{color:black!important}thead{display:table-header-group}tr{break-inside:avoid}a{color:#184c73!important}.rb-status{border:1px solid #555;background:white!important}}
+
+/* Report Book V2 – white-paper engineering layout, independent of the old guild theme. */
+body[data-guild-route="report"]{background:#f1f3f1!important;color:#172e3d!important}
+body[data-guild-route="report"] .site-header{background:#fff!important;border-bottom:1px solid #d8e0e2;box-shadow:none!important}
+body[data-guild-route="report"] #mode-toggle{display:none!important}
+body[data-guild-route="report"] .site-header .brand,body[data-guild-route="report"] .site-header .brand strong{color:#1d3443!important}
+body[data-guild-route="report"] .site-header .brand small{color:#536c77!important}
+body[data-guild-route="report"] .site-header .navigation a{color:#385564!important}
+body[data-guild-route="report"] .site-header .navigation a[aria-current]{color:#095f70!important;border-bottom:2px solid #20758a}
+.rb-main{color:#172e3d!important;--fg:#172e3d;--muted:#526773;--surface:#fff;--surface2:#fafbfa;--line:#d9e0e3;--accent:#0b6579}
+.rb-root{gap:26px}
+.rb-cover{background:#fff!important;border:1px solid #d6dfe1!important;min-height:440px!important;border-radius:5px!important;color:#172e3d!important;box-shadow:0 10px 32px #203b4610!important}
+.rb-cover::after{display:none!important}
+.rb-cover-top,.rb-cover-bottom{color:#637780!important;border-color:#ccd7d9}
+.rb-cover-rule{background:#0b6579!important;margin-top:38px!important}
+.rb-cover h1{font-family:Georgia,"Times New Roman",serif!important;color:#172f40!important;font-size:clamp(36px,5vw,57px)!important;font-weight:700!important;letter-spacing:-.025em!important}
+.rb-cover-subtitle{color:#263f4c!important}
+.rb-cover-desc{color:#49626e!important;font-size:15px!important}
+.rb-cover-summary div{border-color:#c5d6db!important}
+.rb-cover-summary small{color:#617580!important}.rb-cover-summary strong{color:#173744!important}
+.rb-overline,.rb-section-strap{color:#0a5d6d!important}
+.rb-actionbar .btn{border-radius:5px!important;background:#fff!important;border:1px solid #c5d3d7!important;color:#14495a!important}
+.rb-actionbar .btn.primary{background:#145b6b!important;color:white!important;border-color:#145b6b!important}
+.rb-critical{background:#fff9f8!important;border:1px solid #d49c95!important;border-left:4px solid #a94038!important;color:#6f2624!important}
+.rb-critical strong{color:#762c28!important}
+.rb-key{color:#526773!important}
+.rb-contents{background:#fff!important;border-color:#d7dee1!important;border-radius:5px!important;color:#17303b!important}
+.rb-contents h2{font-family:Georgia,"Times New Roman",serif!important;color:#17303b!important}
+.rb-contents>p{color:#536a75!important}
+.rb-contents-rows{border-top:1px solid #dde5e7!important}
+.rb-contents-rows a{border-color:#e1e7e9!important;color:#203843!important}
+.rb-contents-rows a:hover{background:#f5faf9!important}
+.rb-toc-group{border-bottom:1px solid #d9e3e5}
+.rb-contents-rows a.rb-toc-primary{display:grid!important;grid-template-columns:58px 1fr 20px;gap:14px;align-items:center;padding:15px 12px!important;background:#fff;border-bottom:0!important}
+.rb-toc-primary strong{font-size:15px!important;font-weight:700!important;color:#1c3946}
+.rb-toc-index{color:#0d6474!important;font-variant-numeric:tabular-nums;font-weight:750;font-size:12px}
+.rb-toc-children{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px 12px;margin:0 15px 13px 74px}
+.rb-contents-rows a.rb-toc-sub{display:flex!important;gap:11px;align-items:baseline;padding:6px 8px!important;font-size:12px;color:#455d67!important;border:0!important;border-radius:3px}
+.rb-toc-sub span:first-child{min-width:38px}
+.rb-reader{grid-template-columns:220px minmax(0,1fr)!important;gap:20px}
+.rb-side{background:#fff!important;border-color:#dce3e4!important;border-radius:5px}
+.rb-side-head{color:#0c5d70!important}
+.rb-side-head small{color:#576c75!important}
+.rb-side nav a{color:#536a73!important}
+.rb-side nav a[aria-current],.rb-side nav a:hover{background:#eef5f5!important;color:#115c6c!important;border-left-color:#0c6070!important}
+.rb-side-info,.rb-side-info p{color:#445c68!important}
+.rb-chapter{border:1px solid #dce2e3!important;background:#fff!important;border-radius:5px!important}
+.rb-chapter-header{background:#f5f8f8!important;border-color:#dce4e6!important;color:#17303d!important;padding-top:26px!important;padding-bottom:24px!important}
+.rb-chapter-kicker,.rb-chapter-kicker span{color:#0c5f70!important}
+.rb-num{border:1px solid #9bbec7!important;background:#e9f2f2!important;color:#115766!important}
+.rb-chapter-header h2{color:#17323e!important;font-family:Georgia,"Times New Roman",serif!important;font-size:clamp(26px,3vw,35px)!important;letter-spacing:-.025em!important}
+.rb-chapter-header p{color:#526773!important;font-size:14px!important}
+.rb-status{background:#edf3f4!important;border:1px solid #b4c8ce!important;color:#365767!important}
+.rb-chapter-body{gap:16px!important;padding:clamp(20px,3vw,34px)!important}
+.rb-card{background:#fff!important;border:1px solid #dce4e6!important;border-radius:5px!important;color:#223e4d!important;padding:24px!important}
+.rb-card h3,.rb-card h4{color:#183845!important;font-family:Georgia,"Times New Roman",serif!important;font-weight:700!important}
+.rb-card p,.rb-card li,.rb-card span{color:#314b59!important;font-size:14px!important;line-height:1.7!important}
+.rb-card .rb-source,.rb-card small{color:#637a84!important;font-size:12px!important}
+.rb-card th{background:#edf3f4!important;color:#233f4e!important;border-bottom:1px solid #c6d8dc!important}
+.rb-card td{background:#fff!important;color:#274452!important;border-color:#dbe5e7!important;line-height:1.5!important}
+.rb-card tr:nth-child(even) td{background:#f9fbfa!important}
+.rb-card table{font-size:13px!important}
+.rb-equation{background:#f4f8f8!important;border-color:#d2e0e3!important}
+.rb-equation code{color:#0f5263!important;font-weight:650}
+.rb-deep{background:#f8fbfa!important;border:1px solid #c5d7dc!important;border-radius:5px!important}
+.rb-deep>summary{color:#0a5d70!important}
+.rb-deep .m09-codex,.rb-deep .m09-hold,.rb-deep .m09-view{color:#243e49!important;background:#fff!important;border-color:#d7e2e5!important}
+.rb-deep .section-title h2,.rb-deep h3{color:#173e4a!important}
+.rb-deep p,.rb-deep small{color:#3c5665!important}
+.rb-metric{background:#f6faf9!important;border-color:#d3e1e2!important;border-radius:4px!important}
+.rb-metric small{color:#546e79!important}.rb-metric strong{color:#173743!important}
+.rb-danger{background:#fff4f3!important;border:1px solid #dcaaa5!important;border-left:4px solid #bd4b41!important;color:#782b27!important}
+.rb-danger p{color:#75322f!important}
+.rb-download-grid a{background:#f8fbfb!important;border:1px solid #cbdfe1!important;color:#164e61!important}
+.rb-download-grid a strong{color:#155568!important}
+.rb-download-grid a small{color:#5c737d!important}
+.rb-error{color:#9e292a!important}
+.rb-editorial-note{margin:0;padding:12px 15px;background:#eaf3f4;color:#294956;border-left:3px solid #0b6677;font-size:13px}
+.rb-method-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:15px 0}
+.rb-method-steps span{background:#f0f6f5;border:1px solid #d4e2e3;padding:12px;border-radius:4px;font-size:12px;color:#255063}
+.rb-method-label{font-size:12px;font-weight:800;letter-spacing:.1em;color:#0d5e70;padding-top:22px;border-top:1px solid #d4e0e3}
+.rb-subnumber{color:#0b6475!important;font-weight:800}
+.rb-anchor, .rb-card[id^="toc-"], .rb-card tr[id^="toc-"]{scroll-margin-top:85px}
+.rb-next a{color:#0b6475!important}
+.rb-loading{color:#61757e!important}
+@media(max-width:950px){.rb-reader{grid-template-columns:1fr!important}.rb-side{position:static!important;max-height:none!important}.rb-side nav{grid-template-columns:repeat(2,minmax(0,1fr))}.rb-toc-children{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.rb-cover{min-height:400px!important;padding:23px!important}.rb-cover h1{font-size:38px!important}.rb-toc-children{margin-left:26px;grid-template-columns:1fr}.rb-contents-rows a.rb-toc-primary{grid-template-columns:35px 1fr 15px}.rb-card{padding:17px!important}.rb-chapter-header{padding:21px!important}.rb-method-steps{grid-template-columns:1fr 1fr}.rb-side nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media print{body[data-guild-route="report"]{background:white!important}.rb-cover{box-shadow:none!important;border:0!important;min-height:245mm!important}.rb-chapter-header,.rb-chapter,.rb-card{background:white!important;color:#111!important}.rb-toc-children{grid-template-columns:repeat(2,minmax(0,1fr))}.rb-deep{background:white!important}}
