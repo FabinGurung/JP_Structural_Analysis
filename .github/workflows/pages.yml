@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 5779a1fffdf4694900faaeadaba3ac8ad3e9e33f
+          ref: 78391fab10393b64d2f1adaf3882334ff8e593cc
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -130,6 +130,22 @@ jobs:
           assert "825" in h and "18" in h and "816" in h
           assert (Path("site")/"more-guide.css").is_file()
           print("MORE_GUIDE_SELF_CONTAINED_6_LESSONS_QA_PASS")
+          PY
+      - name: Enforce original report chapter ordering and More R&D source preservation
+        run: |
+          python -m pytest -q tests/test_g15_report_book.py tests/test_more_learning_guide.py
+          python - <<'PY'
+          from pathlib import Path
+          report=Path("site/report.html").read_text()
+          more=Path("site/more.html").read_text()
+          mids=("gate05-report","gate06-report","m09-report-case","d2-trace","gate21-report-engine")
+          for mid in mids:
+              assert ('id="'+mid+'"') not in report
+              assert more.count('id="'+mid+'"')==1
+          assert 'id="chapter-01-input-check"' in report
+          assert 'id="guide-opensees-engine"' in more
+          assert "NOT SAFE IN ONE WAY SHEAR" in report and "NOT SAFE IN ONE WAY SHEAR" in more
+          print("REPORT_SOURCE_SEQUENCE_AND_PRESERVATION_PASS")
           PY
       - name: Validate current report-first coverage and site navigation
         run: |
