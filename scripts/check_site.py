@@ -597,6 +597,26 @@ def main():
             assert "g15-gate20-crosswalk.v0.1.json" in (SITE/"gate20.js").read_text()
         except (KeyError,AssertionError,ValueError,TypeError,OSError) as ex:
             problems.append("Gate20 engineering evidence safety violation: "+str(ex))
+    g21=SITE/"reports/g15-gate21-report.v0.1.json"
+    if not g21.is_file():
+        problems.append("Gate21 actual OpenSees numerical report missing")
+    else:
+        try:
+            import json,hashlib
+            d=json.loads(g21.read_text())
+            m=json.loads((SITE/"reports/g15-gate21-manifest.json").read_text())
+            assert d["schema"]=="jp.structural.g15.gate21.open_reproducible_sar.v0.1"
+            assert d["case_count"]==5 and d["signed_end_action_count"]==825
+            assert d["counts"]["members"]==165
+            assert d["F3_verdict"]=="NOT SAFE IN ONE WAY SHEAR" and d["engineering_approval"] is False
+            assert not d["model_ETABS_source_verified"] and not d["p_delta_performed"]
+            assert all(x["force_residual_kN"]<.001 and x["moment_residual_kNm"]<.001 for x in d["cases"])
+            for name,item in m["files"].items():
+                assert hashlib.sha256((SITE/"reports"/name).read_bytes()).hexdigest()==item["sha256"]
+            assert 'id="gate21-report-engine"' in (SITE/"report.html").read_text()
+            assert 'id="lab-gate21"' in (SITE/"project-lab.html").read_text()
+        except (KeyError,AssertionError,ValueError,TypeError,OSError) as ex:
+            problems.append("Gate21 real source-cited report validation failed: "+str(ex))
     if problems:raise SystemExit("\n".join(problems))
     print("STRUCTURAL_SITE_QA_PASS: seven pages including open real-source 3D frame analysis, source-linked de-identified project journal, SP16, M09/D2, privacy checks and shared theme")
 if __name__=="__main__":main()
