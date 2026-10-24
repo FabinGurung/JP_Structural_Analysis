@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 5d434155967c629f558e23f350ec6d16784979ab
+          ref: 5779a1fffdf4694900faaeadaba3ac8ad3e9e33f
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -117,6 +117,19 @@ jobs:
           for target in ("index.html","report.html","more.html"):
               assert f'href="{target}"' in t
           print("SOURCE_TOC_SIX_CHAPTER_ANNEX_READBACK_PASS")
+          PY
+      - name: Verify More illustrated education guide and complete public workflow explanations
+        run: |
+          python -m pytest -q tests/test_more_learning_guide.py
+          python - <<'PY'
+          from pathlib import Path
+          h=Path("site/more.html").read_text(encoding="utf-8")
+          assert h.count('<details class="guide-check">')>=10
+          assert all(f'id="guide-{x}"' in h for x in ("map","3d","run","lab","skills","machines","selftest"))
+          assert "NOT SAFE IN ONE WAY SHEAR" in h
+          assert "825" in h and "18" in h and "816" in h
+          assert (Path("site")/"more-guide.css").is_file()
+          print("MORE_GUIDE_SELF_CONTAINED_6_LESSONS_QA_PASS")
           PY
       - name: Validate current report-first coverage and site navigation
         run: |
