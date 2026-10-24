@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: c62a11fa60bb97ae81e9a59b56ed106918ac5e25
+          ref: 5d434155967c629f558e23f350ec6d16784979ab
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -104,6 +104,20 @@ jobs:
         run: |
           python -m pytest -q tests/test_g15_report_book.py
           node --check site/report-book.js
+      - name: Validate original report TOC and light primary navigation
+        run: |
+          python -m pytest -q tests/test_g15_report_book.py
+          node --check site/report-book.js
+          python - <<'PY'
+          from pathlib import Path
+          t=Path("site/report.html").read_text()
+          assert "rb-original-toc" in t and "2.0 General Data for Structural Analysis" in t
+          assert t.count('class="rb-chapter"')==7
+          assert 'NOT SAFE IN ONE WAY SHEAR' in t
+          for target in ("index.html","report.html","more.html"):
+              assert f'href="{target}"' in t
+          print("SOURCE_TOC_SIX_CHAPTER_ANNEX_READBACK_PASS")
+          PY
       - name: Validate current report-first coverage and site navigation
         run: |
           python scripts/build_calculation_coverage.py --check
