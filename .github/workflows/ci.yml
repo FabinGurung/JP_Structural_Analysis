@@ -234,6 +234,11 @@ jobs:
           python scripts/publish_fem_learning_registry.py --output-dir site/data
           node --check site/fem-triad.js
           python -m pytest -q tests/test_fem_learning_cantilever.py tests/test_fem_learning_view.py
+      - name: Verify original Chapter2 materials, steel, cover, standards and alternative weights
+        run: |
+          python scripts/build_g15_chapter02_source_audit.py --output site/data/g15-chapter02-source-audit.v0.1.json
+          python -m pytest -q tests/test_g15_chapter02_source.py
+          node --check site/chapter02-audit.js
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check

@@ -262,7 +262,7 @@ def main():
         text=p.read_text(encoding="utf-8")
         parser=Parse();parser.feed(text)
         if parser.css!=(["styles.css","report-book.css"] if page=="report.html" else ["styles.css","more-guide.css"] if page=="more.html" else ["styles.css"]):problems.append(page+": inconsistent stylesheet")
-        if parser.scripts!=(["app.js","report-book.js"] if page=="report.html" else ["app.js","d2.js","fem-triad.js"] if page=="more.html" else ["app.js","d2.js"] if page=="calculation-coverage.html" else ["app.js","project-ledger.js","gate08.js","gate09.js","gate10.js","gate11.js","gate12.js","gate13.js","gate14.js","gate15.js","gate16.js","gate17.js","gate18.js","gate19.js","gate20.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
+        if parser.scripts!=(["app.js","report-book.js","chapter02-audit.js"] if page=="report.html" else ["app.js","d2.js","fem-triad.js"] if page=="more.html" else ["app.js","d2.js"] if page=="calculation-coverage.html" else ["app.js","project-ledger.js","gate08.js","gate09.js","gate10.js","gate11.js","gate12.js","gate13.js","gate14.js","gate15.js","gate16.js","gate17.js","gate18.js","gate19.js","gate20.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
         if parser.mains!=1:problems.append(page+": expected one main")
         nav=text.split('<nav class="navigation" aria-label="Primary navigation">',1)
         if len(nav)!=2 or "</nav>" not in nav[1]:
@@ -675,6 +675,23 @@ def main():
         if not (SITE/"data"/file).is_file():problems.append("Missing real FEM/code projection "+file)
     if 'id="chapter-02-input-provenance"' not in book:
         problems.append("Source-first supports and loads input review not linked in Chapter2")
+    ch2=SITE/"data/g15-chapter02-source-audit.v0.1.json"
+    if not ch2.is_file():
+        problems.append("Chapter02 source-checked material arithmetic output absent")
+    else:
+        try:
+            d=json.loads(ch2.read_text(encoding="utf-8"))
+            assert d["schema"]=="jp.structural.g15.chapter02.source_audit.v0.1"
+            assert d["source_record_count"]==21
+            assert d["gate_open_count"]==8 and d["gate_accepted_count"]==0
+            assert not d["engineering_approval"] and not d["actual_model_materials_verified"]
+            assert not d["actual_member_load_assignments_verified"]
+            assert d["original_F3_verdict"]=="NOT SAFE IN ONE WAY SHEAR"
+            assert len(d["illustrative_square_member_alternatives"])==6
+            assert "chapter02-audit.js" in book
+            assert all('id="c02-'+s+'"' in book for s in ("concrete","steel","cover","code","source-scenarios"))
+        except (KeyError,AssertionError,ValueError,TypeError,OSError) as ex:
+            problems.append("Chapter02 material code/density discrepancy QA failed: "+str(ex))
     if problems:raise SystemExit("\n".join(problems))
     print("STRUCTURAL_SITE_QA_PASS: seven pages including open real-source 3D frame analysis, source-linked de-identified project journal, SP16, M09/D2, privacy checks and shared theme")
 if __name__=="__main__":main()
