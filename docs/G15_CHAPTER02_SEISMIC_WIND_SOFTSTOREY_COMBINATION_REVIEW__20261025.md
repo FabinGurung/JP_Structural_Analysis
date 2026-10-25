@@ -1,0 +1,11 @@
+# Original Chapter 2.6.4–2.8 seismic, wind, soft-storey and load-combination numerical audit · 2026-10-25
+
+Authorized original: revised private 68-page PDF, Drive ID `1TpWUmOdrcQqOpkN6qvmhZ12KrYaNABBM`, SHA256 f122904444a2e2f75230d9d4e41da0093d050da25c6e8140c86d466b7e37cc52. No source bytes or personally identifying content published. Chapter2 follows §§2.6.4 seismic → 2.6.5 wind → 2.7 soft storey → 2.8 combinations.
+
+Source §2.6.4 reports H9.144m, kt .075, amplification 1.25, T .493s, shape factor2.25, Z .35, I1, R4, OmegaULS1.5, OmegaSLS1.25, and SLS spectrum multiplier .2. Native explicit-period and NBC105 bounded coefficients calculate T, unrounded ULS .13125 and SLS .126. Original ULS printed .131 gives W6831.9109×.131=894.9803279kN and printed shear894.9803kN; unrounded .13125 differs by 1.707977725 kN. Distinction remains explicit; original reported output is not secretly reinterpreted as a verified precise design coefficient.
+
+Story masses 270076.47, 274062.74, 152521.81 have NO PRINTED UNIT. CONDITIONAL kg×9.80665/1000 yields approx W6831.9108kN, matching printed total only arithmetically. Heights 3.048,6.096,9.144m are source-derived working elevations; NBC105 floor forces are arithmetically balanced but not admitted as original ETABS load patterns or actual diaphragm/mass distribution. Original eccentricity .05 noted but NOT applied in this scalar floor-force audit.
+
+Source §2.6.5 asserts wind is not governing, but no actual wind action comparison was supplied: HOLD. Original §2.7 states no soft storey, without independently authenticated per-storey stiffness: HOLD. §2.8 presents 1.2DL+1.5LL, 1.2DL+.5LL+S, DL+lambdaLL±E, .9DL±E. Existing source-code `load_combinations.py` exercised with clearly synthetic numerical test input DL100 LL50 Ex20 Ey10 only; not the actual signed result envelopes. Do not claim complete governing combinations or RC design.
+
+Open tasks 6, zero accepted, original 15 Gate20 source-to-model holds unchanged, source F3 **NOT SAFE IN ONE WAY SHEAR**. All current work is numerical source checking, not a signed engineering approval. Next Chapter3 method and Chapter4 authenticated geometry/loads remain external-source gated. Source references and original code registries are preserved.

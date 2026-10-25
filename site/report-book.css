@@ -141,3 +141,11 @@ body[data-guild-route="report"] .site-header .navigation a[aria-current]{color:#
 .rb-chapter .c02-metric small{display:block;color:#536f79;margin-top:4px}
 .rb-chapter .c02-alert{background:#fff5f3;border:1px solid #deada7;padding:10px 13px;color:#803d35;font-size:13px}
 @media(max-width:600px){.rb-chapter #c02-calculated-modulus{grid-template-columns:1fr}}
+
+/* Ch2 original-order conditional earthquake, wind, soft-storey and combination source screens. */
+.rb-chapter .rb-chapter02-check{border-left:3px solid #aac6cc!important}
+.rb-chapter .rb-chapter02-check h4{font-family:Georgia,"Times New Roman",serif;color:#244c5b;margin-top:8px}
+.rb-chapter .rb-chapter02-check .rb-table-wrap{overflow:auto;margin:13px 0}
+.rb-chapter .rb-chapter02-check th{font-weight:700}
+.rb-chapter .rb-source-status{background:#f8f2ef;border-left:4px solid #a66c4e;color:#724a35;font-size:13px;padding:12px 15px;border-radius:4px}
+.rb-chapter .rb-chapter02-check .rb-c02-danger{color:#833b33;font-weight:750}

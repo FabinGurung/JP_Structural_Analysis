@@ -708,6 +708,28 @@ def main():
             assert 'id="c02-wall-audit"' in book
         except (KeyError,AssertionError,ValueError,TypeError,OSError) as e:
             problems.append("Chapter02 source load unresolved scope QA failed: "+str(e))
+    ch2seis=SITE/"data/g15-chapter02-seismic-audit.v0.1.json"
+    if not ch2seis.is_file():
+        problems.append("Chapter02 original seismic/wind/combination audit missing")
+    else:
+        try:
+            d=json.loads(ch2seis.read_text(encoding="utf-8"))
+            assert d["schema"]=="jp.structural.g15.chapter02.seismic_wind_combinations_audit.v0.1"
+            assert d["physical_evidence_accepted"] is False and d["engineering_approval"] is False
+            assert d["source_mass_reconciled"] is False
+            assert d["source_f3_verdict"]=="NOT SAFE IN ONE WAY SHEAR"
+            assert d["source_summary"]["source_ULS_coefficient_printed"]==.131
+            assert d["source_summary"]["formula_ULS_coefficient_unrounded"]==.13125
+            assert d["wind_screen"]["wind_dominance_proven"] is False
+            assert d["soft_storey_screen"]["actual_story_stiffnesses_verified"] is False
+            assert len(d["source_conditional_floor_weights_and_forces"])==3
+            assert 'id="c02-seismic-source"' in book
+            assert 'id="c02-wind-evidence"' in book
+            assert 'id="c02-soft-evidence"' in book
+            assert 'id="c02-combo-evidence"' in book
+            assert "chapter02-seismic.js" in book
+        except (KeyError,AssertionError,ValueError,TypeError,OSError) as e:
+            problems.append("Chapter02 seismic source/engineering hold QA failed: "+str(e))
     if problems:raise SystemExit("\n".join(problems))
     print("STRUCTURAL_SITE_QA_PASS: seven pages including open real-source 3D frame analysis, source-linked de-identified project journal, SP16, M09/D2, privacy checks and shared theme")
 if __name__=="__main__":main()

@@ -244,6 +244,11 @@ jobs:
           python scripts/build_g15_chapter02_load_review.py --output site/data/g15-chapter02-load-review.v0.1.json
           python -m pytest -q tests/test_g15_chapter02_load_review.py
           node --check site/chapter02-audit.js
+      - name: Audit original Chapter 2.6.4 to 2.8 seismic wind soft storey and signed-case readiness
+        run: |
+          python scripts/build_g15_chapter02_seismic_audit.py --output site/data/g15-chapter02-seismic-audit.v0.1.json
+          python -m pytest -q tests/test_g15_chapter02_seismic_audit.py
+          node --check site/chapter02-seismic.js
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
