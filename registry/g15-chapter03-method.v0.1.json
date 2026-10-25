@@ -1,0 +1,255 @@
+{
+  "schema": "jp.structural.g15.chapter03.procedure_source.v0.1",
+  "original": {
+    "title": "new nbc2025 report REVISED(1).pdf",
+    "drive_id": "1TpWUmOdrcQqOpkN6qvmhZ12KrYaNABBM",
+    "sha256": "f122904444a2e2f75230d9d4e41da0093d050da25c6e8140c86d466b7e37cc52",
+    "section": "3.0 ANALYSIS AND DESIGN PROCEDURE",
+    "physical_pdf_page": 21,
+    "extraction_policy": "DEIDENTIFIED_SOURCE_FACTS_AND_QUOTED_TECHNICAL_TERMS_ONLY"
+  },
+  "original_programs": [
+    {
+      "function": "Space-frame analysis and beam/column design",
+      "program": "ETABS v20.0.0",
+      "source_text_status": "ORIGINAL_REPORTED_NOT_AUTHENTICATED"
+    },
+    {
+      "function": "Foundation analysis and design",
+      "program": "SAFE 2016",
+      "source_text_status": "ORIGINAL_REPORTED_NOT_AUTHENTICATED"
+    },
+    {
+      "function": "Floor slab design",
+      "program": "Excel worksheets",
+      "source_text_status": "ORIGINAL_REPORTED_NOT_AUTHENTICATED"
+    },
+    {
+      "function": "Staircase design",
+      "program": "Excel worksheets",
+      "source_text_status": "ORIGINAL_REPORTED_NOT_AUTHENTICATED"
+    }
+  ],
+  "original_code_notes": [
+    {
+      "printed": "NBC 150:2025",
+      "status": "SOURCE_CITATION_REQUIRES_VERIFICATION",
+      "detail": "Original §3.0 analysis narrative; do not silently replace with NBC 105:2025"
+    },
+    {
+      "printed": "IS 456:2000",
+      "status": "SOURCE_REPORTED_NOT_PROJECT_APPROVED",
+      "detail": "Original §3.0 plain and reinforced concrete limit-state design"
+    },
+    {
+      "printed": "IS456:2000+1392:2016",
+      "status": "SOURCE_TYPO_OR_EDITION_REQUIRES_VERIFICATION",
+      "detail": "Original §3.0 as printed; do not pretend it proves IS 13920 edition or application"
+    }
+  ],
+  "original_member_schedule": [
+    {
+      "member": "Column",
+      "reported_size": "400×400 mm",
+      "concrete": "M20",
+      "source_status": "REPORTED_NOT_ACTUAL_OBJECT_ASSIGNED"
+    },
+    {
+      "member": "Main Beam A",
+      "reported_size": "300\"X400 (as extracted, unit typo unresolved)",
+      "concrete": "M20",
+      "source_status": "SOURCE_STRING_UNIT_CONFLICT"
+    },
+    {
+      "member": "Main Beam B",
+      "reported_size": "230×400 mm",
+      "concrete": "M20",
+      "source_status": "REPORTED_NOT_ACTUAL_OBJECT_ASSIGNED"
+    },
+    {
+      "member": "Main Beam C",
+      "reported_size": "230×355 mm",
+      "concrete": "M20",
+      "source_status": "REPORTED_NOT_ACTUAL_OBJECT_ASSIGNED"
+    },
+    {
+      "member": "Secondary Beam",
+      "reported_size": "230×300 mm",
+      "concrete": "M20",
+      "source_status": "REPORTED_NOT_ACTUAL_OBJECT_ASSIGNED"
+    },
+    {
+      "member": "Floor Slab",
+      "reported_size": "120 mm",
+      "concrete": "M20",
+      "source_status": "REPORTED_NOT_ACTUAL_OBJECT_ASSIGNED"
+    },
+    {
+      "member": "Staircase Waist Slab",
+      "reported_size": "150 mm",
+      "concrete": "M20",
+      "source_status": "REPORTED_NOT_ACTUAL_OBJECT_ASSIGNED"
+    },
+    {
+      "member": "Isolated Footing",
+      "reported_size": "dimensions not enumerated in §3.0",
+      "concrete": "M20",
+      "source_status": "FOOTING_F3_EXPLICIT_UNSAFE"
+    }
+  ],
+  "source_soil": {
+    "reported_SBC_kPa": 160,
+    "reported_settlement_mm": 25,
+    "geotechnical_report_authenticated": false,
+    "foundation_F3_status": "NOT SAFE IN ONE WAY SHEAR"
+  },
+  "methodology": [
+    {
+      "id": "M01",
+      "title": "Authenticate source drawings, floor-use and building identity",
+      "reported": "Original report relies on architectural/structural description",
+      "engine": "Source ledger, Gate20 custody crosswalk",
+      "source_code": [
+        "scripts/check_g15_chapter01_source.py",
+        "scripts/build_g15_gate20_crosswalk.py"
+      ],
+      "state": "EVIDENCE_HOLD",
+      "acceptance": "Owner/authenticated plans, geometry and actual native object identity"
+    },
+    {
+      "id": "M02",
+      "title": "Establish materials, section IDs and code versions",
+      "reported": "Original §3.0 M20 and member-size schedule; §2.1–2.4 grades and codes",
+      "engine": "Source-checked material arithmetic and member sensitivity",
+      "source_code": [
+        "scripts/build_g15_chapter02_source_audit.py"
+      ],
+      "state": "AUDITED_NOT_PHYSICALLY_ACCEPTED",
+      "acceptance": "Resolve M20 E and unit-weight conflicts, Fe500 modulus, sections and code editions"
+    },
+    {
+      "id": "M03",
+      "title": "Identify ground restraints and support stiffness",
+      "reported": "Original source model does not expose authenticated base restraint assignment",
+      "engine": "Provisional base restraints inside OpenSees model",
+      "source_code": [
+        "scripts/run_g15_open_3d.py"
+      ],
+      "state": "ASSUMED_MODEL",
+      "acceptance": "Foundation and connection drawings + soil/stiffness/boundary condition evidence"
+    },
+    {
+      "id": "M04",
+      "title": "Assign dead, imposed and other spatial loads",
+      "reported": "Source §2.6 defines rates; §4.2 screenshots do not provide full native assignments",
+      "engine": "Source wall/live rates audited; trial gravity model uses conditional storey seismic weights distributed equally to top column nodes",
+      "source_code": [
+        "scripts/build_g15_chapter02_load_review.py",
+        "scripts/build_g15_gate21_report.py"
+      ],
+      "state": "CONDITIONAL_NOT_SOURCE_MAPPED",
+      "acceptance": "Complete slab polygon, wall line, floor occupancy, element target, load pattern and mass-source mapping"
+    },
+    {
+      "id": "M05",
+      "title": "Compute source-conditional earthquake floor forces",
+      "reported": "Original §2.6.4 equivalent static method NBC 105:2025 (with 2020/2025 mixed source citations)",
+      "engine": "Bounded Python equivalent-static numerical algorithm",
+      "source_code": [
+        "src/jp_structural/solvers/native/nbc105_2025_esm.py",
+        "scripts/build_g15_chapter02_seismic_audit.py"
+      ],
+      "state": "ARITHMETIC_EXECUTED_INPUTS_UNVERIFIED",
+      "acceptance": "Location, hazard, mass, response spectrum, period, diaphragm and eccentricity independently verified"
+    },
+    {
+      "id": "M06",
+      "title": "Assemble and solve elastic 3D finite-element model",
+      "reported": "Source reports ETABS v20.0.0 3D space frame",
+      "engine": "OpenSeesPy 6-DOF/nodal elasticBeamColumn with five signed static cases",
+      "source_code": [
+        "scripts/run_g15_open_3d.py",
+        "scripts/build_g15_gate21_report.py"
+      ],
+      "state": "SOLVED_PROVISIONAL_GEOMETRY",
+      "acceptance": "Actual member connectivity, diaphragm, supports and stiffness accepted; nonlinear/dynamic cases separately"
+    },
+    {
+      "id": "M07",
+      "title": "Check equilibrium and collect signed member actions",
+      "reported": "Original Chapter 5 shear, axial, bending and reaction output presentation",
+      "engine": "Actual OpenSees nodeReaction/element localForce with 12 components and force/moment balance",
+      "source_code": [
+        "scripts/run_g15_open_3d.py",
+        "scripts/build_g15_gate21_report.py"
+      ],
+      "state": "NUMERICALLY_VERIFIED_PROVISIONAL_MODEL",
+      "acceptance": "Independent verified mesh/model and concurrent signed ULS/SLS design cases"
+    },
+    {
+      "id": "M08",
+      "title": "Run modes, response spectrum, drift and irregularities",
+      "reported": "Source claims linear static + response-spectrum procedures and checks",
+      "engine": "Various bounded educational kernels exist; not executed as accepted full-building modal/spectral/drift workflow",
+      "source_code": [
+        "src/jp_structural/solvers/native/nbc105_2025_esm.py"
+      ],
+      "state": "UNFINISHED_PROJECT_ANALYSIS",
+      "acceptance": "Verified source mass, response spectrum, floor diaphragms, effective stiffness and irregularity evidence"
+    },
+    {
+      "id": "M09",
+      "title": "Generate signed design load combinations",
+      "reported": "Source §2.8 and §3.0 says governing combination controls member design",
+      "engine": "Native combination enumerator and synthetic tests; no signed actual project envelope",
+      "source_code": [
+        "src/jp_structural/solvers/native/load_combinations.py"
+      ],
+      "state": "KERNEL_ONLY_REAL_DEMAND_HOLD",
+      "acceptance": "Independent concurrent element-level DL, LL, EQ and wind cases with verified code basis"
+    },
+    {
+      "id": "M10",
+      "title": "Design RC beams and columns",
+      "reported": "Original uses ETABS + IS456 and a printed seismic detailing reference",
+      "engine": "Bounded separate RC section kernels and synthetic interaction demos; no complete real-member design",
+      "source_code": [
+        "src/jp_structural/solvers/native/rc_report_kernels.py"
+      ],
+      "state": "KERNEL_ONLY_REAL_REBAR_HOLD",
+      "acceptance": "Member geometry, P/M/V/T combinations, ductile detailing, bar layout and signed independent check"
+    },
+    {
+      "id": "M11",
+      "title": "Design slabs, foundations and stairs",
+      "reported": "Original SAFE 2016 for foundations and Excel for slabs/stairs",
+      "engine": "Bounded source footing/slab arithmetic and shell studies; no accepted project slab/stair/foundation design",
+      "source_code": [
+        "scripts/reconcile_f3_source.py",
+        "scripts/build_g15_gate18_mass_f3.py"
+      ],
+      "state": "INCOMPLETE_F3_UNSAFE",
+      "acceptance": "Verified loads, soil parameters, foundation geometry, shear, punching, settlement and source F3 correction"
+    },
+    {
+      "id": "M12",
+      "title": "Publish report, calculations and machine audit trail",
+      "reported": "Original issued PDF report with tables and design schedules",
+      "engine": "GitHub Actions builds chaptered HTML/Markdown, JSON, signed CSV and SHA256 manifest",
+      "source_code": [
+        "scripts/build_g15_gate21_report.py"
+      ],
+      "state": "REPORT_AUTOMATION_EXECUTED_NOT_ENGINEERING_APPROVED",
+      "acceptance": "All upstream engineering gates plus appropriate signed professional review"
+    }
+  ],
+  "acceptance_policy": {
+    "original_report_is_a_reported_source_not_native_etabs_model": true,
+    "retain_source_code_typos": true,
+    "all_input_assumptions_must_be_explicit": true,
+    "never_force_opensees_to_match_etabs": true,
+    "engineering_approval": false,
+    "physical_source_accepted": false,
+    "F3": "NOT SAFE IN ONE WAY SHEAR"
+  }
+}
