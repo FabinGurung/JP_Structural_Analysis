@@ -660,7 +660,7 @@ def main():
     if not (SITE/"more-guide.css").is_file():
         problems.append("More guide stylesheet not shipped")
     try:
-        from scripts.check_g15_chapter01_source import check as check_ch1
+        from check_g15_chapter01_source import check as check_ch1
         check_ch1()
     except (AssertionError,KeyError,ValueError,TypeError,OSError) as ex:
         problems.append("Chapter01 source-evidence and safety gate failed: "+str(ex))
