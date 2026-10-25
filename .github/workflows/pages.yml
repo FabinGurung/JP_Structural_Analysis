@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 338f1ed2c808073a613188f43d9424195cea4488
+          ref: 3f673c07e8f3e26de87a07572a64f8135efa18f4
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -160,6 +160,24 @@ jobs:
           assert a["engineering_approval"] is False
           assert a["source_F3_one_way_shear"]=="NOT SAFE IN ONE WAY SHEAR"
           print("SOURCE_VERIFIED_CHAPTER1_NARRATIVE_NOT_A_PHYSICAL_ENGINEERING_APPROVAL")
+          PY
+      - name: Publish real OpenSees and ETABS style learning data into Pages
+        run: |
+          python scripts/build_fem_learning_cantilever.py --output site/data/opensees-cantilever-learning.v0.1.json
+          python scripts/publish_fem_learning_registry.py --output-dir site/data
+          python -m pytest -q tests/test_fem_learning_cantilever.py tests/test_fem_learning_view.py
+          node --check site/fem-triad.js
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          s=Path("site/data")
+          d=json.loads((s/"opensees-cantilever-learning.v0.1.json").read_text())
+          assert len(d["cases"])==4
+          assert d["project_model_used"] is False and d["engineering_approval"] is False
+          assert d["nepal_design_compliance"]=="NOT_EVALUATED"
+          assert "id=\"guide-fem-triad\"" in Path("site/more.html").read_text()
+          assert "id=\"chapter-02-input-provenance\"" in Path("site/report.html").read_text()
+          print("THREE_SVG_OPEN_SEES_HAND_PROOF_AND_NBC_SCOPE_PROJECTION_PASS")
           PY
       - name: Validate current report-first coverage and site navigation
         run: |
