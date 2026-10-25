@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 78391fab10393b64d2f1adaf3882334ff8e593cc
+          ref: 338f1ed2c808073a613188f43d9424195cea4488
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -146,6 +146,20 @@ jobs:
           assert 'id="guide-opensees-engine"' in more
           assert "NOT SAFE IN ONE WAY SHEAR" in report and "NOT SAFE IN ONE WAY SHEAR" in more
           print("REPORT_SOURCE_SEQUENCE_AND_PRESERVATION_PASS")
+          PY
+      - name: Validate Chapter01 provenance and unresolved original-source engineering holds
+        run: |
+          python scripts/check_g15_chapter01_source.py
+          python -m pytest -q tests/test_g15_chapter01_source.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path("site/data/g15-chapter01-source-review.v0.1.json").read_text())
+          a=x["acceptance"]
+          assert a["open_obligations"]==7 and a["accepted_obligations"]==0
+          assert a["engineering_approval"] is False
+          assert a["source_F3_one_way_shear"]=="NOT SAFE IN ONE WAY SHEAR"
+          print("SOURCE_VERIFIED_CHAPTER1_NARRATIVE_NOT_A_PHYSICAL_ENGINEERING_APPROVAL")
           PY
       - name: Validate current report-first coverage and site navigation
         run: |
