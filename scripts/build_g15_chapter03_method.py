@@ -5,10 +5,11 @@ Reuses the actual Gate21 OpenSees calculation, checks numerical equilibrium,
 and keeps every real-building engineering acceptance gate CLOSED/ON HOLD.
 """
 from __future__ import annotations
-import argparse,json,math,hashlib
+import argparse,json,math,hashlib,sys
 from pathlib import Path
-from scripts.build_g15_gate21_report import calculate,PDF_SHA
 ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT))
+from scripts.build_g15_gate21_report import calculate,PDF_SHA
 REG=ROOT/"registry/g15-chapter03-method.v0.1.json"
 SCHEMA="jp.structural.g15.chapter03.method_execution.v0.1"
 
