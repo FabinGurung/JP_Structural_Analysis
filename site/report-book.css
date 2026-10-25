@@ -119,3 +119,13 @@ body[data-guild-route="report"] .site-header .navigation a[aria-current]{color:#
 @media(max-width:950px){.rb-reader{grid-template-columns:1fr!important}.rb-side{position:static!important;max-height:none!important}.rb-side nav{grid-template-columns:repeat(2,minmax(0,1fr))}.rb-toc-children{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){.rb-cover{min-height:400px!important;padding:23px!important}.rb-cover h1{font-size:38px!important}.rb-toc-children{margin-left:26px;grid-template-columns:1fr}.rb-contents-rows a.rb-toc-primary{grid-template-columns:35px 1fr 15px}.rb-card{padding:17px!important}.rb-chapter-header{padding:21px!important}.rb-method-steps{grid-template-columns:1fr 1fr}.rb-side nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media print{body[data-guild-route="report"]{background:white!important}.rb-cover{box-shadow:none!important;border:0!important;min-height:245mm!important}.rb-chapter-header,.rb-chapter,.rb-card{background:white!important;color:#111!important}.rb-toc-children{grid-template-columns:repeat(2,minmax(0,1fr))}.rb-deep{background:white!important}}
+
+/* Chapter 1 source-grounded learning and professional readable input review */
+.rb-chapter #c01-executive h4,.rb-chapter #c01-modelling h4,.rb-chapter #c01-structure h4{font-family:Georgia,"Times New Roman",serif;color:#173e4a;margin:23px 0 11px;font-size:17px}
+.rb-chapter #c01-executive strong,.rb-chapter #c01-modelling strong,.rb-chapter #c01-structure strong{color:#183a4c}
+.rb-chapter #chapter-01-input-check{border-left:4px solid #0f7180!important}
+.rb-chapter .rb-loadpath{display:flex;flex-direction:column;align-items:center;gap:8px;margin:17px 0;border:1px solid #d6e5e6;padding:15px;background:#f6faf9;border-radius:5px}
+.rb-chapter .rb-loadpath span:not([aria-hidden]){background:#fff;border:1px solid #c8dcdf;padding:12px;width:min(100%,500px);color:#1e4b5d;font-weight:750;text-align:center;border-radius:4px}
+.rb-chapter .rb-loadpath small{display:block;font-weight:400;color:#547480;margin-top:4px;line-height:1.5}
+.rb-chapter .rb-loadpath span[aria-hidden]{color:#0e6b7b;font-size:19px}
+.rb-chapter #chapter-01-gates td:last-child{font-weight:800;color:#9b4738}

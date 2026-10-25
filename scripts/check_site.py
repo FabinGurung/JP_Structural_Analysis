@@ -659,6 +659,11 @@ def main():
         problems.append("More guide engineering limitations changed unexpectedly")
     if not (SITE/"more-guide.css").is_file():
         problems.append("More guide stylesheet not shipped")
+    try:
+        from scripts.check_g15_chapter01_source import check as check_ch1
+        check_ch1()
+    except (AssertionError,KeyError,ValueError,TypeError,OSError) as ex:
+        problems.append("Chapter01 source-evidence and safety gate failed: "+str(ex))
     if problems:raise SystemExit("\n".join(problems))
     print("STRUCTURAL_SITE_QA_PASS: seven pages including open real-source 3D frame analysis, source-linked de-identified project journal, SP16, M09/D2, privacy checks and shared theme")
 if __name__=="__main__":main()

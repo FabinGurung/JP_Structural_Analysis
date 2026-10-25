@@ -26,22 +26,67 @@
 </aside>
 <div class="rb-reader-body">
 <article class="rb-chapter" id="chapter-01" data-chapter="01" tabindex="-1">
-<header class="rb-chapter-header"><div class="rb-chapter-kicker"><span class="rb-num">01</span><span>CHAPTER 01 · INTRODUCTION</span></div><h2>1.0 Introduction</h2><p>Report front matter appears first even though final conclusions depend on the design calculations.</p><span class="rb-status">Document shell ready · Engineering approval withheld</span></header>
+<header class="rb-chapter-header"><div class="rb-chapter-kicker"><span class="rb-num">01</span><span>CHAPTER 01 · INTRODUCTION</span></div><h2>1.0 Introduction</h2>
+<p>A source-indexed introduction and transparent explanation of our OpenSees replacement for the original ETABS workflow. The source statements are transcribed or paraphrased without treating them as verified measurements.</p>
+<span class="rb-status">20 source-evidence entries reviewed · 7 engineering gates open · Not approved</span></header>
 <div class="rb-chapter-body">
-<section class="rb-card rb-chapter-control" id="chapter-01-input-check"><h3>Chapter 1 · Source review before calculation</h3>
-<p><strong>Current outcome:</strong> introductory narrative drafted from the original PDF (physical pp. 4–5), but not accepted as a complete, source-verified building definition.</p>
-<div class="rb-table-wrap"><table><thead><tr><th>Original report item</th><th>What we have</th><th>Still to establish</th></tr></thead><tbody>
-<tr><td>1.1 Executive Summary</td><td>Source description and auto-read preliminary numerical summary</td><td>Validated occupancy, source model and final engineering conclusion</td></tr>
-<tr><td>1.2 Structural Modelling</td><td>OpenSees working-frame method and provenance</td><td>Actual slab, wall, beam and column assignments</td></tr>
-<tr><td>1.3 Structural System</td><td>Source states RC SMRF; trial frame computed</td><td>Signed code edition, seismic classification and material/member source verification</td></tr>
+<section class="rb-card rb-chapter-control" id="chapter-01-input-check"><h3>Chapter 1 source review — what is established, what is not?</h3>
+<p>This chapter was audited against the original <em>new nbc2025 report REVISED(1).pdf</em>, §§1.1–1.3 (printed/internal pp. 3–4). The original report is a <strong>reported source</strong>, not independently authenticated drawings, model files or geotechnical evidence.</p>
+<div class="rb-table-wrap"><table><thead><tr><th>Original subsection</th><th>Reading status</th><th>Engineering acceptance</th></tr></thead><tbody>
+<tr><td>1.1 Executive Summary</td><td>Source summary and features indexed</td><td>HOLD · occupancy, location, geometry and soil</td></tr>
+<tr><td>1.2 Structural Modelling</td><td>Original method and our OpenSees method distinguished</td><td>HOLD · native geometry, loads, dynamic modelling</td></tr>
+<tr><td>1.3 Structural System of the Building</td><td>SMRF load-path description documented</td><td>HOLD · connection, ductility and capacity checks</td></tr>
 </tbody></table></div>
-<p class="rb-source">**Our rule:** follow the source's engineering *process*, not its numerical outcomes. A different OpenSees result is acceptable only if our inputs, analysis, equilibrium and independent checks are defensible. Never force it to match an ETABS screenshot.</p></section>
-<div class="rb-two"><section class="rb-card"><h3><span class="rb-anchor" id="toc-1-1"></span><span class="rb-subnumber">1.1</span> Executive Summary</h3><p>The original document describes a G+1.5-storey reinforced-concrete framed building in Pokhara and calls the structural system a <strong>Special Moment Resisting Frame (SMRF)</strong>. The source uses ETABS v20.0.0 for modelling and describes SAFE for foundation design.</p><p class="rb-source">Original revised PDF, pp. 4–5. <em>Original-source statements, not independently validated.</em></p></section>
-<section class="rb-card"><h3>Building description and occupancy conflict</h3><p>The source calls the project residential in the executive summary, while the architectural ground-floor plan labels a commercial space and the closing text references an office building. <strong>Occupancy remains unresolved.</strong></p><p class="rb-source">Original PDF pp. 4, 9 and 68 · Gate20 G20-USE-007</p></section>
-</div>
-<section class="rb-card"><h3>Computed executive summary · populated from solver</h3><div id="rb-executive"><p class="rb-loading">Loading governed OpenSees results…</p></div><p class="rb-source">Auto-populated from the latest published Gate21 run. Numerical outputs do not establish safety for the original structure.</p></section>
-<section class="rb-card"><h3><span class="rb-anchor" id="toc-1-2"></span><span class="rb-subnumber">1.2</span> Structural Modelling · <span class="rb-anchor" id="toc-1-3"></span><span class="rb-subnumber">1.3</span> Structural System of the Building</h3><p>We retain the original building's reported grid/section information as precedent, and use an <strong>OpenSeesPy numerical reconstruction</strong>. The working frame has 23 source-derived column positions, assumed connecting beams and fixed supports. Authentic ETABS frame/area object assignments have not been recovered.</p><p>Final engineering narrative and signed design conclusion remain <strong>unpublished until source comparison and redesign checks pass</strong>.</p><div class="rb-inline-links"><a href="#chapter-04">Inspect the OpenSees method ↓</a><a href="#chapter-07">See validation status ↓</a></div></section>
-</div><div class="rb-next"><a href="#chapter-02">Continue to next chapter ↓</a></div></article>
+<p class="rb-source">Machine-readable source-review ledger: <a href="data/g15-chapter01-source-review.v0.1.json">Chapter 1 evidence and open gates (JSON)</a>. Original private PDF SHA-256: <code>f122904444a2e2f75230d9d4e41da0093d050da25c6e8140c86d466b7e37cc52</code>. No original drawings or personal contact details are embedded here.</p></section>
+<section class="rb-card" id="c01-executive"><h3><span id="toc-1-1" class="rb-anchor"></span><span class="rb-subnumber">1.1</span> Executive Summary</h3>
+<p><strong>Purpose (source):</strong> The original document presents a seismic analysis/design report for a proposed G+1.5-storey reinforced-concrete building in Pokhara, intended to support a construction-permit application. Its author reports analysis using ETABS v20.0.0. Our project retains that reporting structure but uses independently scripted OpenSees calculations; it is not a reissued permit report.</p>
+<h4>1.1.1 · Building features reported in the original</h4>
+<div class="rb-table-wrap"><table><thead><tr><th>Reported feature</th><th>Value or description</th><th>Interpretation</th></tr></thead><tbody>
+<tr><td>Location</td><td>Pokhara / Lekhnath</td><td>Original §1.1 · site identity not independently verified</td></tr>
+<tr><td>Building designation</td><td>G+1.5-storey RC frame; storey height 3.048 m; total height 9.144 m</td><td>Original §1.1 · level definitions still to reconcile</td></tr>
+<tr><td>Structural system</td><td>Special Moment Resisting Frame (SMRF)</td><td>Original §1.1 · source claim, not ductile-detailing approval</td></tr>
+<tr><td>Reported member materials</td><td>M20 concrete; Fe500 reinforcing steel</td><td>Original §1.1 · element assignments and tests to confirm in Chapter 2</td></tr>
+<tr><td>General foundation</td><td>Isolated/eccentric/combined footings</td><td>Original §1.1 · source F3 one-way shear failure unresolved</td></tr>
+<tr><td>Original tools</td><td>ETABS v20.0.0; SAFE</td><td>Original §§1.1–1.2 · program use reported, not independently reproduced</td></tr>
+</tbody></table></div>
+<h4>1.1.2 · Three source contradictions we will not conceal</h4>
+<div class="rb-table-wrap"><table><thead><tr><th>Problem</th><th>Conflicting source statements</th><th>What happens next</th></tr></thead><tbody>
+<tr><td>Occupancy</td><td>Residential in §1.1; commercial area on architectural ground-floor plan; office in conclusion</td><td>Reclassify individual spaces from source plans before imposing live loads</td></tr>
+<tr><td>Site/seismic designation</td><td>Pokhara/Lekhnath location; “Kathmandu” seismic-zone note; 2020 versus 2025 code references</td><td>Independently establish the site and adopted seismic provisions</td></tr>
+<tr><td>Member geometry</td><td>14 × 14 in columns in §1.1 versus 400 × 400 mm in later schedule</td><td>Resolve sections per original plan/member before frame acceptance</td></tr>
+</tbody></table></div>
+<p class="rb-source">Source sections: original §1.1, plans §2.5 and conclusion/column schedule. These inconsistencies are not silently resolved by choosing whichever entry looks convenient.</p></section>
+<section class="rb-card"><h3>Preliminary executive numerical snapshot — <em>not</em> the source conclusion</h3>
+<div id="rb-executive"><p class="rb-loading">Loading governed OpenSees results…</p></div>
+<p class="rb-source">This numerical paragraph is assembled from the separately tested Gate21 OpenSees prototype; it is not part of the original source's introductory measurements. No permit/safety conclusion should be inferred from it.</p></section>
+<section class="rb-card" id="c01-modelling"><h3><span id="toc-1-2" class="rb-anchor"></span><span class="rb-subnumber">1.2</span> Structural Modelling</h3>
+<p><strong>What the original report says:</strong> It describes 3D ETABS frame modelling with centre-line dimensions, preliminary member sizes, concrete M20, rectangular-beam idealization, horizontal seismic effects along principal axes and a SAFE foundation model. It also <em>claims</em> linear static and response-spectrum methods. These statements document intent, but not a recoverable original element and load definition.</p>
+<p><strong>Our reproducible method:</strong> Python builds a provisional 3D finite-element frame and calls OpenSeesPy <code>elasticBeamColumn</code>. The current example solves gravity and four signed horizontal force cases (±X/±Y), preserving displacements, reactions and full signed local end forces. Every input is required to carry source or assumption provenance.</p>
+<div class="rb-table-wrap"><table><thead><tr><th>Source's process</th><th>Our current implementation</th><th>Still missing</th></tr></thead><tbody>
+<tr><td>ETABS frame and 3D modelling</td><td>OpenSees elastic frame, 92 nodes / 165 working members</td><td>Authenticated member connectivity, slabs, walls, foundation releases</td></tr>
+<tr><td>Code-defined earthquake loads</td><td>Equivalent-static floor distribution with source-conditional weights</td><td>Verified location/hazard, true seismic Mass Source and governing combinations</td></tr>
+<tr><td>Claimed response-spectrum analysis</td><td>Standalone bounded algorithms exist</td><td>Actual source-matched modal/spectrum model and result acceptance</td></tr>
+<tr><td>Reinforcement and foundation design</td><td>Separate bounded engineering kernels</td><td>Full source-specific design, code compliance and F3 redesign</td></tr>
+</tbody></table></div>
+<p class="rb-source">Original §1.2. OpenSees evidence from checked-in <code>scripts/run_g15_open_3d.py</code> and <code>scripts/build_g15_gate21_report.py</code>. The source describes ETABS/SAFE; we do not present our OpenSees results as their original outputs.</p></section>
+<section class="rb-card" id="c01-structure"><h3><span id="toc-1-3" class="rb-anchor"></span><span class="rb-subnumber">1.3</span> Structural System of the Building</h3>
+<p><strong>Source intent:</strong> The report selects an RC Special Moment Resisting Frame. Beams and columns form a connected path for gravity and horizontal earthquake loads to reach the ground. It names adequate strength, lateral stiffness and serviceability as desired performance objectives.</p>
+<div class="rb-loadpath"><span>Roof and floors <small>gravity + horizontal loads</small></span><span aria-hidden="true">↓</span><span>Beams and slabs <small>distribute load; slab diaphragm is unverified</small></span><span aria-hidden="true">↓</span><span>Columns + beam joints <small>carry axial force, shear and moments</small></span><span aria-hidden="true">↓</span><span>Foundations → ground <small>soil bearing, shear and settlement checks</small></span></div>
+<p><strong>What this does not prove:</strong> An SMRF label in the source is not a check of confinement, strong-column/weak-beam relationships, joint shear, reinforcement anchorage, column continuity or foundation safety. Those are tasks for Chapters 2, 5 and 6.</p>
+<div class="rb-danger"><strong>Source footing F3 remains NOT SAFE IN ONE WAY SHEAR.</strong><p>The original report does not resolve that printed footing failure. This Chapter 1 explanation is not an engineering approval.</p></div>
+<p class="rb-source">Original §1.3, design checks described later in §6. Original F3 worksheet physical p.61.</p></section>
+<section class="rb-card" id="chapter-01-gates"><h3>Chapter 1 acceptance checklist · seven requirements open</h3><div class="rb-table-wrap"><table><thead><tr><th>Gate</th><th>Required verification</th><th>State</th></tr></thead><tbody>
+<tr><td>C01-G01</td><td>Project location/site ID and true use classes; Need independent site/address and occupancy evidence; residential/commercial/office conflict</td><td>OPEN</td></tr>
+<tr><td>C01-G02</td><td>Storey schedule and roof levels; Reconcile G+1.5, 3.048 m levels, 9.144 m and architectural drawing elevations</td><td>OPEN</td></tr>
+<tr><td>C01-G03</td><td>Real frame topology and section assignments; Recover approved architectural/structural plans or authenticated model objects</td><td>OPEN</td></tr>
+<tr><td>C01-G04</td><td>Adopted code and seismic location; Resolve 2020/2025 source edition references and Kathmandu/Pokhara discrepancy</td><td>OPEN</td></tr>
+<tr><td>C01-G05</td><td>Source-native model data; No original ETABS .edb/.e2k admitted; trace all area/frame load paths</td><td>OPEN</td></tr>
+<tr><td>C01-G06</td><td>Lateral system and ductility details; SMRF claim needs joint, confining and capacity-design evidence</td><td>OPEN</td></tr>
+<tr><td>C01-G07</td><td>Geotechnical inputs and foundation remediation; Bearing/soil source and F3 unsafe finding require independent evidence</td><td>OPEN</td></tr>
+</tbody></table></div>
+<p><strong>Reading status:</strong> Source sections 1.1–1.3 reviewed and explained. <strong>Design status:</strong> 0 of 7 acceptance requirements verified; Chapter 1 is not structurally accepted. The next planned engineering-data chapter is Chapter 2, beginning at concrete grade, reinforcing steel, cover, applicable codes, drawings and the actual load register.</p></section>
+</div><div class="rb-next"><a href="#chapter-02">Continue to Chapter 2 ↓</a></div>
+</article>
 <article class="rb-chapter" id="chapter-02" data-chapter="02" tabindex="-1">
 <header class="rb-chapter-header"><div class="rb-chapter-kicker"><span class="rb-num">02</span><span>CHAPTER 02 · MATERIALS & GEOMETRY</span></div><h2>2.0 General Data for Structural Analysis</h2><p>The design inputs appear here in the report, ahead of calculations; values with conflicting source statements remain visibly unresolved.</p><span class="rb-status">Source references available · Model geometry provisional</span></header>
 <div class="rb-chapter-body">

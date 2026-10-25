@@ -1,0 +1,257 @@
+{
+  "schema": "jp.structural.g15.chapter01.source_review.v0.1",
+  "workstream": "JP_Structural_Analysis",
+  "source": {
+    "kind": "ORIGINAL_PRIVATE_REPORT",
+    "title": "new nbc2025 report REVISED(1).pdf",
+    "drive_id": "1TpWUmOdrcQqOpkN6qvmhZ12KrYaNABBM",
+    "sha256": "f122904444a2e2f75230d9d4e41da0093d050da25c6e8140c86d466b7e37cc52",
+    "privacy": "METADATA_AND_DEIDENTIFIED_NUMERICAL_FACTS_ONLY",
+    "note": "Source section references below are to the original report; internal PDF pagination differs from physical PDF pages."
+  },
+  "acceptance": {
+    "chapter": "01",
+    "original_subsections": [
+      "1.1",
+      "1.2",
+      "1.3"
+    ],
+    "source_text_extracted": true,
+    "source_records_reviewed": 20,
+    "accepted_obligations": 0,
+    "open_obligations": 7,
+    "chapter_engineering_accepted": false,
+    "source_geometry_verified": false,
+    "original_ETABS_model_verified": false,
+    "physical_project_verified": false,
+    "engineering_approval": false,
+    "source_F3_one_way_shear": "NOT SAFE IN ONE WAY SHEAR"
+  },
+  "evidence": [
+    {
+      "id": "C01-SRC-001",
+      "section": "1.1",
+      "field": "Project location",
+      "value": "Pokhara; Lekhnath Metropolitan City",
+      "status": "SOURCE_REPORTED",
+      "citation": "Source §1.1 General Features table; internal pp. 3–4",
+      "uncertainty": "Project-specific site coordinates and legal/permit identity not independently verified"
+    },
+    {
+      "id": "C01-SRC-002",
+      "section": "1.1",
+      "field": "Building designation",
+      "value": "G+1.5-storey RC building",
+      "status": "SOURCE_REPORTED",
+      "citation": "Source cover and §1.1 Executive Summary",
+      "uncertainty": "G+1.5 label not reconciled with exact physical floor-use/roof geometry"
+    },
+    {
+      "id": "C01-SRC-003",
+      "section": "1.1",
+      "field": "Building occupancy",
+      "value": "Residential building",
+      "status": "SOURCE_CONFLICT",
+      "citation": "Source §1.1 General Features; architectural ground-floor plan (commercial space); final report conclusion (office)",
+      "uncertainty": "Actual mixed-use distribution, live-load categories and occupancy to verify"
+    },
+    {
+      "id": "C01-SRC-004",
+      "section": "1.1",
+      "field": "Storey height",
+      "value": "3.048 m",
+      "status": "SOURCE_REPORTED",
+      "citation": "Source §1.1 Architectural Features",
+      "uncertainty": "Per-level offsets and ground datum not independently surveyed"
+    },
+    {
+      "id": "C01-SRC-005",
+      "section": "1.1",
+      "field": "Total building height",
+      "value": "9.144 m",
+      "status": "SOURCE_REPORTED",
+      "citation": "Source §1.1 Architectural Features",
+      "uncertainty": "Reference datum, roof/eave/parapet definition and G+1.5 terminology unresolved"
+    },
+    {
+      "id": "C01-SRC-006",
+      "section": "1.1",
+      "field": "Lateral-force system",
+      "value": "Special Moment Resisting Frame (SMRF)",
+      "status": "SOURCE_REPORTED_UNVERIFIED",
+      "citation": "Source §1.1 Structural Features and §1.3",
+      "uncertainty": "Ductile detailing, joints and compliance not independently established"
+    },
+    {
+      "id": "C01-SRC-007",
+      "section": "1.1",
+      "field": "General foundation types",
+      "value": "Isolated pad, eccentric pad and combined footings",
+      "status": "SOURCE_REPORTED_UNVERIFIED",
+      "citation": "Source §1.1 Structural Features",
+      "uncertainty": "No independently verified foundation/soil assignment; F3 unsafe"
+    },
+    {
+      "id": "C01-SRC-008",
+      "section": "1.1",
+      "field": "Reported material grades",
+      "value": "Concrete M20 for slab, beam, column and footing; reinforcement Fe500",
+      "status": "SOURCE_REPORTED",
+      "citation": "Source §1.1 Materials, supplemented by §2.1 and §2.2",
+      "uncertainty": "Material test certificates and grade-to-element mapping not available"
+    },
+    {
+      "id": "C01-SRC-009",
+      "section": "1.1",
+      "field": "Source soil and bearing notes",
+      "value": "Soil class D; allowable bearing 160 kN/m² at 1.5 m",
+      "status": "SOURCE_REPORTED_UNVERIFIED",
+      "citation": "Source §1.1 Geotechnical Features",
+      "uncertainty": "No authenticated geotechnical investigation; class D and bearing unverified"
+    },
+    {
+      "id": "C01-SRC-010",
+      "section": "1.1",
+      "field": "Seismic zone reference",
+      "value": "Kathmandu (as per NBC 105:2020)",
+      "status": "SOURCE_CONFLICT",
+      "citation": "Source §1.1 Geotechnical Features versus stated site Pokhara",
+      "uncertainty": "Do not silently apply Kathmandu seismic hazard to Pokhara; verify actual location and adopted NBC edition"
+    },
+    {
+      "id": "C01-SRC-011",
+      "section": "1.1",
+      "field": "Listed column width",
+      "value": "14 in × 14 in in executive features",
+      "status": "SOURCE_CONFLICT",
+      "citation": "Source §1.1 Structural Features versus later 400 × 400 mm column schedule",
+      "uncertainty": "Source 14 in = 355.6 mm, not 400 mm; section-by-section resolution in Chapter 2"
+    },
+    {
+      "id": "C01-SRC-012",
+      "section": "1.2",
+      "field": "Analysis program used by report",
+      "value": "ETABS v20.0.0 frame; SAFE for foundations",
+      "status": "SOURCE_REPORTED_UNVERIFIED",
+      "citation": "Source §1.2 Structural Modelling",
+      "uncertainty": "Original editable model files, load assignments and actual run setup not recovered"
+    },
+    {
+      "id": "C01-SRC-013",
+      "section": "1.2",
+      "field": "Original modelling approach",
+      "value": "3D centre-line models, preliminary beam/column sizes, rectangular beam approximation",
+      "status": "SOURCE_REPORTED_UNVERIFIED",
+      "citation": "Source §1.2 Structural Modelling",
+      "uncertainty": "Element connectivity, stiffness modifiers and section mappings cannot be authenticated"
+    },
+    {
+      "id": "C01-SRC-014",
+      "section": "1.2",
+      "field": "Original earthquake method claimed",
+      "value": "Horizontal seismic action in two principal directions; report claims static and response-spectrum linear analysis",
+      "status": "SOURCE_REPORTED_UNVERIFIED",
+      "citation": "Source §1.2 Structural Modelling",
+      "uncertainty": "Original modal and response-spectrum input/output case definitions not independently reproduced"
+    },
+    {
+      "id": "C01-SRC-015",
+      "section": "1.2",
+      "field": "Referenced seismic code",
+      "value": "NBC 105:2025",
+      "status": "SOURCE_CONFLICT",
+      "citation": "Source §1.2 and §2.4 versus §1.1 NBC 105:2020 soil/zone labels",
+      "uncertainty": "Code version and classification must be explicitly governed before design acceptance"
+    },
+    {
+      "id": "C01-SRC-016",
+      "section": "1.2",
+      "field": "Current open solver",
+      "value": "OpenSeesPy 3D elasticBeamColumn, 5 static cases, 165 provisional members, 92 nodes",
+      "status": "CURRENT_ENGINE_RESULT",
+      "citation": "Versioned existing source scripts/run_g15_open_3d.py and scripts/build_g15_gate21_report.py; Gate21 CI",
+      "uncertainty": "Our trial frame is not the original ETABS model or an independently verified structure"
+    },
+    {
+      "id": "C01-SRC-017",
+      "section": "1.3",
+      "field": "Load transmission concept",
+      "value": "Columns and beams act together to transfer vertical and lateral actions toward the ground",
+      "status": "SOURCE_REPORTED",
+      "citation": "Source §1.3 Structural System",
+      "uncertainty": "Physical frame continuity and actual load path must be verified from drawings and member assignments"
+    },
+    {
+      "id": "C01-SRC-018",
+      "section": "1.3",
+      "field": "System performance criteria",
+      "value": "Adequate strength, lateral stiffness and service-life performance",
+      "status": "SOURCE_REPORTED",
+      "citation": "Source §1.3 Structural System",
+      "uncertainty": "This describes design objectives, not passed checks"
+    },
+    {
+      "id": "C01-SRC-019",
+      "section": "1.3",
+      "field": "SMRF verification",
+      "value": "Not established",
+      "status": "ENGINEERING_HOLD",
+      "citation": "Original §§1.1–1.3 plus original column, beam and joint design sections §§6.1–6.2",
+      "uncertainty": "Ductile seismic detailing, member force combinations, joint checks and code compliance not verified"
+    },
+    {
+      "id": "C01-SRC-020",
+      "section": "1.3",
+      "field": "Original footing F3 finding",
+      "value": "NOT SAFE IN ONE WAY SHEAR",
+      "status": "ENGINEERING_HOLD",
+      "citation": "Original report §6.4 F3 worksheet (physical PDF p.61)",
+      "uncertainty": "Signed independent footing redesign and acceptance missing"
+    }
+  ],
+  "acceptance_gates": [
+    {
+      "id": "C01-G01",
+      "name": "Project location/site ID and true use classes",
+      "status": "OPEN",
+      "missing_evidence": "Need independent site/address and occupancy evidence; residential/commercial/office conflict"
+    },
+    {
+      "id": "C01-G02",
+      "name": "Storey schedule and roof levels",
+      "status": "OPEN",
+      "missing_evidence": "Reconcile G+1.5, 3.048 m levels, 9.144 m and architectural drawing elevations"
+    },
+    {
+      "id": "C01-G03",
+      "name": "Real frame topology and section assignments",
+      "status": "OPEN",
+      "missing_evidence": "Recover approved architectural/structural plans or authenticated model objects"
+    },
+    {
+      "id": "C01-G04",
+      "name": "Adopted code and seismic location",
+      "status": "OPEN",
+      "missing_evidence": "Resolve 2020/2025 source edition references and Kathmandu/Pokhara discrepancy"
+    },
+    {
+      "id": "C01-G05",
+      "name": "Source-native model data",
+      "status": "OPEN",
+      "missing_evidence": "No original ETABS .edb/.e2k admitted; trace all area/frame load paths"
+    },
+    {
+      "id": "C01-G06",
+      "name": "Lateral system and ductility details",
+      "status": "OPEN",
+      "missing_evidence": "SMRF claim needs joint, confining and capacity-design evidence"
+    },
+    {
+      "id": "C01-G07",
+      "name": "Geotechnical inputs and foundation remediation",
+      "status": "OPEN",
+      "missing_evidence": "Bearing/soil source and F3 unsafe finding require independent evidence"
+    }
+  ],
+  "next_chapter": "02 · General Data for Structural Analysis; do not promote underlying material, geometry or load inputs without project verification"
+}
