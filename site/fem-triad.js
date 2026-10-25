@@ -98,7 +98,7 @@ catch(e){txt("fem-three-fallback","3D library could not load. The SVG, hand deri
 const host=$("fem-three");
 const scene=new THREE.Scene();scene.background=new THREE.Color("#e4f0f1");
 const camera=new THREE.PerspectiveCamera(42,1,.1,60);
-const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+let renderer;try{renderer=new THREE.WebGLRenderer({antialias:true})}catch(e){txt("fem-three-fallback","WebGL is unavailable. Use the linked SVG, OpenSees table and manual calculation.");return;}renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
 host.append(renderer.domElement);$("fem-three-fallback").remove();
 scene.add(new THREE.HemisphereLight("#ffffff","#648997",2.1));
 const lamp=new THREE.DirectionalLight("#ffffff",2);lamp.position.set(3,6,5);scene.add(lamp);
@@ -120,6 +120,7 @@ highlight3D=part=>{
  member.material.color.set(part==="member"?"#e6a14d":"#2796a6");
  tip.material.color.set(part==="tip"?"#e6a14d":"#ca744e");
 };
+if(data)render();
 const ray=new THREE.Raycaster(),mouse=new THREE.Vector2();
 renderer.domElement.addEventListener("pointerdown",e=>{move={x:e.clientX,y:e.clientY,drag:false}});
 renderer.domElement.addEventListener("pointermove",e=>{if(!move)return;const dx=e.clientX-move.x;if(Math.abs(dx)>2)move.drag=true;angle+=dx*.007;move.x=e.clientX});
