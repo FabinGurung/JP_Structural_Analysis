@@ -149,3 +149,17 @@ body[data-guild-route="report"] .site-header .navigation a[aria-current]{color:#
 .rb-chapter .rb-chapter02-check th{font-weight:700}
 .rb-chapter .rb-source-status{background:#f8f2ef;border-left:4px solid #a66c4e;color:#724a35;font-size:13px;padding:12px 15px;border-radius:4px}
 .rb-chapter .rb-chapter02-check .rb-c02-danger{color:#833b33;font-weight:750}
+
+/* Chapter 3: original report method, with tested OpenSees workflow evidence */
+.rb-chapter .rb-ch3-proof{border-left:3px solid #adc4c8!important}
+.rb-chapter .rb-ch3-proof .rb-table-wrap{margin:14px 0;overflow:auto}
+.rb-chapter .rb-ch3-proof table{min-width:630px}
+.rb-chapter .rb-ch3-proof th{background:#eaf2f3;color:#18495b}
+.rb-chapter .rb-ch3-proof td{vertical-align:top;line-height:1.55}
+.rb-chapter .rb-ch3-proof .rb-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.rb-chapter .rb-ch3-metric{background:#f4f9f8;border:1px solid #cddcdf;border-radius:4px;padding:13px}
+.rb-chapter .rb-ch3-metric strong{display:block;color:#18566b;font-size:22px}
+.rb-chapter .rb-ch3-metric small{display:block;color:#52707a;font-size:11px;margin-top:4px}
+.rb-chapter .rb-ch3-proof h3{color:#1c4c5d}
+.rb-chapter .rb-ch3-proof .rb-danger{background:#fff4f0;border:1px solid #e2aea8;padding:14px;color:#743e35}
+@media(max-width:690px){.rb-chapter .rb-ch3-proof .rb-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}

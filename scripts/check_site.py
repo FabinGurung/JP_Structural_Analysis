@@ -262,7 +262,7 @@ def main():
         text=p.read_text(encoding="utf-8")
         parser=Parse();parser.feed(text)
         if parser.css!=(["styles.css","report-book.css"] if page=="report.html" else ["styles.css","more-guide.css"] if page=="more.html" else ["styles.css"]):problems.append(page+": inconsistent stylesheet")
-        if parser.scripts!=(["app.js","report-book.js","chapter02-audit.js","chapter02-seismic.js"] if page=="report.html" else ["app.js","d2.js","fem-triad.js"] if page=="more.html" else ["app.js","d2.js"] if page=="calculation-coverage.html" else ["app.js","project-ledger.js","gate08.js","gate09.js","gate10.js","gate11.js","gate12.js","gate13.js","gate14.js","gate15.js","gate16.js","gate17.js","gate18.js","gate19.js","gate20.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
+        if parser.scripts!=(["app.js","report-book.js","chapter02-audit.js","chapter02-seismic.js","chapter03-method.js"] if page=="report.html" else ["app.js","d2.js","fem-triad.js"] if page=="more.html" else ["app.js","d2.js"] if page=="calculation-coverage.html" else ["app.js","project-ledger.js","gate08.js","gate09.js","gate10.js","gate11.js","gate12.js","gate13.js","gate14.js","gate15.js","gate16.js","gate17.js","gate18.js","gate19.js","gate20.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
         if parser.mains!=1:problems.append(page+": expected one main")
         nav=text.split('<nav class="navigation" aria-label="Primary navigation">',1)
         if len(nav)!=2 or "</nav>" not in nav[1]:
@@ -730,6 +730,24 @@ def main():
             assert "chapter02-seismic.js" in book
         except (KeyError,AssertionError,ValueError,TypeError,OSError) as e:
             problems.append("Chapter02 seismic source/engineering hold QA failed: "+str(e))
+    ch3=SITE/"data/g15-chapter03-method.v0.1.json"
+    if not ch3.is_file():
+        problems.append("Chapter03 real-OpenSees/source-method projection missing")
+    else:
+        try:
+            d=json.loads(ch3.read_text(encoding="utf-8"))
+            n=d["real_OpenSees_numerical_snapshot"]
+            assert d["schema"]=="jp.structural.g15.chapter03.method_execution.v0.1"
+            assert d["engineering_approval"] is False and d["original_native_ETABS_model_authenticated"] is False
+            assert d["source_gates_open"]==15 and d["accepted_engineering_method_stages"]==0
+            assert d["original_F3_one_way_shear"]=="NOT SAFE IN ONE WAY SHEAR"
+            assert n["case_count"]==5 and n["signed_member_end_action_records"]==825
+            assert n["max_equilibrium_force_residual_kN"]<.001
+            assert n["max_equilibrium_moment_residual_kNm"]<.001
+            assert len(d["stages"])==12
+            assert 'id="chapter-03-stages"' in book and "chapter03-method.js" in book
+        except (KeyError,AssertionError,ValueError,TypeError,OSError) as exc:
+            problems.append("Chapter03 original method / OpenSees numerical QA failed: "+str(exc))
     if problems:raise SystemExit("\n".join(problems))
     print("STRUCTURAL_SITE_QA_PASS: seven pages including open real-source 3D frame analysis, source-linked de-identified project journal, SP16, M09/D2, privacy checks and shared theme")
 if __name__=="__main__":main()

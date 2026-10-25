@@ -169,7 +169,55 @@
 <p class="rb-source">Original §§2.8–2.8.1 and code-limited <code>native/load_combinations.py</code>. Do not silently promote an IS/NBC citation into full current-code approval.</p></section>
 <p class="rb-experiment-moved">The gate05-report development demonstration is preserved in <a href="more.html#guide-rd-shelf">More → R&amp;D staging shelf</a>; it is not part of this building's original report evidence.</p>
 </div><div class="rb-next"><a href="#chapter-03">Continue to next chapter ↓</a></div></article>
-<article class="rb-chapter" id="chapter-03" data-chapter="03" tabindex="-1"><header class="rb-chapter-header"><div class="rb-chapter-kicker"><span class="rb-num">03</span><span>CHAPTER 03 · METHOD</span></div><h2>3.0 Analysis and Design Procedure</h2><p>The original report's computational procedure, now distinguished from our OpenSees implementation.</p><span class="rb-status">Static solver implemented · Full engineering procedure incomplete</span></header><div class="rb-chapter-body"><section class="rb-card"><h3>3.0 · Analysis sequence</h3><p>The uploaded report documents ETABS frame analysis, CSI SAFE footing analysis and separate slab and staircase worksheets. This repository uses an open OpenSeesPy 3D frame solver and explicit source-linked numerical kernels rather than claiming to reproduce ETABS screenshots.</p><div class="rb-method-steps"><span>Source geometry</span><span>Material and loading assumptions</span><span>OpenSees mesh and boundary conditions</span><span>Solved load cases</span><span>Signed member-end forces and reactions</span><span>Independent verification and report</span></div><p>Five solved static cases are available. Full source-matched gravity assignments, response spectrum, P–Delta and complete reinforced-concrete detailing remain incomplete.</p><p class="rb-source">Original report §3.0, physical PDF p.21; open calculation code in GitHub.</p></section></div><div class="rb-next"><a href="#chapter-04">Continue to Chapter 4 ↓</a></div></article>
+<article class="rb-chapter" id="chapter-03" data-chapter="03" tabindex="-1">
+<header class="rb-chapter-header">
+<div class="rb-chapter-kicker"><span class="rb-num">03</span><span>CHAPTER 03 · ANALYSIS AND DESIGN PROCEDURE</span></div>
+<h2>3.0 Analysis and Design Procedure</h2>
+<p>Exactly as the original report sequence requires: explain the original analysis method, identify each calculation's owner, execute what our open solver actually supports and record what is still unverified.</p>
+<span class="rb-status">12 method stages mapped · real five-case OpenSees 3D numerical proof · Engineering approval HOLD</span>
+</header>
+<div class="rb-chapter-body">
+<section class="rb-card rb-ch3-proof" id="chapter-03-procedure">
+<h3>3.0.1 · What the original report actually did</h3>
+<p>In the original §3.0, the consultant reports analysing the building's space frame in <strong>ETABS v20.0.0</strong>, designing foundations in <strong>SAFE 2016</strong>, and designing the floor and staircase slabs using <strong>Excel worksheets</strong>. It describes limit-state reinforced-concrete design and choosing reinforcement for governing load combinations. Those are original-source descriptions, not evidence that we have the editable original ETABS, SAFE or Excel files.</p>
+<div class="rb-method-steps" aria-label="Original report method implemented through our source-first OpenSees workflow">
+<span>Verify source and building</span><span>Define material, geometry, supports and loads</span><span>Compute applied earthquake action</span><span>Execute OpenSees solver</span><span>Check equilibrium and signed actions</span><span>Evaluate design combinations and code checks</span><span>Publish traceable report</span>
+</div>
+<p><strong>Our objective is methodological equivalence, not forced numerical agreement with ETABS.</strong> If the source model is unavailable, we compute an explicitly provisional OpenSees model, test its arithmetic and retain a HOLD for actual building design.</p>
+<p class="rb-source">Source: private original revised 68-page PDF, §3.0, physical PDF p.21. <a href="more.html#guide-fem-triad">How the finite-element equations are solved, with linked 3D, SVG, numerical and hand proofs</a>.</p>
+</section>
+<section class="rb-card rb-ch3-proof" id="chapter-03-source-programs">
+<h3>3.0.2 · Source programs, general structural elements and reference-code caveats</h3>
+<div id="c03-programs" class="rb-table-wrap"><p class="rb-loading">Loading source-reported ETABS, SAFE and worksheet responsibilities…</p></div>
+<div id="c03-member-schedule" class="rb-table-wrap"><p class="rb-loading">Loading original structural-element schedule without silently correcting source units…</p></div>
+<p><strong>Code-source conflicts remain:</strong> §3.0 prints “NBC 150:2025” and “IS456:2000+1392:2016”; these strings need actual code identity/edition verification. It also prints a main-beam size as “300&quot;X400”, whose unit formatting cannot be treated as a verified 300 mm section. The source SBC 160 kPa and settlement 25 mm are likewise reported, not independently geotechnically proven.</p>
+<p class="rb-source">Exact source-text provenance and unresolved qualifiers are preserved in <a href="data/g15-chapter03-method.v0.1.json">Chapter 3 method ledger (JSON)</a>; original report/model not published.</p>
+</section>
+<section class="rb-card rb-ch3-proof" id="chapter-03-stages">
+<h3>3.0.3 · Twelve traceable steps: who does what, and what is still owed?</h3>
+<p>A database record for each method step links the original description, our responsible Python function, execution state and the evidence required for acceptance. Calculations may work on a provisional frame even when the physical-building acceptance is still pending.</p>
+<div id="c03-stage-table" class="rb-table-wrap"><p class="rb-loading">Loading code-linked method steps and engineering holds…</p></div>
+<p><strong>Stage status is not a pass/fail certificate.</strong> “Solved provisional geometry” means a real numerical engine ran on the trial frame; it does not mean that frame represents the actual proposed structure.</p>
+</section>
+<section class="rb-card rb-ch3-proof" id="chapter-03-real-results">
+<h3>3.0.4 · Real OpenSees results that support the procedure</h3>
+<p>The following data is recalculated by <code>scripts/build_g15_chapter03_method.py</code> using the real Gate21 OpenSeesPy solver—not typed into a dashboard and not copied from the original ETABS report.</p>
+<div id="c03-solver-metrics" class="rb-metrics"><p class="rb-loading">Loading real computed model counts, signed actions and equilibrium residuals…</p></div>
+<div id="c03-solved-cases" class="rb-table-wrap"><p class="rb-loading">Loading five actual solved load-case names and numerical scope…</p></div>
+<div class="rb-danger"><strong>Interpretation restriction:</strong> The existing GRAVITY case distributes conditional storey seismic weight to the trial column nodes; it does not reconstruct original slab, wall, finishing and imposed load assignments. Its signed force vectors and balance checks are valid only for that stated provisional model.</div>
+<p class="rb-source">Open <a href="reports/g15-gate21-calculation-report.html">the real OpenSees numerical calculation report</a> or inspect <a href="reports/g15-gate21-signed-member-actions.csv">all signed member-end action records</a> alongside this procedure.</p>
+</section>
+<section class="rb-card rb-ch3-proof" id="chapter-03-open-holds">
+<h3>3.0.5 · What cannot yet be claimed?</h3>
+<div class="rb-table-wrap"><table><thead><tr><th>Engineering question</th><th>Actual status</th><th>Required next evidence</th></tr></thead><tbody>
+<tr><td>Original ETABS model reproduced?</td><td>NO — native source not authenticated</td><td>Authenticated G+1.5 EDB/E2K, object IDs, actual support and member assignments</td></tr>
+<tr><td>Actual building gravity + seismic inputs complete?</td><td>NO — source story mass units inferred; floor and wall assignments not verified</td><td>True floor-area polygons, walls, room uses, section properties, load patterns and mass source</td></tr>
+<tr><td>Actual modal, spectrum, wind, eccentricity, P–Delta and drift?</td><td>NOT COMPLETED as full original-building design</td><td>Approved model, analysis settings, effective stiffness and response checking procedures</td></tr>
+<tr><td>Beam/column reinforcement and complete RC design?</td><td>NOT APPROVED — independent bounded kernels exist</td><td>Correct concurrent signed demand combinations, section capacities, ductile detailing and checks</td></tr>
+<tr><td>Slab, staircase and footing design?</td><td>NOT APPROVED — original F3 is NOT SAFE IN ONE WAY SHEAR</td><td>Soil report, accepted footing/slab/stair loads and independent revised checks</td></tr>
+</tbody></table></div>
+<p class="rb-source">15 original source-to-model acceptance gates remain open. Formal verification and code applicability precede any final structural design sign-off. The GitHub experiment shelf stays inside More, not in this report chapter.</p>
+</section></div><div class="rb-next"><a href="#chapter-04">Continue to Chapter 4 · Structural Modelling ↓</a></div></article>
 <article class="rb-chapter" id="chapter-04" data-chapter="04" tabindex="-1">
 <header class="rb-chapter-header"><div class="rb-chapter-kicker"><span class="rb-num">04</span><span>CHAPTER 04 · MODELLING & SOLVER</span></div><h2>4.0 Modeling in ETABS v20.0.0 — OpenSees Reconstruction</h2><p>We use OpenSees instead of recreating ETABS screenshots; every solved case preserves machine-readable numerical evidence.</p><span class="rb-status">Five real static 3D OpenSees solves · Model still hypothetical</span></header>
 <div class="rb-chapter-body"><p class="rb-editorial-note">This is the original Chapter 4 heading; no ETABS analysis is executed here. The substitute engine is OpenSees, using a provisional source-derived model.</p>
@@ -212,4 +260,4 @@
 <section class="rb-card"><h3>Annex C · Independent verification</h3><p>GitHub Actions generates the sanitized static numerical reports from a pinned engineering commit, runs regression tests, checks source/approval flags and publishes this web presentation. Its success means the software pipeline passed, <strong>not</strong> that a structural engineer accepted the design.</p><div class="rb-inline-links"><a href="https://github.com/FabinGurung/JP_Structural_Analysis/actions">GitHub Actions ↗</a><a href="calculation-coverage.html">Full module coverage ↗</a></div></section>
 <p class="rb-experiment-moved">The gate21-report-engine development demonstration is preserved in <a href="more.html#guide-rd-shelf">More → R&amp;D staging shelf</a>; it is not part of this building's original report evidence.</p>
 <section class="rb-card"><h3>Annex D · Private source custody</h3><p>Original drawing images, reports, editable DOCX and native structural models remain private in Google Drive. This public report shows only approved de-identified source references, bounded model assumptions and public numerical outputs.</p><p><strong>Not a permit report, statutory approval, or replacement for original engineering signoff.</strong></p></section>
-</div><div class="rb-next"><a href="#report-top">Back to cover ↑</a></div></article></div></div></div></main><footer class="site-footer"><div class="wrap footer-inner"><span>JP Structural Analysis · OpenSees primary · Not an engineering approval</span><span id="build">Source snapshot · read-only public demonstration</span></div></footer><script src="app.js" defer></script><script src="report-book.js" defer></script><script src="chapter02-audit.js" defer></script><script src="chapter02-seismic.js" defer></script></body></html>
+</div><div class="rb-next"><a href="#report-top">Back to cover ↑</a></div></article></div></div></div></main><footer class="site-footer"><div class="wrap footer-inner"><span>JP Structural Analysis · OpenSees primary · Not an engineering approval</span><span id="build">Source snapshot · read-only public demonstration</span></div></footer><script src="app.js" defer></script><script src="report-book.js" defer></script><script src="chapter02-audit.js" defer></script><script src="chapter02-seismic.js" defer></script><script src="chapter03-method.js" defer></script></body></html>
