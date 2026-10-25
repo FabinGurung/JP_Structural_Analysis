@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: bcbef5bc5c73ed29f320917ac7defdd00f479e10
+          ref: 8ae6bb2a553cd2751f8f6bf338f114e91f4dd6a0
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -221,6 +221,27 @@ jobs:
           assert d["soft_storey_screen"]["actual_story_stiffnesses_verified"] is False
           assert len(d["source_conditional_floor_weights_and_forces"])==3
           print("G15_SOURCE_CHAPTER02_6_TO_8_ACCEPTANCE_GATES_PRESERVED")
+          PY
+      - name: Publish original Chapter 3 source-to-OpenSees method and verified signed numeric evidence
+        run: |
+          python scripts/build_g15_chapter03_method.py --output site/data/g15-chapter03-method.v0.1.json
+          python -m pytest -q tests/test_g15_chapter03_method.py
+          node --check site/chapter03-method.js
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("site/data/g15-chapter03-method.v0.1.json").read_text())
+          n=d["real_OpenSees_numerical_snapshot"]
+          assert d["engineering_approval"] is False
+          assert d["original_native_ETABS_model_authenticated"] is False
+          assert d["original_F3_one_way_shear"]=="NOT SAFE IN ONE WAY SHEAR"
+          assert d["source_gates_open"]==15 and d["accepted_engineering_method_stages"]==0
+          assert len(d["stages"])==12
+          assert n["members"]==165 and n["case_count"]==5
+          assert n["signed_member_end_action_records"]==825
+          assert n["max_equilibrium_force_residual_kN"]<0.001
+          assert n["max_equilibrium_moment_residual_kNm"]<0.001
+          print("CHAPTER3_METHOD_AND_SOLVER_NOT_PHYSICAL_APPROVAL_PASS")
           PY
       - name: Validate current report-first coverage and site navigation
         run: |
