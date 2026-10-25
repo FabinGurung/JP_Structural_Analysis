@@ -1,0 +1,129 @@
+{
+  "schema": "jp.structural.g15.chapter02.seismic_wind_combination_facts.v0.1",
+  "source": {
+    "title": "new nbc2025 report REVISED(1).pdf",
+    "sha256": "f122904444a2e2f75230d9d4e41da0093d050da25c6e8140c86d466b7e37cc52",
+    "drive_id": "1TpWUmOdrcQqOpkN6qvmhZ12KrYaNABBM",
+    "original_sections": [
+      "2.6.4",
+      "2.6.5",
+      "2.7",
+      "2.8",
+      "2.8.1"
+    ],
+    "provenance_type": "ORIGINAL_REPORT_STATEMENTS_NOT_MODEL_VERIFICATION"
+  },
+  "seismic": {
+    "source_ref": "Original §2.6.4.2 seismic coefficient worksheet (PDF physical p.16), §5.1 auto seismic table (PDF physical p.25)",
+    "location": "Lekhnath/Pokhara reported; Kathmandu zoning reference conflict not resolved",
+    "soil_type": "D",
+    "height_m": 9.144,
+    "empirical_period_coefficient_kt": 0.075,
+    "empirical_period_exponent": 0.75,
+    "empirical_period_amplification": 1.25,
+    "reported_period_seconds": 0.493,
+    "source_spectral_shape_factor": 2.25,
+    "source_z": 0.35,
+    "source_importance": 1,
+    "source_ductility_Rmu": 4,
+    "source_overstrength_ULS": 1.5,
+    "source_overstrength_SLS": 1.25,
+    "source_sls_spectral_scale": 0.2,
+    "source_reported_uls_coefficient_rounded": 0.131,
+    "source_reported_sls_coefficient_rounded": 0.126,
+    "source_reported_seismic_weight_kN": 6831.9109,
+    "source_printed_base_shear_ULS_kN": 894.9803,
+    "source_printed_base_shear_SLS_kN": 860.8208,
+    "source_mass_units_printed": false,
+    "assumed_story_mass_unit": "kg (arithmetic inference ONLY)",
+    "source_stories_from_gate18_id": "registry/g15-gate18-report-mass-f3-source.v0.1.json",
+    "source_accidental_eccentricity_ratio_reported": 0.05,
+    "native_source_mass_verified": false,
+    "source_site_hazard_verified": false,
+    "original_ETABS_load_case_verified": false
+  },
+  "wind": {
+    "source_ref": "Original §2.6.5",
+    "original_claim": "Wind and seismic loads not taken simultaneously; wind not considered because seismic expected to govern",
+    "wind_speed_source_verified": false,
+    "wind_load_computed": false,
+    "wind_dominance_proven": false,
+    "wind_omission_design_accepted": false
+  },
+  "soft_storey": {
+    "source_ref": "Original §2.7",
+    "original_claim": "No soft storey, based on asserted absence of considerable mass and stiffness changes",
+    "actual_story_stiffnesses_verified": false,
+    "source_model_accepted": false,
+    "original_claim_independently_accepted": false
+  },
+  "combinations": {
+    "source_ref": "Original §§2.8–2.8.1, citing NBC105:2025 cl.3.6.1",
+    "parallel_report_expressions": [
+      "1.2DL+1.5LL",
+      "1.2DL+0.5LL+S",
+      "DL+lambda LL ± E",
+      "0.9DL ± E"
+    ],
+    "reported_lambda_for_storage": 0.6,
+    "reported_lambda_other": 0.3,
+    "reported_snow_factor": 1.2,
+    "original_load_patterns_authenticated": false,
+    "full_project_ULS_SLS_envelope_complete": false,
+    "unit_case_for_kernel_benchmark": {
+      "DL": 100,
+      "LL": 50,
+      "Ex": 20,
+      "Ey": 10,
+      "E_parallel": 20,
+      "Z": 0.35,
+      "Sso": 10,
+      "additional_load_type": "snow",
+      "usage": "other",
+      "benchmark_type": "SYNTHETIC_NUMERICAL_FIXTURE_NOT_PROJECT_LOADS"
+    }
+  },
+  "holds": {
+    "source_occupancy_verified": false,
+    "source_materials_verified": false,
+    "source_floor_mass_composition_verified": false,
+    "source_frame_slabs_wall_loads_verified": false,
+    "source_seismic_eccentricity_applied": false,
+    "full_drift_verified": false,
+    "full_modal_analysis_verified": false,
+    "source_F3_one_way_shear": "NOT SAFE IN ONE WAY SHEAR",
+    "engineering_approval": false
+  },
+  "open_tasks": [
+    {
+      "id": "C02-SEIS-01",
+      "name": "Confirm geospatial seismic hazard and code edition",
+      "status": "SOURCE_REQUIRED"
+    },
+    {
+      "id": "C02-SEIS-02",
+      "name": "Reconstruct seismic mass components and original source case mapping",
+      "status": "SOURCE_REQUIRED"
+    },
+    {
+      "id": "C02-SEIS-03",
+      "name": "Verify diaphragm, accidental eccentricity and mode response",
+      "status": "SOURCE_REQUIRED"
+    },
+    {
+      "id": "C02-WIND-04",
+      "name": "Calculate actual wind loading and independently justify its exclusion/inclusion",
+      "status": "SOURCE_REQUIRED"
+    },
+    {
+      "id": "C02-SOFT-05",
+      "name": "Compute actual story stiffness and soft-storey checks",
+      "status": "SOURCE_REQUIRED"
+    },
+    {
+      "id": "C02-COMB-06",
+      "name": "Apply correct governing combinations to source-signed DL, LL, earthquake and other structural case vectors",
+      "status": "SOURCE_REQUIRED"
+    }
+  ]
+}
