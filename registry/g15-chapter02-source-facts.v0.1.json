@@ -1,0 +1,255 @@
+{
+  "schema": "jp.structural.g15.chapter02.source_facts.v0.1",
+  "original_pdf": {
+    "name": "new nbc2025 report REVISED(1).pdf",
+    "drive_id": "1TpWUmOdrcQqOpkN6qvmhZ12KrYaNABBM",
+    "sha256": "f122904444a2e2f75230d9d4e41da0093d050da25c6e8140c86d466b7e37cc52",
+    "privacy": "public-deidentified-facts-only"
+  },
+  "scope": "Original 2.1–2.4 and source-derived material/section sensitivity only; NOT project-model acceptance",
+  "recorded": [
+    {
+      "id": "C02-001",
+      "section": "2.1",
+      "item": "concrete_grades",
+      "value": "M20 for foundations, columns, beams, secondary beams, slabs and tie/strap/plinth beams",
+      "class": "SOURCE_REPORTED",
+      "basis": "Original §2.1 before Table 1"
+    },
+    {
+      "id": "C02-002",
+      "section": "2.1",
+      "item": "fck_MPa",
+      "value": 20,
+      "class": "SOURCE_REPORTED",
+      "basis": "Original Table 1"
+    },
+    {
+      "id": "C02-003",
+      "section": "2.1",
+      "item": "modulus_formula",
+      "value": "E = 5000 × sqrt(fck), MPa",
+      "class": "SOURCE_REPORTED",
+      "basis": "Original Table 1"
+    },
+    {
+      "id": "C02-004",
+      "section": "2.1",
+      "item": "modulus_table_MPa",
+      "value": 25000,
+      "class": "SOURCE_ARITHMETIC_CONFLICT",
+      "basis": "Original Table 1, fck 20 and formula 5000×sqrt(fck) yield 22360.68 MPa"
+    },
+    {
+      "id": "C02-005",
+      "section": "2.1",
+      "item": "poisson_ratio",
+      "value": 0.2,
+      "class": "SOURCE_REPORTED",
+      "basis": "Original Table 1"
+    },
+    {
+      "id": "C02-006",
+      "section": "2.1",
+      "item": "plain_concrete_unit_weight_kN_m3",
+      "value": 24,
+      "class": "SOURCE_REPORTED",
+      "basis": "Original Table 1"
+    },
+    {
+      "id": "C02-007",
+      "section": "2.1",
+      "item": "reinforced_concrete_unit_weight_kN_m3",
+      "value": 25,
+      "class": "SOURCE_REPORTED",
+      "basis": "Original Table 1"
+    },
+    {
+      "id": "C02-008",
+      "section": "1.1",
+      "item": "competing_unit_weight_kN_m3",
+      "value": 20,
+      "class": "SOURCE_CONFLICT",
+      "basis": "Original §1.1 general material feature versus Table 1 §2.1"
+    },
+    {
+      "id": "C02-009",
+      "section": "2.2",
+      "item": "rebar_fy_MPa",
+      "value": 500,
+      "class": "SOURCE_REPORTED",
+      "basis": "Original §2.2 and Table 2, longitudinal and stirrup/ties"
+    },
+    {
+      "id": "C02-010",
+      "section": "2.2",
+      "item": "rebar_E_printed_MPa",
+      "value": 200,
+      "class": "SOURCE_UNIT_UNVERIFIED",
+      "basis": "Original Table 2 explicitly prints '200 Mpa' for reinforcing steel modulus; DO NOT silently reinterpret as 200,000 MPa"
+    },
+    {
+      "id": "C02-011",
+      "section": "2.3",
+      "item": "footing_clear_cover_mm",
+      "value": 50,
+      "class": "SOURCE_REPORTED",
+      "basis": "Original §2.3 bottom/top/sides"
+    },
+    {
+      "id": "C02-012",
+      "section": "2.3",
+      "item": "column_clear_cover_mm",
+      "value": 40,
+      "class": "SOURCE_REPORTED",
+      "basis": "Original §2.3"
+    },
+    {
+      "id": "C02-013",
+      "section": "2.3",
+      "item": "secondary_beam_clear_cover_mm",
+      "value": 25,
+      "class": "SOURCE_REPORTED",
+      "basis": "Original §2.3"
+    },
+    {
+      "id": "C02-014",
+      "section": "2.3",
+      "item": "beam_clear_cover_mm",
+      "value": "max(25,bar_diameter_mm)",
+      "class": "SOURCE_REPORTED_NOT_CODE_VERIFIED",
+      "basis": "Original §2.3"
+    },
+    {
+      "id": "C02-015",
+      "section": "2.3",
+      "item": "slab_clear_cover_mm",
+      "value": "max(20,bar_diameter_mm)",
+      "class": "SOURCE_REPORTED_NOT_CODE_VERIFIED",
+      "basis": "Original §2.3"
+    },
+    {
+      "id": "C02-016",
+      "section": "2.4",
+      "item": "concrete_standard",
+      "value": "IS 456:2000",
+      "class": "SOURCE_CITED_NOT_COMPLETE_CODE_BASIS",
+      "basis": "Original §2.4 (RC concrete), not full adopted design edition verification"
+    },
+    {
+      "id": "C02-017",
+      "section": "2.2/2.4",
+      "item": "steel_standard",
+      "value": "IS 1786:1985 in §2.2; IS 1786:2008 in §2.4",
+      "class": "SOURCE_EDITION_CONFLICT",
+      "basis": "Original §2.2 versus original §2.4 table"
+    },
+    {
+      "id": "C02-018",
+      "section": "2.4",
+      "item": "seismic_standard",
+      "value": "NBC 105:2025",
+      "class": "SOURCE_CITED_NOT_COMPLETE_CODE_BASIS",
+      "basis": "Original §2.4; registry/nbc105-verified-rule-inventory.v0.1.json covers bounded rules only"
+    },
+    {
+      "id": "C02-019",
+      "section": "2.4",
+      "item": "loading_standards",
+      "value": "IS 875:1987 Parts I, II and V",
+      "class": "SOURCE_CITED_NOT_COMPLETE_CODE_BASIS",
+      "basis": "Original §2.4"
+    },
+    {
+      "id": "C02-020",
+      "section": "1.1/2.1",
+      "item": "column_size_conflict",
+      "value": "14 × 14 in §1.1 versus 400 × 400 mm later member schedule",
+      "class": "SOURCE_CONFLICT",
+      "basis": "Original executive features versus project member schedules"
+    },
+    {
+      "id": "C02-021",
+      "section": "1.1",
+      "item": "storey_height_m",
+      "value": 3.048,
+      "class": "SOURCE_REPORTED",
+      "basis": "Original §1.1 architectural features; used only for sensitivity illustration"
+    }
+  ],
+  "public_safety": {
+    "engineering_approval": false,
+    "source_geometry_verified": false,
+    "member_assignments_verified": false,
+    "original_F3": "NOT SAFE IN ONE WAY SHEAR",
+    "seismic_mass_path_verified": false
+  },
+  "inputs_for_illustrations": {
+    "concrete_grade_fck_MPa": 20,
+    "concrete_modulus_coefficient": 5000,
+    "printed_modulus_MPa": 25000,
+    "plain_gamma_kN_m3": 24,
+    "reinforced_gamma_kN_m3": 25,
+    "conflicting_gamma_kN_m3": 20,
+    "member_length_m": 3.048,
+    "competing_square_column_widths_m": [
+      0.3556,
+      0.4
+    ],
+    "sample_cover_bar_diameters_mm": [
+      12,
+      20,
+      32
+    ]
+  },
+  "admission_gates": [
+    {
+      "id": "C02-MAT-01",
+      "title": "Authenticate actual concrete material and density",
+      "status": "OPEN",
+      "reason": "20 vs 24/25 kN/m³ source disagreement; no source-native element/mass mapping"
+    },
+    {
+      "id": "C02-MAT-02",
+      "title": "Resolve E concrete formula versus table",
+      "status": "OPEN",
+      "reason": "M20, 5000×sqrt(fck) ≠ printed 25,000 MPa"
+    },
+    {
+      "id": "C02-STEEL-03",
+      "title": "Verify reinforcing modulus and code edition",
+      "status": "OPEN",
+      "reason": "Printed 200 MPa and IS1786:1985 vs 2008 cannot be silently corrected"
+    },
+    {
+      "id": "C02-GEO-04",
+      "title": "Establish each member's true cross-section",
+      "status": "OPEN",
+      "reason": "14-inch square versus 400-mm square column description"
+    },
+    {
+      "id": "C02-COVER-05",
+      "title": "Confirm durability, cover and actual bars",
+      "status": "OPEN",
+      "reason": "Report cover statements are not per-member verified code checks"
+    },
+    {
+      "id": "C02-CODE-06",
+      "title": "Resolve governing code/edition and source clause",
+      "status": "OPEN",
+      "reason": "Reported mixed NBC/IS references are not full independently verified applicable code sets"
+    },
+    {
+      "id": "C02-LOAD-07",
+      "title": "Locate every actual load on authenticated elements",
+      "status": "BLOCKED_SOURCE",
+      "reason": "Plans and original ETABS per-area/per-line assignments missing"
+    },
+    {
+      "id": "C02-SOIL-08",
+      "title": "Obtain F3 source-geotechnical and design correction",
+      "status": "BLOCKED_SOURCE",
+      "reason": "Original F3 failure NOT SAFE IN ONE WAY SHEAR remains"
+    }
+  ]
+}
