@@ -1,0 +1,270 @@
+{
+  "schema": "jp.structural.etabs_inspired_workflow_and_normalized_entities.v0.1",
+  "source": {
+    "name": "CSI ETABS official User Guide and product menu documentation",
+    "url": "https://docs.csiamerica.com/manuals/etabs/User%27s%20Guide.pdf",
+    "note": "Functional taxonomy follows documented menu categories, not a pixel-level copied or claimed proprietary ribbon."
+  },
+  "model_status": "DESIGN_ARCHITECTURE_SPECIFICATION_NOT_YET_AN_IMPLEMENTED_DATABASE",
+  "menus": [
+    {
+      "id": "ET01",
+      "menu": "File",
+      "etabs_purpose": "Save/import/version files",
+      "our_delegation": "Source document + project snapshots",
+      "report_section": "Report cover / Annex"
+    },
+    {
+      "id": "ET02",
+      "menu": "Edit",
+      "etabs_purpose": "Edit storeys, grids, geometry",
+      "our_delegation": "Story + grid tables",
+      "report_section": "2.5"
+    },
+    {
+      "id": "ET03",
+      "menu": "View",
+      "etabs_purpose": "Show plan, elevation, 3D",
+      "our_delegation": "3D projection / SVG inspectors",
+      "report_section": "2.5 / 4.1"
+    },
+    {
+      "id": "ET04",
+      "menu": "Define",
+      "etabs_purpose": "Declare materials, sections, mass, patterns, cases",
+      "our_delegation": "Materials, sections, sources, patterns, cases",
+      "report_section": "2.1–2.8"
+    },
+    {
+      "id": "ET05",
+      "menu": "Draw",
+      "etabs_purpose": "Create nodes, frame, shell objects",
+      "our_delegation": "Joint/frame/area records",
+      "report_section": "2.5 / 4.1"
+    },
+    {
+      "id": "ET06",
+      "menu": "Select",
+      "etabs_purpose": "Identify groups and objects",
+      "our_delegation": "Selections by IDs / queries",
+      "report_section": "4.1"
+    },
+    {
+      "id": "ET07",
+      "menu": "Assign",
+      "etabs_purpose": "Apply boundary restraints, supports, member sections and loads",
+      "our_delegation": "Supports and load assignments with source IDs",
+      "report_section": "2.6 / 4.2"
+    },
+    {
+      "id": "ET08",
+      "menu": "Analyze",
+      "etabs_purpose": "Assemble model, solve load cases and inspect logs",
+      "our_delegation": "OpenSeesPy numerical runtime",
+      "report_section": "3.0"
+    },
+    {
+      "id": "ET09",
+      "menu": "Display",
+      "etabs_purpose": "Show forces, deformation, reactions and modal results",
+      "our_delegation": "3D/SVG/tables connected by result IDs",
+      "report_section": "5.0"
+    },
+    {
+      "id": "ET10",
+      "menu": "Design",
+      "etabs_purpose": "Check members and design strengths/code combinations",
+      "our_delegation": "RC code and capacity calculation modules",
+      "report_section": "6.0"
+    },
+    {
+      "id": "ET11",
+      "menu": "Detailing",
+      "etabs_purpose": "Make reinforcement and construction schedules",
+      "our_delegation": "Bar/layout/anchorage checks and schedules",
+      "report_section": "6.0"
+    },
+    {
+      "id": "ET12",
+      "menu": "Options",
+      "etabs_purpose": "Units, view preferences, numerical options",
+      "our_delegation": "Model settings / UI preferences",
+      "report_section": "Annex"
+    },
+    {
+      "id": "ET13",
+      "menu": "Tools / Plugins",
+      "etabs_purpose": "Extend functions and work with source imports",
+      "our_delegation": "Import/export, source validator, GitHub Actions",
+      "report_section": "Annex / More"
+    },
+    {
+      "id": "ET14",
+      "menu": "Help",
+      "etabs_purpose": "Documentation and example explanation",
+      "our_delegation": "Learning guide and cited reference library",
+      "report_section": "More"
+    }
+  ],
+  "entities": [
+    {
+      "id": "ENT01",
+      "name": "source_documents",
+      "pk": "source_id",
+      "records": "Source PDF/DXF/model or code name, checksum, URI, document class",
+      "relations": "none",
+      "proof_rule": "Immutable original; data is source, not approval"
+    },
+    {
+      "id": "ENT02",
+      "name": "projects",
+      "pk": "project_id",
+      "records": "Building identity, scope, place",
+      "relations": "source_id",
+      "proof_rule": "Site and occupancy remain held"
+    },
+    {
+      "id": "ENT03",
+      "name": "storeys",
+      "pk": "storey_id",
+      "records": "Level labels and elevation",
+      "relations": "project_id",
+      "proof_rule": "Derived levels must cite original"
+    },
+    {
+      "id": "ENT04",
+      "name": "nodes",
+      "pk": "node_id",
+      "records": "Joint coordinates (x,y,z), storey",
+      "relations": "storey_id",
+      "proof_rule": "Every joint has stable ID"
+    },
+    {
+      "id": "ENT05",
+      "name": "elements",
+      "pk": "element_id",
+      "records": "Beam/column/shell endpoints, type",
+      "relations": "node_id[i],node_id[j],section_id",
+      "proof_rule": "Physical connectivity review"
+    },
+    {
+      "id": "ENT06",
+      "name": "materials",
+      "pk": "material_id",
+      "records": "E, fy, density, poisson, units",
+      "relations": "source_id",
+      "proof_rule": "Conflict values remain separate versions"
+    },
+    {
+      "id": "ENT07",
+      "name": "sections",
+      "pk": "section_id",
+      "records": "Shape, width, depth, modifiers",
+      "relations": "material_id",
+      "proof_rule": "One section applies to many members"
+    },
+    {
+      "id": "ENT08",
+      "name": "supports",
+      "pk": "support_id",
+      "records": "Restrained UX/UY/UZ/RX/RY/RZ or stiffness",
+      "relations": "node_id,source_id",
+      "proof_rule": "Do not default all footings FIXED without proof"
+    },
+    {
+      "id": "ENT09",
+      "name": "load_patterns",
+      "pk": "pattern_id",
+      "records": "Dead, live, wind, earthquake",
+      "relations": "source_id",
+      "proof_rule": "Pattern is distinct from case"
+    },
+    {
+      "id": "ENT10",
+      "name": "load_assignments",
+      "pk": "load_id",
+      "records": "Target element/area/node, pattern, magnitude, direction, units",
+      "relations": "pattern_id,element_id OR node_id,source_id",
+      "proof_rule": "No location invented from a PDF total"
+    },
+    {
+      "id": "ENT11",
+      "name": "load_cases",
+      "pk": "case_id",
+      "records": "Algorithm and included patterns",
+      "relations": "pattern_id",
+      "proof_rule": "Separate load definition from solve"
+    },
+    {
+      "id": "ENT12",
+      "name": "code_rules",
+      "pk": "rule_id",
+      "records": "Code edition, clause, applicability, validation",
+      "relations": "source_id",
+      "proof_rule": "Registered != fully implemented"
+    },
+    {
+      "id": "ENT13",
+      "name": "solver_runs",
+      "pk": "run_id",
+      "records": "Input set, OpenSees version, model hash, logs",
+      "relations": "case_id",
+      "proof_rule": "Every solve auditable"
+    },
+    {
+      "id": "ENT14",
+      "name": "results",
+      "pk": "result_id",
+      "records": "run, node/element, response kind, value, units, step",
+      "relations": "run_id,element_id OR node_id",
+      "proof_rule": "Never store just a screenshot"
+    },
+    {
+      "id": "ENT15",
+      "name": "design_checks",
+      "pk": "check_id",
+      "records": "Governing rule, member, demand, capacity, status",
+      "relations": "rule_id,result_id",
+      "proof_rule": "Pass, fail and unknown distinct"
+    },
+    {
+      "id": "ENT16",
+      "name": "report_sections",
+      "pk": "section_id",
+      "records": "TOC sequence, generated narrative, evidence pointers",
+      "relations": "result_id OR check_id",
+      "proof_rule": "Chapter view is a joined projection, not source of truth"
+    }
+  ],
+  "normalization": {
+    "meaning": "A table describes one kind of object; a row (record) is one instance; a key identifies that instance. Foreign keys join records to their sources and dependent objects.",
+    "goal": "3NF/BCNF where appropriate, immutable revisions and explicit provenance. 6NF is a specialized temporal normalization option, not a blanket default.",
+    "physical_implementation": "PROPOSED_NOT_MIGRATED"
+  },
+  "code_library": {
+    "verified_registry": "registry/nbc105-verified-rule-inventory.v0.1.json",
+    "edition": "NBC105:2025",
+    "registered_bounded_clauses": 14,
+    "coverage_status": "BOUNDED_IMPLEMENTATIONS_NOT_FULL_BUILDING_DESIGN",
+    "official_nepal_code_index": "https://www.dudbc.gov.np/pages/24231978/",
+    "issue": "NBC205:2024 RUD eligibility and cross-edition reconciliation cannot be assumed"
+  },
+  "support_load_truth": {
+    "supports": [
+      "Structural + foundation plans",
+      "Member and joint continuity",
+      "Foundation and soil parameters",
+      "Design constraints",
+      "Documented modelling hypotheses until confirmed"
+    ],
+    "loads": [
+      "Element selfweight from geometry and mass density",
+      "Slab dead/finish/partition using plan geometry and areas",
+      "Live load from actual room occupation and authoritative occupancy code",
+      "Masonry line loads along proven wall paths",
+      "Wind/earthquake with validated site, mass and code basis"
+    ],
+    "rule": "No actual support or load location should be inferred only from a source report's total force or period."
+  },
+  "example_engine": "openseespy Cantilever, explicitly synthetic, compare OpenSees recorders to hand equilibrium"
+}
