@@ -45,4 +45,32 @@ fetch("data/g15-chapter02-source-audit.v0.1.json",{cache:"no-store"})
  d.illustrative_square_member_alternatives.map(x=>[n(x.square_side_m*1000,1)+" × "+n(x.square_side_m*1000,1),
  n(x.gamma_kN_m3,0),n(x.trial_member_weight_kN,4),"NONE · source comparison only"])));
 }).catch(e=>fail(e.message));
+
+const compareRows=$("c02-wall-rows"),liveRows=$("c02-live-rows");
+if(compareRows&&liveRows){
+ fetch("data/g15-chapter02-load-review.v0.1.json",{cache:"no-store"})
+ .then(r=>{if(!r.ok)throw Error("Original wall load source audit missing");return r.json()})
+ .then(d=>{
+ if(d.schema!=="jp.structural.g15.chapter02.load_review.v0.1"||
+ d.member_load_assignments_accepted!==0||d.numeric_screen_discrepancies_count!==2||
+ d.engineering_approval!==false||d.private_ETABS_load_assignment_verified!==false||
+ d.source_geometry_verified!==false||d.original_F3_verdict!=="NOT SAFE IN ONE WAY SHEAR"||
+ d.wall_load_arithmetic?.length!==5||d.reported_live_load_rate_register?.length!==3||
+ d.wall_load_arithmetic.some(x=>x.actual_wall_segment_id!==null||x.target_beam_id!==null))
+ throw Error("Unreconciled original load assignment safety failure");
+ compareRows.replaceChildren(table(
+ ["Source line load","Report printed (kN/m)","Recalculated (kN/m)","Difference (kN/m)","Load assigned?"],
+ d.wall_load_arithmetic.map(x=>[x.source_label,n(x.printed_kN_m,4),
+ n(x.computed_from_source_inputs_kN_m,4),n(x.computed_minus_source_kN_m,4),
+ "NO · source geometry missing"])));
+ liveRows.replaceChildren(table(
+ ["Original reported occupancy","Printed rate (kN/m²)","Original element/room assignment"],
+ d.reported_live_load_rate_register.map(x=>[x.space,n(x.value_kN_m2,2),"NOT VERIFIED · original source occupancy conflict"])));
+ }).catch(e=>{
+ for(const box of [compareRows,liveRows]){
+ box.replaceChildren();const p=document.createElement("p");p.className="c02-alert";
+ p.textContent="SOURCE LOAD REVIEW WITHHELD: "+e.message;box.append(p);
+ }
+ });
+}
 })();

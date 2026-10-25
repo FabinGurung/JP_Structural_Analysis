@@ -1,0 +1,97 @@
+{
+  "schema": "jp.structural.g15.chapter02.load_rate_sources.v0.1",
+  "source": "private original §2.5 General Building Layout; §§2.6.1–2.6.3 Gravity/Live/Dead Loads",
+  "original_pdf_sha256": "f122904444a2e2f75230d9d4e41da0093d050da25c6e8140c86d466b7e37cc52",
+  "input_basis": "SOURCE_REPORTED_VALUES_NOT_AUTHENTICATED_PHYSICAL_ASSIGNMENTS",
+  "reported_dimensions": {
+    "wall_gross_floor_height_m": 3.05,
+    "report_general_storey_height_m": 3.048,
+    "beam_deduction_m": 0.4,
+    "slab_deduction_m": 0.13,
+    "wall_unit_weight_kN_m3": 19.2,
+    "main_thickness_m": 0.23,
+    "partition_thickness_m": 0.11,
+    "parapet_thickness_m": 0.12,
+    "parapet_height_m": 0.95,
+    "main_opening_fraction": 0.21,
+    "partition_opening_fraction": 0.2
+  },
+  "reported_line_rates": [
+    {
+      "id": "L-MAIN-GROSS",
+      "label": "Main masonry gross under beam",
+      "printed_kN_m": 11.69,
+      "formula": "gamma*(H-D)*t",
+      "citation": "§2.6.3 dead load table"
+    },
+    {
+      "id": "L-MAIN-OPEN",
+      "label": "Main masonry net with 21% openings",
+      "printed_kN_m": 9.24,
+      "formula": "gamma*(H-D)*t*(1-.21)",
+      "citation": "§2.6.3 dead load table"
+    },
+    {
+      "id": "L-PART-GROSS",
+      "label": "Partition wall gross",
+      "printed_kN_m": 5.59,
+      "formula": "gamma*(H-D)*t1",
+      "citation": "§2.6.3 dead load table"
+    },
+    {
+      "id": "L-PART-OPEN",
+      "label": "Partition net with 20% openings",
+      "printed_kN_m": 4.47,
+      "formula": "gamma*(H-D)*t1*(1-.2)",
+      "citation": "§2.6.3 dead load table"
+    },
+    {
+      "id": "L-PARAPET",
+      "label": "Parapet masonry",
+      "printed_kN_m": 2.1,
+      "formula": "gamma*H1*t2",
+      "citation": "§2.6.3 dead load table; full section and openings unclear"
+    }
+  ],
+  "reported_live_load_rates": [
+    {
+      "id": "L-LIVE-RES",
+      "space": "Bedroom, living, kitchen, toilet",
+      "value_kN_m2": 2,
+      "code": "Source §2.6.2 says IS875 Part II residential",
+      "physical_occupancy_verified": false
+    },
+    {
+      "id": "L-LIVE-TER",
+      "space": "Terrace",
+      "value_kN_m2": 1.5,
+      "code": "Source §2.6.2",
+      "physical_occupancy_verified": false
+    },
+    {
+      "id": "L-LIVE-COR",
+      "space": "Corridors, passage, staircase",
+      "value_kN_m2": 3,
+      "code": "Source §2.6.2",
+      "physical_occupancy_verified": false
+    }
+  ],
+  "geometry_source": {
+    "plans": "Original Fig3 ground/first and Fig4 second-floor, non-public source PDF",
+    "actual_area_polygon_ids_recovered": false,
+    "actual_wall_segment_ids_recovered": false,
+    "original_ETABS_pattern_assignments_recovered": false,
+    "source_report_image_public": false
+  },
+  "acceptance": {
+    "applied_loads_verified": false,
+    "reported_numbers_arithmetically_reviewed_only": true,
+    "source_F3_verdict": "NOT SAFE IN ONE WAY SHEAR",
+    "engineering_approval": false,
+    "accepted_project_load_members": 0
+  },
+  "checks": {
+    "absolute_discrepancy_threshold_kN_m": 0.01,
+    "note": "Threshold distinguishes large discrepancy from display rounding; NOT source model design validation"
+  }
+}

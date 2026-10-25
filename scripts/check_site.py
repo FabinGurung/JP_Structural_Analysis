@@ -692,6 +692,22 @@ def main():
             assert all('id="c02-'+s+'"' in book for s in ("concrete","steel","cover","code","source-scenarios"))
         except (KeyError,AssertionError,ValueError,TypeError,OSError) as ex:
             problems.append("Chapter02 material code/density discrepancy QA failed: "+str(ex))
+    ch2loads=SITE/"data/g15-chapter02-load-review.v0.1.json"
+    if not ch2loads.is_file():
+        problems.append("Chapter02 documented load rate audit missing")
+    else:
+        try:
+            d=json.loads(ch2loads.read_text(encoding="utf-8"))
+            assert d["schema"]=="jp.structural.g15.chapter02.load_review.v0.1"
+            assert d["numeric_screen_discrepancies_count"]==2
+            assert d["member_load_assignments_accepted"]==0
+            assert not d["engineering_approval"] and not d["source_geometry_verified"]
+            assert not d["private_ETABS_load_assignment_verified"]
+            assert d["original_F3_verdict"]=="NOT SAFE IN ONE WAY SHEAR"
+            assert len(d["wall_load_arithmetic"])==5
+            assert 'id="c02-wall-audit"' in book
+        except (KeyError,AssertionError,ValueError,TypeError,OSError) as e:
+            problems.append("Chapter02 source load unresolved scope QA failed: "+str(e))
     if problems:raise SystemExit("\n".join(problems))
     print("STRUCTURAL_SITE_QA_PASS: seven pages including open real-source 3D frame analysis, source-linked de-identified project journal, SP16, M09/D2, privacy checks and shared theme")
 if __name__=="__main__":main()

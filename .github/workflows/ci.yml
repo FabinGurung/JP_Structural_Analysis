@@ -239,6 +239,11 @@ jobs:
           python scripts/build_g15_chapter02_source_audit.py --output site/data/g15-chapter02-source-audit.v0.1.json
           python -m pytest -q tests/test_g15_chapter02_source.py
           node --check site/chapter02-audit.js
+      - name: Calculate original Chapter2 wall rate source deltas without assigning actual building loads
+        run: |
+          python scripts/build_g15_chapter02_load_review.py --output site/data/g15-chapter02-load-review.v0.1.json
+          python -m pytest -q tests/test_g15_chapter02_load_review.py
+          node --check site/chapter02-audit.js
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
