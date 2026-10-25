@@ -262,7 +262,7 @@ def main():
         text=p.read_text(encoding="utf-8")
         parser=Parse();parser.feed(text)
         if parser.css!=(["styles.css","report-book.css"] if page=="report.html" else ["styles.css","more-guide.css"] if page=="more.html" else ["styles.css"]):problems.append(page+": inconsistent stylesheet")
-        if parser.scripts!=(["app.js","report-book.js"] if page=="report.html" else ["app.js","d2.js"] if page=="more.html" else ["app.js","d2.js"] if page=="calculation-coverage.html" else ["app.js","project-ledger.js","gate08.js","gate09.js","gate10.js","gate11.js","gate12.js","gate13.js","gate14.js","gate15.js","gate16.js","gate17.js","gate18.js","gate19.js","gate20.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
+        if parser.scripts!=(["app.js","report-book.js"] if page=="report.html" else ["app.js","d2.js","fem-triad.js"] if page=="more.html" else ["app.js","d2.js"] if page=="calculation-coverage.html" else ["app.js","project-ledger.js","gate08.js","gate09.js","gate10.js","gate11.js","gate12.js","gate13.js","gate14.js","gate15.js","gate16.js","gate17.js","gate18.js","gate19.js","gate20.js","private-force-viewer.js"] if page=="project-lab.html" else ["app.js","analysis-studio.js"] if page=="analysis-studio.html" else ["app.js","g15-3d.js"] if page=="g15-3d.html" else ["app.js"]):problems.append(page+": inconsistent app scripts")
         if parser.mains!=1:problems.append(page+": expected one main")
         nav=text.split('<nav class="navigation" aria-label="Primary navigation">',1)
         if len(nav)!=2 or "</nav>" not in nav[1]:
@@ -664,6 +664,17 @@ def main():
         check_ch1()
     except (AssertionError,KeyError,ValueError,TypeError,OSError) as ex:
         problems.append("Chapter01 source-evidence and safety gate failed: "+str(ex))
+    fem=(SITE/"more.html").read_text()
+    for key in ("guide-fem-triad","fem-three","fem-svg","fem-numbers","fem-manual-compare"):
+        if fem.count('id="'+key+'"')!=1:
+            problems.append("Missing synchronized FEM teaching view: "+key)
+    for file in ("fem-triad.js","more-guide.css"):
+        if not (SITE/file).is_file():problems.append("Missing FEM learning asset "+file)
+    for file in ("opensees-cantilever-learning.v0.1.json","fem-workflow-map.v0.1.json",
+                 "nbc105-verified-rule-inventory.v0.1.json"):
+        if not (SITE/"data"/file).is_file():problems.append("Missing real FEM/code projection "+file)
+    if 'id="chapter-02-input-provenance"' not in book:
+        problems.append("Source-first supports and loads input review not linked in Chapter2")
     if problems:raise SystemExit("\n".join(problems))
     print("STRUCTURAL_SITE_QA_PASS: seven pages including open real-source 3D frame analysis, source-linked de-identified project journal, SP16, M09/D2, privacy checks and shared theme")
 if __name__=="__main__":main()

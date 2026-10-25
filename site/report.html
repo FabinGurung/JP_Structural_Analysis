@@ -90,6 +90,16 @@
 <article class="rb-chapter" id="chapter-02" data-chapter="02" tabindex="-1">
 <header class="rb-chapter-header"><div class="rb-chapter-kicker"><span class="rb-num">02</span><span>CHAPTER 02 · MATERIALS & GEOMETRY</span></div><h2>2.0 General Data for Structural Analysis</h2><p>The design inputs appear here in the report, ahead of calculations; values with conflicting source statements remain visibly unresolved.</p><span class="rb-status">Source references available · Model geometry provisional</span></header>
 <div class="rb-chapter-body">
+<section class="rb-card" id="chapter-02-input-provenance"><h3>2.0.1 · How do we actually find the supports and where forces act?</h3>
+<p>The OpenSees program does <strong>not</strong> discover ground supports or loads by itself. We identify them from real structural and foundation drawings, member/joint continuity, soil parameters, actual occupied space, member selfweight and code-governed earthquake/wind actions.</p>
+<div class="rb-table-wrap"><table><thead><tr><th>Assignment</th><th>Evidence needed before modelling</th><th>Our current state</th></tr></thead><tbody>
+<tr><td>Base / foundation restraints</td><td>Foundation plans, support details, geotechnical inputs and intended fixity</td><td><strong>NOT VERIFIED</strong> · trial fixed supports only</td></tr>
+<tr><td>Slab, selfweight and wall loads</td><td>Plan geometry, dimensions, materials, openings and actual load locations</td><td><strong>NOT VERIFIED</strong> · source magnitudes insufficient for assignments</td></tr>
+<tr><td>Live load / occupation</td><td>Real room use plus applicable occupancy-load standard</td><td><strong>NOT VERIFIED</strong> · mixed-use conflict</td></tr>
+<tr><td>Seismic and wind actions</td><td>Verified Pokhara site, mass, editions, exposure and code procedures</td><td><strong>NOT VERIFIED</strong> · site-specific governing inputs incomplete</td></tr>
+</tbody></table></div>
+<p>Each value must have its own source and target ID before analysis. A finished PDF can report 6,831.9109 kN seismic weight without proving which slab and wall objects supplied that weight.</p>
+<p class="rb-source">See the real OpenSees, manual mathematics, Three.js and SVG linked example at <a href="more.html#guide-fem-triad">More → FEM solving lesson</a>. The teaching support/force are declared assumptions, <strong>not</strong> G+1.5 evidence.</p></section>
 <section class="rb-card"><h3><span class="rb-anchor" id="toc-2-1"></span><span class="rb-subnumber">2.1</span> Grade of Concrete · <span class="rb-anchor" id="toc-2-2"></span><span class="rb-subnumber">2.2</span> Reinforcement Steel · <span class="rb-anchor" id="toc-2-3"></span><span class="rb-subnumber">2.3</span> Clear Cover</h3><div class="rb-table-wrap"><table><thead><tr><th>Item</th><th>Original report value / statement</th><th>Interpretation</th></tr></thead><tbody>
 <tr><td>Concrete</td><td>M20 in columns, beams, slabs and footings</td><td>Source-reported · PDF pp. 4, 6</td></tr>
 <tr><td>Reinforcement</td><td>Fe500</td><td>Source-reported · PDF p. 7</td></tr>
