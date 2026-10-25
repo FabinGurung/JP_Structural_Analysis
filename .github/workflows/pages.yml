@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 8218083c84c1d52fbb5b5525c2cf8c65e68beb2c
+          ref: bcbef5bc5c73ed29f320917ac7defdd00f479e10
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -200,6 +200,27 @@ jobs:
           assert w["original_F3_verdict"]=="NOT SAFE IN ONE WAY SHEAR"
           assert w["engineering_approval"] is False
           print("SOURCE_CHAPTER2_MATERIAL_AND_UNASSIGNED_LOAD_SCREEN_PASS")
+          PY
+      - name: Publish original Chapter 2.6.4 to 2.8 seismic source arithmetic and bounded safety checks
+        run: |
+          python scripts/build_g15_chapter02_seismic_audit.py --output site/data/g15-chapter02-seismic-audit.v0.1.json
+          python -m pytest -q tests/test_g15_chapter02_seismic_audit.py
+          node --check site/chapter02-seismic.js
+          python - <<'PY'
+          from pathlib import Path
+          import json,math
+          p=Path("site/data/g15-chapter02-seismic-audit.v0.1.json")
+          d=json.loads(p.read_text())
+          t=d["source_summary"]
+          assert d["engineering_approval"] is False and d["physical_evidence_accepted"] is False
+          assert d["source_mass_reconciled"] is False
+          assert d["source_f3_verdict"]=="NOT SAFE IN ONE WAY SHEAR"
+          assert t["source_ULS_coefficient_printed"]==.131
+          assert t["formula_ULS_coefficient_unrounded"]==.13125
+          assert d["wind_screen"]["wind_dominance_proven"] is False
+          assert d["soft_storey_screen"]["actual_story_stiffnesses_verified"] is False
+          assert len(d["source_conditional_floor_weights_and_forces"])==3
+          print("G15_SOURCE_CHAPTER02_6_TO_8_ACCEPTANCE_GATES_PRESERVED")
           PY
       - name: Validate current report-first coverage and site navigation
         run: |
