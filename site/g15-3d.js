@@ -13,9 +13,9 @@ fetch("data/g15-chapter04-model-graph.v0.1.json",{cache:"no-store"}).then(r=>r.o
  chapter04Members=new Map(d.elements.map(x=>[x.id,x]));
 }).catch(()=>{chapter04Members=null});
 function memberKey(label){
- const column=/^COLUMN ([A-Z0-9]+) @ L(\\d+)–L(\\d+)/.exec(label);
+ const column=/^COLUMN ([A-Z0-9]+) @ L([0-9]+)–L([0-9]+)/.exec(label);
  if(column)return "COL-"+column[1]+"-L"+column[2]+"-"+column[3];
- const beam=/^BEAM ([A-Z0-9]+)–([A-Z0-9]+) \\/ L(\\d+)/.exec(label);
+ const beam=/^BEAM ([A-Z0-9]+)–([A-Z0-9]+) [/] L([0-9]+)/.exec(label);
  return beam?"BEAM-"+beam[1]+"-"+beam[2]+"-L"+beam[3]:null;
 }
 
