@@ -5,6 +5,20 @@ const $=id=>document.getElementById(id),ns="http://www.w3.org/2000/svg";
 const fmt=(x,d=2)=>Number.isFinite(x)?x.toLocaleString("en-US",{maximumFractionDigits:d,minimumFractionDigits:d}):"—";
 const node=(name,attrs,txt)=>{const v=document.createElementNS(ns,name);for(const [k,val] of Object.entries(attrs))v.setAttribute(k,String(val));if(txt!==undefined)v.textContent=txt;return v;};
 const make=(name,txt,klass)=>{const v=document.createElement(name);if(txt!==undefined)v.textContent=txt;if(klass)v.className=klass;return v;};
+// Chapter 4 additional read-only identity graph. Absence leaves original viewer working.
+let chapter04Members=null;
+fetch("data/g15-chapter04-model-graph.v0.1.json",{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject(Error("identity ledger unavailable"))).then(d=>{
+ if(d.engineering_approval!==false||d.original_F3_one_way_shear!=="NOT SAFE IN ONE WAY SHEAR"||
+    d.elements?.length!==165 || d.counts?.source_gate20_open!==15)return;
+ chapter04Members=new Map(d.elements.map(x=>[x.id,x]));
+}).catch(()=>{chapter04Members=null});
+function memberKey(label){
+ const column=/^COLUMN ([A-Z0-9]+) @ L(\\d+)–L(\\d+)/.exec(label);
+ if(column)return "COL-"+column[1]+"-L"+column[2]+"-"+column[3];
+ const beam=/^BEAM ([A-Z0-9]+)–([A-Z0-9]+) \\/ L(\\d+)/.exec(label);
+ return beam?"BEAM-"+beam[1]+"-"+beam[2]+"-L"+beam[3]:null;
+}
+
 const refs=["g15-beam","g15-e","g15-stiff","g15-w1","g15-w2","g15-w3","g15-c","g15-t","g15-bridges"];
 const defaults=Object.fromEntries(refs.map(id=>[id,$(id).type==="checkbox"?$(id).checked:$(id).value]));
 let model=null,yaw=-.67,beamVisible=true,request=null;
@@ -34,7 +48,14 @@ function segment(scene,a,b,color,width,label){
  const [x1,y1]=project(...a),[x2,y2]=project(...b);
  const l=node("line",{x1,y1,x2,y2,stroke:color,"stroke-width":width,
                        "stroke-linecap":"round","data-member":label,tabindex:0});
- const choose=()=>$("g15-inspector").textContent=label+" · assumed elastic element centerline · source grid-based connectivity, not confirmed as-built.";
+ const choose=()=>{
+  const id=memberKey(label),e=chapter04Members?.get(id);
+  $("g15-inspector").textContent=e?
+    id+" · OpenSees tag "+e.solver_tag+" · "+e.status+" · "+e.connection_status+
+    " · section "+e.section_id+" · source record "+e.source_observation_id+
+    " · original ETABS ID MISSING · original F3 NOT SAFE IN ONE WAY SHEAR · design HOLD.":
+    label+" · provisional centerline · source graph not yet loaded · engineering HOLD.";
+ };
  l.addEventListener("click",choose);l.addEventListener("keydown",e=>{if(e.key==="Enter")choose();});
  scene.append(l);
 }
