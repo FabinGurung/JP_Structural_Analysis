@@ -254,6 +254,31 @@ jobs:
           python scripts/build_g15_chapter03_method.py --output site/data/g15-chapter03-method.v0.1.json
           python -m pytest -q tests/test_g15_chapter03_method.py
           node --check site/chapter03-method.js
+      - name: Chapter 4 source-model geometry, support and actual OpenSees load graph
+        run: |
+          python scripts/build_g15_chapter04_model_graph.py --output site/data/g15-chapter04-model-graph.v0.1.json
+          python -m pytest -q tests/test_g15_chapter04_model_graph.py
+          node --check site/chapter04-model.js
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("site/data/g15-chapter04-model-graph.v0.1.json").read_text())
+          assert d["schema"]=="jp.structural.g15.chapter04.source_model_load_graph.v0.1"
+          assert len(d["nodes"])==92 and len(d["elements"])==165
+          assert len(d["trial_nodal_loads"])==345 and len(d["solved_cases"])==5
+          assert d["counts"]["open_sees_signed_member_case_records"]==825
+          assert all(x["moment_residual_kNm"]<0.001 for x in d["solved_cases"])
+          assert d["original_ETABS_model_authenticated"] is False
+          assert d["actual_selfweight_assembled"] is False
+          assert d["original_F3_one_way_shear"]=="NOT SAFE IN ONE WAY SHEAR"
+          assert d["engineering_approval"] is False
+          print("CH4_TRIAL_SOURCE_MODEL_345_LOAD_RECORDS_REAL_OPENSEES_APPROVAL_HOLD")
+          PY
+      - name: Upload Chapter 4 source-labelled model and unassigned original loads (not approved)
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: chapter04-model-identity-loadgraph-165-members-F3-unsafe
+          path: site/data/g15-chapter04-model-graph.v0.1.json
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
