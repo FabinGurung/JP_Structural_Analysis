@@ -1,0 +1,63 @@
+{
+  "schema": "jp.structural.g15.chapter06.source_choice_registry.v0.1",
+  "source_pdf": {
+    "drive_id": "1TpWUmOdrcQqOpkN6qvmhZ12KrYaNABBM",
+    "sha256": "f122904444a2e2f75230d9d4e41da0093d050da25c6e8140c86d466b7e37cc52",
+    "authority": "Reported observations only, not a native authenticated ETABS model"
+  },
+  "codes": [
+    {
+      "name": "NBC105:2025",
+      "url": "https://ebps.kathmandu.gov.np/UploadFiles/NBC_105_2025_Sesmic_Design.pdf"
+    },
+    {
+      "name": "IS456:2000",
+      "url": "https://wriddodoti.gov.np/uploads/blog/20230331071217_IS-456-with-all-ammendments.pdf"
+    }
+  ],
+  "status": {
+    "owner_authorized_source_sensitivity_study": true,
+    "physical_source_accepted": false,
+    "engineer_signed_design": false,
+    "original_F3_one_way_shear": "NOT SAFE IN ONE WAY SHEAR"
+  },
+  "inputs": {
+    "column_grade_MPa": 20,
+    "steel_grade_MPa": 500,
+    "printed_stair_waist_mm": 150,
+    "worked_stair_waist_mm": 127,
+    "slab_schedule_mm": 120,
+    "slab_worksheet_mm": 125,
+    "footing_F3_D_mm": 450,
+    "footing_F3_original_d_mm": 423.46278,
+    "footing_F3_cover_based_d_mm": 394,
+    "soil_SBC_source_kPa": 160
+  },
+  "decisions": [
+    {
+      "original": "Column schedule §6.1.2",
+      "choice": "Arithmetic bar steel ratios only",
+      "reason": "Reported bar counts and dimensions permit independently repeatable area calculation; section force/capacity identity remains open"
+    },
+    {
+      "original": "Slab §6.3",
+      "choice": "Use D125 for the one worked sample, retain D120 conflict",
+      "reason": "Explicit source worksheet dimension; no verified floor assignment"
+    },
+    {
+      "original": "Footing §6.4",
+      "choice": "Keep F3 unsafe and soil unverified",
+      "reason": "Original F3 explicitly fails one-way shear and no borehole data exists"
+    },
+    {
+      "original": "Stair §6.5",
+      "choice": "Compare 150 and 127 thickness, no construction depth chosen",
+      "reason": "Original general schedule and worksheet disagree"
+    },
+    {
+      "original": "NBC105:2025",
+      "choice": "Use latest official code as standards reference",
+      "reason": "Official 2025 second revision supersedes prior editions but does not independently prove soil/site inputs"
+    }
+  ]
+}
