@@ -1,0 +1,134 @@
+{
+  "schema": "jp.structural.g15.chapter05.source_report_observations.v0.1",
+  "original": {
+    "file_id": "1TpWUmOdrcQqOpkN6qvmhZ12KrYaNABBM",
+    "sha256": "f122904444a2e2f75230d9d4e41da0093d050da25c6e8140c86d466b7e37cc52",
+    "section": "Original structural report §5.1–§5.15",
+    "classification": "SOURCE_REPORTED_UNVERIFIED"
+  },
+  "original_auto_seismic": {
+    "citation": "Original §5.1 ETABS auto seismic coefficient and base-reaction tables",
+    "seismic_weight_kN": 6831.9109,
+    "ULS": {
+      "coefficient": 0.131,
+      "reported_base_shear_kN": 894.9803
+    },
+    "SLS": {
+      "coefficient": 0.126,
+      "reported_base_shear_kN": 860.8208
+    },
+    "reported_ecc_ratio": 0.05,
+    "source_identity_verified": false
+  },
+  "reported_modes": {
+    "citation": "Original §5.5 table of modal participating mass ratios and neighboring prose",
+    "narrative_period_s": 0.185,
+    "narrative_six_modes_for_90_percent": true,
+    "table": [
+      {
+        "mode": 1,
+        "period_s": 0.618,
+        "sum_UX": 0.0004,
+        "sum_UY": 0.537,
+        "sum_RZ": 0.3122
+      },
+      {
+        "mode": 2,
+        "period_s": 0.58,
+        "sum_UX": 0.6992,
+        "sum_UY": 0.577,
+        "sum_RZ": 0.3677
+      },
+      {
+        "mode": 3,
+        "period_s": 0.55,
+        "sum_UX": 0.7876,
+        "sum_UY": 0.8289,
+        "sum_RZ": 0.8464
+      },
+      {
+        "mode": 4,
+        "period_s": 0.202,
+        "sum_UX": 0.7914,
+        "sum_UY": 0.9492,
+        "sum_RZ": 0.847
+      },
+      {
+        "mode": 5,
+        "period_s": 0.195,
+        "sum_UX": 0.9297,
+        "sum_UY": 0.9538,
+        "sum_RZ": 0.8491
+      },
+      {
+        "mode": 6,
+        "period_s": 0.187,
+        "sum_UX": 0.934,
+        "sum_UY": 0.9558,
+        "sum_RZ": 0.961
+      }
+    ],
+    "original_periods_and_modes_authenticated": false
+  },
+  "reported_roof_displacements": {
+    "citation": "Original §5.6 ULS / SLS maximum storey displacement prose",
+    "ULS_max_mm": 22.9069,
+    "SLS_max_mm": 12.846306,
+    "ULS_printed_limit_mm": 57.15,
+    "SLS_printed_limit_mm": 54.864,
+    "physical_comparability": false
+  },
+  "reported_drift": {
+    "citation": "Original §5.7 ULS and SLS story drift prose",
+    "ULS_max_ratio": 0.00288,
+    "SLS_max_ratio": 0.002174,
+    "ULS_limit_ratio": 0.00625,
+    "SLS_limit_ratio": 0.006,
+    "physical_comparability": false
+  },
+  "reported_torsion": {
+    "citation": "Original §5.8 ULS torsional irregularity source table",
+    "ULS_example_X_max_ratio": 1.06,
+    "ULS_example_Y_max_ratio": 1.2,
+    "not_a_reproduced_model_check": true
+  },
+  "reported_story_stiffness": {
+    "citation": "Original §5.9 soft-story story stiffness table, kN/m",
+    "X_kN_per_m": [
+      210766.538,
+      105412.441,
+      58488.585
+    ],
+    "Y_kN_per_m": [
+      164985.671,
+      93272.914,
+      61139.877
+    ],
+    "authenticated_model_stiffness": false
+  },
+  "reported_story_masses": {
+    "citation": "Original §5.10 mass irregularity table; units omitted in report",
+    "reported": [
+      270076.47,
+      274062.74,
+      152521.81
+    ],
+    "units_printed": false
+  },
+  "reported_base_reaction": {
+    "citation": "Original §5.12 ULS EQX/EQY LinStatic reaction values",
+    "ULS_X_kN": -894.9803,
+    "ULS_Y_kN": -894.9803,
+    "independent_source_reproduction": false
+  },
+  "missing_native_data": {
+    "original_ETABS_EDB_or_E2K": false,
+    "member_load_map": false,
+    "mass_source": false,
+    "diaphragm": false,
+    "dynamic_modal_model": false,
+    "original_signed_member_envelopes": false
+  },
+  "source_F3_status": "NOT SAFE IN ONE WAY SHEAR",
+  "physical_engineering_approval": false
+}
