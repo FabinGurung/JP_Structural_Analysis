@@ -279,6 +279,28 @@ jobs:
         with:
           name: chapter04-model-identity-loadgraph-165-members-F3-unsafe
           path: site/data/g15-chapter04-model-graph.v0.1.json
+      - name: Chapter 5 actual OpenSees signed end action panels and original report source screens
+        run: |
+          python scripts/build_g15_chapter05_signed_results.py --output site/data/g15-chapter05-signed-results.v0.1.json
+          python -m pytest -q tests/test_g15_chapter05_signed_results.py
+          node --check site/chapter05-results.js
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("site/data/g15-chapter05-signed-results.v0.1.json").read_text())
+          assert d["engineering_approval"] is False
+          assert d["original_F3_one_way_shear"]=="NOT SAFE IN ONE WAY SHEAR"
+          assert d["counts"]["signed_member_case_records"]==825
+          assert len(d["trial_node_displacements"])==345
+          assert d["original_report_claims"]["modal_90_percent_first_table_mode"]=={"UX":5,"UY":4,"RZ":6}
+          assert all(x["force_residual_kN"]<.001 for x in d["case_summaries"])
+          print("CH5_825_ACTUAL_SIGNED_MEMBER_CASES_345_NODAL_RECORDS_SOURCE_HOLD")
+          PY
+      - name: Upload Chapter 5 source-reported vs signed OpenSees results (no physical acceptance)
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: chapter05-signed-member-actions-original-modal-drift-conflict-not-approved
+          path: site/data/g15-chapter05-signed-results.v0.1.json
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
