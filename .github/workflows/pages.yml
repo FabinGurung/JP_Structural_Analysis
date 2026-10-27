@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 737b723b878971d5cf1acb0206ace33d018dd5f7
+          ref: 5779b84cee012f00b4ff2a0c504b394dc3fae1bd
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -258,6 +258,23 @@ jobs:
           assert (len(d["nodes"]),len(d["elements"]),len(d["trial_nodal_loads"]))==(92,165,345)
           assert all(x["moment_residual_kNm"]<0.001 for x in d["solved_cases"])
           print("CH4_SOURCE_TRIAL_MODEL_OPENSEES_PAGES_PASS_NO_DESIGN_APPROVAL")
+          PY
+      - name: Publish Chapter 5 source-indexed real OpenSees signed end action and trial displacements
+        run: |
+          python scripts/build_g15_chapter05_signed_results.py --output site/data/g15-chapter05-signed-results.v0.1.json
+          python -m pytest -q tests/test_g15_chapter05_signed_results.py
+          node --check site/chapter05-results.js
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("site/data/g15-chapter05-signed-results.v0.1.json").read_text())
+          assert d["counts"]["signed_member_case_records"]==825
+          assert d["counts"]["trial_displacement_records"]==345
+          assert d["original_report_claims"]["modal_90_percent_first_table_mode"]=={"UX":5,"UY":4,"RZ":6}
+          assert d["original_report_claims"]["modal_period_source_conflict_s"]["resolved"] is False
+          assert d["engineering_approval"] is False and d["original_F3_one_way_shear"]=="NOT SAFE IN ONE WAY SHEAR"
+          assert d["counts"]["source_gates_open"]==15
+          print("CH5_825_SIGNED_OPENSEES_RESULTS_345_NODAL_RECORDS_PAGES_APPROVAL_HOLD")
           PY
       - name: Validate current report-first coverage and site navigation
         run: |
