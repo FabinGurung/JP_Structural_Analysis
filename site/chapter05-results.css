@@ -1,0 +1,17 @@
+/* Chapter 5 original source report + real OpenSees member-end data, matching the existing report. */
+.rb-chapter .rb-ch5-panel{border-left:3px solid #a6c6cb;margin:18px 0}
+.rb-chapter .rb-ch5-panel h3,.rb-chapter .rb-ch5-panel h4{color:#215365}
+.rb-chapter .rb-ch5-controls{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin:15px 0}
+.rb-chapter .rb-ch5-controls label{font-size:13px;font-weight:700;color:#285367}
+.rb-chapter .rb-ch5-controls select{display:block;margin-top:5px;background:#fff;color:#244d5e;border:1px solid #b7ccd1;border-radius:4px;padding:9px;max-width:100%}
+.rb-chapter .rb-ch5-figures{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.rb-chapter .rb-ch5-chart{background:#f7faf9;border:1px solid #d2dfe1;border-radius:5px;padding:8px}
+.rb-chapter .rb-ch5-chart svg{display:block;width:100%;height:auto}
+.rb-chapter .rb-ch5-scroll{overflow:auto;max-height:400px;border:1px solid #d2dfe1;border-radius:4px;margin:12px 0}
+.rb-chapter .rb-ch5-scroll table{min-width:540px;width:100%;margin:0}
+.rb-chapter .rb-ch5-scroll th{background:#eaf3f3;color:#1c5264}
+.rb-chapter .rb-ch5-scroll td,.rb-chapter .rb-ch5-scroll th{font-size:12px;padding:9px;vertical-align:top}
+.rb-chapter .rb-ch5-notice{background:#fff5f0;color:#813e34;border-left:4px solid #b97e70;padding:12px 14px;margin:14px 0}
+.rb-chapter #c05-deformed{background:#f6faf9;border:1px solid #d2dfe1;border-radius:5px}
+.rb-chapter #c05-deformed svg{display:block;width:100%;height:auto}
+@media(max-width:690px){.rb-chapter .rb-ch5-figures{grid-template-columns:1fr}}
