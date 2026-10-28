@@ -1,0 +1,419 @@
+{
+  "schema": "jp.structural.report_template_contract.v0.2",
+  "template_purpose": "Reusable SAR structural-analysis and design-engine assembly, not a declaration of building approval",
+  "chapter_count": 7,
+  "format": "Original G+1.5 PDF report chapter order, with explicitly normalized headings and additional submission annex; module status governed by registry/report-calculation-coverage.v0.1.json",
+  "original_source": {
+    "drive_id": "1TpWUmOdrcQqOpkN6qvmhZ12KrYaNABBM",
+    "sha256": "f122904444a2e2f75230d9d4e41da0093d050da25c6e8140c86d466b7e37cc52",
+    "note": "Restricted private original; no source drawing bytes republished"
+  },
+  "precedent_scope": "G+1.5 structural report main precedent; G+2.5 considered in existing coverage registry but no original-building parity claimed",
+  "codes": [
+    {
+      "id": "NBC105_2025",
+      "url": "https://ebps.kathmandu.gov.np/UploadFiles/NBC_105_2025_Sesmic_Design.pdf",
+      "clauses": [
+        "3.4",
+        "3.6",
+        "4",
+        "5.2",
+        "5.5",
+        "5.6",
+        "6.1",
+        "6.2",
+        "6.3",
+        "7",
+        "Annex A"
+      ],
+      "role": "Seismic loads, ductility and detailing"
+    },
+    {
+      "id": "IS456_2000",
+      "url": "https://wriddodoti.gov.np/uploads/blog/20230331071217_IS-456-with-all-ammendments.pdf",
+      "clauses": [
+        "25",
+        "26",
+        "31.6",
+        "34.2.3",
+        "34.2.4",
+        "38",
+        "39",
+        "40/Table 19"
+      ],
+      "role": "Concrete strength and footings"
+    },
+    {
+      "id": "DUDBC_CODE_INDEX",
+      "url": "https://dudbc.gov.np/pages/building-code/",
+      "clauses": [
+        "NBC 103",
+        "NBC 104",
+        "NBC 110",
+        "NBC 105"
+      ],
+      "role": "Official code edition discovery; not automatically a verified implemented calculation"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "01",
+      "title": "Executive Summary",
+      "requirement_ids": [
+        "M01",
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06",
+        "M07",
+        "M08",
+        "M09",
+        "M10",
+        "M11",
+        "M12",
+        "M13",
+        "M14",
+        "M15",
+        "M16",
+        "S17",
+        "S18"
+      ],
+      "headings": [
+        {
+          "number": "1.1",
+          "name": "Executive Summary"
+        },
+        {
+          "number": "1.2",
+          "name": "Structural Modelling"
+        },
+        {
+          "number": "1.3",
+          "name": "Structural System of the Building"
+        }
+      ]
+    },
+    {
+      "id": "02",
+      "title": "General Building Data, Material and Loading",
+      "requirement_ids": [
+        "M01",
+        "M02",
+        "M03",
+        "M06"
+      ],
+      "headings": [
+        {
+          "number": "2.1",
+          "name": "Grade of Concrete"
+        },
+        {
+          "number": "2.2",
+          "name": "Reinforcement Steel"
+        },
+        {
+          "number": "2.3",
+          "name": "Clear Cover"
+        },
+        {
+          "number": "2.4",
+          "name": "Reference Codes"
+        },
+        {
+          "number": "2.5",
+          "name": "General Building Layout"
+        },
+        {
+          "number": "2.6.1",
+          "name": "Dead Loads"
+        },
+        {
+          "number": "2.6.2",
+          "name": "Live Loads"
+        },
+        {
+          "number": "2.6.3",
+          "name": "Dead and Other Loads"
+        },
+        {
+          "number": "2.6.4",
+          "name": "Seismic Load"
+        },
+        {
+          "number": "2.6.5",
+          "name": "Wind Loads"
+        },
+        {
+          "number": "2.7",
+          "name": "Soft Storey"
+        },
+        {
+          "number": "2.8",
+          "name": "Load Combinations"
+        }
+      ]
+    },
+    {
+      "id": "03",
+      "title": "Structural Analysis and Design Method",
+      "requirement_ids": [
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "headings": [
+        {
+          "number": "3",
+          "name": "Structural Analysis Methodology"
+        }
+      ]
+    },
+    {
+      "id": "04",
+      "title": "Structural Model and Load Application",
+      "requirement_ids": [
+        "M02",
+        "M04"
+      ],
+      "headings": [
+        {
+          "number": "4.1",
+          "name": "3D View of the Building"
+        },
+        {
+          "number": "4.2",
+          "name": "Load Application"
+        },
+        {
+          "number": "4.2.1",
+          "name": "Live Load and Floor Finish"
+        },
+        {
+          "number": "4.2.2",
+          "name": "Wall Load"
+        }
+      ]
+    },
+    {
+      "id": "05",
+      "title": "Analysis Results and Code Checks",
+      "requirement_ids": [
+        "M03",
+        "M04",
+        "M05",
+        "M06",
+        "M07"
+      ],
+      "headings": [
+        {
+          "number": "5.1",
+          "name": "Auto Seismic Load"
+        },
+        {
+          "number": "5.2",
+          "name": "Axial Force Diagram"
+        },
+        {
+          "number": "5.3",
+          "name": "Shear Force Diagram"
+        },
+        {
+          "number": "5.4",
+          "name": "Bending Moment Diagram"
+        },
+        {
+          "number": "5.5",
+          "name": "Model Participating Mass Ratio"
+        },
+        {
+          "number": "5.6",
+          "name": "Maximum Storey Displacement"
+        },
+        {
+          "number": "5.7",
+          "name": "Maximum Storey Drift"
+        },
+        {
+          "number": "5.8",
+          "name": "Torsional Irregularity"
+        },
+        {
+          "number": "5.9",
+          "name": "Soft Storey Check"
+        },
+        {
+          "number": "5.10",
+          "name": "Mass Irregularity"
+        },
+        {
+          "number": "5.11",
+          "name": "Deformed Model"
+        },
+        {
+          "number": "5.12",
+          "name": "Base Reaction"
+        },
+        {
+          "number": "5.13",
+          "name": "Section Verification"
+        },
+        {
+          "number": "5.14",
+          "name": "Base Reaction (source repeated section)"
+        },
+        {
+          "number": "5.15",
+          "name": "Centre of Mass and Rigidity"
+        }
+      ]
+    },
+    {
+      "id": "06",
+      "title": "RC Member and Foundation Design",
+      "requirement_ids": [
+        "M08",
+        "M09",
+        "M10",
+        "M11",
+        "M12",
+        "M13",
+        "M14",
+        "M15"
+      ],
+      "headings": [
+        {
+          "number": "6.1",
+          "name": "Design of Column"
+        },
+        {
+          "number": "6.2",
+          "name": "Design of Beam"
+        },
+        {
+          "number": "6.3",
+          "name": "Design of Slab"
+        },
+        {
+          "number": "6.4",
+          "name": "Design of Footing"
+        },
+        {
+          "number": "6.5",
+          "name": "Design of Staircase"
+        }
+      ]
+    },
+    {
+      "id": "07",
+      "title": "Annex, Sources and Submission Preparation",
+      "requirement_ids": [
+        "S17",
+        "S18"
+      ],
+      "headings": [
+        {
+          "number": "A",
+          "name": "Input/evidence ledger"
+        },
+        {
+          "number": "B",
+          "name": "Numerical result tables"
+        },
+        {
+          "number": "C",
+          "name": "Independent checks and validation"
+        },
+        {
+          "number": "D",
+          "name": "Code references"
+        },
+        {
+          "number": "E",
+          "name": "Engineering limitations and outstanding checks"
+        },
+        {
+          "number": "F",
+          "name": "Submission readiness without invented seals"
+        }
+      ]
+    }
+  ],
+  "requirements_source": "registry/report-calculation-coverage.v0.1.json",
+  "case_schema": "jp.structural.template.input.v0.2",
+  "engine_modules": [
+    "src/jp_structural/solvers/native/nbc105_2025_esm.py",
+    "src/jp_structural/solvers/native/rc_beam_strength.py",
+    "src/jp_structural/solvers/native/rc_report_kernels.py"
+  ],
+  "current_runner_bounded_modules": [
+    "M03",
+    "M08",
+    "M09",
+    "M10",
+    "M11",
+    "M12",
+    "M14"
+  ],
+  "missing_integrations": [
+    "M02 floor-to-element load placement",
+    "M04 full 3D OpenSees run per normalized case",
+    "M05 real modal + source response spectrum",
+    "M06 same-time signed combinations and accidental torsion",
+    "M07 physical drift, mass irregularity and P-Delta",
+    "M08 torsion, development, ductile detailing",
+    "M09 independent same-P interaction capacity and short/slender columns",
+    "M10 joint anchorage/confinement/hierarchy",
+    "M11 two-way slab, deflection and actual boundary support",
+    "M12 settlement, eccentricity/uplift and development",
+    "M13 raft/soil FEM",
+    "M14 real stair inclined load, torsion and support stiffness",
+    "M15 equipment",
+    "M16 wind"
+  ],
+  "submission_documents": [
+    {
+      "id": "SUB-01",
+      "title": "Original drawing/version register and engineering scope",
+      "source_required": true
+    },
+    {
+      "id": "SUB-02",
+      "title": "Verified site hazard, occupancy and soil evidence",
+      "source_required": true
+    },
+    {
+      "id": "SUB-03",
+      "title": "Traceable model geometry, load paths, mass assignment and model fingerprint",
+      "source_required": true
+    },
+    {
+      "id": "SUB-04",
+      "title": "Audited ULS/SLS analysis cases, signed forces and deflection checks",
+      "source_required": true
+    },
+    {
+      "id": "SUB-05",
+      "title": "Full members and foundation design with detailing, supporting calculations",
+      "source_required": true
+    },
+    {
+      "id": "SUB-06",
+      "title": "Independent benchmark, numerical QA and code-edition signoff",
+      "source_required": true
+    },
+    {
+      "id": "SUB-07",
+      "title": "Professional review, authorized signatures and municipality-specific permit format",
+      "source_required": true
+    }
+  ],
+  "rules": {
+    "any_input_or_module_failure": "Emit HOLD; preserve unsafe source verdict",
+    "software_test_pass": "Never equals professional approval",
+    "candidate_footing": "Rank bounded numerical options but never issue a construction recommendation",
+    "private_source": "Only source metadata, no PDF bytes or private drawing geometry",
+    "separate_sequences": "Source registry, code commit and Pages release each independently versioned"
+  }
+}
