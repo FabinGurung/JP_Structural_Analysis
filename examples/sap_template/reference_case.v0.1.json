@@ -1,0 +1,42 @@
+{
+  "project_id": "REFERENCE-DEMO-001",
+  "revision": "T0.1",
+  "site": "HYPOTHETICAL-LOCATION-NOT-VERIFIED",
+  "occupancy": "REFERENCE-ONLY",
+  "code_edition": "NBC 105:2025",
+  "inputs": {
+    "slab_thickness_m": 0.125,
+    "concrete_density_kN_m3": 25,
+    "dead_area_kN_m2": 2,
+    "live_area_kN_m2": 2,
+    "area_m2": 18,
+    "factor": 1
+  },
+  "load_cases": [
+    {
+      "id": "G_REF",
+      "type": "REFERENCE_GRAVITY",
+      "combination_factors": {
+        "dead": 1,
+        "live": 0
+      },
+      "source": "explicit hypothetical sample input"
+    },
+    {
+      "id": "DL_REF",
+      "type": "REFERENCE_COMBINATION",
+      "combination_factors": {
+        "dead": 1.5,
+        "live": 1.5
+      },
+      "source": "hypothetical 1.5 dead +1.5 live study ONLY; not adopted code verification"
+    }
+  ],
+  "source_custody": {
+    "id": "EXAMPLE-HYPOTHETICAL",
+    "verified": false
+  },
+  "engineer_review": {
+    "signed": false
+  }
+}
