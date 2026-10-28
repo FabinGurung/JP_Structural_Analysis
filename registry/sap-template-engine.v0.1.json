@@ -1,0 +1,280 @@
+{
+  "schema": "jp.structural.sap.template.v0.1",
+  "purpose": "Reusable Structural Analysis & Design Report / submission preparation engine, independent of subject building",
+  "original_case": {
+    "role": "REFERENCE_CASE_NOT_TEMPLATE_AUTHORITY",
+    "source": "new nbc2025 report REVISED(1).pdf",
+    "drive_id": "1TpWUmOdrcQqOpkN6qvmhZ12KrYaNABBM",
+    "sha256": "f122904444a2e2f75230d9d4e41da0093d050da25c6e8140c86d466b7e37cc52",
+    "status": "NOT_CERTIFIED"
+  },
+  "standards": [
+    {
+      "code": "NBC 105:2025",
+      "scope": "Seismic load definition, spectrum, effective stiffness, ESM/MRSM, ULS/SLS, drift and detailing",
+      "url": "https://giwmscdnone.gov.np/media/files/NBC_105_2025_Seismic%20Design%20of%20Buildings%20in%20Nepal_lqqvx6a.pdf",
+      "priority": "PRIMARY_CURRENT"
+    },
+    {
+      "code": "NBC 103",
+      "scope": "Imposed/occupancy loads",
+      "url": "https://dudbc.gov.np/pages/building-code/",
+      "priority": "REFER_FROM_OFFICIAL_INDEX"
+    },
+    {
+      "code": "NBC 104",
+      "scope": "Wind loading",
+      "url": "https://dudbc.gov.np/pages/building-code/",
+      "priority": "REFER_FROM_OFFICIAL_INDEX"
+    },
+    {
+      "code": "NBC 108",
+      "scope": "Seismic site considerations",
+      "url": "https://dudbc.gov.np/pages/building-code/",
+      "priority": "REFER_FROM_OFFICIAL_INDEX"
+    },
+    {
+      "code": "NBC 110",
+      "scope": "Plain and reinforced concrete",
+      "url": "https://dudbc.gov.np/pages/building-code/",
+      "priority": "REFER_FROM_OFFICIAL_INDEX"
+    },
+    {
+      "code": "IS 456:2000",
+      "scope": "RC footing shear/flexure design methods where adopted and edition checked",
+      "url": "https://wriddodoti.gov.np/uploads/blog/20230331071217_IS-456-with-all-ammendments.pdf",
+      "priority": "SECONDARY_SUBJECT_TO_LOCAL_ADOPTION"
+    }
+  ],
+  "chapters": [
+    {
+      "chapter": "01",
+      "title": "Introduction and structural design basis",
+      "source_outline": [
+        "Project description",
+        "Objectives",
+        "Scope and applicable codes"
+      ],
+      "inputs": [
+        "project",
+        "standards",
+        "occupancy",
+        "site"
+      ],
+      "outputs": [
+        "design_basis",
+        "code_edition_register"
+      ]
+    },
+    {
+      "chapter": "02",
+      "title": "General data for structural analysis",
+      "source_outline": [
+        "2.1 General data",
+        "2.2 Site parameters",
+        "2.3 Material parameters",
+        "2.4 Seismic and wind inputs",
+        "2.5 Loading data",
+        "2.6 Response analysis and combinations",
+        "2.7 Model results",
+        "2.8 Drift/irregularity screening"
+      ],
+      "inputs": [
+        "geometry",
+        "materials",
+        "occupancy",
+        "site",
+        "load_patterns",
+        "mass_source",
+        "design_combinations"
+      ],
+      "outputs": [
+        "source_parameter_ledger",
+        "gravity_load_tables",
+        "mass_breakdown",
+        "seismic_parameters",
+        "drift_screen",
+        "model_diagnostics"
+      ]
+    },
+    {
+      "chapter": "03",
+      "title": "Structural analysis method and assumptions",
+      "source_outline": [
+        "Analysis method",
+        "Governing assumptions",
+        "Numerical model definition",
+        "Solver identity",
+        "Verification strategy"
+      ],
+      "inputs": [
+        "model",
+        "solver",
+        "mesh",
+        "boundary_conditions"
+      ],
+      "outputs": [
+        "equilibrium",
+        "solver_log",
+        "convergence",
+        "analysis_assumption_ledger"
+      ]
+    },
+    {
+      "chapter": "04",
+      "title": "Structural model and load assignment",
+      "source_outline": [
+        "Grid and storeys",
+        "Beam/column/area objects",
+        "Slabs and openings",
+        "Footing and boundary restraints",
+        "Wall load mapping",
+        "Load and mass sources"
+      ],
+      "inputs": [
+        "model",
+        "load_patterns",
+        "mass_source",
+        "source_object_registry"
+      ],
+      "outputs": [
+        "mesh_model",
+        "member_table",
+        "loads_by_object",
+        "geometry_trace"
+      ]
+    },
+    {
+      "chapter": "05",
+      "title": "Structural analysis results",
+      "source_outline": [
+        "Case definitions",
+        "Signed member end forces",
+        "Node displacement",
+        "Modal periods and mass participation",
+        "Base shear and story response",
+        "Drift, torsion and stability",
+        "Combination envelopes"
+      ],
+      "inputs": [
+        "analysis_cases",
+        "solver_results"
+      ],
+      "outputs": [
+        "signed_actions",
+        "displacements",
+        "modes",
+        "drifts",
+        "equilibrium_checks",
+        "governing_case_provenance"
+      ]
+    },
+    {
+      "chapter": "06",
+      "title": "Structural element design",
+      "source_outline": [
+        "6.1 Column",
+        "6.2 Beam",
+        "6.3 Slab",
+        "6.4 Foundation",
+        "6.5 Stair"
+      ],
+      "inputs": [
+        "design_effects",
+        "materials",
+        "sections",
+        "rebar",
+        "foundation_reactions",
+        "geotechnical"
+      ],
+      "outputs": [
+        "column_design",
+        "beam_design",
+        "slab_design",
+        "foundation_design",
+        "stair_design",
+        "ductility_details",
+        "demand_capacity_ratios"
+      ]
+    },
+    {
+      "chapter": "07",
+      "title": "Conclusions and report annex",
+      "source_outline": [
+        "Design summary",
+        "Drawings and schedules",
+        "Calculation sheets",
+        "Sources and assumptions",
+        "Reviewer and revision register"
+      ],
+      "inputs": [
+        "calculation_results",
+        "checks",
+        "drawings",
+        "review"
+      ],
+      "outputs": [
+        "report_html",
+        "report_md",
+        "machine_json",
+        "submission_manifest",
+        "source_trace"
+      ]
+    }
+  ],
+  "mandatory_contracts": [
+    "all_numeric_quantities_explicit_unit",
+    "every_load_case_has_factor_and_load_type",
+    "all_member_actions_signed_local_coordinate_system",
+    "seismic_mass_provenance_by_object",
+    "original_source_case_not_automatically_truth",
+    "no_pass_for_unimplemented_checks",
+    "no_submission_ready_without_required_evidence_and_independent_reviewer",
+    "software_test_pass_is_not_engineering_acceptance"
+  ],
+  "phases": [
+    {
+      "id": "T0",
+      "name": "Source contract and TOC",
+      "acceptance": "schema complete, traceable code list, sample valid and failure cases"
+    },
+    {
+      "id": "T1",
+      "name": "Model and loads",
+      "acceptance": "per-object geometry, materials, lateral system, foundations and loads with dimension checks"
+    },
+    {
+      "id": "T2",
+      "name": "Analysis solver",
+      "acceptance": "actual OpenSees static+modal signed results, residual checks, traceable load combinations and analysis settings"
+    },
+    {
+      "id": "T3",
+      "name": "Design modules",
+      "acceptance": "verified RC beams, columns, slabs, stairs, footings, joints and confinement with independent benchmark cases"
+    },
+    {
+      "id": "T4",
+      "name": "Report generator",
+      "acceptance": "all seven chapters generated from one revisioned input+output manifest, no duplicate manual claims"
+    },
+    {
+      "id": "T5",
+      "name": "Submission and QA",
+      "acceptance": "code applicability, source custody, soil, drawings, reviewer signoff, jurisdiction requirements and issue-ready bundle"
+    }
+  ],
+  "status": "T0_IMPLEMENTED_SUBMISSION_NOT_READY",
+  "completed_modules": [
+    "source-based seven-chapter schema",
+    "unit-and-provenance validators",
+    "bounded gravity/footing-demand reference calculation"
+  ],
+  "unimplemented_modules": [
+    "full certified response-spectrum solver",
+    "automatic RC strength and ductility modules",
+    "foundation verification",
+    "permit submission integration",
+    "professional acceptance"
+  ]
+}
