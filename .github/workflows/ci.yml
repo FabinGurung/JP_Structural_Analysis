@@ -343,6 +343,25 @@ jobs:
         with:
           name: annex-15-source-evidence-gates-f3-12-demand-scenarios-not-approved
           path: site/data/g15-annex-source-recovery.v0.1.json
+      - name: Validate reusable seven-chapter SAP template and fail-closed submission example
+        run: |
+          python scripts/build_sap_template_case.py --input examples/sap_template/reference_case.v0.1.json --output build/sap_template/reference_case.v0.1.json --markdown build/sap_template/reference_report.md
+          python -m pytest -q tests/test_sap_template_engine.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("build/sap_template/reference_case.v0.1.json").read_text())
+          assert len(r["chapter_coverage"])==7 and len(r["required_design_modules"])==12
+          assert not r["approval"]["submission_ready"]
+          assert not r["approval"]["analysis_verified"]
+          assert not r["approval"]["design_approved"]
+          print("SAP_TEMPLATE_SEVEN_CHAPTERS_GRAVITY_REFERENCE_ONLY_SUBMISSION_HOLD")
+          PY
+      - name: Archive SAP template source-aligned example report and machine QA
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: sap-template-reference-seven-chapter-not-approved
+          path: build/sap_template/
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
