@@ -1,0 +1,108 @@
+{
+  "schema": "jp.structural.g15.annex.source_evidence_strategy.v0.1",
+  "date": "2026-10-28",
+  "purpose": "Bounded original-source evidence recovery and sensitivity, not permit or structural approval",
+  "source_pdf": {
+    "id": "1TpWUmOdrcQqOpkN6qvmhZ12KrYaNABBM",
+    "sha256": "f122904444a2e2f75230d9d4e41da0093d050da25c6e8140c86d466b7e37cc52",
+    "authority": "Reported observations only; native model not available"
+  },
+  "standards": [
+    {
+      "id": "NBC105_2025",
+      "title": "Nepal NBC 105:2025, Seismic Design of Buildings in Nepal, second revision",
+      "url": "https://ebps.kathmandu.gov.np/UploadFiles/NBC_105_2025_Sesmic_Design.pdf",
+      "clauses": [
+        "2.2.4 Diaphragm action",
+        "2.2.5 Adequate foundation",
+        "4.1.3 Site subsoil",
+        "5.2 Seismic weight",
+        "5.5 Inter-story deflections",
+        "5.6 Accidental eccentricity",
+        "Annex A RC seismic detailing"
+      ],
+      "decision": "Use for future physically authenticated seismic verification; source values alone insufficient"
+    },
+    {
+      "id": "IS456_2000",
+      "title": "IS 456:2000 Plain and Reinforced Concrete Code, amended",
+      "url": "https://wriddodoti.gov.np/uploads/blog/20230331071217_IS-456-with-all-ammendments.pdf",
+      "clauses": [
+        "34.2.3 Footing bending",
+        "34.2.4 Footing shear and bond",
+        "31.6 Two-way shear",
+        "Table 19 Concrete design shear strength"
+      ],
+      "decision": "Use as design-check scope, not as evidence that source F3 passes"
+    },
+    {
+      "id": "NEPAL_STRUCTURAL_GUIDANCE",
+      "title": "Nepal governmental Structural Design Guidelines 2018, section 4.19 footings",
+      "url": "https://giwmscdntwo.gov.np/media/pdf_upload/powerhouse-design-guidelines-2018_j8vrg3q.pdf",
+      "clauses": [
+        "4.19.1 Isolated Footing",
+        "4.19.1.2 One-way and punching shear"
+      ],
+      "decision": "Corroborates checking one-way shear at critical distance d from face; does not override source failure"
+    }
+  ],
+  "evidence_recovery": {
+    "priority_order": [
+      "G20-SRC-001",
+      "G20-F3-012",
+      "G20-F3-013",
+      "G20-GEO-002",
+      "G20-LOAD-005",
+      "G20-GEO-003",
+      "G20-MAT-004",
+      "G20-LOAD-006",
+      "G20-USE-007",
+      "G20-MASS-008",
+      "G20-MASS-009",
+      "G20-SITE-010",
+      "G20-F3-014",
+      "G20-DYN-011",
+      "G20-F3-015"
+    ],
+    "gate_reference": "registry/g15-gate20-source-crosswalk.v0.1.json",
+    "candidate_original_model_rule": "Require subject+story+grid+load pattern+mass-source identity checked from source owner; other-project named E2K files are not valid evidence",
+    "geotechnical_rule": "Need project-specific soil bearing, settlement, groundwater and soil category; do not infer Vs30/NSPT from location",
+    "license_and_approval_rule": "Owner approves methodology and study but only authenticated evidence and qualified independent design signoff can change physical acceptance"
+  },
+  "f3_scenario_definition": {
+    "base_B_m": 2.1,
+    "base_L_m": 2.1,
+    "source_column_m": 0.36,
+    "source_D_mm": 450,
+    "source_axial_kN": 571,
+    "source_axial_including_selfweight_kN": 600,
+    "source_soil_allowable_kPa_unverified": 160,
+    "printed_one_way_tau_MPa_rounded": 0.2,
+    "source_d_mm": 423.46278,
+    "cover_scenario_mm": 50,
+    "bar_diameter_mm": 12,
+    "chosen_dimensions_mm": [
+      450,
+      475,
+      500,
+      550
+    ],
+    "chosen_plan_m": [
+      2.1,
+      2.2,
+      2.4
+    ],
+    "factor_for_source_arithmetic": 1.5,
+    "assumed_concentric_uniform_pressure": true,
+    "assumed_no_additional_eccentric_moment": true,
+    "designed_footing_recommendation": false
+  },
+  "limitations": [
+    "Source F3 explicitly NOT SAFE IN ONE WAY SHEAR; dimension variants are sensitivity inputs not approved selection",
+    "Observed 0.2 MPa allowable is rounded source text, not a verified Table 19 design shear capacity",
+    "Simplified pressure ignores own adjusted foundation selfweight, eccentricity, contact distribution and seismic actions",
+    "Does not calculate punching shear, bar development, flexure, bearing, settlement, shear reinforcement, full factored combination or soil capacity",
+    "No original EDB/E2K accepted and no drawing-verified F3 support path or site soil available"
+  ],
+  "outcome_policy": "Even an apparent one-way demand below rounded 0.2 MPa is NOT a design PASS; all alternative geometries remain NOT APPROVED"
+}
