@@ -29,8 +29,8 @@ def test_scenarios_are_unique_numerically_sensible_and_unapproved(out):
     assert base["cover_based_effective_d_mm"]==394
     assert base["q_1p5_axial_571_kPa"]==pytest.approx(194.2176870748)
     assert base["q_1p5_reported_total_600_kPa"]==pytest.approx(1.5*600/4.41)
-    assert bykey[(2.1,550)]["includes_600_demand"]["one_way_uniform_pressure_stress_MPa"]<
-           base["includes_600_demand"]["one_way_uniform_pressure_stress_MPa"]
+    assert (bykey[(2.1,550)]["includes_600_demand"]["one_way_uniform_pressure_stress_MPa"] <
+            base["includes_600_demand"]["one_way_uniform_pressure_stress_MPa"])
     for row in rows:
         assert row["includes_600_demand"]["one_way_uniform_pressure_stress_MPa"]>=0
         assert row["axial_only_demand"]["one_way_uniform_pressure_stress_MPa"]<=row["includes_600_demand"]["one_way_uniform_pressure_stress_MPa"]
