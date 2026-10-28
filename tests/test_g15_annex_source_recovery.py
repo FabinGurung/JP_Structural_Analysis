@@ -17,8 +17,8 @@ def test_exact_f3_original_source_and_load_case_arithmetic(out):
         (1.5*571/4.41)*(0.87-.42346278)/(.42346278*1000))
     assert out["source_F3_axial_only_pressure_demand_at_cover_based_d_MPa"]==pytest.approx(
         (1.5*571/4.41)*(0.87-.394)/(.394*1000))
-    assert out["source_F3_axial_only_pressure_demand_at_worksheet_d_MPa"]<
-           out["source_F3_axial_only_pressure_demand_at_cover_based_d_MPa"]
+    assert (out["source_F3_axial_only_pressure_demand_at_worksheet_d_MPa"] <
+            out["source_F3_axial_only_pressure_demand_at_cover_based_d_MPa"])
 
 def test_scenarios_are_unique_numerically_sensible_and_unapproved(out):
     assert out["schema"]==SCHEMA
