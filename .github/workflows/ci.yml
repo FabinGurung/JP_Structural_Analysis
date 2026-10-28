@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - engine/opensees-sar-v0.1
+      - engine/sap-template-contract-v01-20261029
       - 'site/**'
   pull_request:
   workflow_dispatch:
