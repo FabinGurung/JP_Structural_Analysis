@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 5cb3695025e0140fcaecb176593ff7125a4551e2
+          ref: 52f8fe15044fa1f53a926f2f79563a92d899ec4c
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -292,6 +292,23 @@ jobs:
           assert d["engineering_approval"] is False
           assert d["section6_4_footing"]["F3_original_schedule_accepted"] is False
           print("CH6_ORIGINAL_REPORT_EVIDENCE_15_GATES_OPEN_F3_UNSAFE_PAGES_PASS")
+          PY
+      - name: Publish Annex source evidence recovery and original F3 geometric demand sensitivity
+        run: |
+          python scripts/build_g15_annex_source_recovery.py --output site/data/g15-annex-source-recovery.v0.1.json
+          python -m pytest -q tests/test_g15_annex_source_recovery.py
+          node --check site/annex-source-recovery.js
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("site/data/g15-annex-source-recovery.v0.1.json").read_text())
+          assert d["gate_count"]==15 and d["accepted_gate_count"]==0
+          assert len(d["F3_sensitivity_scenarios"])==12
+          assert all(x["design_pass"] is False for x in d["F3_sensitivity_scenarios"])
+          assert d["original_F3_verdict"]=="NOT SAFE IN ONE WAY SHEAR"
+          assert d["site_soil_or_bearing_verified"] is False
+          assert d["engineering_approval"] is False
+          print("ANNEX_F3_12_DEMAND_SENSITIVITIES_SOURCE_GATE15_HOLD_PAGES_PASS")
           PY
       - name: Validate current report-first coverage and site navigation
         run: |
