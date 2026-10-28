@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 52f8fe15044fa1f53a926f2f79563a92d899ec4c
+          ref: e0382ef64291160de1a4faf3d5be96ccdbb5eb80
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -309,6 +309,25 @@ jobs:
           assert d["site_soil_or_bearing_verified"] is False
           assert d["engineering_approval"] is False
           print("ANNEX_F3_12_DEMAND_SENSITIVITIES_SOURCE_GATE15_HOLD_PAGES_PASS")
+          PY
+      - name: Publish reusable independent seven-chapter SAR template and 24 isolated-footing comparisons
+        run: |
+          python scripts/build_structural_template_engine.py --input examples/sanitized/template_engine_independent.v0.2.json --output-dir site/reports
+          python -m pytest -q tests/test_structural_template_engine.py
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path("site/reports")
+          d=json.loads((p/"template-engine-reference.json").read_text())
+          m=json.loads((p/"template-engine-reference-manifest.json").read_text())
+          assert d["M12_candidate_count"]==24 and d["M12_numeric_candidate_count"]==3
+          assert len(d["chapters"])==7 and len(d["modules_calculated"])==7
+          assert d["all_18_modules_complete"] is False
+          assert not d["engineer_approved"] and not d["permit_eligible"] and not d["engineering_approval"]
+          assert all(not x["design_approved"] for x in d["M12_footing_candidates"])
+          for name,digest in m["files"].items():
+              assert hashlib.sha256((p/name).read_bytes()).hexdigest()==digest
+          print("PAGES_TEMPLATE_ENGINE_SEVEN_CHAPTERS_24_CANDIDATES_3_BOUNDED_NUMERIC_ONLY_UNAPPROVED")
           PY
       - name: Validate current report-first coverage and site navigation
         run: |
