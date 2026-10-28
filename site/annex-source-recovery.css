@@ -1,0 +1,9 @@
+.rb-chapter .annex-evidence-panel{border-left:3px solid #a3c6cc}
+.rb-chapter .annex-evidence-panel .annex-table{overflow:auto;max-height:500px;margin:12px 0}
+.rb-chapter .annex-evidence-panel table{min-width:630px;width:100%}
+.rb-chapter .annex-evidence-panel th,.rb-chapter .annex-evidence-panel td{font-size:12px;padding:9px;vertical-align:top}
+.rb-chapter .annex-evidence-panel th{background:#eaf3f4;color:#245166}
+.rb-chapter .annex-evidence-panel select{padding:9px;border:1px solid #a9bec4;color:#245166;max-width:100%}
+.rb-chapter .annex-evidence-panel #annex-standards p{margin:12px 0}
+.rb-chapter .annex-evidence-panel #annex-standards small{display:block;margin-top:3px;color:#546e77}
+.rb-chapter .annex-evidence-panel .annex-hold{background:#fff5f0;border-left:4px solid #b66f58;padding:12px;color:#713a32}
