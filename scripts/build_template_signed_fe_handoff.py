@@ -14,6 +14,11 @@ import io
 import json
 import math
 from pathlib import Path
+import sys
+
+# Executable as `python scripts/...py` as well as imported by pytest.
+ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT))
 
 from jp_structural.solvers.opensees.synthetic_d2_example import case_fixture
 from scripts.build_d2_signed_frame_case import build as d2_build
