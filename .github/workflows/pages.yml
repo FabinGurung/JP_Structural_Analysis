@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 103d4db2b1d993352435d58f7234b2186e217d17
+          ref: 5261c6f5eedcecbc2f2cf7e7184b18b975114fb0
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -372,6 +372,29 @@ jobs:
           for k,v in m["files"].items():
               assert hashlib.sha256((p/k).read_bytes()).hexdigest()==v
           print("PAGES_R5_GEOMETRIC_PANEL_LINE_LOAD_128_KN_MASS_111P2_SIGNED_FE_80_UNAPPROVED")
+          PY
+      - name: Publish native 3D uniform beam element loads and independent fixed-end benchmark
+        run: |
+          python scripts/build_r5_uniform_beam_case.py --input examples/sanitized/r5_generic_source_geometry_frame.v0.1.json --output-dir site/reports
+          python -m pytest -q tests/test_r5_uniform_distributed_beam.py
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path("site/reports")
+          d=json.loads((p/"r5-distributed-beam-reference.json").read_text())
+          m=json.loads((p/"r5-distributed-beam-reference-manifest.json").read_text())
+          assert d["source_total_gravity_kN"]==128
+          assert d["true_element_uniform_resultants_kN"]==32
+          assert d["nodal_resultants_kN"]==96
+          assert d["signed_end_action_count"]==80
+          assert d["global_six_component_equilibrium_max_kN_or_kNm"]<1e-5
+          assert any(abs(x["moment_difference_kNm"])>1e-4 for x in d["predecessor_equivalent_nodal_comparison"])
+          assert d["original_F3_failure"]=="NOT SAFE IN ONE WAY SHEAR"
+          assert d["panel_pressure_is_still_nodal_equivalent"] is True
+          assert not d["engineering_approval"] and not d["permit_eligible"]
+          for name,checksum in m["files"].items():
+              assert hashlib.sha256((p/name).read_bytes()).hexdigest()==checksum
+          print("PAGES_R5_NATIVE_BEAM_UNIFORM_32KN_F3_UNSAFE_80_SIGNED_ACTIONS_NOT_APPROVED")
           PY
       - name: Validate current report-first coverage and site navigation
         run: |
