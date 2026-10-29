@@ -1,0 +1,530 @@
+{
+  "schema": "jp.structural.r5.input.v0.1",
+  "case_id": "SYNTHETIC-R5-FOUR-COLUMN-ROOF-001",
+  "classification": "SYNTHETIC_REFERENCE_NOT_A_BUILDING",
+  "gravity_m_s2": 9.81,
+  "model": {
+    "schema_version": "0.1",
+    "model_id": "SYNTHETIC-R5-FOUR-COLUMN-ROOF-001",
+    "project": {
+      "project_id": "SYNTHETIC-REFERENCE-NOT-CLIENT"
+    },
+    "units": {
+      "force": "kN",
+      "length": "m",
+      "time": "s",
+      "mass": "kN*s^2/m"
+    },
+    "design_basis": {
+      "code": "SANITIZED_TEST",
+      "damping_ratio": 0.05
+    },
+    "source_references": [
+      {
+        "id": "R5-SYNTH",
+        "source_type": "SYNTHETIC_TEST"
+      }
+    ],
+    "storeys": [
+      {
+        "id": "BASE",
+        "elevation": 0
+      },
+      {
+        "id": "ROOF",
+        "elevation": 3
+      }
+    ],
+    "nodes": [
+      {
+        "id": "B1",
+        "storey_id": "BASE",
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      {
+        "id": "B2",
+        "storey_id": "BASE",
+        "x": 4,
+        "y": 0,
+        "z": 0
+      },
+      {
+        "id": "B3",
+        "storey_id": "BASE",
+        "x": 4,
+        "y": 3,
+        "z": 0
+      },
+      {
+        "id": "B4",
+        "storey_id": "BASE",
+        "x": 0,
+        "y": 3,
+        "z": 0
+      },
+      {
+        "id": "R1",
+        "storey_id": "ROOF",
+        "x": 0,
+        "y": 0,
+        "z": 3
+      },
+      {
+        "id": "R2",
+        "storey_id": "ROOF",
+        "x": 4,
+        "y": 0,
+        "z": 3
+      },
+      {
+        "id": "R3",
+        "storey_id": "ROOF",
+        "x": 4,
+        "y": 3,
+        "z": 3
+      },
+      {
+        "id": "R4",
+        "storey_id": "ROOF",
+        "x": 0,
+        "y": 3,
+        "z": 3
+      }
+    ],
+    "materials": [
+      {
+        "id": "CONC",
+        "E": 25000000,
+        "poisson": 0.2
+      }
+    ],
+    "sections": [
+      {
+        "id": "COL-S",
+        "material_id": "CONC",
+        "shape": "Rectangular",
+        "width": 0.4,
+        "depth": 0.5
+      },
+      {
+        "id": "BEAM-S",
+        "material_id": "CONC",
+        "shape": "Rectangular",
+        "width": 0.3,
+        "depth": 0.45
+      }
+    ],
+    "supports": [
+      {
+        "id": "FIX1",
+        "node_id": "B1",
+        "restrained_dofs": [
+          "UX",
+          "UY",
+          "UZ",
+          "RX",
+          "RY",
+          "RZ"
+        ]
+      },
+      {
+        "id": "FIX2",
+        "node_id": "B2",
+        "restrained_dofs": [
+          "UX",
+          "UY",
+          "UZ",
+          "RX",
+          "RY",
+          "RZ"
+        ]
+      },
+      {
+        "id": "FIX3",
+        "node_id": "B3",
+        "restrained_dofs": [
+          "UX",
+          "UY",
+          "UZ",
+          "RX",
+          "RY",
+          "RZ"
+        ]
+      },
+      {
+        "id": "FIX4",
+        "node_id": "B4",
+        "restrained_dofs": [
+          "UX",
+          "UY",
+          "UZ",
+          "RX",
+          "RY",
+          "RZ"
+        ]
+      }
+    ],
+    "frame_members": [
+      {
+        "id": "COL1",
+        "i_node": "B1",
+        "j_node": "R1",
+        "section_id": "COL-S",
+        "member_type": "COLUMN"
+      },
+      {
+        "id": "COL2",
+        "i_node": "B2",
+        "j_node": "R2",
+        "section_id": "COL-S",
+        "member_type": "COLUMN"
+      },
+      {
+        "id": "COL3",
+        "i_node": "B3",
+        "j_node": "R3",
+        "section_id": "COL-S",
+        "member_type": "COLUMN"
+      },
+      {
+        "id": "COL4",
+        "i_node": "B4",
+        "j_node": "R4",
+        "section_id": "COL-S",
+        "member_type": "COLUMN"
+      },
+      {
+        "id": "BM1",
+        "i_node": "R1",
+        "j_node": "R2",
+        "section_id": "BEAM-S",
+        "member_type": "BEAM"
+      },
+      {
+        "id": "BM2",
+        "i_node": "R2",
+        "j_node": "R3",
+        "section_id": "BEAM-S",
+        "member_type": "BEAM"
+      },
+      {
+        "id": "BM3",
+        "i_node": "R3",
+        "j_node": "R4",
+        "section_id": "BEAM-S",
+        "member_type": "BEAM"
+      },
+      {
+        "id": "BM4",
+        "i_node": "R4",
+        "j_node": "R1",
+        "section_id": "BEAM-S",
+        "member_type": "BEAM"
+      }
+    ],
+    "diaphragms": [],
+    "end_releases": [],
+    "rigid_offsets": [],
+    "shell_elements": [],
+    "joint_loads": [],
+    "frame_loads": [],
+    "area_loads": [],
+    "load_patterns": [],
+    "load_cases": [],
+    "load_combinations": [],
+    "mass_source": {},
+    "nodal_masses": []
+  },
+  "source_loads": [
+    {
+      "id": "ROOF-FINISH-DL",
+      "source_key": "ROOF-FINISH-DL-REGION-001",
+      "load_category": "DEAD",
+      "case_id": "DL",
+      "type": "UNIFORM_PANEL_PRESSURE",
+      "boundary_node_ids": [
+        "R1",
+        "R2",
+        "R3",
+        "R4"
+      ],
+      "pressure_kPa": 6,
+      "participation_factor": 1,
+      "node_shares": [
+        {
+          "node_id": "R1",
+          "fraction": 0.25
+        },
+        {
+          "node_id": "R2",
+          "fraction": 0.25
+        },
+        {
+          "node_id": "R3",
+          "fraction": 0.25
+        },
+        {
+          "node_id": "R4",
+          "fraction": 0.25
+        }
+      ],
+      "provenance": "SYNTHETIC 4m x 3m roof dead-load panel 6kPa. No shell FE or automatic selfweight."
+    },
+    {
+      "id": "ROOF-LIVE-LL",
+      "source_key": "ROOF-LIVE-LL-REGION-001",
+      "load_category": "LIVE",
+      "case_id": "LL",
+      "type": "UNIFORM_PANEL_PRESSURE",
+      "boundary_node_ids": [
+        "R1",
+        "R2",
+        "R3",
+        "R4"
+      ],
+      "pressure_kPa": 2,
+      "participation_factor": 0.3,
+      "node_shares": [
+        {
+          "node_id": "R1",
+          "fraction": 0.25
+        },
+        {
+          "node_id": "R2",
+          "fraction": 0.25
+        },
+        {
+          "node_id": "R3",
+          "fraction": 0.25
+        },
+        {
+          "node_id": "R4",
+          "fraction": 0.25
+        }
+      ],
+      "provenance": "SYNTHETIC 2kPa live load with 30-percent assumed seismic participation, not an official project occupancy determination."
+    },
+    {
+      "id": "EDGE-WALL-DL",
+      "source_key": "EDGE-WALL-DL-BM1-001",
+      "load_category": "DEAD",
+      "case_id": "DL",
+      "type": "UNIFORM_FRAME_LINE_LOAD",
+      "member_id": "BM1",
+      "intensity_kN_m": 8,
+      "participation_factor": 1,
+      "node_shares": [
+        {
+          "node_id": "R1",
+          "fraction": 0.5
+        },
+        {
+          "node_id": "R2",
+          "fraction": 0.5
+        }
+      ],
+      "provenance": "SYNTHETIC 8kN/m wall equivalent along BM1, half at each end; member distributed moments NOT reproduced."
+    }
+  ],
+  "lateral_cases": [
+    {
+      "case_id": "HX",
+      "source_id": "ASSUMED-R5-ROOF-LATERAL-HX",
+      "nodal_loads": [
+        {
+          "node_id": "R1",
+          "Fx_kN": 10,
+          "Fy_kN": 0,
+          "Fz_kN": 0,
+          "Mx_kNm": 0,
+          "My_kNm": 0,
+          "Mz_kNm": 0
+        },
+        {
+          "node_id": "R2",
+          "Fx_kN": 10,
+          "Fy_kN": 0,
+          "Fz_kN": 0,
+          "Mx_kNm": 0,
+          "My_kNm": 0,
+          "Mz_kNm": 0
+        },
+        {
+          "node_id": "R3",
+          "Fx_kN": 10,
+          "Fy_kN": 0,
+          "Fz_kN": 0,
+          "Mx_kNm": 0,
+          "My_kNm": 0,
+          "Mz_kNm": 0
+        },
+        {
+          "node_id": "R4",
+          "Fx_kN": 10,
+          "Fy_kN": 0,
+          "Fz_kN": 0,
+          "Mx_kNm": 0,
+          "My_kNm": 0,
+          "Mz_kNm": 0
+        }
+      ]
+    }
+  ],
+  "combinations": [
+    {
+      "combination_id": "U_PLUS",
+      "source_id": "SYNTHETIC-ASSUMED-1P2DL-1P5LL-PLUS-HX",
+      "components": [
+        {
+          "case_id": "DL",
+          "factor": 1.2
+        },
+        {
+          "case_id": "LL",
+          "factor": 1.5
+        },
+        {
+          "case_id": "HX",
+          "factor": 1
+        }
+      ]
+    },
+    {
+      "combination_id": "U_MINUS",
+      "source_id": "SYNTHETIC-ASSUMED-1P2DL-1P5LL-MINUS-HX",
+      "components": [
+        {
+          "case_id": "DL",
+          "factor": 1.2
+        },
+        {
+          "case_id": "LL",
+          "factor": 1.5
+        },
+        {
+          "case_id": "HX",
+          "factor": -1
+        }
+      ]
+    }
+  ],
+  "design_bindings": {
+    "beam": [
+      {
+        "member_id": "BM1",
+        "source_id": "SYNTHETIC-R5-BM1",
+        "combination_ids": [
+          "U_PLUS",
+          "U_MINUS"
+        ],
+        "gravity_case_id": "DL",
+        "shear_component": "Vz",
+        "strength_source_id": "ASSUMED-R5-BM1-HINGES-NOT-ENGINEER-CERTIFIED",
+        "strengths_kNm": {
+          "right_I": 130,
+          "right_J": 130,
+          "left_I": 130,
+          "left_J": 130
+        }
+      }
+    ],
+    "column": [
+      {
+        "member_id": "COL1",
+        "source_id": "SYNTHETIC-R5-COL1-BARS",
+        "combination_ids": [
+          "U_PLUS",
+          "U_MINUS"
+        ],
+        "moment_component_mapping": {
+          "Mux": "Mz",
+          "Muy": "My"
+        },
+        "section": {
+          "width_mm": 400,
+          "depth_mm": 500,
+          "fck_MPa": 25,
+          "fy_MPa": 415,
+          "bars": [
+            {
+              "x_mm": 50,
+              "y_mm": 50,
+              "area_mm2": 490.8738521234052
+            },
+            {
+              "x_mm": 200,
+              "y_mm": 50,
+              "area_mm2": 490.8738521234052
+            },
+            {
+              "x_mm": 350,
+              "y_mm": 50,
+              "area_mm2": 490.8738521234052
+            },
+            {
+              "x_mm": 50,
+              "y_mm": 450,
+              "area_mm2": 490.8738521234052
+            },
+            {
+              "x_mm": 200,
+              "y_mm": 450,
+              "area_mm2": 490.8738521234052
+            },
+            {
+              "x_mm": 350,
+              "y_mm": 450,
+              "area_mm2": 490.8738521234052
+            },
+            {
+              "x_mm": 50,
+              "y_mm": 250,
+              "area_mm2": 490.8738521234052
+            },
+            {
+              "x_mm": 350,
+              "y_mm": 250,
+              "area_mm2": 490.8738521234052
+            }
+          ],
+          "clear_height_mm": 3000,
+          "effective_length_x_mm": 3000,
+          "effective_length_y_mm": 3000
+        }
+      }
+    ],
+    "joint": [
+      {
+        "joint_node_id": "R1",
+        "beam_member_id": "BM1",
+        "column_member_id": "COL1",
+        "column_end": "J",
+        "shear_component": "Vz",
+        "combination_ids": [
+          "U_PLUS",
+          "U_MINUS"
+        ],
+        "source_id": "ASSUMED-R5-JOINT-CONFIG",
+        "joint": {
+          "confinement_faces": "THREE",
+          "framing": "INTERIOR",
+          "fck_MPa": 25,
+          "fy_MPa": 415,
+          "joint_breadth_mm": 400,
+          "joint_width_mm": 400,
+          "Ast_top_mm2": 804,
+          "Ast_bottom_mm2": 603
+        }
+      }
+    ]
+  },
+  "notes": [
+    "All source parameters are synthetic and separate from the original G+1.5 report.",
+    "Roof panel is a source-defined load region only, not a shell stiffness model.",
+    "Wall line load is lumped to beam ends; local distributed-load moments NOT captured.",
+    "No automatic self-weight; assumed DL includes modeled weights as explicitly reported; occupancy and live participation hypothetical.",
+    "No full-building seismic hazard, code seismic-combination or engineer design approval."
+  ]
+}
