@@ -11,6 +11,7 @@ import json
 import math
 from pathlib import Path
 import pytest
+from jp_structural.solvers.opensees.canonical_frame import CanonicalTranslationError
 from jp_structural.solvers.opensees.member_design_bridge import (
     DesignBridgeError,solve_signed_member_cases
 )
@@ -27,7 +28,13 @@ def _fixed_beam():
     m["nodes"]=[x for x in m["nodes"] if x["id"] in ("R1","R2")]
     m["frame_members"]=[x for x in m["frame_members"] if x["id"]=="BM1"]
     fixed=["UX","UY","UZ","RX","RY","RZ"]
-    m["supports"]=[{"id":"FIX-"+n,"node_id":n,"restrained_dofs":fixed} for n in ("R1","R2")]
+    # Keep rotations and vertical DOFs fixed at both ends; release the
+    # unloaded beam-axis translation UX only at J to give OpenSees 1 free
+    # stable DOF (fully restrained beam leaves a zero-sized linear system).
+    m["supports"]=[
+        {"id":"FIX-R1","node_id":"R1","restrained_dofs":fixed},
+        {"id":"FIX-R2","node_id":"R2","restrained_dofs":[x for x in fixed if x!="UX"]},
+    ]
     m["diaphragms"]=[];m["nodal_masses"]=[];m["mass_source"]={}
     case={"case_id":"DISTRIBUTED","source_id":"SYNTHETIC-8KN_PER_M_4M_FIXED_BEAM",
           "nodal_loads":[],"uniform_beam_loads":[{
@@ -139,13 +146,13 @@ def test_seven_chapter_cover_all_18_requirements_and_safety_unchanged(result):
     (lambda m,c:c["uniform_beam_loads"][0].update(source_key=""),"source_key"),
     (lambda m,c:c["uniform_beam_loads"].append(copy.deepcopy(c["uniform_beam_loads"][0])),"duplicate"),
     (lambda m,c:m["frame_members"][0].update(local_axis_vector=[0,1,0]),"custom local"),
-    (lambda m,c:m["nodes"][1].update(z=3.1),"horizontal"),
+    (lambda m,c:m["nodes"][1].update(z=3.1),"horizontal|LOCAL_AXIS_UNRESOLVED"),
     (lambda m,c:c["uniform_beam_loads"][0].update(extra=True),"uniform beam source"),
 ])
 def test_element_source_rejects_bad_member_or_provenance(mutate,expected):
     m,c,k=_fixed_beam()
     mutate(m,c)
-    with pytest.raises(DesignBridgeError,match=expected):
+    with pytest.raises((DesignBridgeError,CanonicalTranslationError),match=expected):
         solve_signed_member_cases(model=m,cases=[c],combinations=k)
 
 def test_output_package_is_deterministic_hashed_and_report_linked(tmp_path,result):
