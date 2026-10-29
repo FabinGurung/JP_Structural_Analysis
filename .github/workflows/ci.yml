@@ -372,6 +372,36 @@ jobs:
             site/reports/template-engine-reference-footing-candidates.csv
             site/reports/template-engine-reference-manifest.json
             build/template_source_f3/
+      - name: Signed FE to SAR template report, M08-M09-M10 and verified same-case force vectors
+        run: |
+          python scripts/build_template_signed_fe_handoff.py --output-dir site/reports
+          python -m pytest -q tests/test_template_signed_fe_handoff.py
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path("site/reports")
+          d=json.loads((p/"template-signed-fe-handoff.json").read_text())
+          m=json.loads((p/"template-signed-fe-handoff-manifest.json").read_text())
+          assert d["case_count"]==d["combination_count"]==2
+          assert d["member_count"]==4 and d["member_end_action_rows"]==32
+          assert d["global_six_component_balance_max_kN_or_kNm"] < 1e-5
+          assert d["implemented_in_this_FE_case"]==["M04","M08","M09","M10"]
+          assert d["original_F3_verdict_changed"] is False
+          assert not d["engineering_approval"] and not d["permit_eligible"]
+          for k,v in m["files"].items():
+              assert hashlib.sha256((p/k).read_bytes()).hexdigest()==v
+          print("SAR_SIGNED_FE_32_END_RECORDS_192_SIGNED_COMPONENTS_SAME_CASE_M08_M09_M10_NO_APPROVAL")
+          PY
+      - name: Archive signed OpenSees-to-design report with source hash and manifest
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: sar-template-signed-fe-member-design-handoff-not-approved
+          path: |
+            site/reports/template-signed-fe-handoff.json
+            site/reports/template-signed-fe-handoff.html
+            site/reports/template-signed-fe-handoff.md
+            site/reports/template-signed-fe-handoff.csv
+            site/reports/template-signed-fe-handoff-manifest.json
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
