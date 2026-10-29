@@ -190,10 +190,13 @@ def html_report(d):
            extra=f'<p>Actual OpenSees static FE: {d["raw_case_count"]} raw cases and {d["signed_combination_count"]} signed combinations; {d["frame_member_count"]} frame members, {d["signed_end_action_count"]} I/J signed force vectors. Maximum full force/moment equilibrium residual: {d["max_six_component_FE_balance_kN_or_kNm"]:.7g}. Data in <a href="{PFX}-member-actions.csv">member CSV</a>.</p>'
        if chapter["id"]=="06":
            b=d["bounded_member_checks"]
-           extra="<p>Non-approved synthetic checks: "+", ".join(
-               esc(x["member_id"])+" ("+esc(x["check"]["status"])+")" for x in b["beam_design"])+"; "+
-               ", ".join(esc(x["member_id"])+" ("+esc(x["status"])+")" for x in b["column_design"])+"; "+
-               ", ".join(esc(x["joint_node_id"])+" ("+esc(x["status"])+")" for x in b["joint_design"])+".</p>"
+           beam_text=", ".join(esc(x["member_id"])+" ("+esc(x["check"]["status"])+")"
+                               for x in b["beam_design"])
+           column_text=", ".join(esc(x["member_id"])+" ("+esc(x["status"])+")"
+                                 for x in b["column_design"])
+           joint_text=", ".join(esc(x["joint_node_id"])+" ("+esc(x["status"])+")"
+                                for x in b["joint_design"])
+           extra="<p>Non-approved synthetic checks: "+beam_text+"; "+column_text+"; "+joint_text+".</p>"
        parts.append(f'<section id="ch-{esc(chapter["id"])}"><h2>Chapter {esc(chapter["id"])} — {esc(chapter["title"])}</h2>{subs}<h3>Module check coverage</h3><table><tr><th>Module</th><th>Requirement</th><th>R5 result</th></tr>{mod}</table>{extra}</section>')
     caveats="".join("<li>"+esc(q)+"</li>" for q in d["exclusions"])
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
