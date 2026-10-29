@@ -79,7 +79,13 @@ def _case_bundle(model, case, *, tol):
     nodeids = {r["id"] for r in model["nodes"]}
     seen = set()
     input_loads = []
-    for row in _records(case["nodal_loads"], "nodal_loads"):
+    nodal = case.get("nodal_loads")
+    if not isinstance(nodal,list):
+        raise DesignBridgeError("nodal_loads must be a list")
+    uniform = case.get("uniform_beam_loads", [])
+    if not isinstance(uniform,list) or (not nodal and not uniform):
+        raise DesignBridgeError("at least one nodal or uniform beam load required")
+    for row in nodal:
         nid = _require_string(row, "node_id")
         if nid in seen or nid not in nodeids:
             raise DesignBridgeError("duplicated or unknown nodal load ID")
@@ -89,6 +95,45 @@ def _case_bundle(model, case, *, tol):
         vec = [_finite(row[k], k) for k in _LOAD_COMPONENTS]
         input_loads.append({"node_id": nid, **dict(zip(_LOAD_COMPONENTS, vec))})
         ops.load(built.node_tags[nid], *vec)
+    # Native 3D elasticBeamColumn full-span eleLoad, local Wy/Wz/Wx.
+    # For horizontal members with canonical default vecxz=(0,0,1),
+    # local z is exactly global +Z, so -Wz is global downward.
+    # Arbitrary user local-axis rotation and inclined/vertical members are
+    # deliberately rejected until a verified global-to-local load mapper exists.
+    by_member = _members(model)
+    coords = {row["id"]: tuple(_finite(row[k],k) for k in ("x","y","z"))
+              for row in model["nodes"]}
+    element_loads = []
+    seen_load_ids,seen_source_keys = set(),set()
+    for row in uniform:
+        if not isinstance(row,Mapping) or set(row)!={"id","source_key","member_id","downward_kN_per_m"}:
+            raise DesignBridgeError("uniform beam source requires id/source_key/member_id/downward_kN_per_m")
+        lid=_require_string(row,"id")
+        key=_require_string(row,"source_key")
+        mid=_require_string(row,"member_id")
+        if lid in seen_load_ids or key in seen_source_keys:
+            raise DesignBridgeError("duplicate uniform beam source identity")
+        seen_load_ids.add(lid);seen_source_keys.add(key)
+        if mid not in by_member or mid not in built.element_tags:
+            raise DesignBridgeError("uniform beam unknown member")
+        member=by_member[mid]
+        if str(member.get("member_type","")).upper()!="BEAM":
+            raise DesignBridgeError("uniform beam load requires explicit BEAM member type")
+        if any(member.get(k) is not None for k in ("local_axis_vector","local_axis_angle","orientation")):
+            raise DesignBridgeError("custom local beam orientation unsupported for global downward line load")
+        ni,nj=coords[member["i_node"]],coords[member["j_node"]]
+        if abs(ni[2]-nj[2])>1e-9:
+            raise DesignBridgeError("only horizontal canonical beams support downward uniform element load")
+        span=math.dist(ni,nj)
+        if span<=1e-9:
+            raise DesignBridgeError("uniform beam span invalid")
+        w=_finite(row["downward_kN_per_m"],"uniform beam intensity",positive=True)
+        ops.eleLoad("-ele",built.element_tags[mid],"-type","-beamUniform",0.,-w,0.)
+        element_loads.append({"id":lid,"source_key":key,"member_id":mid,
+           "downward_kN_per_m":w,"span_m":span,"downward_resultant_kN":w*span,
+           "centroid_xyz_m":[(ni[k]+nj[k])/2 for k in range(3)],
+           "local_load_components_kN_m":{"Wy":0.,"Wz":-w,"Wx":0.},
+           "source_member_end_load_applied":True})
     ops.constraints("Transformation")
     ops.numberer("RCM")
     ops.system("BandGeneral")
@@ -126,10 +171,15 @@ def _case_bundle(model, case, *, tol):
             sums[i] += value
     for row in input_loads:
         accumulate(row["node_id"], [row[k] for k in _LOAD_COMPONENTS])
+    for row in element_loads:
+        x,y,z=row["centroid_xyz_m"]
+        fz=-row["downward_resultant_kN"]
+        for i,v in enumerate((0.,0.,fz,y*fz,-x*fz,0.)):
+            sums[i]+=v
     for nid, v in reactions.items():
         accumulate(nid, v)
-    scale = max(1., sum(abs(x) for row in input_loads for k in _LOAD_COMPONENTS
-                        for x in [row[k]]))
+    scale = max(1., sum(abs(row[k]) for row in input_loads for k in _LOAD_COMPONENTS)
+                +sum(row["downward_resultant_kN"] for row in element_loads))
     residual = max(abs(x) for x in sums)
     if residual > max(tol, 1e-8 * scale):
         raise DesignBridgeError(f"global 6-DOF free-body residual {residual} exceeds tolerance")
@@ -137,6 +187,7 @@ def _case_bundle(model, case, *, tol):
         "case_id": case["case_id"], "source_id": case["source_id"],
         "local_end_resisting_actions": members,
         "nodal_loads": input_loads,
+        "uniform_beam_loads": element_loads,
         "global_force_moment_equilibrium_residual": dict(zip(
             ("Fx_kN","Fy_kN","Fz_kN","Mx_kNm","My_kNm","Mz_kNm"), sums)),
         "global_equilibrium_pass": True,
@@ -170,7 +221,8 @@ def solve_signed_member_cases(*, model: dict, cases: Sequence[dict],
         if cid in case_by_id:
             raise DesignBridgeError("duplicate case ID")
         _require_string(case, "source_id")
-        if set(case) != {"case_id", "source_id", "nodal_loads"}:
+        required={"case_id","source_id","nodal_loads"}
+        if set(case) not in (required,required|{"uniform_beam_loads"}):
             raise DesignBridgeError("case schema unsupported")
         case_by_id[cid] = case
         raw.append(_case_bundle(model, case, tol=tol))
