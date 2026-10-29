@@ -54,7 +54,7 @@ def test_model_and_signed_bridge_provenance_digest_and_same_case_bindings(d2):
     assert [x["member_id"] for x in d2["member_design_checks"]["beam_design"]]==["BM1"]
     assert [x["member_id"] for x in d2["member_design_checks"]["column_design"]]==["COL1"]
     assert len(d2["member_design_checks"]["column_design"][0]["scenarios"])==4
-    assert [x["joint_node_id"] for x in d2["member_design_checks"]["joint_design"]]==["BL"]
+    assert [x["joint_node_id"] for x in d2["member_design_checks"]["joint_design"]]==["T1"]
 
 def test_original_toc_maps_18_modules_and_real_run_statuses(d2):
     chapters=d2["chapters"]
