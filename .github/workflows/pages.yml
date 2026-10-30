@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 5261c6f5eedcecbc2f2cf7e7184b18b975114fb0
+          ref: 0408a9059c56286ce1d51639f5b9886eb4ea4356
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -395,6 +395,26 @@ jobs:
           for name,checksum in m["files"].items():
               assert hashlib.sha256((p/name).read_bytes()).hexdigest()==checksum
           print("PAGES_R5_NATIVE_BEAM_UNIFORM_32KN_F3_UNSAFE_80_SIGNED_ACTIONS_NOT_APPROVED")
+          PY
+      - name: Publish source-signed in-span beam Vz My diagrams and CSV
+        run: |
+          python scripts/build_r5_beam_span_diagrams.py --input examples/sanitized/r5_generic_source_geometry_frame.v0.1.json --output-dir site/reports
+          python -m pytest -q tests/test_r5_beam_span_diagrams.py
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          p=Path("site/reports")
+          d=json.loads((p/"r5-beam-span-diagrams.json").read_text())
+          m=json.loads((p/"r5-beam-span-diagrams-manifest.json").read_text())
+          assert d["raw_case_count"]==3 and d["signed_combination_count"]==2
+          assert d["beam_member_count"]==4 and d["in_span_case_beam_diagram_count"]==20
+          assert d["all_IJ_end_force_and_moment_residuals_pass"] is True
+          assert d["original_F3_failure"]=="NOT SAFE IN ONE WAY SHEAR"
+          assert d["panel_area_forces_remain_nodal_equivalents"] is True
+          assert d["engineering_approval"] is False
+          for name,sha in m["files"].items():
+              assert hashlib.sha256((p/name).read_bytes()).hexdigest()==sha
+          print("PAGES_R5_20_SIGNED_LOCAL_BEAM_SHEAR_MOMENT_DIAGRAMS_ALL_BOUNDARIES_PASS_NO_APPROVAL")
           PY
       - name: Validate current report-first coverage and site navigation
         run: |
