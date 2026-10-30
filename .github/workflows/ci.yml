@@ -469,6 +469,37 @@ jobs:
             site/reports/r5-distributed-beam-reference-member-ends.csv
             site/reports/r5-distributed-beam-reference-moments-comparison.csv
             site/reports/r5-distributed-beam-reference-manifest.json
+      - name: Build R5 signed beam span Vz My diagrams and exact moment extrema
+        run: |
+          python scripts/build_r5_beam_span_diagrams.py --input examples/sanitized/r5_generic_source_geometry_frame.v0.1.json --output-dir site/reports
+          python -m pytest -q tests/test_r5_beam_span_diagrams.py
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          folder=Path("site/reports")
+          d=json.loads((folder/"r5-beam-span-diagrams.json").read_text())
+          m=json.loads((folder/"r5-beam-span-diagrams-manifest.json").read_text())
+          assert d["raw_case_count"]==3 and d["signed_combination_count"]==2
+          assert d["beam_member_count"]==4 and d["in_span_case_beam_diagram_count"]==20
+          assert d["all_IJ_end_force_and_moment_residuals_pass"] is True
+          assert abs(d["source_total_gravity_kN"]-128)<1e-9
+          assert abs(d["source_seismic_weight_kN"]-111.2)<1e-9
+          assert d["original_F3_failure"]=="NOT SAFE IN ONE WAY SHEAR"
+          assert d["engineering_approval"] is False
+          for name,sha in m["files"].items():
+              assert hashlib.sha256((folder/name).read_bytes()).hexdigest()==sha
+          print("R5_SPAN_V_M_20_SOURCE_SIGNED_BEAM_CASES_ALL_J_BOUNDARIES_AND_SHA_PASS_NO_APPROVAL")
+          PY
+      - name: Archive R5 source-signed in-span beam moment and shear diagrams
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: r5-beam-span-diagrams-20-source-signed-cases-not-approved
+          path: |
+            site/reports/r5-beam-span-diagrams.json
+            site/reports/r5-beam-span-diagrams.html
+            site/reports/r5-beam-span-diagrams-stations.csv
+            site/reports/r5-beam-span-diagrams-extrema.csv
+            site/reports/r5-beam-span-diagrams-manifest.json
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
