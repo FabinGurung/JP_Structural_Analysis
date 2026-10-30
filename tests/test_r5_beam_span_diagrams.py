@@ -47,7 +47,7 @@ def test_simply_supported_uniform_beam_midspan_M_wL2_over8():
 
 def test_unsampled_interior_critical_station_is_inserted_exactly():
     out=reconstruct_local_vertical_diagram(length_m=4.,
-       left={"Vz":10.,"My":-16.},right={"Vz":22.,"My":8.},
+       left={"Vz":10.,"My":-16.},right={"Vz":22.,"My":40.},
        downward_uniform_kN_m=8.,sample_divisions=8)
     # xstar=1.25 m is not a 0.5m sampling interval.
     assert out["zero_shear_inside_member_x_m"]==pytest.approx(1.25)
@@ -96,10 +96,17 @@ def test_concurrent_combination_preserves_linear_diagram_load_intensities(calcul
             1.2*g["downward_uniform_signed_kN_m"]+1.5*l["downward_uniform_signed_kN_m"]+hx["downward_uniform_signed_kN_m"])
         assert minus["downward_uniform_signed_kN_m"]==pytest.approx(
             1.2*g["downward_uniform_signed_kN_m"]+1.5*l["downward_uniform_signed_kN_m"]-hx["downward_uniform_signed_kN_m"])
-        for index in (0,8,16):
+        for fraction in (0.,0.5,1.):
+            L=plus["diagram"]["length_m"]
+            x=L*fraction
+            def val(row,axis):
+                v=row["diagram"]["cut_left"]
+                w=row["downward_uniform_signed_kN_m"]
+                return (v["Vz_kN"]-w*x if axis=="Vz_section_kN"
+                        else v["My_kNm"]+v["Vz_kN"]*x-w*x*x/2)
             for axis in ("Vz_section_kN","My_sagging_positive_kNm"):
-                assert plus["diagram"]["samples"][index][axis]==pytest.approx(
-                  1.2*g["diagram"]["samples"][index][axis]+1.5*l["diagram"]["samples"][index][axis]+hx["diagram"]["samples"][index][axis],abs=1e-5)
+                assert val(plus,axis)==pytest.approx(
+                    1.2*val(g,axis)+1.5*val(l,axis)+val(hx,axis),abs=1e-5)
 
 def test_reject_tampered_signed_digest_and_changed_factors(calculation):
     from scripts.build_r5_uniform_beam_case import build as baseline
