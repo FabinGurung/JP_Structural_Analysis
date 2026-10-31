@@ -110,9 +110,9 @@ def transfer_one_way_panels(*,model:dict,loads:list,routes:list,gravity_m_s2:flo
         area=(x1-x0)*(y1-y0)
         if not _near(geometry["horizontal_area_m2"],area):
             raise PanelRoutingError("routed rectangle differs from audited source polygon")
-        support_len=(y1-y0 if direction=="X" else x1-x0)
-        beam_len=(x1-x0 if direction=="X" else y1-y0)
-        minedge,maxedge=(x0,x1) if direction=="X" else (y0,y1)
+        support_len=(x1-x0 if direction=="X" else y1-y0)
+        beam_len=(y1-y0 if direction=="X" else x1-x0)
+        minedge,maxedge=(y0,y1) if direction=="X" else (x0,x1)
         centroid=((x0+x1)/2,(y0+y1)/2,(points[0][2]))
         source_resultant=source_by_id[rid]["gravity_weight_kN"]
         pressure=geometry["pressure_kPa"]
@@ -122,9 +122,9 @@ def transfer_one_way_panels(*,model:dict,loads:list,routes:list,gravity_m_s2:flo
         for index,mid in enumerate(bs):
             _id(mid,"edge_beam_member_id")
             a,b,L=_beam(nd,members,mid)
-            along=[a[0],b[0]] if direction=="Y" else [a[1],b[1]]
-            other=[a[1],b[1]] if direction=="Y" else [a[0],b[0]]
-            far=(y0,y1) if direction=="X" else (x0,x1)
+            along=[a[1],b[1]] if direction=="X" else [a[0],b[0]]
+            other=[a[0],b[0]] if direction=="X" else [a[1],b[1]]
+            far=(x0,x1) if direction=="X" else (y0,y1)
             if (not all(_near(v,far[index]) for v in other) or
                 not _near(min(along),minedge) or
                 not _near(max(along),maxedge) or
