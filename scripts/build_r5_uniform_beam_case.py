@@ -216,7 +216,7 @@ def render_html(r):
 <p>Source load {r["source_total_gravity_kN"]:.1f} kN; native element load {r["true_element_uniform_resultants_kN"]:.1f} kN; {r["signed_end_action_count"]} signed frame I/J actions. <a href="{PFX}.json">Calculation JSON</a> · <a href="{PFX}-member-ends.csv">Signed force CSV</a> · <a href="{PFX}-manifest.json">SHA manifest</a></p>
 <nav>{nav}</nav></header>{''.join(sections)}
 <section><h2>Annex — source, software verification and safety HOLD</h2>
-<p>OpenSees 3D \`eleLoad -beamUniform Wy Wz Wx\`: <a href="{e(r["source_code_reference"])}">official documentation</a>.</p>
+<p>OpenSees 3D `eleLoad -beamUniform Wy Wz Wx`: <a href="{e(r["source_code_reference"])}">official documentation</a>.</p>
 <p>Each applied local beam load is horizontal-beam canonical local Wz. Vertical beam, inclined beam, arbitrary local-axis rotation and unvalidated slab distribution are rejected or left out rather than guessed.</p>
 <p>Signed input SHA: {e(r["signed_FE_input_sha256"])}. Original building physical proof: OPEN. F3 original one-way shear failure: NOT SAFE.</p></section></body></html>"""
 
