@@ -1,0 +1,32 @@
+{
+  "schema": "jp.structural.r5.one_way_route_plan.v0.1",
+  "reference_case_id": "SYNTHETIC-R5-FOUR-COLUMN-ROOF-001",
+  "assumption": "SYNTHETIC_SIMPLE_SUPPORT_ONE_WAY_SLAB_BEAMS_ALONG_X",
+  "routes": [
+    {
+      "panel_source_id": "ROOF-FINISH-DL",
+      "span_direction": "Y",
+      "edge_beam_member_ids": [
+        "BM1",
+        "BM3"
+      ],
+      "transfer_model": "ONE_WAY_SIMPLY_SUPPORTED"
+    },
+    {
+      "panel_source_id": "ROOF-LIVE-LL",
+      "span_direction": "Y",
+      "edge_beam_member_ids": [
+        "BM1",
+        "BM3"
+      ],
+      "transfer_model": "ONE_WAY_SIMPLY_SUPPORTED"
+    }
+  ],
+  "notes": [
+    "Panel 4m by 3m at z=3m, supported along BM1 y=0 and BM3 y=3.",
+    "Each opposing beam receives 1.5m tributary width; physical slab support behavior is assumed not independently proven.",
+    "Source panel load-mass participation remains untouched in the audited original allocator.",
+    "Source wall 8kN/m along BM1 remains its own independent physical source and is added as an additional native OpenSees beam UDL.",
+    "No shell stiffness, slab flexure design, occupancy verification or original G+1.5 structural acceptance."
+  ]
+}
