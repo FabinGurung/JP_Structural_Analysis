@@ -447,4 +447,17 @@
 </div>
 <p>Connected shell/diaphragm FE, original building source authentication, complete code detailing and original F3 foundation clearance remain unverified. Original F3: NOT SAFE IN ONE WAY SHEAR.</p>
 </section>
+<section class="rb-card" id="annex-r5p4-oneway-slabs">
+<h3>Annex L · R5.4 explicit one-way rectangular slab load transfer to real frame beams</h3>
+<p>This engine increment maps source-audited horizontal rectangular panel pressures to their two explicitly identified opposite support beams under a <strong>user-declared, simply-supported one-way slab assumption</strong>. Each beam takes half the perpendicular panel span as its tributary width. Unlike the previous nodal panel approximation, the resulting loads are solved as actual native OpenSees uniform beam element loads, while the source-audited seismic mass allocation is preserved separately.</p>
+<p>The transfer verifies the panel shape, supporting-beam geometry, complete source coverage, unique load IDs, total vertical force and the X/Y first moments of every source pressure. Existing wall-line sources remain independent and are added without doubling the panel or member loads. Signed member-end forces and in-span beam section diagrams are preserved for the static cases and concurrent signed combinations.</p>
+<div class="rb-download-grid">
+<a href="reports/r5-oneway-panel-transfer.html">R5.4 seven-chapter structural transfer report (HTML)</a>
+<a href="reports/r5-oneway-panel-transfer.json">Full route, mass, OpenSees and member-check data (JSON)</a>
+<a href="reports/r5-oneway-panel-transfer-routes.csv">Per-panel and per-beam tributary load register (CSV)</a>
+<a href="reports/r5-oneway-panel-transfer-member-ends.csv">Signed I/J member-force ledger (CSV)</a>
+<a href="reports/r5-oneway-panel-transfer-manifest.json">SHA-256 release manifest</a>
+</div>
+<p><strong>Limits:</strong> One-way slab support is declared, not deduced from actual reinforcement or stiffness. This is not a connected slab shell/diaphragm FE calculation, a two-way slab solution, or verified project load path. The synthetic original source has no permit approval. Original G+1.5 building evidence holds persist, including the F3 verdict <strong>NOT SAFE IN ONE WAY SHEAR</strong>.</p>
+</section>
 <div class="rb-next"><a href="#report-top">Back to cover ↑</a></div></article></div></div></div></main><footer class="site-footer"><div class="wrap footer-inner"><span>JP Structural Analysis · OpenSees primary · Not an engineering approval</span><span id="build">Source snapshot · read-only public demonstration</span></div></footer><script src="app.js" defer></script><script src="report-book.js" defer></script><script src="chapter02-audit.js" defer></script><script src="chapter02-seismic.js" defer></script><script src="chapter03-method.js" defer></script><script src="chapter04-model.js" defer></script><script src="chapter05-results.js" defer></script><script src="chapter06-design.js" defer></script><script src="annex-source-recovery.js" defer></script></body></html>
