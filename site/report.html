@@ -460,4 +460,17 @@
 </div>
 <p><strong>Limits:</strong> One-way slab support is declared, not deduced from actual reinforcement or stiffness. This is not a connected slab shell/diaphragm FE calculation, a two-way slab solution, or verified project load path. The synthetic original source has no permit approval. Original G+1.5 building evidence holds persist, including the F3 verdict <strong>NOT SAFE IN ONE WAY SHEAR</strong>.</p>
 </section>
+<section class="rb-card" id="annex-r5p5-connected-shell">
+<h3>Annex M · R5.5 Real connected ShellMITC4 slab-to-frame finite-element benchmark</h3>
+<p>This source-isolated synthetic roof slab now uses <strong>actual OpenSees four-node ShellMITC4 plate elements</strong> sharing 6-DOF vertices with the surrounding subdivided frame beams. Four corner shell/beam nodes are also the tops of the frame columns, so load transfer follows connected elastic stiffness and beam/column support reactions—not an assumed one-way tributary width. Equal source uniform pressure is applied as conservative four-node nodal loads for each shell cell. Original audited seismic source masses remain pinned to the source physical roof corner nodes.</p>
+<p>The engine executes 2×2, 4×4 and 8×8 compatible plate/frame meshes for source-defined DL, LL and horizontal HX static load cases. Each case checks all six global force/moment balances, solver signed I/J member actions, real shell centre deflection, and unchanged source seismic weight. Vertical centre-displacement changes must reduce under mesh refinement; the 4×4 to 8×8 difference is bounded. These checks do not prove construction readiness or physical building correspondence.</p>
+<div class="rb-download-grid">
+<a href="reports/r5-connected-shell.html">Seven-chapter R5.5 connected shell/frame SAR and mesh graph (HTML)</a>
+<a href="reports/r5-connected-shell.json">Actual OpenSees ShellMITC4 member data and 9 runs (JSON)</a>
+<a href="reports/r5-connected-shell-mesh.csv">Mesh displacement, reactions and conservation (CSV)</a>
+<a href="reports/r5-connected-shell-member-ends.csv">Full signed frame end actions for every mesh and case (CSV)</a>
+<a href="reports/r5-connected-shell-manifest.json">Source SHA-256 and report checksums</a>
+</div>
+<p><strong>Hold:</strong> This is a deliberately synthetic rectangular elastic plate/frame, not the original G+1.5 native shell model. Thickness, elastic material, pressure, and mass participation are hypothetical. No rigid diaphragm MPC comparison, source-accepted whole-floor geometry, connected-shell ULS/SLS signed combinations, NBC seismic verification or complete RC shell design has yet passed. Original F3 remains <strong>NOT SAFE IN ONE WAY SHEAR</strong>.</p>
+</section>
 <div class="rb-next"><a href="#report-top">Back to cover ↑</a></div></article></div></div></div></main><footer class="site-footer"><div class="wrap footer-inner"><span>JP Structural Analysis · OpenSees primary · Not an engineering approval</span><span id="build">Source snapshot · read-only public demonstration</span></div></footer><script src="app.js" defer></script><script src="report-book.js" defer></script><script src="chapter02-audit.js" defer></script><script src="chapter02-seismic.js" defer></script><script src="chapter03-method.js" defer></script><script src="chapter04-model.js" defer></script><script src="chapter05-results.js" defer></script><script src="chapter06-design.js" defer></script><script src="annex-source-recovery.js" defer></script></body></html>
