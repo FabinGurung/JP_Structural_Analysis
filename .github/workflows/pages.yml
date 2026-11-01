@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 2ec6f0a2b66f401a232cf8442409f836dfb52734
+          ref: ad7db779a469fbdab664c7d76c28ab15469f2c04
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -440,6 +440,33 @@ jobs:
           for name,checksum in m["files"].items():
               assert hashlib.sha256((folder/name).read_bytes()).hexdigest()==checksum
           print("PAGES_R5P4_SOURCE_ROUTE_MOMENTS_MASS_SIGNED_FE_128KN_80_IJ_NO_APPROVAL")
+          PY
+      - name: Publish R5.5 connected ShellMITC4 frame mesh SAR
+        run: |
+          python scripts/build_r5_connected_shell_report.py --output-dir site/reports
+          python -m pytest -q tests/test_r5_connected_shell_frame.py
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path("site/reports")
+          d=json.loads((p/"r5-connected-shell.json").read_text())
+          m=json.loads((p/"r5-connected-shell-manifest.json").read_text())
+          assert len(d["mesh_case_results"])==9
+          assert d["mesh_sizes"]==[2,4,8]
+          assert d["shell_elements_actual_connected_frame"] is True
+          assert d["shared_edge_beam_shell_nodes"] is True
+          assert d["convergence_improvement"] is True
+          assert d["global_six_component_equilibrium_pass"] is True
+          assert d["source_mass_conserved_across_mesh"] is True
+          assert abs(d["source_total_gravity_kN"]-128.)<1e-9
+          assert abs(d["source_seismic_weight_kN"]-111.2)<1e-9
+          assert d["original_F3_failure"]=="NOT SAFE IN ONE WAY SHEAR"
+          assert d["signed_combo_executed_on_connected_shell"] is False
+          assert d["physical_diaphragm_constraint_tested"] is False
+          assert not d["engineering_approval"] and not d["permit_eligible"]
+          for name,digest in m["files"].items():
+              assert hashlib.sha256((p/name).read_bytes()).hexdigest()==digest
+          print("PAGES_R5P5_CONNECTED_SHELL_REAL_FE_9_CASES_3_MESHES_F3_UNSAFE_NOT_APPROVED")
           PY
       - name: Validate current report-first coverage and site navigation
         run: |
