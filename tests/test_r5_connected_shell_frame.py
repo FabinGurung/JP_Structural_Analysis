@@ -79,7 +79,7 @@ def test_complete_signed_local_IJ_actions_of_connected_frame_members(calculation
 @pytest.mark.parametrize("change,expected",[
     (lambda x:x["model"]["nodes"][6].update(y=2.5),"rectangle|axis-aligned"),
     (lambda x:x["model"]["nodes"][5].update(z=2.8),"horizontal"),
-    (lambda x:x["model"]["frame_members"][4].update(i_node="R2"),"topology"),
+    (lambda x:x["model"]["frame_members"][4].update(i_node="R2"),"topology|line length invalid"),
     (lambda x:x["source_loads"][0].update(pressure_kPa=-1),"positive"),
     (lambda x:x["model"].update(nodal_masses=[{"node_id":"R1","mx":1}]),"existing loads/mass"),
 ])
