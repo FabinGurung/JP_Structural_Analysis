@@ -38,6 +38,14 @@
 - Reproducible source paths: `examples/sanitized/r5_oneway_slab_routes.v0.1.json`, `src/jp_structural/solvers/native/one_way_panel_to_beams.py`, `scripts/build_r5_oneway_panel_beam_case.py`, `tests/test_r5_oneway_panel_beam.py`. The latest live CI/Pages run and milestone commit must be read before claiming deployment complete.
 - Original F3 source remains **NOT SAFE IN ONE WAY SHEAR**; original physical source acceptance remains **0/15**; professional signoff and municipality submission remain unaccepted.
 
+## R5.5 connected shell-frame extension — implementation / CI-gated 2026-11-01
+
+The new independent **synthetic rectangular source model** uses compatible, physically shared nodes at all edges between actual OpenSees `ShellMITC4` four-node quadrilateral shells, subdivided `elasticBeamColumn` perimeter beams, and four column supports. Meshes **2×2, 4×4 and 8×8** are solved for **source-defined DL, LL and HX cases** (9 distinct static OpenSees runs); the original load/mass source SHA and assumed 111.2 kN seismic-eligible weight are preserved across refinements. Dead panel 72 kN plus independent beam wall 32 kN, and separate live panel 24 kN, reproduce the synthetic 128 kN gravity source. Transverse pressure acts on the compatible four-node shell element mesh, not the previous user-declared one-way strip load; the shell shares actual FE nodes with surrounding beam elements. Six-component external/reaction equilibrium, signed member I/J local forces, actual shell-centre displacement, and monotonic displacement-difference reduction across the tested three meshes are governed QA.
+
+This does **not** represent a full original building, real floor diaphragm seismic comparison, actual reinforced slab design, code-verified load combinations, any professional signoff, or the missing 15 physical source acceptances. In particular **F3 remains NOT SAFE IN ONE WAY SHEAR**. New bounded files are `scripts/build_r5_connected_shell_frame.py`, `scripts/build_r5_connected_shell_report.py` and `tests/test_r5_connected_shell_frame.py`. The source SHA/CI/Pages states must be verified before changing this status from *staged* to *tested/deployed*.
+
+**Next open design/solver debt:** source-authenticated floor opening/topology and nonrectangular 2D/3D shell geometry, explicit MPC-versus-flexible diaphragm comparison, selfweight/source mass reconciliation, signed combinations/true concurrent design action transfer in the same shell model, independent mesh convergence benchmarks for plate displacement/stresses, NBC ESM/MRSM/drift/P-Delta, complete RC detailing/foundation checks, and jurisdictional submission. Do not silently mark them closed.
+
 ## Remaining source/physical debt — intentionally distinct
 
 1. Authenticate native ETABS/model source or independently reproduce and survey actual as-built member/grid/loads.
