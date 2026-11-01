@@ -104,10 +104,39 @@ def exact_reference(spec, thickness=SHELL_T_M):
         if row["type"]=="UNIFORM_FRAME_LINE_LOAD":
             walls.append({"case_id":row["case_id"],"member_id":row["member_id"],"w":float(row["intensity_kN_m"]),
                           "source_key":row["source_key"]})
+    # Preserve and validate the exact external horizontal load ledger; never
+    # replace a changed synthetic input with invented hard-coded 10kN/corner.
+    lateral_cases=spec.get("lateral_cases")
+    if not isinstance(lateral_cases,list) or len(lateral_cases)!=1 or lateral_cases[0].get("case_id")!="HX":
+        raise ShellBridgeError("one explicit source HX load case required")
+    lateral_by_node={}
+    for row in lateral_cases[0].get("nodal_loads",[]):
+        nid=row.get("node_id")
+        if nid not in {"R1","R2","R3","R4"} or nid in lateral_by_node:
+            raise ShellBridgeError("lateral source must list unique physical roof corner nodes")
+        keys={"node_id","Fx_kN","Fy_kN","Fz_kN","Mx_kNm","My_kNm","Mz_kNm"}
+        if set(row)!=keys:
+            raise ShellBridgeError("full signed lateral source components required")
+        vals=[row[k] for k in ("Fx_kN","Fy_kN","Fz_kN","Mx_kNm","My_kNm","Mz_kNm")]
+        if any(isinstance(v,bool) or not isinstance(v,(float,int)) or not math.isfinite(v) for v in vals):
+            raise ShellBridgeError("invalid signed horizontal force component")
+        if any(vals[j]!=0 for j in (2,3,4,5)):
+            raise ShellBridgeError("horizontal HX case must not contain vertical/couple gravity duplicates")
+        lateral_by_node[nid]=vals
+    if set(lateral_by_node)!={"R1","R2","R3","R4"}:
+        raise ShellBridgeError("missing physical lateral roof corner source")
+    source_by_case={}
+    for rec in audit["source_case_components"]:
+        cid=rec["load_case_id"]
+        source_by_case[cid]=source_by_case.get(cid,0.)+rec["gravity_weight_kN"]
+    if set(source_by_case)!={"DL","LL"}:
+        raise ShellBridgeError("only explicit independently identified DL and LL loads supported")
     return {"model":model,"audit":audit,"corners":(x0,x1,y0,y1,zz[0]),
        "area_m2":panel_area,"pressure_by_case":pressures,"walls":walls,
        "E_kN_m2":E,"nu":nu,"shell_thickness_m":thickness,
        "column_section":props(col),"beam_section":props(beam),
+       "lateral_source_by_node":lateral_by_node,
+       "source_total_by_case_kN":source_by_case,
        "explicit_original_mass_SHA256":sha(audit["audited_assembly"])}
 
 def solve_mesh(ref, n:int, case_id:str):
@@ -193,12 +222,13 @@ def solve_mesh(ref, n:int, case_id:str):
                 L=math.dist(p1,p2)
                 push(*[(p1[d]+p2[d])/2 for d in range(3)],fz=-w*L)
     else:
-        lateral=next(x for x in m.get("source_cases",[]) if x["case_id"]=="HX") if False else None
-        # The canonical source fixture has 10 kN horizontal at each physical
-        # roof corner. Do not generate a new earthquake code load.
-        for corner in corner_ix:
-            ops.load(tag(*corner),10.,0.,0.,0.,0.,0.)
-            x,y,zz=positions[corner];push(x,y,zz,fx=10.)
+        # Use the original signed source ledger unchanged. This is an
+        # explicitly supplied synthetic lateral case, not a code-generated EQ.
+        for index,corner in enumerate(corner_ix,1):
+            fx,fy,fz,mx,my,mz=ref["lateral_source_by_node"][f"R{index}"]
+            ops.load(tag(*corner),fx,fy,fz,mx,my,mz)
+            x,y,zz=positions[corner]
+            push(x,y,zz,fx,fy,fz,mx,my,mz)
     ops.constraints("Plain")
     ops.numberer("RCM");ops.system("BandGeneral")
     ops.algorithm("Linear");ops.integrator("LoadControl",1.)
@@ -266,12 +296,16 @@ def build(spec=None):
         if not r["global_equilibrium_pass"]:raise ShellBridgeError("source model force equilibrium absent")
         if r["source_seismic_weight_kN"]!=ref["audit"]["audited_assembly"]["total_seismic_weight_kN"]:
             raise ShellBridgeError("seismic mass changed across mesh")
-        if r["case_id"]=="DL" and not math.isclose(r["applied_force_kN"][2],-104.,abs_tol=1e-7):
-            raise ShellBridgeError("source DL 72kN panel+32kN wall not transferred")
-        if r["case_id"]=="LL" and not math.isclose(r["applied_force_kN"][2],-24.,abs_tol=1e-7):
-            raise ShellBridgeError("source LL panel 24kN not transferred")
-        if r["case_id"]=="HX" and not math.isclose(r["applied_force_kN"][0],40.,abs_tol=1e-7):
-            raise ShellBridgeError("source explicit lateral forces mismatch")
+        if r["case_id"] in ("DL","LL"):
+            expected=-ref["source_total_by_case_kN"][r["case_id"]]
+            if not math.isclose(r["applied_force_kN"][2],expected,abs_tol=1e-7):
+                raise ShellBridgeError("source gravity case not completely transferred")
+        if r["case_id"]=="HX":
+            expected_x=math.fsum(v[0] for v in ref["lateral_source_by_node"].values())
+            expected_y=math.fsum(v[1] for v in ref["lateral_source_by_node"].values())
+            if not (math.isclose(r["applied_force_kN"][0],expected_x,abs_tol=1e-7)
+                  and math.isclose(r["applied_force_kN"][1],expected_y,abs_tol=1e-7)):
+                raise ShellBridgeError("source explicit lateral forces mismatch")
     by_n={n:next(x for x in cases if x["mesh_divisions"]==n and x["case_id"]=="DL") for n in MESHES}
     center=[by_n[n]["center_shell_Uz_m"] for n in MESHES]
     if not all(v<0 for v in center):raise ShellBridgeError("gravity must move shell center down in all meshes")
