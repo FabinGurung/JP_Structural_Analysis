@@ -97,3 +97,37 @@ def test_seven_original_chapters_eighteen_modules_and_original_F3_holds(calculat
     assert calculation["engineering_approval"] is False
     assert calculation["permit_eligible"] is False
     assert calculation["signed_combo_executed_on_connected_shell"] is False
+
+
+def test_source_lateral_input_is_not_hardcoded(original):
+    src=copy.deepcopy(original)
+    for x in src["lateral_cases"][0]["nodal_loads"]:
+        x["Fx_kN"]=12.
+    ref=exact_reference(src)
+    lateral=solve_mesh(ref,2,"HX")
+    assert lateral["applied_force_kN"][0]==pytest.approx(48.)
+    assert max(abs(x) for x in lateral["global_force_moment_residual"].values())<1e-4
+    corrupted=copy.deepcopy(original)
+    corrupted["lateral_cases"][0]["nodal_loads"].pop()
+    with pytest.raises(ShellBridgeError,match="missing physical lateral roof corner"):
+        exact_reference(corrupted)
+
+def test_sar_report_csv_sha_and_annex_links(tmp_path):
+    import csv
+    from scripts.build_r5_connected_shell_report import emit
+    d=emit(tmp_path)
+    manifest=json.loads((tmp_path/(PFX+"-manifest.json")).read_text())
+    assert not manifest["engineering_approval"]
+    assert len(manifest["files"])==4
+    for name,checksum in manifest["files"].items():
+        assert hashlib.sha256((tmp_path/name).read_bytes()).hexdigest()==checksum
+    assert json.loads((tmp_path/(PFX+".json")).read_text())["schema"]==d["schema"]
+    html=(tmp_path/(PFX+".html")).read_text()
+    assert "NOT ENGINEER APPROVED" in html and "<svg" in html and "Chapter 05" in html
+    assert "NOT SAFE IN ONE WAY SHEAR" in html
+    records=list(csv.DictReader((tmp_path/(PFX+"-mesh.csv")).open()))
+    assert len(records)==9
+    assert len(list(csv.DictReader((tmp_path/(PFX+"-member-ends.csv")).open())))==sum(3*2*(4+4*n) for n in (2,4,8))
+    site=(Path(__file__).resolve().parents[1]/"site/report.html").read_text()
+    assert 'id="annex-r5p5-connected-shell"' in site
+    assert "reports/r5-connected-shell.html" in site
