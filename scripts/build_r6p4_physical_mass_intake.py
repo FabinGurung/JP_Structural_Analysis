@@ -62,7 +62,7 @@ def hashjson(value):
 
 def load_components(path):
     if not path.exists():raise MassIntakeError("private physical component ledger not supplied")
-    with path.open("r",encoding="utf8-sig",newline="") as fh:
+    with path.open("r",encoding="utf-8-sig",newline="") as fh:
         reader=csv.DictReader(fh)
         if tuple(reader.fieldnames or ())!=HEADERS:
             raise MassIntakeError("physical source CSV schema changed; cannot infer floor/component fields")
