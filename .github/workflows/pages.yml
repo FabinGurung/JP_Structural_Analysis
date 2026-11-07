@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: b4b77699aefd1f340d515c3116af01a049d971ba
+          ref: 80b9e76f538efbbe9a7109ad1aef2c7d0928241e
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -493,6 +493,31 @@ jobs:
           for name,h in m["files"].items():
               assert hashlib.sha256((p/name).read_bytes()).hexdigest()==h
           print("PAGES_R5P6_SAME_CONNECTED_SHELL_FLEX_RIGID_MPC_30_ANALYSES_12_COMBO_CHECKS_F3_UNSAFE")
+          PY
+      - name: Publish R6.1 source-audited synthetic seismic MRSM and PDelta benchmark
+        run: |
+          python scripts/build_r6_source_seismic_case.py --input examples/sanitized/r5_generic_source_geometry_frame.v0.1.json --settings examples/sanitized/r6_source_audited_synthetic_spectrum.v0.1.json --output-dir site/reports
+          python -m pytest -q tests/test_r6_source_seismic_case.py
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          p=Path("site/reports")
+          d=json.loads((p/"r6-synthetic-seismic-source.json").read_text())
+          m=json.loads((p/"r6-synthetic-seismic-source-manifest.json").read_text())
+          assert d["audited_gravity_kN"]==128
+          assert abs(d["audited_seismic_weight_kN"]-111.2)<1e-8
+          assert abs(d["audited_seismic_mass_kN_s2_m"]-111.2/9.81)<1e-8
+          assert d["dynamic_response_axes"]==["X","Y"]
+          assert d["modal_mode_count_per_axis"]==6
+          assert d["pdelta_independent_3d_benchmark"]["monotone_PDelta_amplification"] is True
+          assert d["original_F3_failure"]=="NOT SAFE IN ONE WAY SHEAR"
+          assert d["original_building_sources_accepted"]==0
+          assert d["engineering_approval"] is False
+          assert d["nbc105_2025_compliance_approved"] is False
+          assert d["connected_shell_modal_mass_verified"] is False
+          for name,digest in m["files"].items():
+              assert hashlib.sha256((p/name).read_bytes()).hexdigest()==digest
+          print("PAGES_R6P1_SOURCE_111P2KN_SEISMIC_WEIGHT_CQC_XY_6MODES_DRIFT_TORSION_PDELTA_HOLD")
           PY
       - name: Validate current report-first coverage and site navigation
         run: |
