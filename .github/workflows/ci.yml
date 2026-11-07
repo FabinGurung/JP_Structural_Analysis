@@ -606,6 +606,39 @@ jobs:
             site/reports/r5-shell-diaphragm-signed-comparisons.csv
             site/reports/r5-shell-diaphragm-signed-member-actions.csv
             site/reports/r5-shell-diaphragm-signed-manifest.json
+      - name: Build R6.1 source-audited synthetic modal MRSM and PDelta benchmark
+        run: |
+          python scripts/build_r6_source_seismic_case.py --input examples/sanitized/r5_generic_source_geometry_frame.v0.1.json --settings examples/sanitized/r6_source_audited_synthetic_spectrum.v0.1.json --output-dir site/reports
+          python -m pytest -q tests/test_r6_source_seismic_case.py
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          p=Path("site/reports")
+          d=json.loads((p/"r6-synthetic-seismic-source.json").read_text())
+          m=json.loads((p/"r6-synthetic-seismic-source-manifest.json").read_text())
+          assert abs(d["audited_seismic_weight_kN"]-111.2)<1e-8
+          assert abs(d["audited_seismic_mass_kN_s2_m"]-111.2/9.81)<1e-8
+          assert d["modal_mode_count_per_axis"]==6
+          assert d["dynamic_response_axes"]==["X","Y"]
+          assert d["pdelta_independent_3d_benchmark"]["monotone_PDelta_amplification"]
+          assert d["original_F3_failure"]=="NOT SAFE IN ONE WAY SHEAR"
+          assert d["original_building_sources_accepted"]==0
+          assert not d["engineering_approval"] and not d["nbc105_2025_compliance_approved"]
+          assert not d["connected_shell_modal_mass_verified"]
+          for name,digest in m["files"].items():
+              assert hashlib.sha256((p/name).read_bytes()).hexdigest()==digest
+          print("R6P1_SOURCE_111P2KN_MASS_CQC_XY_6_MODES_DRIFT_TORSION_PDELTA_BENCHMARK_HOLD")
+          PY
+      - name: Archive R6.1 source seismic mass modal MRSM and PDelta SAR
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: r6p1-audited-source-mass-mrsm-cqc-drift-torsion-pdelta-hold
+          path: |
+            site/reports/r6-synthetic-seismic-source.json
+            site/reports/r6-synthetic-seismic-source.html
+            site/reports/r6-synthetic-seismic-source-modes.csv
+            site/reports/r6-synthetic-seismic-source-pdelta.csv
+            site/reports/r6-synthetic-seismic-source-manifest.json
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
