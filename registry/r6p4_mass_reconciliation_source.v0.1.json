@@ -1,0 +1,83 @@
+{
+  "schema": "jp.structural.r6p4.mass_reconciliation_source.v0.1",
+  "scope": "G15_PRIVATE_GATE08_DEIDENTIFIED_AGGREGATE_RECONCILIATION_NOT_SITE_APPROVED",
+  "source_lineage": {
+    "original_report_sha256": "f122904444a2e2f75230d9d4e41da0093d050da25c6e8140c86d466b7e37cc52",
+    "gate08_source_summary_sha256": "37d3ab85d96953a74a773358fb9d56de1858ed163c896bb99de8e43844ee0a48",
+    "gate08_private_archive_sha256": "c237a8a0f99bff0400969afaa77dd9c02ce77ba0718f2a5a294e522e7e5dda15",
+    "provenance_note": "Full client, source-grid and member-level evidence remains in governed private Drive Gate08 archive, not republished in public GitHub.",
+    "date_of_gate08_private_derivation": "2026-10-20",
+    "provisional_geometry_approval": "USER_APPROVED_PROVISIONAL_SUMMARY_ONLY_NOT_PHYSICAL_MODEL",
+    "full_private_source_model_released_publicly": false
+  },
+  "reported_original_ETABS_seismic_weight_kN": 6831.9109,
+  "scenarios": [
+    {
+      "id": "GATE08_NO_CANDIDATE_WALLS",
+      "source_status": "PRIVATE_FE_DERIVED_CONDITIONAL_NOT_VERIFIED_SITE",
+      "seismic_weight_kN": 5520.483743,
+      "wall_hypothesis_included": false
+    },
+    {
+      "id": "GATE08_WITH_HYPOTHETICAL_WALLS",
+      "source_status": "PRIVATE_FE_DERIVED_CONDITIONAL_NOT_VERIFIED_SITE",
+      "seismic_weight_kN": 6059.877983,
+      "wall_hypothesis_included": true
+    }
+  ],
+  "gate08_incremental_candidate_wall_weight_kN": 539.39424,
+  "physical_inference_banned": true,
+  "direct_original_ETABS_mass_export_found": false,
+  "expected_physical_mass_component_file": "registry/r6p4_original_mass_components.csv",
+  "source_report_floor_area_and_levels": "Ambiguous GF/FF/upper terrace; no verified source slab footprints or complete ETABS mass-source map",
+  "evidence_chain": [
+    {
+      "type": "ORIGINAL_REPORT",
+      "status": "READ_VERIFIED_CONTENT_ONLY_NOT_ENGINEERING_ACCEPTED"
+    },
+    {
+      "type": "PROVISIONAL_GEOMETRY_DECISION",
+      "status": "APPROVED_AS_PROVISIONAL_NOT_STRUCTURAL_SOURCE"
+    },
+    {
+      "type": "GATE08_MASS_RECONSTRUCTION",
+      "status": "CONDITIONAL_PRIVATE_FE_DERIVATION_NOT_MASS_CLOSED"
+    },
+    {
+      "type": "GOVERNMENT_PARCEL_RECORD",
+      "status": "NOT_FOUND_AND_AUTHENTICATED_FOR_THIS_BUILDING"
+    },
+    {
+      "type": "EXACT_SITE_NBC2025_ZONE_AUTHORITY",
+      "status": "NOT_FOUND_AND_AUTHENTICATED_FOR_THIS_BUILDING"
+    },
+    {
+      "type": "SITE_SPECIFIC_VS30_OR_SPT",
+      "status": "NOT_FOUND_AND_AUTHENTICATED_FOR_THIS_BUILDING"
+    },
+    {
+      "type": "APPROVED_RESIDENTIAL_STRUCTURAL_SYSTEM",
+      "status": "NOT_FOUND_AND_AUTHENTICATED_FOR_THIS_BUILDING"
+    },
+    {
+      "type": "ETABS_STORY_AND_COMPONENT_MASS_EXPORT",
+      "status": "NOT_FOUND_AND_AUTHENTICATED_FOR_THIS_BUILDING"
+    },
+    {
+      "type": "INDEPENDENT_MASS_ENGINEER_REVIEW",
+      "status": "NOT_FOUND_AND_AUTHENTICATED_FOR_THIS_BUILDING"
+    }
+  ],
+  "source_scope_exclusions": [
+    "Other client Narayani Parajuli soil investigation is not original G+1.5 site evidence.",
+    "Nabin Bista hospital-site proxy Vs30 maps do not measure this building's parcel.",
+    "Recovered Saugat Paneru research ETABS E2K files do not match original G+1.5 and cannot replace its missing native ETABS model."
+  ],
+  "original_physical_evidence_accepted": 0,
+  "original_physical_evidence_total": 15,
+  "original_foundation_F3_verdict": "NOT SAFE IN ONE WAY SHEAR",
+  "design_spectrum_generated": false,
+  "etabs_mass_authenticated": false,
+  "scale_factor_generated": false,
+  "engineering_approval": false
+}
