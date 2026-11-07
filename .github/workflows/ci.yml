@@ -676,6 +676,43 @@ jobs:
             site/reports/r6-connected-shell-modal-modal.csv
             site/reports/r6-connected-shell-modal-member-actions.csv
             site/reports/r6-connected-shell-modal-manifest.json
+      - name: Build R6.3 original seismic site/mass/modal evidence gate
+        run: |
+          python scripts/build_r6p3_site_mass_modal_admission.py --evidence registry/r6p3_original_site_mass_evidence.v0.1.json --source examples/sanitized/r5_generic_source_geometry_frame.v0.1.json --settings examples/sanitized/r6p2_connected_shell_modal_source.v0.1.json --output-dir site/reports
+          python -m pytest -q tests/test_r6p3_site_mass_modal_admission.py
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path("site/reports")
+          d=json.loads((p/"r6p3-seismic-evidence-admission.json").read_text())
+          m=json.loads((p/"r6p3-seismic-evidence-admission-manifest.json").read_text())
+          assert d["gates_on_hold"]==8
+          assert d["real_ETABS_mass_kN_reported_not_verified"]==6831.9109
+          assert d["synthetic_reference_weight_kN"]==111.2
+          assert d["modal_synthetic_screens_total"]==8
+          assert d["site_specific_zone_factor_accepted"] is False
+          assert d["original_building_mass_source_admitted"] is False
+          assert d["original_building_modal_compliance"] is False
+          assert d["real_project_MRSM_scale_factor"] is None
+          assert d["ESM_MRSM_code_scaling_executed"] is False
+          assert d["original_F3_failure"]=="NOT SAFE IN ONE WAY SHEAR"
+          assert d["original_accepted_evidence_gates"]==0
+          assert d["engineering_approval"] is False
+          assert m["scaling_not_executed"] is True
+          for name,digest in m["files"].items():
+              assert hashlib.sha256((p/name).read_bytes()).hexdigest()==digest
+          print("R6P3_ORIGINAL_SITE_SOIL_MASS_8_SOURCE_GATES_HOLD_8_SYNTHETIC_MODAL_SCREENS_NO_SCALING_F3_UNSAFE")
+          PY
+      - name: Archive R6.3 site and seismic-mass source acceptance gate
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: r6p3-original-site-soil-mass-modal-gates-not-approved
+          path: |
+            site/reports/r6p3-seismic-evidence-admission.json
+            site/reports/r6p3-seismic-evidence-admission.html
+            site/reports/r6p3-seismic-evidence-admission-gates.csv
+            site/reports/r6p3-seismic-evidence-admission-modal.csv
+            site/reports/r6p3-seismic-evidence-admission-manifest.json
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
