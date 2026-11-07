@@ -1,0 +1,108 @@
+{
+  "schema": "jp.structural.r6.project_site_evidence_admission.v0.1",
+  "subject": "ORIGINAL_G_PLUS_1P5_RC_RESIDENTIAL_REPORT",
+  "record_class": "UNVERIFIED_ORIGINAL_ETABS_REPORT_ASSERTIONS",
+  "original_report": {
+    "file_id": "1TpWUmOdrcQqOpkN6qvmhZ12KrYaNABBM",
+    "title": "new nbc2025 report REVISED(1).pdf",
+    "url": "https://drive.google.com/file/d/1TpWUmOdrcQqOpkN6qvmhZ12KrYaNABBM/view",
+    "source_media_type": "application/pdf",
+    "source_document_located_and_text_read": true,
+    "engineer_source_design_acceptance": false,
+    "observed_report_sections": [
+      "1.1 EXECUTIVE SUMMARY",
+      "2.6.4 Seismic Load",
+      "5.1 Auto Seismic Load",
+      "6.4 Design of Footing"
+    ],
+    "note": "Original report content read via authenticated Drive on 2026-11-07. Document is a source of assertions, not independent verification of site conditions."
+  },
+  "original_report_assertions": {
+    "address_general": "Pokhara",
+    "location_phrase": "Leknath Metropolitian City",
+    "seismic_zone_phrase": "Kathmandu (as per NBC 105:2020)",
+    "occupancy": "Residential Building",
+    "structural_system": "Special Moment Resisting Frame",
+    "soil_profile_description": "Medium Soil Site",
+    "soil_class": "D (as per NBC 105:2020)",
+    "zone_factor_Z": 0.35,
+    "zone_factor_reported_basis": "Mixed 'NBC 105-2020' and 'NBC 105:2025' text in 2.6.4",
+    "importance_factor_reported": 1,
+    "soil_bearing_capacity_reported_kPa": 160,
+    "seismic_weight_ETABS_reported_kN": 6831.9109,
+    "source_weight_table": "ETABS Load Pattern Definitions - Auto Seismic - User Coefficient, EQX/EQY",
+    "reported_F3_verdict": "NOT SAFE IN ONE WAY SHEAR"
+  },
+  "conflicts": [
+    {
+      "key": "location_vs_seismic_zone",
+      "source_assertions": [
+        "Pokhara / Leknath",
+        "Kathmandu (as per NBC 105:2020)"
+      ],
+      "status": "UNRESOLVED"
+    },
+    {
+      "key": "soil_description_vs_old_class",
+      "source_assertions": [
+        "Medium Soil Site",
+        "Soil Type D (NBC 105:2020)"
+      ],
+      "status": "UNRESOLVED"
+    },
+    {
+      "key": "code_revision_vs_report_tables",
+      "source_assertions": [
+        "Report cites NBC 105:2025",
+        "Z and soil inputs also attributed to NBC 105:2020"
+      ],
+      "status": "UNRESOLVED"
+    }
+  ],
+  "authoritative_site_evidence": {
+    "approved_cadastral_parcel_or_survey_uri": null,
+    "current_local_jurisdiction_identifier": null,
+    "site_georeferenced_municipality_certification_uri": null,
+    "nbc105_2025_zone_table_entry_and_provenance_uri": null,
+    "geotechnical_report_uri": null,
+    "measured_Vs30_m_s": null,
+    "documented_SPT_profile_uri": null,
+    "reviewed_soil_class_2025": null,
+    "approved_building_use_document_uri": null,
+    "approved_lateral_system_document_uri": null,
+    "reviewed_importance_class_and_factor_uri": null,
+    "qualified_independent_design_review_receipt_uri": null
+  },
+  "authoritative_mass_evidence": {
+    "actual_storey_geometry_and_floor_ledger_uri": null,
+    "structural_member_volume_and_density_ledger_uri": null,
+    "wall_cladding_tank_and_permanent_load_ledger_uri": null,
+    "occupancy_imposed_load_partition_ledger_uri": null,
+    "floor_by_floor_ETABS_mass_export_and_node_mapping_uri": null,
+    "gravity_vs_seismic_participation_review_uri": null,
+    "physical_reported_ETABS_weight_kN": 6831.9109,
+    "independently_reconciled_total_seismic_weight_kN": null,
+    "reconciliation_signed_engineer_receipt_uri": null
+  },
+  "synthetic_R6p2_reference": {
+    "case_id": "SYNTHETIC-R5-FOUR-COLUMN-ROOF-001",
+    "audited_seismic_weight_kN": 111.2,
+    "classification": "SYNTHETIC_REFERENCE_NOT_A_BUILDING",
+    "may_not_replace_or_scale_original_mass": true
+  },
+  "nbc105_2025_admission_rules": {
+    "code_edition": "NBC 105:2025 SECOND REVISION",
+    "official_code_uri": "https://giwmscdnone.gov.np/media/files/NBC_105_2025_Seismic%20Design%20of%20Buildings%20in%20Nepal_lqqvx6a.pdf",
+    "soil_classification_clause": "4.1.3 (Vs30 if available, otherwise N_SPT)",
+    "modal_mass_participation_clause": "7.3",
+    "modal_fraction_required_each_direction": 0.9,
+    "frequency_cutoff_for_modal_combination_Hz": 33,
+    "high_frequency_missing_mass_correction_required": true,
+    "spectrum_scaling_clause": "7.5",
+    "spectrum_scale_conditions": "Do not calculate V/VR or apply it before authenticated project ESM and MRSM bases; drift/displacement not scaled under clause 7.5."
+  },
+  "original_building_physical_evidence_gates_accepted": 0,
+  "original_building_physical_evidence_gates_total": 15,
+  "force_design_acceptance": false,
+  "overall_engineering_approval": false
+}
