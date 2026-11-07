@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 8e25c321f8e634b421835bb8ea499b2196ecd0a1
+          ref: 57c736557d7b1fdb2888e84656ff25d1e47835fa
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -544,6 +544,35 @@ jobs:
           for name,digest in manifest["files"].items():
               assert hashlib.sha256((root/name).read_bytes()).hexdigest()==digest
           print("PAGES_R6P2_SHARED_SHELL_FRAME_32_MODAL_FE_2_MESHES_2_MPC_4_MODES_111P2KN_F3_HOLD")
+          PY
+      - name: Publish R6.3 original seismic evidence and modal adequacy gates
+        run: |
+          python scripts/build_r6p3_site_mass_modal_admission.py --evidence registry/r6p3_original_site_mass_evidence.v0.1.json --source examples/sanitized/r5_generic_source_geometry_frame.v0.1.json --settings examples/sanitized/r6p2_connected_shell_modal_source.v0.1.json --output-dir site/reports
+          python -m pytest -q tests/test_r6p3_site_mass_modal_admission.py
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          root=Path("site/reports")
+          d=json.loads((root/"r6p3-seismic-evidence-admission.json").read_text())
+          m=json.loads((root/"r6p3-seismic-evidence-admission-manifest.json").read_text())
+          assert d["original_report_Drive_file_id"]=="1TpWUmOdrcQqOpkN6qvmhZ12KrYaNABBM"
+          assert d["gates_on_hold"]==8
+          assert d["original_accepted_evidence_gates"]==0
+          assert d["original_required_evidence_gates"]==15
+          assert d["modal_synthetic_screens_total"]==8
+          assert d["modal_synthetic_90pct_screens_meeting"]==8
+          assert d["seismic_mass_physical_vs_synthetic_status"]=="NON_COMPARABLE_DIFFERENT_MODELS"
+          assert d["real_ETABS_mass_kN_reported_not_verified"]==6831.9109
+          assert d["synthetic_reference_weight_kN"]==111.2
+          assert d["original_F3_failure"]=="NOT SAFE IN ONE WAY SHEAR"
+          assert d["real_project_MRSM_scale_factor"] is None
+          assert d["ESM_MRSM_code_scaling_executed"] is False
+          assert d["whole_building_engineering_approval"] is False
+          assert d["engineering_approval"] is False
+          assert m["scaling_not_executed"] is True
+          for name,digest in m["files"].items():
+              assert hashlib.sha256((root/name).read_bytes()).hexdigest()==digest
+          print("PAGES_R6P3_8_UNAUTHENTICATED_SITE_MASS_GATES_8_SYNTHETIC_MODAL_90_PERCENT_SCREENS_NO_SCALING_F3_HOLD")
           PY
       - name: Validate current report-first coverage and site navigation
         run: |
