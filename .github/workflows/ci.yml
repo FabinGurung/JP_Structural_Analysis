@@ -570,6 +570,42 @@ jobs:
             site/reports/r5-connected-shell-mesh.csv
             site/reports/r5-connected-shell-member-ends.csv
             site/reports/r5-connected-shell-manifest.json
+      - name: Build R5.6 flexible and rigid shell diaphragm signed static FE
+        run: |
+          python scripts/build_r5_shell_diaphragm_signed.py --output-dir site/reports
+          python -m pytest -q tests/test_r5_shell_diaphragm_signed.py
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          p=Path("site/reports")
+          d=json.loads((p/"r5-shell-diaphragm-signed.json").read_text())
+          m=json.loads((p/"r5-shell-diaphragm-signed-manifest.json").read_text())
+          assert d["solver_run_count"]==30
+          assert d["superposition_check_count"]==12
+          assert d["mpc_comparison_count"]==15
+          assert d["all_combination_superposition_checks_pass"] is True
+          assert d["all_rigid_MPC_kinematic_checks_pass"] is True
+          assert d["global_six_component_equilibrium_pass"] is True
+          assert d["rigid_constraint_only_UX_UY_RZ"] is True
+          assert d["synthetic_source_gravity_kN"]==128
+          assert abs(d["synthetic_source_seismic_weight_kN"]-111.2)<1e-8
+          assert d["original_F3_failure"]=="NOT SAFE IN ONE WAY SHEAR"
+          assert d["original_building_evidence_gates_accepted"]==0
+          assert d["engineering_approval"] is False
+          for name,digest in m["files"].items():
+              assert hashlib.sha256((p/name).read_bytes()).hexdigest()==digest
+          print("R5P6_30_SHELL_MPC_FLEX_RIGID_SIGNED_12_SUPERPOSITION_15_COMPARISONS_F3_HOLD_PASS")
+          PY
+      - name: Archive R5.6 signed diaphragm MPC source calculations
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: r5p6-connected-shell-flexible-rigid-signed-not-approved
+          path: |
+            site/reports/r5-shell-diaphragm-signed.json
+            site/reports/r5-shell-diaphragm-signed.html
+            site/reports/r5-shell-diaphragm-signed-comparisons.csv
+            site/reports/r5-shell-diaphragm-signed-member-actions.csv
+            site/reports/r5-shell-diaphragm-signed-manifest.json
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
