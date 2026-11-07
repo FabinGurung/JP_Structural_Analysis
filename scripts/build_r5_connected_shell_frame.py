@@ -270,6 +270,31 @@ def solve_mesh(ref, n:int, case_id:str, *, diaphragm_mode="FLEXIBLE_SHELL", fact
     center=(n//2,n//2)
     center_w=float(ops.nodeDisp(tag(*center),3))
     if not math.isfinite(center_w):raise ShellBridgeError("invalid shell center displacement")
+    corner_displacements={}
+    for index,corner in enumerate(corner_ix,1):
+        corner_displacements[f"R{index}"]={
+           key:float(ops.nodeDisp(tag(*corner),dof))
+           for key,dof in (("UX",1),("UY",2),("UZ",3),("RZ",6))}
+    inplane_x=max(abs(float(ops.nodeDisp(tag(n,j),1))-
+                      float(ops.nodeDisp(tag(0,j),1))) for j in range(n+1))
+    inplane_y=max(abs(float(ops.nodeDisp(tag(i,n),2))-
+                      float(ops.nodeDisp(tag(i,0),2))) for i in range(n+1))
+    rigid_residual=None
+    if master_tag is not None:
+        umx=float(ops.nodeDisp(master_tag,1))
+        umy=float(ops.nodeDisp(master_tag,2))
+        mrz=float(ops.nodeDisp(master_tag,6))
+        xc=(x0+x1)/2;yc=(y0+y1)/2
+        rigid_residual=max(
+            abs(float(ops.nodeDisp(tag(i,j),1))-
+                (umx-(positions[(i,j)][1]-yc)*mrz))
+            for j in range(n+1) for i in range(n+1))
+        rigid_residual=max(rigid_residual,max(
+            abs(float(ops.nodeDisp(tag(i,j),2))-
+                (umy+(positions[(i,j)][0]-xc)*mrz))
+            for j in range(n+1) for i in range(n+1)))
+        if rigid_residual>1e-8 or inplane_x>1e-8 or inplane_y>1e-8:
+            raise ShellBridgeError("MPC displacement compatibility failed")
     end_records={}
     for key,segments in segment_register.items():
         end_records[key]=[]
@@ -286,6 +311,14 @@ def solve_mesh(ref, n:int, case_id:str, *, diaphragm_mode="FLEXIBLE_SHELL", fact
                                   "J":dict(zip(LOCAL,[float(x) for x in f[6:]]))}]
     return {
        "case_id":case_id,"mesh_divisions":n,
+       "diaphragm_mode":diaphragm_mode,
+       "source_factors":{k:factors[k] for k in sorted(factors)},
+       "master_tag":master_tag,
+       "master_retained_dofs":"UX_UY_RZ" if master_tag is not None else None,
+       "rigid_compatibility_residual_m":rigid_residual,
+       "inplane_row_UX_difference_m":inplane_x,
+       "inplane_col_UY_difference_m":inplane_y,
+       "corner_displacements_m":corner_displacements,
        "shell_nodes":(n+1)**2,"shell_elements":n*n,
        "connected_boundary_beam_segments":len(beams),"columns":len(columns),
        "member_end_vector_count":2*(len(columns)+len(beams)),
@@ -298,7 +331,7 @@ def solve_mesh(ref, n:int, case_id:str, *, diaphragm_mode="FLEXIBLE_SHELL", fact
        "center_shell_Uz_m":center_w,
        "signed_member_end_actions":end_records,
        "shell_to_beam_same_node_count":4*n,
-       "shell_panel_load_directly_applied_at_interior_nodes":n>1 and case_id in ("DL","LL"),
+       "shell_panel_load_directly_applied_at_interior_nodes":n>1 and any(factors.get(c,0.)!=0. for c in ("DL","LL")),
        "source_seismic_weight_kN":ref["audit"]["audited_assembly"]["total_seismic_weight_kN"],
        "engineering_approval":False,
     }
