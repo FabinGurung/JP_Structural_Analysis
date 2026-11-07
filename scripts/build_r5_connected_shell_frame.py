@@ -222,27 +222,29 @@ def solve_mesh(ref, n:int, case_id:str, *, diaphragm_mode="FLEXIBLE_SHELL", fact
     external=[] # global {x,y,z, fx,fy,fz,mx,my,mz}; wall centroid exact
     def push(x,y,z,fx=0.,fy=0.,fz=0.,mx=0.,my=0.,mz=0.):
         external.append((x,y,z,fx,fy,fz,mx,my,mz))
-    if not is_lateral:
-        p=ref["pressure_by_case"][case_id]
-        patch=-p*element_area/4
+    # Raw cases and signed combinations are loaded together into this
+    # exact connected model. No independent action envelope substitution.
+    for src in ("DL","LL"):
+        factor=factors.get(src,0.)
+        if factor==0:continue
+        patch=-factor*ref["pressure_by_case"][src]*element_area/4
         for j in range(n):
             for i in range(n):
                 for node in ((i,j),(i+1,j),(i+1,j+1),(i,j+1)):
                     ops.load(tag(*node),0.,0.,patch,0.,0.,0.)
                     x,y,zz=positions[node];push(x,y,zz,fz=patch)
         for wall in ref["walls"]:
-            if wall["case_id"]!=case_id:continue
-            k=wall["member_id"];w=wall["w"]
+            if wall["case_id"]!=src:continue
+            k=wall["member_id"];w=factor*wall["w"]
             for e,(a,b) in zip(segment_register[k],zip(paths[k],paths[k][1:])):
                 ops.eleLoad("-ele",e,"-type","-beamUniform",0.,-w,0.)
                 p1=positions[a];p2=positions[b]
                 L=math.dist(p1,p2)
                 push(*[(p1[d]+p2[d])/2 for d in range(3)],fz=-w*L)
-    else:
-        # Use the original signed source ledger unchanged. This is an
-        # explicitly supplied synthetic lateral case, not a code-generated EQ.
+    if factors.get("HX",0.)!=0:
         for index,corner in enumerate(corner_ix,1):
-            fx,fy,fz,mx,my,mz=ref["lateral_source_by_node"][f"R{index}"]
+            vals=ref["lateral_source_by_node"][f"R{index}"]
+            fx,fy,fz,mx,my,mz=[v*factors["HX"] for v in vals]
             ops.load(tag(*corner),fx,fy,fz,mx,my,mz)
             x,y,zz=positions[corner]
             push(x,y,zz,fx,fy,fz,mx,my,mz)
