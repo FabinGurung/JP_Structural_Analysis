@@ -139,7 +139,7 @@ def exact_reference(spec, thickness=SHELL_T_M):
        "source_total_by_case_kN":source_by_case,
        "explicit_original_mass_SHA256":sha(audit["audited_assembly"])}
 
-def solve_mesh(ref, n:int, case_id:str, *, diaphragm_mode="FLEXIBLE_SHELL", factors=None):
+def solve_mesh(ref, n:int, case_id:str, *, diaphragm_mode="FLEXIBLE_SHELL", factors=None, modal_handler=None):
     """Retain one shell/frame topology across original raw and signed cases."""
     import openseespy.opensees as ops
     if n not in MESHES:raise ShellBridgeError("unsupported mesh size; validated 2,4,8")
@@ -218,6 +218,17 @@ def solve_mesh(ref, n:int, case_id:str, *, diaphragm_mode="FLEXIBLE_SHELL", fact
             raise ShellBridgeError("R5 source mass node cannot be mapped to connected corner")
         ci=corner_ix[int(node[1])-1]
         ops.mass(tag(*ci),*[row[k] for k in ("mx","my","mz","mrx","mry","mrz")])
+    # R6.2 passes a handler at the shared FE-assembly boundary, ensuring
+    # connected slab, beam, column, constraints and exact audited corner masses
+    # remain IDENTICAL to R5.6. The modal path does not install static DL/LL/HX.
+    if modal_handler is not None:
+        if not callable(modal_handler):
+            raise ShellBridgeError("modal handler must be a callable")
+        return modal_handler(
+            ops=ops,ref=ref,n=n,diaphragm_mode=diaphragm_mode,
+            tag=tag,positions=positions,corner_ix=corner_ix,
+            base=base,columns=columns,segment_register=segment_register,
+            master_tag=master_tag,source_mass_rows=mass_nodes)
     ops.timeSeries("Linear",1);ops.pattern("Plain",1,1)
     external=[] # global {x,y,z, fx,fy,fz,mx,my,mz}; wall centroid exact
     def push(x,y,z,fx=0.,fy=0.,fz=0.,mx=0.,my=0.,mz=0.):
