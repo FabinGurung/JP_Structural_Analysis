@@ -139,12 +139,21 @@ def exact_reference(spec, thickness=SHELL_T_M):
        "source_total_by_case_kN":source_by_case,
        "explicit_original_mass_SHA256":sha(audit["audited_assembly"])}
 
-def solve_mesh(ref, n:int, case_id:str):
+def solve_mesh(ref, n:int, case_id:str, *, diaphragm_mode="FLEXIBLE_SHELL", factors=None):
+    """Retain one shell/frame topology across original raw and signed cases."""
     import openseespy.opensees as ops
     if n not in MESHES:raise ShellBridgeError("unsupported mesh size; validated 2,4,8")
+    if diaphragm_mode not in ("FLEXIBLE_SHELL","RIGID_INPLANE_MPC"):
+        raise ShellBridgeError("unknown diaphragm mode")
+    if factors is None:
+        if case_id not in ("DL","LL","HX"):raise ShellBridgeError("unknown raw source case")
+        factors={case_id:1.}
+    elif (case_id in ("DL","LL","HX") or not isinstance(factors,dict) or not factors
+        or not set(factors)<={"DL","LL","HX"} or any(
+            not isinstance(v,(int,float)) or isinstance(v,bool) or not math.isfinite(v)
+            for v in factors.values())):
+        raise ShellBridgeError("invalid signed combination source or factor")
     m=ref["model"]; x0,x1,y0,y1,z=ref["corners"]
-    is_lateral=case_id=="HX"
-    if case_id not in ("DL","LL","HX"):raise ShellBridgeError("unsupported raw case")
     ops.wipe();ops.model("basic","-ndm",3,"-ndf",6)
     def tag(i,j):return 1000+i+(n+1)*j
     positions={}
