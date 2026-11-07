@@ -76,7 +76,7 @@ def test_independent_three_compression_PDelta_3d_cantilever_matches_first_order_
     (lambda c:c["response_spectrum"].update(source_reference="NOT_A_SPECTRUM_SOURCE"),"synthetic spectrum source"),
     (lambda c:c.update(number_modes=0),"mode count"),
     (lambda c:c.update(orthogonal_factor=-1),"out of bounds"),
-    (lambda c:c["torsion_probes"]["X"][0].update(separation=0),"positive"),
+    (lambda c:c["torsion_probes"]["X"][0].update(separation=0),"must be > 0"),
     (lambda c:c["pdelta"]["axial_compression_kN"].__setitem__(2,500000),"Euler"),
 ])
 def test_invalid_units_unverified_source_provenance_and_unstable_benchmark_fail_closed(config,mutate,error):
