@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 277bee743d662f77f9b4f9e3aaff3c239264c9ff
+          ref: ab336fa0eb1fcd8744a02f32990d4b83d2aa5758
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -600,6 +600,29 @@ jobs:
           for name,checksum in m["files"].items():
               assert hashlib.sha256((p/name).read_bytes()).hexdigest()==checksum
           print("PAGES_R6P4_SOURCE_6831P9109_VS_6059P877983_772P032917_UNEXPLAINED_KN_0_APPROVAL")
+          PY
+      - name: Publish R6.5 source-reported storey mass conditional benchmark (private data excluded)
+        run: |
+          python scripts/build_r6p5_original_storey_mass_preflight.py --output site/reports/r6p5-original-story-mass-private-preflight.json
+          python -m pytest -q tests/test_r6p5_original_storey_mass_preflight.py
+          python - <<'PY'
+          from pathlib import Path
+          import json,hashlib
+          p=Path("site/reports")
+          b=p/"r6p5-original-story-mass-private-preflight.json"
+          d=json.loads(b.read_text())
+          m=json.loads((p/"r6p5-original-story-mass-private-preflight-manifest.json").read_text())
+          assert d["source_story_count"]==3
+          assert d["reported_original_ETABS_weight_kN"]==6831.9109
+          assert d["gate08_hypothetical_wall_case_unexplained_kN"]==772.032917
+          assert d["private_comparison"]["conditional_all_three_story_numeric_match"] is None
+          assert d["original_physical_evidence_accepted"]==0
+          assert d["f3_source_verdict"]=="NOT SAFE IN ONE WAY SHEAR"
+          assert not d["engineering_approval"] and not d["real_original_mass_approved"]
+          assert d["MRSM_scale_factor"] is None and d["MRSM_scaling_executed"] is False
+          assert not m["private_source_rows_exported"] and not m["engineering_approval"]
+          assert hashlib.sha256(b.read_bytes()).hexdigest()==m["json_sha256"]
+          print("PAGES_R6P5_CONDITIONAL_SOURCE_FLOOR_MASS_BENCHMARK_PRIVATE_ROWS_EXCLUDED_DESIGN_HOLD")
           PY
       - name: Validate current report-first coverage and site navigation
         run: |
