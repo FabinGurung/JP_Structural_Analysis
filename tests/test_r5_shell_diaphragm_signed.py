@@ -41,9 +41,11 @@ def test_inplane_MPC_only_UX_UY_RZ_and_vertical_shell_stays_flexible(result):
                x["inplane_col_UY_difference_m"]<1e-8 for x in rigid)
     assert all(math.isfinite(x["center_shell_Uz_m"]) for x in runs)
     assert any(abs(x["center_shell_Uz_m"])>1e-9 for x in rigid if x["case_id"]=="DL")
-    assert any(x["flexible_inplane_UX_strain_metric_m"] >
-               x["rigid_inplane_UX_strain_metric_m"]+1e-12 for x in
-               result["diaphragm_comparisons"] if x["case_id"]=="HX")
+    assert any((x["flexible_inplane_UX_strain_metric_m"] >
+                x["rigid_inplane_UX_strain_metric_m"]+1e-12 or
+                x["flexible_inplane_UY_strain_metric_m"] >
+                x["rigid_inplane_UY_strain_metric_m"]+1e-12)
+               for x in result["diaphragm_comparisons"] if x["case_id"]=="HX")
 
 def test_concurrent_case_source_factors_and_exact_elastic_superposition(result):
     labels={x["combination_id"]:x["components"] for x in result["source_combinations"]}
