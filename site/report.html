@@ -473,4 +473,17 @@
 </div>
 <p><strong>Hold:</strong> This is a deliberately synthetic rectangular elastic plate/frame, not the original G+1.5 native shell model. Thickness, elastic material, pressure, and mass participation are hypothetical. No rigid diaphragm MPC comparison, source-accepted whole-floor geometry, connected-shell ULS/SLS signed combinations, NBC seismic verification or complete RC shell design has yet passed. Original F3 remains <strong>NOT SAFE IN ONE WAY SHEAR</strong>.</p>
 </section>
+<section class="rb-card" id="annex-r5p6-shell-mpc">
+<h3>Annex N · R5.6 Same connected 3D shell/frame: flexible diaphragm versus rigid in-plane MPC</h3>
+<p>R5.6 solves the original synthetic ShellMITC4 slab, subdivided perimeter beams and four columns with the <strong>same mesh, source pressure loads and unchanged source seismic masses</strong>, comparing fully flexible shell in-plane behavior against the explicitly constrained rigid diaphragm. The rigid alternative uses the OpenSees small-rotation multipoint constraint <code>rigidDiaphragm(3,master,*slabNodes)</code> and a transformation constraint handler. It constrains in-plane Ux, Uy and Rz only; out-of-plane slab bending Uz/Rx/Ry remains available, so the comparison is not a fully fixed roof.</p>
+<p>Actual 3D OpenSees solver runs calculate source raw DL/LL/HX load cases and <strong>source-declared concurrent signed U_PLUS/U_MINUS</strong> combinations on each mode/mesh. Every individual signed member local I/J component, roof displacement and foundation reaction is independently checked against the same-mode linear elastic superposition of its raw cases. Global six-component free-body equilibrium, the rigid kinematic residual and the absence of altered source gravity or mass are mandatory failure gates.</p>
+<div class="rb-download-grid">
+<a href="reports/r5-shell-diaphragm-signed.html">Seven-chapter diaphragm comparison and signed cases (HTML)</a>
+<a href="reports/r5-shell-diaphragm-signed.json">Complete OpenSees source, MPC and I/J results (JSON)</a>
+<a href="reports/r5-shell-diaphragm-signed-comparisons.csv">Flexible versus rigid slab displacement comparison (CSV)</a>
+<a href="reports/r5-shell-diaphragm-signed-member-actions.csv">Concurrent signed member action ledger (CSV)</a>
+<a href="reports/r5-shell-diaphragm-signed-manifest.json">Independent SHA-256 report manifest</a>
+</div>
+<p><strong>Engineering hold:</strong> Synthetic rectangular elastic slab and assumed materials/loads only; this is not a verified actual project diaphragm or approved NBC seismic load combination. Modal mass participation, MRSM, cracking, P-Delta and complete RC design remain unverified. Original F3 remains <strong>NOT SAFE IN ONE WAY SHEAR</strong> and all original building evidence gates remain open.</p>
+</section>
 <div class="rb-next"><a href="#report-top">Back to cover ↑</a></div></article></div></div></div></main><footer class="site-footer"><div class="wrap footer-inner"><span>JP Structural Analysis · OpenSees primary · Not an engineering approval</span><span id="build">Source snapshot · read-only public demonstration</span></div></footer><script src="app.js" defer></script><script src="report-book.js" defer></script><script src="chapter02-audit.js" defer></script><script src="chapter02-seismic.js" defer></script><script src="chapter03-method.js" defer></script><script src="chapter04-model.js" defer></script><script src="chapter05-results.js" defer></script><script src="chapter06-design.js" defer></script><script src="annex-source-recovery.js" defer></script></body></html>
