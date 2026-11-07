@@ -163,6 +163,14 @@ def solve_mesh(ref, n:int, case_id:str, *, diaphragm_mode="FLEXIBLE_SHELL", fact
             positions[(i,j)]=(x,y,z)
             ops.node(tag(i,j),x,y,z)
     corner_ix=[(0,0),(n,0),(n,n),(0,n)]
+    master_tag=None
+    if diaphragm_mode=="RIGID_INPLANE_MPC":
+        master_tag=9900
+        xc=(x0+x1)/2;yc=(y0+y1)/2
+        ops.node(master_tag,xc,yc,z)
+        ops.fix(master_tag,0,0,1,1,1,0)
+        ops.rigidDiaphragm(3,master_tag,*[tag(i,j)
+            for j in range(n+1) for i in range(n+1)])
     base=[]
     for idx,(i,j) in enumerate(corner_ix,1):
         b=m["nodes"][idx-1]
@@ -238,7 +246,7 @@ def solve_mesh(ref, n:int, case_id:str, *, diaphragm_mode="FLEXIBLE_SHELL", fact
             ops.load(tag(*corner),fx,fy,fz,mx,my,mz)
             x,y,zz=positions[corner]
             push(x,y,zz,fx,fy,fz,mx,my,mz)
-    ops.constraints("Plain")
+    ops.constraints("Transformation" if master_tag is not None else "Plain")
     ops.numberer("RCM");ops.system("BandGeneral")
     ops.algorithm("Linear");ops.integrator("LoadControl",1.)
     ops.analysis("Static")
