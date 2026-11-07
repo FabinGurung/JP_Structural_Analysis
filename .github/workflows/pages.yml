@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 80b9e76f538efbbe9a7109ad1aef2c7d0928241e
+          ref: 8e25c321f8e634b421835bb8ea499b2196ecd0a1
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -518,6 +518,32 @@ jobs:
           for name,digest in m["files"].items():
               assert hashlib.sha256((p/name).read_bytes()).hexdigest()==digest
           print("PAGES_R6P1_SOURCE_111P2KN_SEISMIC_WEIGHT_CQC_XY_6MODES_DRIFT_TORSION_PDELTA_HOLD")
+          PY
+      - name: Publish R6.2 same connected ShellMITC4 modal source and CQC member actions
+        run: |
+          python scripts/build_r6_connected_shell_modal.py --input examples/sanitized/r5_generic_source_geometry_frame.v0.1.json --settings examples/sanitized/r6p2_connected_shell_modal_source.v0.1.json --output-dir site/reports
+          python -m pytest -q tests/test_r6_connected_shell_modal.py
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          root=Path("site/reports")
+          d=json.loads((root/"r6-connected-shell-modal.json").read_text())
+          manifest=json.loads((root/"r6-connected-shell-modal-manifest.json").read_text())
+          assert d["mesh_divisions"]==[2,4]
+          assert d["diaphragm_modes"]==["FLEXIBLE_SHELL","RIGID_INPLANE_MPC"]
+          assert d["axes"]==["X","Y"]
+          assert d["modes_per_axis"]==4 and d["native_modal_static_run_count"]==32
+          assert abs(d["audited_seismic_weight_kN"]-111.2)<1e-8
+          assert abs(d["audited_seismic_mass_kN_s2_m"]-111.2/9.81)<1e-8
+          assert d["same_R5p6_connected_shell_FE"]
+          assert d["real_frame_and_shell_modal_member_actions"]
+          assert d["CQC_individual_components_not_concurrent_signed_vectors"]
+          assert d["original_building_accepted_evidence_gates"]==0
+          assert d["original_F3_failure"]=="NOT SAFE IN ONE WAY SHEAR"
+          assert not d["engineering_approval"] and not d["code_spectrum_verified"]
+          for name,digest in manifest["files"].items():
+              assert hashlib.sha256((root/name).read_bytes()).hexdigest()==digest
+          print("PAGES_R6P2_SHARED_SHELL_FRAME_32_MODAL_FE_2_MESHES_2_MPC_4_MODES_111P2KN_F3_HOLD")
           PY
       - name: Validate current report-first coverage and site navigation
         run: |
