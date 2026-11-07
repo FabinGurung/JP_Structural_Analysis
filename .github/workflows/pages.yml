@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 57c736557d7b1fdb2888e84656ff25d1e47835fa
+          ref: 277bee743d662f77f9b4f9e3aaff3c239264c9ff
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -573,6 +573,33 @@ jobs:
           for name,digest in m["files"].items():
               assert hashlib.sha256((root/name).read_bytes()).hexdigest()==digest
           print("PAGES_R6P3_8_UNAUTHENTICATED_SITE_MASS_GATES_8_SYNTHETIC_MODAL_90_PERCENT_SCREENS_NO_SCALING_F3_HOLD")
+          PY
+      - name: Publish R6.4 original mass intake and conditional Gate08 reconciliation
+        run: |
+          python scripts/build_r6p4_physical_mass_intake.py --source registry/r6p4_mass_reconciliation_source.v0.1.json --parent registry/r6p3_original_site_mass_evidence.v0.1.json --private-components registry/r6p4_original_mass_components.csv --output-dir site/reports
+          python -m pytest -q tests/test_r6p4_physical_mass_intake.py
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          p=Path("site/reports")
+          d=json.loads((p/"r6p4-mass-source-reconciliation.json").read_text())
+          m=json.loads((p/"r6p4-mass-source-reconciliation-manifest.json").read_text())
+          assert d["original_ETABS_reported_weight_kN"]==6831.9109
+          assert abs(d["gate08_conditional_mass_comparisons"][0]["conditional_mass_kN"]-5520.483743)<1e-7
+          assert abs(d["gate08_conditional_mass_comparisons"][1]["conditional_mass_kN"]-6059.877983)<1e-7
+          assert abs(d["conditional_candidate_wall_increment_kN"]-539.394240)<1e-7
+          assert abs(d["gap_after_conditional_wall_scenario_kN"]-772.032917)<1e-7
+          assert d["conditional_mass_reconciliation_status"]=="UNRESOLVED_PHYSICAL_RESIDUAL"
+          assert d["private_physical_components_summary"]["component_count"]==0
+          assert d["original_physical_gates_closed"]==0 and d["R6p3_site_gates_closed"]==0
+          assert d["real_native_ETABS_mass_export_admitted"] is False
+          assert d["real_physical_mass_reconciled"] is False
+          assert d["original_F3_failure"]=="NOT SAFE IN ONE WAY SHEAR"
+          assert d["MRSM_scale_factor"] is None and d["MRSM_scaling_executed"] is False
+          assert d["engineering_approval"] is False and m["engineering_approval"] is False
+          for name,checksum in m["files"].items():
+              assert hashlib.sha256((p/name).read_bytes()).hexdigest()==checksum
+          print("PAGES_R6P4_SOURCE_6831P9109_VS_6059P877983_772P032917_UNEXPLAINED_KN_0_APPROVAL")
           PY
       - name: Validate current report-first coverage and site navigation
         run: |
