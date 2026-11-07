@@ -30,7 +30,7 @@ sys.path.insert(0,str(ROOT))
 from scripts.build_r5_connected_shell_frame import (
     DEFAULT,exact_reference,solve_mesh,ShellBridgeError,sha)
 from scripts.build_r5_shell_diaphragm_signed import MODES,COMPONENTS
-from scripts.build_r6_source_seismic_case import SETTINGS
+SETTINGS=ROOT/"examples/sanitized/r6p2_connected_shell_modal_source.v0.1.json"
 from scripts.build_structural_template_engine import CONTRACT,COVERAGE
 from jp_structural.solvers.opensees.canonical_seismic import (
     normalize_response_spectrum,interpolate_spectral_acceleration,
