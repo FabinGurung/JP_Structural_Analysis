@@ -1,0 +1,78 @@
+{
+  "schema": "jp.structural.r6.synthetic_seismic_inputs.v0.1",
+  "source_case_id": "SYNTHETIC-R5-FOUR-COLUMN-ROOF-001",
+  "scope": "SOURCE_MASS_AUDITED_SYNTHETIC_FRAME_MODAL_NOT_ORIGINAL_BUILDING",
+  "number_modes": 6,
+  "modal_combination": "CQC",
+  "response_spectrum": {
+    "id": "R6_SYNTHETIC_CONSTANT_2M_S2_NOT_NBC_DESIGN",
+    "ordinate_type": "ACCELERATION",
+    "damping_ratio": 0.05,
+    "scale_factor": 1,
+    "unit_consistency_verified": true,
+    "units": {
+      "period": "s",
+      "spectral_acceleration": "m/s^2",
+      "displacement": "m",
+      "base_shear": "kN"
+    },
+    "points": [
+      {
+        "period": 0,
+        "spectral_acceleration": 2
+      },
+      {
+        "period": 10,
+        "spectral_acceleration": 2
+      }
+    ],
+    "source_reference": "SYNTHETIC_TEST_ORDINATES_NOT_NBC_105_2025_DESIGN_SPECTRUM"
+  },
+  "response_points": [
+    {
+      "storey_id": "BASE",
+      "node_id": "B1"
+    },
+    {
+      "storey_id": "ROOF",
+      "node_id": "R1"
+    }
+  ],
+  "torsion_probes": {
+    "X": [
+      {
+        "storey_id": "ROOF",
+        "node_a_id": "R1",
+        "node_b_id": "R4",
+        "separation": 3
+      }
+    ],
+    "Y": [
+      {
+        "storey_id": "ROOF",
+        "node_a_id": "R1",
+        "node_b_id": "R2",
+        "separation": 4
+      }
+    ]
+  },
+  "orthogonal_factor": 0.3,
+  "source_assumption_disclaimer": "0.30 orthogonal envelope factor is an illustrative caller input, not a certified NBC action",
+  "pdelta": {
+    "id": "INDEPENDENT_ELASTIC_3D_CANTILEVER_STABILITY_BENCHMARK",
+    "source_reference": "SYNTHETIC_ONLY_NOT_R5_BUILDING_COLUMN",
+    "length_m": 3,
+    "width_m": 0.4,
+    "depth_m": 0.4,
+    "E_kN_m2": 25000000,
+    "poisson": 0.2,
+    "lateral_Fx_kN": 10,
+    "axial_compression_kN": [
+      0,
+      1000,
+      2000
+    ],
+    "reference": "PDelta transformation compared against Linear geometry on identical 3D elasticBeamColumn; no collapse load or nonlinear material verification"
+  },
+  "engineering_approval": false
+}
