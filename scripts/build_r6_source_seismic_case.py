@@ -151,6 +151,10 @@ def build(source=None,settings=None):
     normalized=normalize_response_spectrum(spectrum,model_units=canonical["units"])
     if normalized["source_reference"]!="SYNTHETIC_TEST_ORDINATES_NOT_NBC_105_2025_DESIGN_SPECTRUM":
         raise R6ReferenceError("explicit synthetic spectrum source provenance required")
+    if normalized["units"]["spectral_acceleration"]!="m/s^2":
+        raise R6ReferenceError("synthetic source spectrum acceleration unit must be exactly m/s^2")
+    if normalized["units"]["period"]!="s" or normalized["units"]["base_shear"]!="kN":
+        raise R6ReferenceError("synthetic source spectrum time/force units invalid")
     if settings.get("modal_combination") not in ("CQC","SRSS"):
         raise R6ReferenceError("explicit SRSS/CQC modal method required")
     probes=settings.get("torsion_probes")
