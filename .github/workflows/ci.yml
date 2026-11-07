@@ -749,6 +749,35 @@ jobs:
             site/reports/r6p4-mass-source-reconciliation-scenarios.csv
             site/reports/r6p4-mass-source-reconciliation-sources.csv
             site/reports/r6p4-mass-source-reconciliation-manifest.json
+      - name: R6.5 conditional original ETABS story mass and private privacy regression
+        run: |
+          python -m pytest -q tests/test_r6p5_original_storey_mass_preflight.py
+          python scripts/build_r6p5_original_storey_mass_preflight.py --output site/reports/r6p5-original-story-mass-private-preflight.json
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path("site/reports")
+          a=p/"r6p5-original-story-mass-private-preflight.json"
+          d=json.loads(a.read_text())
+          m=json.loads((p/"r6p5-original-story-mass-private-preflight-manifest.json").read_text())
+          assert d["reported_original_ETABS_weight_kN"]==6831.9109
+          assert d["source_story_count"]==3
+          assert d["gate08_hypothetical_wall_case_unexplained_kN"]==772.032917
+          assert d["private_comparison"]["conditional_all_three_story_numeric_match"] is None
+          assert not d["real_original_mass_approved"] and not d["engineering_approval"]
+          assert d["f3_source_verdict"]=="NOT SAFE IN ONE WAY SHEAR"
+          assert d["MRSM_scale_factor"] is None and not d["MRSM_scaling_executed"]
+          assert hashlib.sha256(a.read_bytes()).hexdigest()==m["json_sha256"]
+          assert not m["private_source_rows_exported"] and not m["engineering_approval"]
+          print("R6P5_REPORTED_FLOOR_SUM_VALID_CONDITIONAL_PHYSICAL_RECONCILIATION_HOLD")
+          PY
+      - name: Archive R6.5 public-safe source story preflight (not original seismic design)
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: r6p5-original-story-conditional-benchmark-no-native-mass-export
+          path: |
+            site/reports/r6p5-original-story-mass-private-preflight.json
+            site/reports/r6p5-original-story-mass-private-preflight-manifest.json
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
