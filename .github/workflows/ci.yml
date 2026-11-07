@@ -639,6 +639,43 @@ jobs:
             site/reports/r6-synthetic-seismic-source-modes.csv
             site/reports/r6-synthetic-seismic-source-pdelta.csv
             site/reports/r6-synthetic-seismic-source-manifest.json
+      - name: Generate R6.2 connected ShellMITC4 modal MRSM and source-mass report
+        run: |
+          python scripts/build_r6_connected_shell_modal.py --input examples/sanitized/r5_generic_source_geometry_frame.v0.1.json --settings examples/sanitized/r6p2_connected_shell_modal_source.v0.1.json --output-dir site/reports
+          python -m pytest -q tests/test_r6_connected_shell_modal.py
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path("site/reports")
+          d=json.loads((p/"r6-connected-shell-modal.json").read_text())
+          m=json.loads((p/"r6-connected-shell-modal-manifest.json").read_text())
+          assert d["mesh_divisions"]==[2,4]
+          assert d["diaphragm_modes"]==["FLEXIBLE_SHELL","RIGID_INPLANE_MPC"]
+          assert d["modes_per_axis"]==4
+          assert d["native_modal_static_run_count"]==32
+          assert abs(d["audited_seismic_weight_kN"]-111.2)<1e-7
+          assert abs(d["audited_seismic_mass_kN_s2_m"]-111.2/9.81)<1e-7
+          assert d["same_R5p6_connected_shell_FE"] is True
+          assert d["real_frame_and_shell_modal_member_actions"] is True
+          assert d["CQC_individual_components_not_concurrent_signed_vectors"] is True
+          assert d["code_spectrum_verified"] is False
+          assert d["original_F3_failure"]=="NOT SAFE IN ONE WAY SHEAR"
+          assert d["original_building_accepted_evidence_gates"]==0
+          assert d["engineering_approval"] is False
+          for name,digest in m["files"].items():
+              assert hashlib.sha256((p/name).read_bytes()).hexdigest()==digest
+          print("R6P2_SAME_SHELL_FRAME_32_REAL_MODAL_STATIC_SOURCES_FLEX_RIGID_4MODES_2MESHES_CQC_HOLD")
+          PY
+      - name: Archive R6.2 real connected shell modal and MRSM calculations
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: r6p2-real-connected-shell-eigen-mrsm-member-actions-f3-hold
+          path: |
+            site/reports/r6-connected-shell-modal.json
+            site/reports/r6-connected-shell-modal.html
+            site/reports/r6-connected-shell-modal-modal.csv
+            site/reports/r6-connected-shell-modal-member-actions.csv
+            site/reports/r6-connected-shell-modal-manifest.json
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
