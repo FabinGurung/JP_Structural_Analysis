@@ -333,6 +333,11 @@ def main():
     a.add_argument("--output-dir",type=Path,required=True)
     args=a.parse_args()
     r=emit(args.evidence,args.source,args.settings,args.output_dir)
+    for row in r["modal_synthetic_participation_screen"]:
+        print("R6P3_MODE_SCREEN",row["mesh"],row["diaphragm_mode"],row["axis"],
+              "eligible_mass_fraction",f'{row["eligible_under_33Hz_mass_fraction"]:.6f}',
+              "unrepresented_fraction",f'{row["unrepresented_mass_fraction"]:.6f}',
+              row["numerical_90pct_eligible_mass_screen"])
     print("R6P3_EVIDENCE_HELD",r["gates_on_hold"],"GATES",
        r["modal_synthetic_90pct_screens_meeting"],"OF",r["modal_synthetic_screens_total"],
        "SYNTHETIC_SCREENS_NO_SCALING_OR_APPROVAL")
