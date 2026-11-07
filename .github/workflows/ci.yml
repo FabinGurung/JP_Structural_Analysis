@@ -713,6 +713,42 @@ jobs:
             site/reports/r6p3-seismic-evidence-admission-gates.csv
             site/reports/r6p3-seismic-evidence-admission-modal.csv
             site/reports/r6p3-seismic-evidence-admission-manifest.json
+      - name: Build R6.4 original mass intake and Gate08 reconciliation
+        run: |
+          python scripts/build_r6p4_physical_mass_intake.py --source registry/r6p4_mass_reconciliation_source.v0.1.json --parent registry/r6p3_original_site_mass_evidence.v0.1.json --private-components registry/r6p4_original_mass_components.csv --output-dir site/reports
+          python -m pytest -q tests/test_r6p4_physical_mass_intake.py
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          p=Path("site/reports")
+          d=json.loads((p/"r6p4-mass-source-reconciliation.json").read_text())
+          m=json.loads((p/"r6p4-mass-source-reconciliation-manifest.json").read_text())
+          assert d["original_ETABS_reported_weight_kN"]==6831.9109
+          assert d["gap_after_conditional_wall_scenario_kN"]==772.032917
+          assert abs(d["conditional_candidate_wall_increment_kN"]-539.39424)<1e-8
+          assert d["conditional_mass_reconciliation_status"]=="UNRESOLVED_PHYSICAL_RESIDUAL"
+          assert d["private_physical_components_summary"]["component_count"]==0
+          assert d["real_native_ETABS_mass_export_admitted"] is False
+          assert d["real_physical_mass_reconciled"] is False
+          assert d["original_physical_gates_closed"]==0
+          assert d["R6p3_site_gates_closed"]==0
+          assert d["original_F3_failure"]=="NOT SAFE IN ONE WAY SHEAR"
+          assert d["MRSM_scale_factor"] is None and d["MRSM_scaling_executed"] is False
+          assert d["engineering_approval"] is False
+          for name,h in m["files"].items():
+              assert hashlib.sha256((p/name).read_bytes()).hexdigest()==h
+          print("R6P4_GATE08_6831P9109_ETABS_6059P877983_CONDITIONAL_772P032917_GAP_NO_PHYSICAL_APPROVAL")
+          PY
+      - name: Archive R6.4 private-source-safe conditional mass residual and original intake gates
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: r6p4-g15-deidentified-conditional-mass-open-source-evidence-not-approved
+          path: |
+            site/reports/r6p4-mass-source-reconciliation.json
+            site/reports/r6p4-mass-source-reconciliation.html
+            site/reports/r6p4-mass-source-reconciliation-scenarios.csv
+            site/reports/r6p4-mass-source-reconciliation-sources.csv
+            site/reports/r6p4-mass-source-reconciliation-manifest.json
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
