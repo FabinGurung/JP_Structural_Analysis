@@ -1,0 +1,85 @@
+{
+  "schema": "jp.structural.r6p5.etabs21_user_designated_governing_pair.v0.1",
+  "effective_date_local": "2026-11-08",
+  "decision": {
+    "state": "USER_CONFIRMED_CURRENT_GOVERNING_ETABS21_ULS_SLS",
+    "scope": "MODEL_SOURCE_SELECTION_NOT_ENGINEERING_OR_MUNICIPAL_APPROVAL",
+    "authority": "EXPLICIT_OWNER_USER_DIRECTIVE_IN_SAR_6",
+    "selected_model_takes_precedence_over_report_for_future_RECONCILIATION": true,
+    "prior_legacy_report_retained_as_HISTORICAL_REFERENCE": true,
+    "professional_source_review_completed": false
+  },
+  "drive_provenance": {
+    "folder_id": "172Acs4IPX7AhlcDo9MEmIsc0lizezwL3",
+    "parent_id": "1WqL7n93Zc_UnsMPNaO9yCMetrreFXC1A",
+    "folder_title": "08_ETABS_STRUCTURAL_MODELS_ULS_SLS",
+    "raw_models_copied_to_github": false,
+    "raw_models_copied_to_public_pages": false,
+    "folder_permissions_restriction_checked": false
+  },
+  "model_pair": {
+    "ULS": {
+      "drive_file_id": "1mHak9-rjPuiLhXtjbL1M2O1RlKYIfg91",
+      "sha256": "8860223c80171cd7437b2d54841171f1bafe4ce98c71fd86024e2ec95d08aaa3",
+      "size_bytes": 260653,
+      "etabs_version": "21.0.0"
+    },
+    "SLS": {
+      "drive_file_id": "1-QdowdIiZ87_MXMXnyWmTLl-B8ZioqPs",
+      "sha256": "7b6ca674447e38302d0647d89fbca1830e7d120795ad260bcf926bb9d335227e",
+      "size_bytes": 259908,
+      "etabs_version": "21.0.0"
+    }
+  },
+  "local_inspection_observations": {
+    "model_coordinate_units": ["N", "MM", "C"],
+    "stories_top_to_base": ["TF", "FF", "GF", "Plinth level"],
+    "story_height_mm": 3048,
+    "grid_extent_mm": [21000, 12550],
+    "point_records": 127,
+    "line_connectivity_records": 97,
+    "area_connectivity_records": 80,
+    "line_assignment_records": 199,
+    "area_assignment_records": 115,
+    "wall_line_load_records": 107,
+    "shell_object_load_records": 230,
+    "source_patterns": {
+      "Dead": 1,
+      "Live": 0.3,
+      "WALL LOAD": 1,
+      "FLOOR FINISH": 1,
+      "TANK": 0.6,
+      "STAIRCASE LOAD": 0.3
+    },
+    "mass_source": "MsSrc1",
+    "mass_elements_directly_included": false,
+    "mass_loads_included": true,
+    "selfweight_dead_load_multiplier": 1,
+    "object_loads_in_TANK_or_STAIRCASE_patterns_observed": false,
+    "ulf_sls_geometry_and_applied_mass_pattern_loads_match": true,
+    "ULS_frame_I2I3_modifiers": {"beams": 0.35, "columns": 0.7},
+    "SLS_frame_I2I3_modifiers": {"beams": 0.7, "columns": 0.9},
+    "ULS_SLS_combinations_use_different_seismic_case_refs": true
+  },
+  "historical_report_comparison": {
+    "report_etabs_major_version": 20,
+    "report_contains_etabs21_appendix_output": true,
+    "report_seismic_weight_kN": 6831.9109,
+    "reported_value_source_only_not_reproduced_from_governing_model": true,
+    "report_story_mass_units_not_explicit": true,
+    "gate08_hypothetical_wall_residual_kN": 772.032917,
+    "historical_residual_not_new_model_discrepancy": true
+  },
+  "admission_gates": {
+    "current_governing_pair_user_selected": true,
+    "private_source_file_sha256_observed": true,
+    "governing_mass_source_configuration_observed": true,
+    "native_ETABS_solution_and_mass_per_story_tables_reproduced": false,
+    "physical_component_mass_independently_reconciled": false,
+    "geotechnical_and_parcel_engineer_approved": false,
+    "F3_one_way_shear_safe": false,
+    "MRSM_scaling_executed": false,
+    "engineering_approval": false
+  },
+  "next_dependency": "Re-run selected ETABS21 ULS/SLS revisions and export story-mass, reactions, element assignments, modal and ESM/MRSM tables; independently check against actual sourced geometry and the reported historical 6831.9109 kN, without forcing a match."
+}
