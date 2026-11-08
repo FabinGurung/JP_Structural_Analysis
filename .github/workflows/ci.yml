@@ -778,6 +778,41 @@ jobs:
           path: |
             site/reports/r6p5-original-story-mass-private-preflight.json
             site/reports/r6p5-original-story-mass-private-preflight-manifest.json
+      - name: R6.5 current ETABS21 governing model register and private-safe source QA
+        run: |
+          python -m pytest -q tests/test_r6p5_etabs21_governing_reconciliation.py
+          python scripts/build_r6p5_etabs21_governing_reconciliation.py --output site/reports/r6p5-etabs21-governing-source.json
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path("site/reports")
+          a=p/"r6p5-etabs21-governing-source.json"
+          d=json.loads(a.read_text())
+          m=json.loads((p/"r6p5-etabs21-governing-source-manifest.json").read_text())
+          assert d["model_user_designated_governing"] is True
+          assert d["model_versions"]==["21.0.0","21.0.0"]
+          assert d["current_model_source_binary_verified_in_this_run"] is False
+          assert abs(d["offline_private_source_integrated_applied_mass_eligible_load_kN_excluding_dead_selfweight"]-3290.2187486)<1e-6
+          assert d["offline_integral_recomputed_by_CI"] is False
+          assert d["offline_integral_is_not_solved_current_model_mass"] is True
+          assert d["current_model_stories_mass_kN"] is None
+          assert d["current_model_mass_total_kN"] is None
+          assert d["historic_report_seismic_weight_kN"]==6831.9109
+          assert d["historic_report_mass_reproduced_from_current_model"] is False
+          assert d["historic_772kN_Gate08_residual_not_current_model_deficit"] is True
+          assert d["physical_mass_reconciliation"]=="HOLD_MODEL_RESULTS_REQUIRED"
+          assert not d["engineering_approval"] and d["current_model_mrsm_scale_factor"] is None
+          assert not m["raw_private_bytes_in_artifact"] and not m["engineer_approval"]
+          assert hashlib.sha256(a.read_bytes()).hexdigest()==m["sha256"]
+          print("R6P5_ETABS21_USER_GOVERNING_AUTHORITY_ACCEPTED_OLD_REPORT_HISTORICAL_CURRENT_MASS_HOLD")
+          PY
+      - name: Archive R6.5 governing source public-safe registry receipt, without raw E2K
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: r6p5-current-governing-etabs21-source-not-current-mass-analysis
+          path: |
+            site/reports/r6p5-etabs21-governing-source.json
+            site/reports/r6p5-etabs21-governing-source-manifest.json
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
