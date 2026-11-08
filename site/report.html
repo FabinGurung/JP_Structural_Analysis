@@ -558,4 +558,16 @@
 </div>
 <p><strong>HOLD:</strong> actual ETABS21 model run and mass decomposition; independent code/site/geotechnical verification; F3 one-way shear (historical explicit NOT SAFE); design approval and construction/permit authorization. All earlier engineering holds stay open unless individually reverified against the new governing source.</p>
 </section>
+
+<section class="rb-card" id="annex-r6p6-reported-results">
+<h3>Annex R · R6.6 verified reuse of the existing structural report's result tables</h3>
+<p><strong>Previously available results recovered:</strong> the revised report already contains three seismic storey mass values (plus a base entry), ULS/SLS equivalent-static base shear and reactions, 12 rows of modal period and mass participation, displacement/drift summaries, and selected beam/column member-design outputs. These <strong>as-issued source results</strong> can support the reporting and comparison workbench immediately without another round of missing-data intake. The owner-selected ETABS21 ULS/SLS files remain the governing input models; a current full ETABS21 solution has not been re-executed or certified from this historical report.</p>
+<p><strong>From the printed source:</strong> original reported seismic weight 6,831.9109 kN (three story mass figures interpreted as kg for an arithmetic check); equivalent-static ULS base shear 894.9803 kN and SLS 860.8208 kN. The report prints 12 modal rows. Its prose says 90% mass participation in six modes, while its cumulative UX/UY rows already exceed 90% at mode <strong>five</strong>. Keep the contradiction traceable. Only selected member design examples are present; complete frame envelopes/reactions remain a separately labelled model-solution enhancement.</p>
+<p><strong>Decision:</strong> continue the linked 2D/3D report-value comparison, model geometry, material and reinforcement quantity work; do not repeatedly stop software development for new ETABS exports. <strong>Engineering HOLD:</strong> F3 is NOT SAFE IN ONE WAY SHEAR; the printed old mass/base shear cannot be treated as a fresh ETABS21 output or design acceptance.</p>
+<div class="rb-download-grid">
+<a href="reports/r6p6-report-results-review.html">Open source-reported seismic, 12-mode and member-results review (HTML)</a>
+<a href="reports/r6p6-report-results-review.json">Read source-reported result table with explicit provenance and blockers (JSON)</a>
+<a href="reports/r6p6-report-results-review-manifest.json">Inspect reproducibility and source SHA-256 manifest (JSON)</a>
+</div>
+</section>
 <div class="rb-next"><a href="#report-top">Back to cover ↑</a></div></article></div></div></div></main><footer class="site-footer"><div class="wrap footer-inner"><span>JP Structural Analysis · OpenSees primary · Not an engineering approval</span><span id="build">Source snapshot · read-only public demonstration</span></div></footer><script src="app.js" defer></script><script src="report-book.js" defer></script><script src="chapter02-audit.js" defer></script><script src="chapter02-seismic.js" defer></script><script src="chapter03-method.js" defer></script><script src="chapter04-model.js" defer></script><script src="chapter05-results.js" defer></script><script src="chapter06-design.js" defer></script><script src="annex-source-recovery.js" defer></script></body></html>
