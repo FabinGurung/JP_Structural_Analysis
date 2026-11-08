@@ -19,11 +19,11 @@ import re
 
 ROOT = Path(__file__).resolve().parents[1]
 REGISTER = ROOT / "registry/r6p5_etabs21_governing_pair.v0.1.json"
-SECTION = re.compile(r"^\\$ ([A-Z][A-Z0-9 /()_-]*)\\s*$")
-GR = re.compile(r'GRID\\s+"[^"]+"\\s+LABEL\\s+"([^"]+)"\\s+DIR\\s+"([XY])"\\s+COORD\\s+(-?\\d+(?:\\.\\d+)?)')
-MLOAD = re.compile(r'^MASSSOURCELOAD\\s+"[^"]+"\\s+"([^"]+)"\\s+(-?\\d+(?:\\.\\d+)?)')
-LC = re.compile(r'\\bLC\\s+"([^"]+)"')
-MOD = re.compile(r'\\bI[23]MOD\\s+(?:\\d+(?:\\.\\d+)?)')
+SECTION = re.compile(r"^\$ ([A-Z][A-Z0-9 /()_-]*)\s*$")
+GR = re.compile(r'GRID\s+"[^"]+"\s+LABEL\s+"([^"]+)"\s+DIR\s+"([XY])"\s+COORD\s+(-?\d+(?:\.\d+)?)')
+MLOAD = re.compile(r'^MASSSOURCELOAD\s+"[^"]+"\s+"([^"]+)"\s+(-?\d+(?:\.\d+)?)')
+LC = re.compile(r'\bLC\s+"([^"]+)"')
+MOD = re.compile(r'\bI[23]MOD\s+(?:\d+(?:\.\d+)?)')
 EXPECTED_COUNTS = {
     "POINT COORDINATES": 127, "LINE CONNECTIVITIES": 97,
     "AREA CONNECTIVITIES": 80, "LINE ASSIGNS": 199,
@@ -92,13 +92,13 @@ def inspect_raw(path, expected):
         raise SourceError("Truncated E2K source")
     d = sections(src)
     prog = " ".join(d.get("PROGRAM INFORMATION", []))
-    if not re.search(r'PROGRAM\\s+"ETABS"\\s+VERSION\\s+"21\\.0\\.0"', prog):
+    if not re.search(r'PROGRAM\s+"ETABS"\s+VERSION\s+"21\.0\.0"', prog):
         raise SourceError("Not ETABS21")
     ctrl = " ".join(d.get("CONTROLS", []))
     if 'UNITS  "N"  "MM"  "C"' not in ctrl:
         raise SourceError("Unexpected E2K unit basis")
     stories = d.get("STORIES - IN SEQUENCE FROM TOP", [])
-    if len(stories) != 4 or [re.search(r'STORY\\s+"([^"]+)"', x).group(1) for x in stories] != LEVELS:
+    if len(stories) != 4 or [re.search(r'STORY\s+"([^"]+)"', x).group(1) for x in stories] != LEVELS:
         raise SourceError("Story identity/sequence differs from selected source")
     if not all("HEIGHT 3048" in x for x in stories[:3]):
         raise SourceError("Story elevations need new review")
@@ -157,7 +157,7 @@ def verify_pair(uls, sls, registry):
     if len(u.get("LOAD COMBINATIONS", [])) != len(s.get("LOAD COMBINATIONS", [])):
         raise SourceError("ULS/SLS combination count mismatch")
     for x, y in zip(u["LOAD COMBINATIONS"], s["LOAD COMBINATIONS"]):
-        if re.sub(r'EQ([XY])\\s+(ULS|SLS)', r'EQ\\1 _', x) != re.sub(r'EQ([XY])\\s+(ULS|SLS)', r'EQ\\1 _', y):
+        if re.sub(r'EQ([XY])\s+(ULS|SLS)', r'EQ\1 _', x) != re.sub(r'EQ([XY])\s+(ULS|SLS)', r'EQ\1 _', y):
             raise SourceError("ULS/SLS load combinations differ unexpectedly")
     return {"ULS": a, "SLS": b,
             "same_geometry_load_assignments_and_mass_source": True,
@@ -207,14 +207,14 @@ def emit(path,uls=None,sls=None):
     d=build(uls=uls,sls=sls)
     out=Path(path)
     out.parent.mkdir(parents=True,exist_ok=True)
-    raw=json.dumps(d,indent=2,sort_keys=True,allow_nan=False)+"\\n"
+    raw=json.dumps(d,indent=2,sort_keys=True,allow_nan=False)+"\n"
     out.write_text(raw,encoding="utf8")
     (out.parent/(out.stem+"-manifest.json")).write_text(
       json.dumps({"sha256":hashlib.sha256(raw.encode("utf8")).hexdigest(),
                   "raw_private_bytes_in_artifact":False,
                   "engineer_approval":False,
                   "source_registry_sha256":hashlib.sha256(REGISTER.read_bytes()).hexdigest()},
-                  indent=2,sort_keys=True)+"\\n",encoding="utf8")
+                  indent=2,sort_keys=True)+"\n",encoding="utf8")
     return d
 
 
