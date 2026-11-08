@@ -848,6 +848,46 @@ jobs:
             site/reports/r6p6-report-results-review.html
             site/reports/r6p6-report-results-review.json
             site/reports/r6p6-report-results-review-manifest.json
+      - name: R6.7 generate full source-calculation book with synchronized provisional 2D and 3D quantity viewer
+        run: |
+          python -m pytest -q tests/test_r6p7_worked_calculations.py
+          python scripts/build_r6p7_worked_calculations.py --output-site site
+          node --check site/worked-calculations.js
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          root=Path("site")
+          v=json.loads((root/"reports/r6p7-worked-calculations.json").read_text())
+          m=json.loads((root/"reports/r6p7-worked-calculations-manifest.json").read_text())
+          assert v["governing_ETABS21_model_user_selected"]
+          assert v["ETABS21_results_reproduced"] is False
+          assert v["provisional_grid_not_ETABS21"] is True
+          assert v["engineer_approval"] is False and v["f3_unsafe"] is True
+          assert len(v["steps"])==7 and len(v["floor_distribution"])==3
+          assert abs(v["historical_uls_base_shear_hand_kN"]-894.9803)<.0001
+          assert v["first_both_axes_90pct_mode_by_printed_table"]==5
+          assert v["report_prose_says_six_modes"]
+          assert v["synthetic_R5"]["total_seismic_eligible_kN"]==111.2
+          assert not m["private_model_raw_bytes_published"] and not m["new_ETABS21_run"]
+          for filename,sha in m["generated_sha256"].items():
+              path=root/filename if filename.endswith(".html") else root/"reports"/filename
+              assert hashlib.sha256(path.read_bytes()).hexdigest()==sha
+          for page in ("index.html","project-lab.html","g15-3d.html"):
+              content=(root/page).read_text()
+              assert 'href="worked-calculations.html"' in content or 'href="worked-calculations.html#linked-member"' in content
+          assert 'id="annex-r6p7-worked-calculations"' in (root/"report.html").read_text()
+          print("R6P7_HAND_DERIVATION_2D3D_PROVISIONAL_STEEL_DEMO_F3_UNSAFE_QA_PASS")
+          PY
+      - name: Preserve R6.7 human-readable calculations and governed numeric steps as CI artifact
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: r6p7-worked-calculation-book-no-engineer-approval
+          path: |
+            site/worked-calculations.html
+            site/worked-calculations.css
+            site/worked-calculations.js
+            site/reports/r6p7-worked-calculations.json
+            site/reports/r6p7-worked-calculations-manifest.json
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
