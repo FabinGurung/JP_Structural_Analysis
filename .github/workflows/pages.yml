@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 715fb5de669b568298b715cc5aa5f0a289974a91
+          ref: db0f2e251a21ea00554a273917154c8b3b974e60
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -681,6 +681,35 @@ jobs:
           for f in ("site/index.html","site/project-lab.html","site/g15-3d.html"):
               assert 'r6p6-report-results-review.html' in Path(f).read_text()
           print("PAGES_R6P6_OLD_REPORT_RESULTS_REUSED_MODAL_PROSE_DISCREPANCY_DOCUMENTED_F3_HOLD")
+          PY
+      - name: Publish R6.7 human-worked calculations and linked provisional member views
+        run: |
+          python -m pytest -q tests/test_r6p7_worked_calculations.py
+          python scripts/build_r6p7_worked_calculations.py --output-site site
+          node --check site/worked-calculations.js
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          root=Path("site")
+          d=json.loads((root/"reports/r6p7-worked-calculations.json").read_text())
+          m=json.loads((root/"reports/r6p7-worked-calculations-manifest.json").read_text())
+          assert len(d["steps"])==7 and len(d["floor_distribution"])==3
+          assert abs(d["historical_uls_base_shear_hand_kN"]-894.9803)<.0001
+          assert d["first_both_axes_90pct_mode_by_printed_table"]==5
+          assert d["report_prose_says_six_modes"]
+          assert d["f3_unsafe"] and not d["engineer_approval"]
+          assert d["provisional_grid_not_ETABS21"] and not d["ETABS21_results_reproduced"]
+          assert d["synthetic_R5"]["total_seismic_eligible_kN"]==111.2
+          assert not m["new_ETABS21_run"] and not m["private_model_raw_bytes_published"]
+          for name,h in m["generated_sha256"].items():
+              path=root/name if name.endswith(".html") else root/"reports"/name
+              assert hashlib.sha256(path.read_bytes()).hexdigest()==h
+          html=(root/"worked-calculations.html").read_text()
+          assert 'id="worked-plan"' in html and 'id="worked-perspective"' in html
+          assert 'id="annex-r6p7-worked-calculations"' in (root/"report.html").read_text()
+          for path in ("index.html","project-lab.html","g15-3d.html"):
+              assert "worked-calculations.html" in (root/path).read_text()
+          print("PAGES_R6P7_HAND_WORKED_CALCULATION_AND_PROVISIONAL_LINKED_2D3D_F3_UNSAFE")
           PY
       - name: Validate current report-first coverage and site navigation
         run: |
