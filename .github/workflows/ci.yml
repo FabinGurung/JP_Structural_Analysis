@@ -792,6 +792,9 @@ jobs:
           assert d["model_user_designated_governing"] is True
           assert d["model_versions"]==["21.0.0","21.0.0"]
           assert d["current_model_source_binary_verified_in_this_run"] is False
+          assert abs(d["offline_private_source_integrated_applied_mass_eligible_load_kN_excluding_dead_selfweight"]-3290.2187486)<1e-6
+          assert d["offline_integral_recomputed_by_CI"] is False
+          assert d["offline_integral_is_not_solved_current_model_mass"] is True
           assert d["current_model_stories_mass_kN"] is None
           assert d["current_model_mass_total_kN"] is None
           assert d["historic_report_seismic_weight_kN"]==6831.9109
