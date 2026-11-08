@@ -873,7 +873,8 @@ jobs:
               path=root/filename if filename.endswith(".html") else root/"reports"/filename
               assert hashlib.sha256(path.read_bytes()).hexdigest()==sha
           for page in ("index.html","project-lab.html","g15-3d.html"):
-              assert 'href="worked-calculations.html"' in (root/page).read_text()
+              content=(root/page).read_text()
+              assert 'href="worked-calculations.html"' in content or 'href="worked-calculations.html#linked-member"' in content
           assert 'id="annex-r6p7-worked-calculations"' in (root/"report.html").read_text()
           print("R6P7_HAND_DERIVATION_2D3D_PROVISIONAL_STEEL_DEMO_F3_UNSAFE_QA_PASS")
           PY
