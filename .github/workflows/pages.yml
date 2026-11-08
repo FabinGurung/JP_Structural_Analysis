@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 274e7b3f9d714e3ba32c5c6143337c519f63c838
+          ref: 715fb5de669b568298b715cc5aa5f0a289974a91
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -653,6 +653,34 @@ jobs:
           assert hashlib.sha256(b.read_bytes()).hexdigest() == m["sha256"]
           assert (p.parent/"report.html").read_text().find('id="annex-r6p5-etabs21"')>=0
           print("PAGES_R6P5_ETABS21_GOVERNING_REGISTER_ONLY_HISTORIC_REPORT_ARCHIVED_PHYSICAL_MASS_AND_F3_HOLD")
+          PY
+      - name: Publish R6.6 already documented report results, not a new ETABS model run
+        run: |
+          python -m pytest -q tests/test_r6p6_existing_report_results.py
+          python scripts/build_r6p6_existing_report_results.py --output-dir site/reports
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          root=Path("site/reports")
+          stem="r6p6-report-results-review"
+          d=json.loads((root/(stem+".json")).read_text())
+          m=json.loads((root/(stem+"-manifest.json")).read_text())
+          assert d["report_seismic_weight_kN"]==6831.9109
+          assert len(d["reported_static_cases"])==4
+          assert len(d["report_modal_rows"])==12
+          assert d["first_report_table_mode_to_reach_90pct_in_both_axes"]==5
+          assert d["report_prose_claims_six_modes"]
+          assert d["selected_member_samples_not_comprehensive"]
+          assert d["report_reuse_for_read_only_workbench"]
+          assert not d["independent_current_etabs21_results_reproduced"]
+          assert d["F3_one_way_shear_unsafe"] and not d["engineering_approval"]
+          assert not m["model_reanalysis_performed"] and not m["raw_private_source_published"]
+          for filename,h in m["file_sha256"].items():
+              assert hashlib.sha256((root/filename).read_bytes()).hexdigest()==h
+          assert 'id="annex-r6p6-reported-results"' in Path("site/report.html").read_text()
+          for f in ("site/index.html","site/project-lab.html","site/g15-3d.html"):
+              assert 'r6p6-report-results-review.html' in Path(f).read_text()
+          print("PAGES_R6P6_OLD_REPORT_RESULTS_REUSED_MODAL_PROSE_DISCREPANCY_DOCUMENTED_F3_HOLD")
           PY
       - name: Validate current report-first coverage and site navigation
         run: |
