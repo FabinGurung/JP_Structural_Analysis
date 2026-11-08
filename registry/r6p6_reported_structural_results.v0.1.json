@@ -1,0 +1,223 @@
+{
+  "schema": "jp.structural.r6p6.as_issued_report_result_benchmark.v0.1",
+  "source": {
+    "authority": "HISTORICAL_REPORT_DOCUMENTED_RESULTS",
+    "report_drive_id": "1TpWUmOdrcQqOpkN6qvmhZ12KrYaNABBM",
+    "report_sha256": "f122904444a2e2f75230d9d4e41da0093d050da25c6e8140c86d466b7e37cc52",
+    "model_current": "USER_CONFIRMED_ETABS21_ULS_SLS_PAIR",
+    "governing_model_register": "registry/r6p5_etabs21_governing_pair.v0.1.json",
+    "consistency_note": "PDF repeatedly labels ETABS20 but includes ETABS21 member-design output. Treat results as historical PDF assertions, not a rerun or validated output of the governing ETABS21 files."
+  },
+  "original_mass": {
+    "report_section": "5.10 MASS IRREGULARITY CHECK",
+    "reported_input_units_printed": false,
+    "assumed_units_for_arithmetic_only": "kg",
+    "source_masses": [
+      {
+        "storey": "Story 1",
+        "value": 270076.47
+      },
+      {
+        "storey": "Story 2",
+        "value": 274062.74
+      },
+      {
+        "storey": "Story 3",
+        "value": 152521.81
+      },
+      {
+        "storey": "Base",
+        "value": 18434.33,
+        "excluded_from_report_seismic_weight": true
+      }
+    ],
+    "conditional_g_m_per_s2": 9.80665,
+    "reported_seismic_weight_kN": 6831.9109,
+    "source_e2k21_mass_reproduced": false
+  },
+  "equivalent_static": {
+    "report_section": "5.1.1 AUTO SEISMIC LOAD and 5.12 BASE REACTION",
+    "cases": [
+      {
+        "limit_state": "ULS",
+        "direction": "X",
+        "coefficient": 0.131,
+        "base_shear_kN": 894.9803,
+        "source_result": "EQX ULS"
+      },
+      {
+        "limit_state": "ULS",
+        "direction": "Y",
+        "coefficient": 0.131,
+        "base_shear_kN": 894.9803,
+        "source_result": "EQY ULS"
+      },
+      {
+        "limit_state": "SLS",
+        "direction": "X",
+        "coefficient": 0.126,
+        "base_shear_kN": 860.8208,
+        "source_result": "EQX SLS"
+      },
+      {
+        "limit_state": "SLS",
+        "direction": "Y",
+        "coefficient": 0.126,
+        "base_shear_kN": 860.8208,
+        "source_result": "EQY SLS"
+      }
+    ],
+    "interpretation": "As-issued equivalent-static seismic reactions, not entire foundation gravity/support reactions."
+  },
+  "modal": {
+    "report_section": "5.5 MODEL PARTICIPATING MASS RATIO",
+    "source_case": "Modal",
+    "source_rows": [
+      {
+        "mode": 1,
+        "period_s": 0.618,
+        "sum_ux": 0.0004,
+        "sum_uy": 0.537
+      },
+      {
+        "mode": 2,
+        "period_s": 0.58,
+        "sum_ux": 0.6992,
+        "sum_uy": 0.577
+      },
+      {
+        "mode": 3,
+        "period_s": 0.55,
+        "sum_ux": 0.7876,
+        "sum_uy": 0.8289
+      },
+      {
+        "mode": 4,
+        "period_s": 0.202,
+        "sum_ux": 0.7914,
+        "sum_uy": 0.9492
+      },
+      {
+        "mode": 5,
+        "period_s": 0.195,
+        "sum_ux": 0.9297,
+        "sum_uy": 0.9538
+      },
+      {
+        "mode": 6,
+        "period_s": 0.187,
+        "sum_ux": 0.934,
+        "sum_uy": 0.9558
+      },
+      {
+        "mode": 7,
+        "period_s": 0.123,
+        "sum_ux": 0.9414,
+        "sum_uy": 0.9933
+      },
+      {
+        "mode": 8,
+        "period_s": 0.122,
+        "sum_ux": 0.9995,
+        "sum_uy": 0.9995
+      },
+      {
+        "mode": 9,
+        "period_s": 0.114,
+        "sum_ux": 1,
+        "sum_uy": 1
+      },
+      {
+        "mode": 10,
+        "period_s": 0.008,
+        "sum_ux": 1,
+        "sum_uy": 1
+      },
+      {
+        "mode": 11,
+        "period_s": 0.007,
+        "sum_ux": 1,
+        "sum_uy": 1
+      },
+      {
+        "mode": 12,
+        "period_s": 0.007,
+        "sum_ux": 1,
+        "sum_uy": 1
+      }
+    ],
+    "printed_claim": "90% mode participation in exactly 6 modes",
+    "calculated_by_report_table_first_mode_meeting_90pct_both_axes": 5,
+    "annotation": "Mode 5 cumulative values in report are 0.9297 UX and 0.9538 UY, already above 90%; the PDF prose says six modes. Preserve and flag the discrepancy rather than changing source."
+  },
+  "reported_serviceability": {
+    "section": "5.6 MAXIMUM STOREY DISPLACEMENT and 5.7 MAXIMUM STOREY DRIFT",
+    "uls_max_displacement_mm": 22.9069,
+    "sls_max_displacement_mm": 12.846306,
+    "uls_max_storey_drift_ratio": 0.00288,
+    "sls_max_storey_drift_ratio": 0.002174,
+    "source_claim": "SAFE (reported, not independently accepted)"
+  },
+  "selected_member_design_samples": [
+    {
+      "section": "6.1 DESIGN OF COLUMN",
+      "member": "TF C24",
+      "element_type": "column",
+      "combination": "0.9DL+EQx",
+      "axial_kN": 174.6942,
+      "moment2_kNm": -121.5281,
+      "moment3_kNm": -37.8202,
+      "transverse_shear_major_kN": 68.4693,
+      "transverse_shear_minor_kN": 79.7428,
+      "interpretation": "ETABS 21 excerpt printed inside older report; not a comprehensive per-member results table."
+    },
+    {
+      "section": "6.2 DESIGN OF BEAM",
+      "member": "GF B46",
+      "element_type": "beam",
+      "combination": "DL+0.3LL-EQX",
+      "moment3_kNm": -99.4853,
+      "torsion_kNm": 10.7597,
+      "shear2_kN": 129.6723,
+      "axial_kN": -6.5956,
+      "interpretation": "Selected design sample only."
+    },
+    {
+      "section": "6.2 DESIGN OF BEAM",
+      "member": "GF B19",
+      "element_type": "beam",
+      "combination": "0.9DL-EQy",
+      "moment3_kNm": -60.1122,
+      "torsion_kNm": 11.9548,
+      "shear2_kN": 62.5668,
+      "axial_kN": 0.1907,
+      "interpretation": "Selected design sample only."
+    }
+  ],
+  "foundation": {
+    "section": "6.4.2 ISOLATED FOOTING — Design of Footing (F3)",
+    "footing": "F3",
+    "report_status": "NOT SAFE IN ONE WAY SHEAR",
+    "report_plan_dimensions_mm": [
+      2100,
+      2100
+    ],
+    "nominal_depth_mm": 450,
+    "source_effective_depth_mm": 423.46278,
+    "acceptance": false
+  },
+  "readiness": {
+    "storey_mass": "REPORT_AVAILABLE_UNIT_UNPRINTED_CURRENT_MODEL_NOT_REPRODUCED",
+    "static_base_shear": "REPORT_AVAILABLE_CURRENT_MODEL_NOT_REPRODUCED",
+    "modal_participation": "REPORT_AVAILABLE_WITH_MODE_COUNT_CONTRADICTION",
+    "static_base_reaction": "REPORT_AVAILABLE_AS_EQUIVALENT_STATIC_ONLY",
+    "member_force_samples": "REPORT_AVAILABLE_SELECTED_EXCERPTS_ONLY",
+    "complete_member_results": "NOT_IN_HISTORICAL_REPORT",
+    "model_result_comparison": "DEFER_NONBLOCKING_TO_FUTURE_SOLVER_OR_EXPORT",
+    "proceed_with_downstream_workbench": true,
+    "F3_safety_acceptance": false,
+    "professional_engineering_approval": false,
+    "MRSM_scaling_executed": false,
+    "new_ETABS21_solution_executed": false
+  }
+}
