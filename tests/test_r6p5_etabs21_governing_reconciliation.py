@@ -15,6 +15,9 @@ def test_model_authority_updates_without_overwriting_historical_report():
     assert d["historic_report_ETABS_version"]==20
     assert d["historic_report_seismic_weight_kN"]==6831.9109
     assert d["historic_report_mass_reproduced_from_current_model"] is False
+    assert d["offline_private_source_integrated_applied_mass_eligible_load_kN_excluding_dead_selfweight"]==3290.2187486
+    assert d["offline_integral_recomputed_by_CI"] is False
+    assert d["offline_integral_is_not_solved_current_model_mass"] is True
     assert d["current_model_stories_mass_kN"] is None
     assert d["current_model_mass_total_kN"] is None
     assert not d["engineering_approval"]
