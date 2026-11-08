@@ -32,10 +32,22 @@
     }
   },
   "local_inspection_observations": {
-    "model_coordinate_units": ["N", "MM", "C"],
-    "stories_top_to_base": ["TF", "FF", "GF", "Plinth level"],
+    "model_coordinate_units": [
+      "N",
+      "MM",
+      "C"
+    ],
+    "stories_top_to_base": [
+      "TF",
+      "FF",
+      "GF",
+      "Plinth level"
+    ],
     "story_height_mm": 3048,
-    "grid_extent_mm": [21000, 12550],
+    "grid_extent_mm": [
+      21000,
+      12550
+    ],
     "point_records": 127,
     "line_connectivity_records": 97,
     "area_connectivity_records": 80,
@@ -57,9 +69,20 @@
     "selfweight_dead_load_multiplier": 1,
     "object_loads_in_TANK_or_STAIRCASE_patterns_observed": false,
     "ulf_sls_geometry_and_applied_mass_pattern_loads_match": true,
-    "ULS_frame_I2I3_modifiers": {"beams": 0.35, "columns": 0.7},
-    "SLS_frame_I2I3_modifiers": {"beams": 0.7, "columns": 0.9},
-    "ULS_SLS_combinations_use_different_seismic_case_refs": true
+    "ULS_frame_I2I3_modifiers": {
+      "beams": 0.35,
+      "columns": 0.7
+    },
+    "SLS_frame_I2I3_modifiers": {
+      "beams": 0.7,
+      "columns": 0.9
+    },
+    "ULS_SLS_combinations_use_different_seismic_case_refs": true,
+    "preliminary_object_load_integral_excluding_structural_selfweight_kN": 3290.2187486,
+    "preliminary_object_load_integral_basis": "PLAN_GEOMETRY_TIMES_ETABS_E2K_WALL_LINE_LOADS_PLUS_FLOOR_FINISH_AREA_LOADS_PLUS_30_PERCENT_LIVE_AREA_LOADS",
+    "preliminary_object_load_integral_ULS_SLS_match": true,
+    "preliminary_object_load_integral_not_solved_ETABS_mass": true,
+    "preliminary_object_load_integral_excludes_unassigned_added_mass_and_structural_selfweight": true
   },
   "historical_report_comparison": {
     "report_etabs_major_version": 20,
