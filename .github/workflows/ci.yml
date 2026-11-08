@@ -813,6 +813,41 @@ jobs:
           path: |
             site/reports/r6p5-etabs21-governing-source.json
             site/reports/r6p5-etabs21-governing-source-manifest.json
+      - name: R6.6 reuse original report's already available seismic, modal and member results
+        run: |
+          python -m pytest -q tests/test_r6p6_existing_report_results.py
+          python scripts/build_r6p6_existing_report_results.py --output-dir site/reports
+          python - <<'PY'
+          from pathlib import Path
+          from hashlib import sha256
+          import json
+          root=Path("site/reports")
+          prefix="r6p6-report-results-review"
+          data=json.loads((root/(prefix+".json")).read_text())
+          manifest=json.loads((root/(prefix+"-manifest.json")).read_text())
+          assert data["report_seismic_weight_kN"]==6831.9109
+          assert len(data["reported_static_cases"])==4
+          assert len(data["report_modal_rows"])==12
+          assert data["first_report_table_mode_to_reach_90pct_in_both_axes"]==5
+          assert data["report_prose_claims_six_modes"] is True
+          assert data["F3_one_way_shear_unsafe"] is True
+          assert data["selected_member_samples_not_comprehensive"] is True
+          assert data["report_reuse_for_read_only_workbench"] is True
+          assert not data["independent_current_etabs21_results_reproduced"]
+          assert not data["engineering_approval"] and not manifest["model_reanalysis_performed"]
+          for filename,h in manifest["file_sha256"].items():
+              assert sha256((root/filename).read_bytes()).hexdigest()==h
+          assert 'id="annex-r6p6-reported-results"' in Path("site/report.html").read_text()
+          print("R6P6_HISTORICAL_RESULTS_REUSED_12_MODAL_ROWS_SOURCE_CONFLICT_NOTED_F3_UNSAFE")
+          PY
+      - name: Archive R6.6 traceable report-value comparison (not a new ETABS run)
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: r6p6-source-reported-modal-seismic-member-benchmark-not-approved
+          path: |
+            site/reports/r6p6-report-results-review.html
+            site/reports/r6p6-report-results-review.json
+            site/reports/r6p6-report-results-review-manifest.json
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
