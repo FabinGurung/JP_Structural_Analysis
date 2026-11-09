@@ -204,7 +204,12 @@ function init(d){
  d.result_scope.engineering_approval!==false || d.result_scope.F3_one_way_shear_unsafe!==true ||
  d.members?.length!==199 || d.shells?.length!==115 || Object.keys(d.points_xyz_local_mm||{}).length!==127)
   throw Error("Source model is absent or unexpectedly changed; stop.");
- model=d;summary();fillSelect();render();
+ model=d;summary();
+ const requested=new URL(window.location.href).searchParams.get("member");
+ const sourceRow=d.members.find(x=>x.key===requested)||d.shells.find(x=>x.key===requested);
+ if(sourceRow){viewLevel=sourceRow.storey;kind=sourceRow.kind;chosen=sourceRow.key;
+  $("r68-storey").value=viewLevel;$("r68-category").value=kind;}
+ fillSelect();render();
  $("r68-storey").addEventListener("change",()=>{viewLevel=$("r68-storey").value;fillSelect();render();});
  $("r68-category").addEventListener("change",()=>{kind=$("r68-category").value;fillSelect();render();});
  $("r68-id").addEventListener("change",()=>{chosen=$("r68-id").value;render();});
