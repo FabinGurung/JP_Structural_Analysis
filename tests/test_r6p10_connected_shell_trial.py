@@ -28,3 +28,22 @@ def test_uls_source_connected_shell_frame_dead_load_gravity_case_passes_reaction
     assert not s["full_building_analysis"]
     assert not s["design_load_combination"] and not s["professional_engineer_approved"]
     assert s["F3_one_way_shear_unsafe"]
+
+
+@pytest.mark.parametrize("role,case",[
+    ("ULS","Live"),("ULS","FLOOR FINISH"),("ULS","WALL LOAD"),
+    ("SLS","Dead"),("SLS","Live"),("SLS","FLOOR FINISH"),("SLS","WALL LOAD"),
+])
+def test_native_shell_and_diaph_source_gravity_pattern_solved_with_equilibrium(role,case):
+    r=solve(role,case,2)
+    assert r["role"]==role and r["source_case"]==case
+    assert r["original_frame_elements_included"]==165
+    assert r["original_source_restraints_declared"]==27
+    assert r["source_restraints_physically_connected"]==21
+    assert len(r["source_restraints_without_connection"])==6
+    assert r["vertically_supported_shells_numerically_included"]==103
+    assert r["coarse_numerical_shell_elements"]==412
+    assert r["applied_gravity"]["total_applied_downward_N"]>0
+    assert r["vertical_equilibrium_residual_N"]<max(.05,r["applied_gravity"]["total_applied_downward_N"]*3e-5)
+    assert len(r["signed_member_end_actions_bounded"])==165
+    assert r["F3_one_way_shear_unsafe"] and not r["professional_engineer_approved"]
