@@ -1,4 +1,4 @@
-name: deploy-pages
+name: Publish structural project reports
 
 on:
   push:
@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 38bc1788b6e59e30ae3305ee5c4c6044808091a3
+          ref: fc74b1459a9d049d5bc9e90f7287ea8526ca5896
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -769,6 +769,10 @@ jobs:
           assert 'id="annex-r6p9-source-solver"' in Path("site/report.html").read_text()
           print("PAGES_R6P9_NATIVE_ETABS21_FRAME_ONLY_161_ELEMENTS_70_LOADS_2_SOLVES_F3_UNSAFE")
           PY
+      - name: Build and verify R6.10 studio and project reports
+        run: |
+          python scripts/build_r6p10_release.py
+          node --check site/r6p10-studio.js
       - name: Validate current report-first coverage and site navigation
         run: |
           python scripts/build_calculation_coverage.py --check
