@@ -61,6 +61,9 @@ def test_trapf_partial_load_integral_preserves_900mm_segment():
 def test_floors_match_previously_verified_source_only_load_budget():
     d=build()
     x=d["level_summary"]
+    assert x["GF"]["source_unsectioned_line_count"]==10
+    assert x["FF"]["source_unsectioned_line_count"]==21
+    assert x["TF"]["source_unsectioned_line_count"]==3
     assert x["GF"]["source_structural_beam_count"]==35
     assert x["FF"]["source_structural_beam_count"]==39
     assert x["TF"]["source_structural_beam_count"]==31
@@ -105,3 +108,14 @@ def test_derived_output_deterministic_and_no_source_binary_published():
     assert "RAMBAZZAR" not in text and "creactive builders doc" not in text
     assert "E:\\\\" not in text
     assert "NOT SAFE" not in text or d["result_scope"]["F3_one_way_shear_unsafe"]
+
+
+def test_unsectioned_line_loads_not_misclassified_as_concrete_beams():
+    d=build()
+    lines=[m for m in d["members"] if m["kind"]=="LINE"]
+    assert len(lines)==34
+    assert all(m["section"]=="NONE" and "section_gross_volume_m3" not in m for m in lines)
+    load_count=sum(len(m["applied_loads"]) for m in lines)
+    assert load_count==30
+    assert all(v["pattern"]=="WALL LOAD" for m in lines for v in m["applied_loads"])
+    assert d["result_scope"]["complete_solved_member_end_forces"] is False
