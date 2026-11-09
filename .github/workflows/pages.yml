@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: e97290d88d8739d03877f0682abb384fb73e9328
+          ref: ad707cc28b1899af50f69a3253f00402c56975c0
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -827,7 +827,7 @@ jobs:
         uses: actions/deploy-pages@v5.0.1
       - name: Verify live Pages source identity, report, studio, and engineering holds
         env:
-          EXPECTED_SOURCE_SHA: e97290d88d8739d03877f0682abb384fb73e9328
+          EXPECTED_SOURCE_SHA: ad707cc28b1899af50f69a3253f00402c56975c0
         run: |
           set -euo pipefail
           for attempt in $(seq 1 18); do
@@ -852,7 +852,21 @@ jobs:
           assert data["shells_connected_through_source_to_fixed_base"]==103
           report=get("projects/pokhara-g15/report.html?verify="+sha[:12]).decode("utf-8")
           assert "<html" in report.lower() and len(report)>250
-          print("LIVE_PAGES_R611_SHA_REPORT_STUDIO_CONTACTS_F3_HOLD_VERIFIED",sha)
+          assert 'id="project-r6p12-manual"' in report
+          assert 'id="project-hand-calculations"' in report and 'id="project-figures"' in report
+          manual=get("projects/pokhara-g15/manual-verification.html?verify="+sha[:12]).decode("utf-8")
+          assert "Manual verification of the archived structural report" in manual
+          assert "F3 remains NOT SAFE IN ONE WAY SHEAR" in manual
+          book=json.loads(get("data/r6p12-manual-report-audit.json?verify="+sha[:12]))
+          assert book["historical_report_sha256"]=="f122904444a2e2f75230d9d4e41da0093d050da25c6e8140c86d466b7e37cc52"
+          assert len(book["checks"])>=40 and book["counts"]["CONFLICT"]>=6
+          assert book["counts"]["ENGINEERING_HOLD"]==1
+          assert book["unsupported_source_shells_excluded"]==12
+          assert book["F3_one_way_shear_unsafe"] and not book["engineering_approval"]
+          assert not book["source_model_solver_reproduced"]
+          assert all(not row["current_etabs21_solver_result"] for row in book["checks"])
+
+          print("LIVE_PAGES_R612_SOURCE_REPORT_MANUAL_CROSSCHECK_HOLDS_VERIFIED",sha)
           PY
             then
               exit 0
