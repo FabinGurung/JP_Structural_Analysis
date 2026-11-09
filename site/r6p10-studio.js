@@ -190,12 +190,107 @@ function viewSolver(d,s){
  " kN; residual = "+fmt(d.vertical_equilibrium_residual_N,5)+" N.");
  insertLine(el,"p","Research-only, nonconforming reduced mesh; source 8×8 meshing, all 115 shell objects and complete seismic/member design cases are not reproduced. F3 unsafe.");
 }
+let researchBook=null,trialRole="ULS",trialCase="P|Dead",trialMember="GF:B46";
+function casebookOptions(){
+ const data=researchBook?.role_results?.[trialRole];
+ if(!data)return;
+ const select=by("r610-trial-case");select.replaceChildren();
+ for(const name of ["Dead","Live","WALL LOAD","FLOOR FINISH","EQX_CONDITIONAL","EQY_CONDITIONAL"]){
+  const opt=document.createElement("option");opt.value="P|"+name;opt.textContent=
+    name.startsWith("EQ")?name.replace("_CONDITIONAL","")+" · conditional centred ESM":name+" · source gravity";
+  select.append(opt);
+ }
+ for(const combo of data.recombined_original_11_linear_add_expressions){
+  const opt=document.createElement("option");opt.value="C|"+combo.original_source_name;
+  opt.textContent="Combination · "+combo.original_source_name+
+    (combo.source_seismic_combination?" · ESM PROXY":" · supported-shell trial");
+  select.append(opt);
+ }
+ if(!Array.from(select.options).some(o=>o.value===trialCase))trialCase="P|Dead";
+ select.value=trialCase;
+ const member=by("r610-trial-member");member.replaceChildren();
+ const ids=Object.keys(data.independently_run_research_patterns.Dead.signed_member_end_actions_bounded)
+  .sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
+ for(const name of ids){const opt=document.createElement("option");opt.value=name;opt.textContent=name;member.append(opt);}
+ if(!ids.includes(trialMember))trialMember=ids[0]||"";
+ member.value=trialMember;
+ showCasebook();
+}
+function signedRow(parent,label,value,unit){
+ const r=div("r610-action-row");insertLine(r,"span",label);
+ insertLine(r,"strong",fmt(value,4)+" "+unit);parent.append(r);
+}
+function showCasebook(){
+ const record=researchBook?.role_results?.[trialRole];
+ if(!record)return;
+ const [type,key]=trialCase.split(/\|(.+)/);
+ const o=type==="P"?record.independently_run_research_patterns[key]:
+   record.recombined_original_11_linear_add_expressions.find(c=>c.original_source_name===key);
+ const status=by("r610-case-status");status.replaceChildren();
+ if(!o){insertLine(status,"p","Selected source trial not available.");return;}
+ const actions=type==="P"?o.signed_member_end_actions_bounded:o.signed_member_end_actions_non_design;
+ const vals=actions?.[trialMember];
+ if(!vals||vals.length!==12){insertLine(status,"p","Selected frame has no source-reproducible signed actions.");return;}
+ insertLine(status,"h4",(type==="P"?"Independent source pattern: ":"Source expression: ")+key+
+  " · "+trialRole);
+ if(type==="P"){
+  const E=key.startsWith("EQ")?o.applied_conditional_lateral:null;
+  insertLine(status,"p",E?
+     "Centred source seismic-coefficient sensitivity only; W is a connected-only mass proxy. Lateral equilibrium residual "+
+        fmt(o.horizontal_equilibrium_residual_N,5)+" N. The native ±5% accidental eccentricity subcases and modal source mass have NOT been reproduced.":
+     "Source original gravity pattern with 103 connected shells and 165 frames on a coarse 2×2 independent OpenSees mesh. Input "+
+       fmt(o.applied_gravity.total_applied_downward_N/1000,4)+" kN; reaction "+
+       fmt(o.sum_native_fixed_base_reactions_N[2]/1000,4)+" kN; vertical equilibrium residual "+
+       fmt(o.vertical_equilibrium_residual_N,5)+" N.");
+ }else{
+  insertLine(status,"p",o.status.replaceAll("_"," ")+". Source 11-combination algebra; force-balance residual "+
+      fmt(Math.max(...o.force_residual_N),5)+" N. "+
+      (o.source_seismic_combination?"Seismic source requires unresolved mass, mesh and ±5% eccentricity qualification.":
+       "Gravity solution is valid only for source-connected 103-shell coarse research structure."));
+ }
+ insertLine(status,"p","Full original ETABS21 solver reproduced: NO · Original all 115 shells supported: NO · F3 safe: NO.");
+ for(const [id,start] of [["r610-actions-i",0],["r610-actions-j",6]]){
+  const parent=by(id);parent.replaceChildren();
+  for(let i=0;i<6;i++){
+   const k=["N","Vy","Vz","T","My","Mz"][i],units=i<3?"kN":"kN·m";
+   signedRow(parent,k,vals[start+i],units);
+  }
+ }
+ const link=by("r610-case-source-link");link.replaceChildren();
+ const a=document.createElement("a");a.href="etabs21-member-book.html?member="+encodeURIComponent(trialMember);
+ a.textContent="Inspect original ETABS21 beam/column "+trialMember+" in linked 2D and 3D →";link.append(a);
+}
+function loadCasebook(){
+ fetch("data/r6p10-connected-shell-gravity-casebook.json",{cache:"no-store"})
+ .then(r=>r.ok?r.json():Promise.reject(Error("Bounded research casebook not published")))
+ .then(raw=>{
+  if(raw.schema!=="jp.structural.r6p10.connected_source_shell_gravity_and_conditional_seismic_casebook.v0.2"||
+     raw.original_shells_source_vertically_unanchored!==12||
+     raw.replayed_source_gravity_pattern_cases!==8||
+     raw.replayed_source_conditional_seismic_pattern_cases!==4||
+     raw.recombined_original_source_linear_add_expressions!==22||
+     raw.F3_one_way_shear_unsafe!==true||raw.engineering_approval!==false||
+     raw.all_source_gravity_and_seismic_combination_envelopes_reproduced!==false)
+     throw Error("Casebook safety/source validation failed");
+  researchBook=raw;casebookOptions();
+  by("r610-trial-role").addEventListener("change",()=>{
+    trialRole=by("r610-trial-role").value;casebookOptions();});
+  by("r610-trial-case").addEventListener("change",()=>{
+    trialCase=by("r610-trial-case").value;showCasebook();});
+  by("r610-trial-member").addEventListener("change",()=>{
+    trialMember=by("r610-trial-member").value;showCasebook();});
+ }).catch(err=>{
+  by("r610-case-status").textContent="No qualified casebook available: "+err.message+
+    ". No missing seismic force values will be fabricated.";
+ });
+}
+
 function init(data){
  if(data.schema!=="jp.structural.r6p10.original_e2k_source_shell_mesh_and_loadcase_audit.v0.1" ||
  data.source_shell_count!==115||data.source_diaphragm_points_total!==201||
  data.shells_without_verified_vertical_support_path!==12||data.engineering_approval!==false||
  data.source_F3_one_way_shear_unsafe!==true)throw Error("Source scope or engineering acceptance incorrectly changed");
- d=data;facts();buildSelect();redraw();lines();pattern();combos();
+ d=data;facts();buildSelect();redraw();lines();pattern();combos();loadCasebook();
  by("r610-floor").addEventListener("change",()=>{floor=by("r610-floor").value;buildSelect();redraw();});
  by("r610-filter").addEventListener("change",()=>{filter=by("r610-filter").value;buildSelect();redraw();});
  by("r610-shell").addEventListener("change",()=>{selected=by("r610-shell").value;redraw();});
