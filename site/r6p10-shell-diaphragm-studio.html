@@ -49,6 +49,19 @@
 <p>Superposition is valid only for compatible, fully solved linear cases. Merely summing known applied gravity force totals does not reconstruct actual seismic forces, reactions, member force envelopes or construction design.</p></div></section>
 <section class="r610-section" id="r610-solver"><div class="r610-heading"><span>05 / independent numerical stage</span><h2>Connected-shell OpenSees research trial</h2><p>Original 165 structural frame members and source-connected shells are the starting graph. The numerical study uses original restraints and in-plane diaphragm definitions but retains coarse-mesh and load-transfer limitations. It will display a solved result only when source integrity, finite signed member actions and force/reaction equilibrium pass.</p></div>
 <div id="r610-solver-status" class="r610-solver-status">Numerical source-backed shell trial has not been published or is still being validated.</div>
+<div class="r610-caseview" id="r610-caseview">
+<h3>Numerical source member actions — qualified case and combination explorer</h3>
+<p>Choose among independently solved original gravity patterns, <em>conditional source-coefficient centred</em> X/Y equivalent-static sensitivities, and the original combination expressions evaluated on this incomplete research frame/shell model. The signed member outputs are provisional—neither ETABS21 reproduced results nor construction-strength demand envelopes.</p>
+<div class="r610-controls">
+<label>Native stiffness <select id="r610-trial-role"><option value="ULS">ULS original stiffness</option><option value="SLS">SLS original stiffness</option></select></label>
+<label>Numerical case / source combination <select id="r610-trial-case"></select></label>
+<label>Original member ID <select id="r610-trial-member"></select></label>
+</div>
+<div id="r610-case-status" class="r610-case-status">Numerical trial data not published or pending source verification.</div>
+<div class="r610-actions"><div><h4>End I — signed actions</h4><div id="r610-actions-i"></div></div>
+<div><h4>End J — signed actions</h4><div id="r610-actions-j"></div></div></div>
+<p id="r610-case-source-link"></p>
+</div>
 <div class="r610-solver-links"><a href="r6p9-solver-bridge.html">Prior verified frame-only 3D OpenSees benchmark</a><a href="data/r6p10-source-shell-diaphragm-loads.json">Inspect all native shell, load and combination inputs (JSON)</a><a href="reports/r6p10-source-shell-diaphragm-summary.json">Inspect original source checksum and QA summary</a></div></section>
 <section class="r610-section r610-final"><h2>What still prevents an approved building-wide design?</h2>
 <div class="r610-holds"><div><h3>Physical source verification</h3><p>Twelve unsupported shell objects, six disconnected base-point restraints, nonconforming auto-mesh interfaces, structural wall/diaphragm load transfer, site/legal and geotechnical evidence.</p></div>
