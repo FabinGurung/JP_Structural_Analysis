@@ -193,6 +193,14 @@ A **distinct versioned R6.2 four-mode input** preserves the earlier R6.1 six-mod
 
 **Professional/source HOLD:** This work does **not** reproduce full ETABS21 geometry/mesh rigidity, diaphragm solver, PDelta, actual mass, full shell forces, full 3D load combination envelopes, accepted beam/column RC design, source BBS, municipality/site approval or F3 one-way shear remediation. Historic original report member forces remain an **independent older source revision**. Issue #7 must remain OPEN; previous frozen sources and native E2K Drive IDs unchanged. Next stage: full shell mesh source interpretation and numerical attachment, original rigid diaphragms, source panel load path and mass; sensitivity checks with full role-specific stiffness and design combinations; then independent engineer review.
 
+## R6.10 — Shells, diaphragms and the project report library
+
+The Pokhara G+1.5 report is published under Projects, with its original cover, six chapters and annexes. The older report address remains available. The project report builder reads the shared hand-calculation sheet during the site build. Each listed project includes worked examples, a floor load plot and linked plan and 3D views. The blank sheet is also available as a standalone page.
+
+The R6.10 studio shows all 115 original shell records and the model’s three diaphragm groups. The trial includes 103 shells, 165 frame members and 21 connected restraints. It solves eight gravity cases and four centred lateral cases and evaluates 22 combinations using those trial results. These runs use a coarse mesh and estimated seismic weights. Twelve shell support paths, full seismic response and accidental eccentricity remain open. The F3 footing still fails the recorded one-way shear check.
+
+Source CI and Pages call the same R6.10 build and validation script. CI also retains the shell audit and trial casebook as downloadable artifacts.
+
 ## Remaining source/physical debt — intentionally distinct
 
 1. Authenticate native ETABS/model source or independently reproduce and survey actual as-built member/grid/loads.

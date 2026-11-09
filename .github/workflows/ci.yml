@@ -959,6 +959,18 @@ jobs:
           path: |
             site/data/r6p9-etabs21-bounded-frame-solver.json
             site/reports/r6p9-etabs21-bounded-frame-manifest.json
+      - name: Build and verify R6.10 studio and project reports
+        run: |
+          python scripts/build_r6p10_release.py
+          node --check site/r6p10-studio.js
+      - name: Archive R6.10 shell audit and trial calculations
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: r6p10-shell-audit-and-trial-casebook
+          path: |
+            site/data/r6p10-*.json
+            site/reports/r6p10-*.json
+          if-no-files-found: error
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check

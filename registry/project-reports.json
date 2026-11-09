@@ -1,0 +1,12 @@
+[
+  {
+    "slug": "pokhara-g15",
+    "name": "Pokhara G+1.5 reinforced-concrete building",
+    "description": "Six chapters and annexes, with worked calculations, a floor load plot and linked views of the ETABS 21 model.",
+    "report": "report.html",
+    "viewer": "r6p10-shell-diaphragm-studio.html",
+    "source_catalogue": "data/r6p8-etabs21-source-member-catalogue.json",
+    "casebook": "data/r6p10-connected-shell-gravity-casebook.json",
+    "worked_beam": "GF:B46"
+  }
+]
