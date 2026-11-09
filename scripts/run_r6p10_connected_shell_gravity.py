@@ -118,8 +118,10 @@ def rig(role="ULS",resolution=2):
             tag=by_xyz[key]
             ops.fix(tag,1,1,1,1,1,1)
             support_tags.add(tag)
-    if len(support_tags)!=27:
-        raise ValueError("Original 27 supports not represented by verified source nodes")
+    if len(original_supports)!=27 or len(support_tags)!=21:
+        raise ValueError("Source 27 supports/21 frame-connected restraints changed; new load path audit required")
+    unconnected_declared_supports=sorted(pid for pid in original_supports
+        if tuple(round(float(z),3) for z in source_points[pid]) not in by_xyz)
 
     ops.geomTransf("Linear",1,0,0,1)
     ops.geomTransf("Linear",2,0,1,0)
@@ -154,7 +156,9 @@ def rig(role="ULS",resolution=2):
 
     return {"ops":ops,"ctrl":ctrl,"native":native,"source":source,"frames":frameids,
        "frametags":frametags,"shelltags":shelltags,"cells":cells,"positions":positions,
-       "supports":support_tags,"diaphragms":diaphragm_assignments,"masters":masters,
+       "supports":support_tags,"original_declared_supports":len(original_supports),
+       "unconnected_declared_source_support_ids":unconnected_declared_supports,
+       "diaphragms":diaphragm_assignments,"masters":masters,
        "tag_count":tag,"resolution":resolution}
 
 def add_gravity_loads(r,case):
@@ -285,6 +289,9 @@ def solve(role="ULS",case="Dead",resolution=2):
       "vertically_supported_shells_numerically_included":103,
       "original_unsupported_shells_numerically_excluded":12,
       "original_frame_elements_included":len(r["frames"]),
+      "original_source_restraints_declared":r["original_declared_supports"],
+      "source_restraints_physically_connected":len(r["supports"]),
+      "source_restraints_without_connection":r["unconnected_declared_source_support_ids"],
       "coarse_numerical_shell_elements":sum(len(c) for c in r["cells"].values()),
       "coarse_refinement":resolution,
       "shell_mesh_faithfully_reproduces_ETABS_8x8":False,
