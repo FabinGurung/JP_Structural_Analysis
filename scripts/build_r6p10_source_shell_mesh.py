@@ -162,10 +162,16 @@ def build():
         gamma=model["materials"][shell["material"]]["unit_weight_N_mm3"] # N/mm3
         deadN=truearea*shell["thickness_mm"]*gamma
         mass_gravity[shell["storey"]]+=deadN/1000
+        section_token=shell["section"].strip(\x27"\x27)
+        shell_types=src["roles"]["ULS"]["shell_model_type"]
+        if section_token not in shell_types:
+            raise MeshQAError("Original E2K shell property name cannot be mapped: "+key)
         m={
           "key":key,"id":shell["id"],"story":shell["storey"],"kind":shell["kind"],"source_section":shell["section"],
           "original_corner_ids":shell["point_ids"],"corners_xyz_mm":coords,
-          "source_shell_model_type":src["roles"]["ULS"]["shell_model_type"].get(shell["section"],"UNSPECIFIED"),
+          "source_shell_model_type":shell_types[section_token],
+          "source_section_canonical":section_token,
+          "source_section_projection_token":shell["section"],
           "source_mesh_mode":cfg.get("OBJMESHTYPE"),"n1":n1,"n2":n2,
           "requested_or_proxy_element_count":n1*n2,"mesh_rule":rule,
           "source_supported_by_frame_shell_topology":key in linked,
