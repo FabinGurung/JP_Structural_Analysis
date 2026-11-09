@@ -19,6 +19,7 @@ ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from scripts.run_r6p9_source_frame_gravity import controls as governing_controls
 from scripts.build_r6p8_native_source_catalogue import build as source_catalogue
+from scripts.r6p11_support_candidates import contact_audit
 
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/"site/data/r6p10-source-shell-diaphragm-loads.json"
@@ -312,6 +313,7 @@ def build():
         "source_mass_source_exact_ETABS_result_verified":False,
         "complete_PMV_envelopes_approved":False,
         "source_F3_one_way_shear_unsafe":True,"engineering_approval":False}
+    out['r6p11_contact_audit'] = contact_audit(model, unlinked)
     return out
 
 def export():
