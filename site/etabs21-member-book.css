@@ -1,0 +1,47 @@
+:root{--r68-ink:#20374a;--r68-line:#d6e0e5;--r68-blue:#28628a}
+.r68-layout{max-width:1450px;padding:20px 12px 64px}
+.r68-intro{padding:25px 28px;background:linear-gradient(125deg,#eaf3f9,#f8f5ec);border:1px solid #d2e2ea;border-radius:16px}
+.r68-intro h1{font-size:clamp(1.7rem,3.2vw,2.8rem);line-height:1.15;margin:13px 0}
+.r68-intro p{max-width:930px;line-height:1.65}
+.r68-links{display:flex;flex-wrap:wrap;gap:12px}
+.r68-links a{color:#185983}
+.r68-boundary{background:#fff2dc;border:1px solid #dfbb86;border-radius:11px;padding:14px 18px;margin:18px 0;line-height:1.65}
+.r68-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;margin:20px 0}
+.r68-kpi{padding:16px 18px;background:#fff;border:1px solid var(--r68-line);border-radius:13px;min-width:0}
+.r68-kpi small{display:block;color:#617685}
+.r68-kpi strong{display:block;font-size:1.55rem;font-variant-numeric:tabular-nums;color:#174562}
+.r68-floor,.r68-calc,.r68-cross{padding:22px;background:white;border:1px solid var(--r68-line);border-radius:14px;margin:17px 0}
+.r68-floor h2,.r68-cross h2,.r68-calc h2{margin:0 0 7px;color:#174562}
+.r68-floor p,.r68-cross p{line-height:1.6}
+.r68-scroll{overflow:auto}
+.r68-floor table{border-collapse:collapse;width:100%;font-size:.85rem;white-space:nowrap}
+.r68-floor td,.r68-floor th{border-bottom:1px solid #e4e9ec;padding:10px 12px;text-align:left;font-variant-numeric:tabular-nums}
+.r68-floor th{background:#edf4f8}
+.r68-controls{display:flex;flex-wrap:wrap;gap:12px;align-items:end;border:1px solid var(--r68-line);background:#f4f7f9;border-radius:13px;padding:14px}
+.r68-controls label{display:flex;flex:1 1 160px;min-width:145px;flex-direction:column;gap:5px;font-size:.84rem;color:#466276}
+.r68-controls select{padding:11px;min-height:42px;max-width:100%;color:#254d66;background:#fff;border:1px solid #afc6d1;border-radius:8px}
+.r68-controls button,.r68-buttons button{background:#e8f1f8;border:1px solid #b7cbd7;padding:10px 14px;border-radius:8px;color:#224e69;cursor:pointer}
+.r68-controls button:hover,.r68-buttons button:hover{background:#d4e6f2}
+.r68-views{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin:17px 0}
+.r68-view{border:1px solid var(--r68-line);border-radius:14px;background:#fff;padding:16px;min-width:0}
+.r68-view-title{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.r68-view-title h2{font-size:1.05rem;margin:0 0 6px}
+.r68-view-title p{font-size:.78rem;color:#667783;margin:0 0 7px}
+.r68-buttons{display:flex;gap:5px}
+.r68-view svg{display:block;width:100%;height:auto;max-height:510px;background:#fafcfe;border:1px solid #e1e9ed;border-radius:9px}
+.r68-view svg [data-select]{cursor:pointer}
+.r68-view svg [data-select]:focus{outline:3px solid #dd9952}
+.r68-calc-header{display:flex;align-items:start;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.r68-calc-header strong{font-size:.7rem;color:#7d5c36;background:#fff2df;border-radius:16px;padding:6px 12px}
+.r68-calc h3{margin-top:22px;font-size:1.04rem;color:#214f69}
+.r68-inputbox{background:#f1f6f9;padding:13px 15px;margin:12px 0;border-radius:10px;border:1px solid #d9e7ee;font-size:.91rem;overflow-wrap:anywhere}
+.r68-inputbox strong{display:block;font-size:.85rem;color:#516e80;margin-bottom:5px}
+.r68-step{display:grid;grid-template-columns:100px minmax(0,1fr);gap:10px;border-bottom:1px solid #e2e8ec;padding:13px 3px}
+.r68-step b{color:#54758b;font-size:.8rem}
+.r68-step code{font-size:.91rem;white-space:normal;word-break:break-word;color:#173a54;background:transparent}
+.r68-step p{line-height:1.58;margin:0}
+.r68-loadrow{border:1px solid #dfe8ee;border-radius:9px;padding:11px 14px;margin:8px 0;background:#fbfdff;overflow-wrap:anywhere}
+.r68-loadrow strong{color:#254e67}
+.r68-rebar-note{padding:13px;background:#fff4e6;border:1px solid #e5c29f;border-radius:10px;line-height:1.6}
+@media(max-width:950px){.r68-views{grid-template-columns:1fr}}
+@media(max-width:620px){.r68-intro,.r68-floor,.r68-calc,.r68-cross{padding:17px 13px}.r68-kpis{grid-template-columns:repeat(2,1fr)}.r68-step{grid-template-columns:1fr;gap:4px}}
