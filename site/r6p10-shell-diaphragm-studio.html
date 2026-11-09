@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>R6.10 | Original shell meshes, rigid diaphragms and load cases | JP Structural Analysis</title>
+<meta name="description" content="Source-backed full ETABS21 shell and diaphragm evidence, model load transfer, seismic mass and original ULS/SLS combinations, engineering holds and numerical source QA.">
+<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="r6p10-studio.css"></head>
+<body class="r610-body">
+<header class="site-header"><div class="wrap nav-row">
+<a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">JP</span><span><strong>Structural Analysis</strong><small>R6.10 · SHELL + DIAPHRAGM WORKBENCH</small></span></a>
+<nav class="navigation" aria-label="Structural navigation"><a href="index.html">Home</a><a href="report.html#annex-r6p10">Master report</a><a href="etabs21-member-book.html">Source 2D/3D</a><a href="r6p9-solver-bridge.html">R6.9 baseline</a></nav>
+</div></header>
+<main class="wrap r610-wrap">
+<div class="r610-hero"><div><span class="r610-eyebrow">R6.10 · SOURCE-BOUND MODEL AUDIT</span>
+<h1>Inside the building’s shell mesh, diaphragm links and load paths.</h1>
+<p>Inspect every original ETABS 21 shell assignment, every source diaphragm group, the full gravity load ledger and both sets of design combinations. See the geometry and calculation procedures beside what has—and has not—been independently solved.</p>
+<div class="r610-hero-links"><a href="worked-calculations.html">Worked equations</a><a href="etabs21-member-book.html">Beam and column studio</a><a href="report.html#annex-r6p10">Source and safety audit</a></div>
+</div><div class="r610-hero-illustration" aria-hidden="true"><svg viewBox="0 0 300 214">
+<path d="M50 166 165 202 260 139 147 102Z" fill="#87b8c8" opacity=".3"/><path d="M50 125 165 161 260 98 147 61Z" fill="#87b8c8" opacity=".45"/>
+<path d="M50 82 165 120 260 57 147 20Z" fill="#87b8c8" opacity=".67"/>
+<g stroke="#174660" stroke-width="2" fill="none"><path d="M50 82V166M165 120V202M260 57V139M147 20V102M50 82 147 20 260 57 165 120Z"/>
+<path d="M50 125 147 61 260 98 165 161Z"/><path d="M50 166 147 102 260 139 165 202Z"/></g><g fill="#e88d73" stroke="#d66d57">
+<circle cx="50" cy="82" r="4"/><circle cx="165" cy="120" r="4"/><circle cx="260" cy="57" r="4"/><circle cx="147" cy="20" r="4"/></g></svg></div>
+</div>
+<section class="r610-safety" role="note"><strong>Engineering boundary:</strong> Source mesh instructions and diaphragm assignments are real ETABS 21 inputs, not a verified recreation of ETABS’ generated finite-element mesh. Twelve shells lack a proven vertical load path and six original base restraint records do not directly attach to GF columns. Shell-to-frame load sharing and full seismic/mass results remain gated. <strong>F3 remains NOT SAFE IN ONE WAY SHEAR.</strong></section>
+<div class="r610-facts" id="r610-facts" aria-label="Authenticated source counts">Loading original source validation…</div>
+<div class="r610-nav" aria-label="This chapter navigation"><a href="#r610-mesh">01 · Shell mesh</a><a href="#r610-transfer">02 · Wall load paths</a><a href="#r610-mass">03 · Gravity and mass</a><a href="#r610-cases">04 · ULS/SLS cases</a><a href="#r610-solver">05 · Independent solver</a></div>
+<section class="r610-section" id="r610-mesh"><div class="r610-heading"><span>01 / original geometry</span><h2>All 115 shell objects in two linked views</h2>
+<p>Floor and panel surfaces are the original point-connected E2K polygons. Source 8×8 mesh requests and remaining automatic/default mesh settings are exposed individually. Surfaces in orange do not have a demonstrated connection to restrained vertical support; no phantom elements are added.</p></div>
+<div class="r610-controls"><label>Floor <select id="r610-floor"><option value="GF">GF · +3.048 m</option><option value="FF">FF · +6.096 m</option><option value="TF">TF · +9.144 m</option><option value="ALL">All floors</option></select></label><label>Classification <select id="r610-filter"><option value="ALL">All original surfaces</option><option value="SUPPORTED">Source-connected only</option><option value="FLOATING">Unrestrained shell groups</option><option value="PANEL">Waist slabs and panels</option></select></label>
+<label>Shell ID <select id="r610-shell"></select></label>
+<button type="button" id="r610-rot-left" aria-label="Rotate 3D left"><span aria-hidden="true">↶</span></button><button type="button" id="r610-rot-right" aria-label="Rotate 3D right"><span aria-hidden="true">↷</span></button></div>
+<div class="r610-views"><div class="r610-view"><h3>2D source footprint</h3><svg id="r610-plan" viewBox="0 0 680 430" role="img" aria-label="Original source grid with selectable shell polygons and support status"></svg><div class="r610-legend"><span><i class="r610-dot ok"></i> Source-connected</span><span><i class="r610-dot unsafe"></i> Unsupported vertically</span></div></div>
+<div class="r610-view"><h3>3D shell geometry</h3><svg id="r610-3d" viewBox="0 0 680 430" role="img" aria-label="Three-dimensional source shell polygons and original storey heights"></svg><p>Includes sloped waist slab geometry, but their physical connections still require verification.</p></div></div>
+<div class="r610-detail" id="r610-shell-detail" aria-live="polite">Select a shell to see native coordinates, section thickness, requested meshing, self-weight and source load formulas.</div>
+<div class="r610-procedure"><div><b>01</b><strong>Geometry</strong><p>Read original four source vertices and storey elevation.</p></div><div><b>02</b><strong>Panel areas</strong><p>Compute projected floor area and actual 3D triangle surface areas separately.</p></div><div><b>03</b><strong>Mesh</strong><p>Check source 8×8 instruction versus any independently reconstructed mesh; never silently equate them.</p></div><div><b>04</b><strong>Vertical support</strong><p>Trace connectivity through shell corners, beams and columns to restrained bases.</p></div></div>
+</section>
+<section class="r610-section" id="r610-transfer"><div class="r610-heading"><span>02 / wall gravity transfer</span><h2>Thirty line loads are no longer invisible</h2><p>Original E2K assigns 30 wall loads to unsectioned geometric LINE objects. The source-backed transfer inspection conserves their resultant and identifies adjacent floor shells. Shared boundaries are split by geometric interpolation, which is a research transfer proxy—not proof of ETABS’ generated shell mesh load path.</p></div>
+<div class="r610-load-widget"><label>Unsectioned source line <select id="r610-line"></select></label><div id="r610-line-detail">Loading source line transfer…</div></div>
+<div class="r610-stepnote"><strong>Worked relationship</strong><code>Wall resultant = w (N/mm) × L (mm) ÷ 1000 = kN</code>
+<code>∑ equivalent shell nodal forces = original wall resultant</code>
+<p>Individual shell shares are calculated by tracing 48 samples along each source line, finding the original floor quadrilateral, interpolating to its vertices and splitting shared edge loads without double-counting.</p></div></section>
+<section class="r610-section" id="r610-mass"><div class="r610-heading"><span>03 / complete input ledger</span><h2>Source gravity and provisional seismic mass — line by line</h2><p>Loads and gross section selfweight are integrated independently from original member and shell geometry. This is a conditional original-input weight, not a verified ETABS 21 assembled mass matrix or accepted seismic story weight.</p></div>
+<div class="r610-pattern-grid" id="r610-gravity"></div>
+<div class="r610-stepnote"><strong>Source mass-source instruction</strong><code>W* = 1.0 Dead + 0.3 Live + 1.0 WALL LOAD + 1.0 FLOOR FINISH + 0.6 TANK + 0.3 STAIRCASE LOAD</code>
+<p>The selected E2K mass source requests load-based mass. Member selfweight and true shell surface weight are approximated geometrically here; frame intersections, actual ETABS meshing/mass handling and source disconnected shells prevent design acceptance.</p></div></section>
+<section class="r610-section" id="r610-cases"><div class="r610-heading"><span>04 / native combinations</span><h2>The original 11 combinations in each model</h2><p>Select ULS or SLS and an exact source combination. Every coefficient and participating case is shown. Gravity-only arithmetic is available; lateral terms remain explicitly unverified until the governing mass, shell connectivity and source diaphragm solver have been reconciled.</p></div>
+<div class="r610-controls"><label>Native model <select id="r610-role"><option value="ULS">ULS · original stiffness and cases</option><option value="SLS">SLS · original stiffness and cases</option></select></label><label>Combination <select id="r610-combo"></select></label></div>
+<div class="r610-combo" id="r610-combo-detail"></div>
+<div class="r610-stepnote"><strong>Linear combination algebra</strong><code>R_combination = ∑ (source load-case scale × solved signed result for that case)</code>
+<p>Superposition is valid only for compatible, fully solved linear cases. Merely summing known applied gravity force totals does not reconstruct actual seismic forces, reactions, member force envelopes or construction design.</p></div></section>
+<section class="r610-section" id="r610-solver"><div class="r610-heading"><span>05 / independent numerical stage</span><h2>Connected-shell OpenSees research trial</h2><p>Original 165 structural frame members and source-connected shells are the starting graph. The numerical study uses original restraints and in-plane diaphragm definitions but retains coarse-mesh and load-transfer limitations. It will display a solved result only when source integrity, finite signed member actions and force/reaction equilibrium pass.</p></div>
+<div id="r610-solver-status" class="r610-solver-status">Numerical source-backed shell trial has not been published or is still being validated.</div>
+<div class="r610-solver-links"><a href="r6p9-solver-bridge.html">Prior verified frame-only 3D OpenSees benchmark</a><a href="data/r6p10-source-shell-diaphragm-loads.json">Inspect all native shell, load and combination inputs (JSON)</a><a href="reports/r6p10-source-shell-diaphragm-summary.json">Inspect original source checksum and QA summary</a></div></section>
+<section class="r610-section r610-final"><h2>What still prevents an approved building-wide design?</h2>
+<div class="r610-holds"><div><h3>Physical source verification</h3><p>Twelve unsupported shell objects, six disconnected base-point restraints, nonconforming auto-mesh interfaces, structural wall/diaphragm load transfer, site/legal and geotechnical evidence.</p></div>
+<div><h3>Numerical design verification</h3><p>Complete ETABS-consistent mesh and mass, independent modal/eccentricity seismic solutions, response combinations, shear/moment diagrams, engineer-reviewed reinforcement, F3 one-way-shear correction.</p></div></div>
+<p><a href="https://github.com/FabinGurung/JP_Structural_Analysis/issues/7">Open the engineering safety and source audit</a> · <a href="reports/r6p10-source-shell-diaphragm-summary.json">Read reproducible source summary</a></p></section>
+</main>
+<footer class="site-footer"><div class="wrap footer-inner"><span>R6.10 original E2K shell/diaphragm evidence · not licensed structural design</span><span>Private Drive originals preserved · F3 engineering hold</span></div></footer>
+<script src="r6p10-studio.js" defer></script>
+</body></html>
