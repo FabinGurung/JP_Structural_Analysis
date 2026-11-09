@@ -26,10 +26,11 @@ import json
 import lzma
 import math
 from pathlib import Path
-
-from scripts.build_r6p8_native_source_catalogue import build as build_source
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from scripts.build_r6p8_native_source_catalogue import build as build_source
 CONTROLS = ROOT / "registry/r6p9_etabs21_solver_controls.lzma.b64"
 OUT = ROOT / "site/data/r6p9-etabs21-bounded-frame-solver.json"
 MANIFEST = ROOT / "site/reports/r6p9-etabs21-bounded-frame-manifest.json"
