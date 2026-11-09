@@ -251,14 +251,75 @@ def add_gravity_loads(r,case):
             "unsectioned_LINE_source_transfer_interpolated":case=="WALL LOAD",
             "lost_load_N":deferred_N}
 
+def connected_floor_seismic_weight(r):
+    """Auditable source-pattern proxy, NOT native ETABS21 modal mass."""
+    from collections import defaultdict
+    native=r["native"];data=r["source"]
+    floors=defaultdict(float)
+    for m in native["members"]:
+        if m["kind"] in ("BEAM","COLUMN"):
+            floors[m["storey"]]+=float(m["source_dead_selfweight_proxy_kN"])
+        for load in m["applied_loads"]:
+            factor=native["load_mass_participation_factors"].get(load["pattern"],0.)
+            floors[m["storey"]]+=factor*load["raw_integrated_kN"]
+    for p in data["all_shell_parameters"]:
+        if not p["source_supported_by_frame_shell_topology"]:continue
+        floors[p["story"]]+=p["true_area_concrete_selfweight_kN"]
+        for load in p["source_applied_loads"]:
+            factor=native["load_mass_participation_factors"].get(load["pattern"],0.)
+            floors[p["story"]]+=factor*load["raw_integrated_kN"]
+    if set(floors)!={"GF","FF","TF"} or not all(floors[x]>100 for x in ("GF","FF","TF")):
+        raise ValueError("Source-connected conditional seismic gravity mass ledger invalid")
+    return floors
+
+def add_conditional_seismic_lateral(r,role,case):
+    """Source-coefficient ESM sensitivity; no original modal/mass/ECC verification."""
+    if case not in ("EQX_CONDITIONAL","EQY_CONDITIONAL"):raise ValueError(case)
+    axis=case[2]
+    source=r["ctrl"]["seismic"]["EQ"+axis+" "+role]
+    exponent=float(source["HEIGHTEXPONENT"])
+    c=float(source["SHEARCOEFF"])
+    if not math.isclose(exponent,1.,abs_tol=1e-9):raise ValueError("Source height exponent requires new derivation")
+    weights=connected_floor_seismic_weight(r)
+    total=sum(weights.values())
+    denom=sum(weights[s]*r["native"]["floor_elevations_mm"][s]**exponent
+              for s in ("GF","FF","TF"))
+    r["ops"].timeSeries("Linear",1)
+    r["ops"].pattern("Plain",1,1)
+    floors={}
+    for story in ("GF","FF","TF"):
+        Fi_N=c*total*1000*(weights[story]*r["native"]["floor_elevations_mm"][story]**exponent)/denom
+        r["ops"].load(r["masters"][story],
+                      Fi_N if axis=="X" else 0.,
+                      Fi_N if axis=="Y" else 0.,0.,0.,0.,0.)
+        floors[story]={"conditional_source_connected_weight_kN":weights[story],
+                       "applied_lateral_force_kN":Fi_N/1000,
+                       "source_floor_height_mm":r["native"]["floor_elevations_mm"][story]}
+    return {
+      "case":case,"axis":axis,"source_seismic_coefficient":c,
+      "source_height_exponent":exponent,
+      "source_requested_eccentricity":float(source["ECC"]),
+      "eccentricity_applied_to_trial":0.,
+      "source_E2K_requested_plus_minus_eccentricity_subcases_not_reproduced":True,
+      "source_mass_includes_12_disconnected_shells":False,
+      "source_modal_mass_matrix_approved":False,
+      "mass_ledger_is_source_connected_proxy_only":True,
+      "source_connected_floor_weights_and_forces":floors,
+      "conditional_base_shear_input_N":c*total*1000,
+      "total_applied_downward_N":0.,
+      "native_source_equivalent_static_auto_seismic_reproduced":False}
+
 def solve(role="ULS",case="Dead",resolution=2):
-    if case not in ("Dead","Live","WALL LOAD","FLOOR FINISH"):
-        raise ValueError("Not one of the original explicitly assigned gravity patterns")
+    if case not in ("Dead","Live","WALL LOAD","FLOOR FINISH","EQX_CONDITIONAL","EQY_CONDITIONAL"):
+        raise ValueError("Unapproved source load pattern")
     r=rig(role,resolution)
     ops=r["ops"]
-    ops.timeSeries("Linear",1)
-    ops.pattern("Plain",1,1)
-    application=add_gravity_loads(r,case)
+    if case.startswith("EQ"):
+        application=add_conditional_seismic_lateral(r,role,case)
+    else:
+        ops.timeSeries("Linear",1)
+        ops.pattern("Plain",1,1)
+        application=add_gravity_loads(r,case)
     ops.constraints("Transformation")
     ops.numberer("RCM")
     ops.system("UmfPack")
@@ -272,9 +333,15 @@ def solve(role="ULS",case="Dead",resolution=2):
     for tag in r["supports"]:
         value=ops.nodeReaction(tag)
         for i in range(3):reactions[i]+=float(value[i])
-    error=abs(reactions[2]-application["total_applied_downward_N"])
-    if error>max(.05,application["total_applied_downward_N"]*3e-5):
-        raise RuntimeError("Applied gravity vs reaction not balanced: "+str(error))
+    if case.startswith("EQ"):
+        axis_index=0 if application["axis"]=="X" else 1
+        error=abs(reactions[axis_index]+application["conditional_base_shear_input_N"])
+        if error>max(.1,application["conditional_base_shear_input_N"]*3e-5):
+            raise RuntimeError("Conditional seismic trial source base shear not equilibrated: "+str(error))
+    else:
+        error=abs(reactions[2]-application["total_applied_downward_N"])
+        if error>max(.05,application["total_applied_downward_N"]*3e-5):
+            raise RuntimeError("Applied gravity vs reaction not balanced: "+str(error))
     end={}
     for key,tag in r["frametags"].items():
         vals=ops.eleResponse(tag,"localForce")
@@ -299,12 +366,15 @@ def solve(role="ULS",case="Dead",resolution=2):
       "connected_rigid_diaphragm_constraints":r["diaphragms"],
       "source_selfweight_section_proxy_only":case=="Dead",
       "source_transferred_LOAD_LINE_point_weights_proxy":case=="WALL LOAD",
-      "applied_gravity":application,
+      "applied_gravity":application if not case.startswith("EQ") else None,
+      "applied_conditional_lateral":application if case.startswith("EQ") else None,
       "sum_native_fixed_base_reactions_N":reactions,
-      "vertical_equilibrium_residual_N":error,
+      "vertical_equilibrium_residual_N":error if not case.startswith("EQ") else None,
+      "horizontal_equilibrium_residual_N":error if case.startswith("EQ") else None,
       "signed_member_end_actions_bounded":end,
       "full_building_analysis":False,
       "design_load_combination":False,
+      "full_source_auto_seismic_case_reproduced":False,
       "professional_engineer_approved":False,
       "F3_one_way_shear_unsafe":True}
     ops.wipe()
