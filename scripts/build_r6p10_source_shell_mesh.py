@@ -14,7 +14,9 @@ import json
 import math
 from collections import defaultdict, Counter
 from pathlib import Path
-
+import sys
+ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT))
 from scripts.run_r6p9_source_frame_gravity import controls as governing_controls
 from scripts.build_r6p8_native_source_catalogue import build as source_catalogue
 
