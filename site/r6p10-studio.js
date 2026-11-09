@@ -1,0 +1,217 @@
+/* R6.10 authenticated source-input shell/diaphragm workbench.
+ * This visualization cannot assert solved ETABS21 modal/design results.
+ */
+(()=>{"use strict";
+const by=id=>document.getElementById(id);
+const svgNS="http://www.w3.org/2000/svg";
+const fmt=(x,n=3)=>Number.isFinite(Number(x))?Number(x).toLocaleString("en-US",{minimumFractionDigits:n,maximumFractionDigits:n}):"—";
+const elt=(tag,attrs={},body)=>{const n=document.createElementNS(svgNS,tag);
+  for(const [k,v] of Object.entries(attrs))n.setAttribute(k,String(v));
+  if(body!==undefined)n.textContent=String(body);return n;};
+const div=(klass)=>{const x=document.createElement("div");if(klass)x.className=klass;return x;};
+function insertLine(parent,tag,text){const el=document.createElement(tag);el.textContent=String(text);parent.append(el);return el;}
+let d=null,floor="GF",filter="ALL",selected="GF:F4",yaw=-.78,role="ULS",lineKey="",comboKey="";
+const p2=xyz=>[34+xyz[0]/21000*615,400-xyz[1]/12550*355];
+const p3=xyz=>{const x=(xyz[0]-10500)/1000,y=(xyz[1]-6275)/1000,z=xyz[2]/1000;
+return [346+(x*Math.cos(yaw)-y*Math.sin(yaw))*16,292+(x*Math.sin(yaw)+y*Math.cos(yaw))*7.5-z*19];};
+function lerp(vertices,u,v){const w=[(1-u)*(1-v),u*(1-v),u*v,(1-u)*v];
+return [0,1,2].map(j=>w.reduce((a,x,i)=>a+x*vertices[i][j],0));}
+function visible(x){return (floor==="ALL"||x.story===floor)&&
+(filter==="ALL"||filter==="SUPPORTED"&&x.source_supported_by_frame_shell_topology||
+ filter==="FLOATING"&&!x.source_supported_by_frame_shell_topology||
+ filter==="PANEL"&&x.kind==="PANEL");}
+function sourceCells(){return d?.all_shell_parameters?.filter(visible)??[];}
+function choose(key){selected=key;const panel=d.all_shell_parameters.find(x=>x.key===key);
+ if(!panel)return;floor=panel.story;by("r610-floor").value=floor;
+ by("r610-filter").value="ALL";filter="ALL";buildSelect();by("r610-shell").value=key;redraw();}
+function clickSource(el,key){el.dataset.shell=key;el.setAttribute("tabindex","0");el.setAttribute("role","button");
+el.setAttribute("aria-label","Inspect original ETABS21 shell "+key);
+el.addEventListener("click",()=>choose(key));el.addEventListener("keydown",ev=>{
+ if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();choose(key);}});}
+function sourceLayer(svg,projection){
+ svg.replaceChildren(elt("rect",{x:1,y:1,width:678,height:428,rx:10,fill:"#f9fcfd"}));
+ const objects=sourceCells();
+ objects.sort((a,b)=>(a.key===selected?1:-1)-(b.key===selected?1:-1));
+ for(const a of objects){
+  const polygon=a.corners_xyz_mm.map(p=>projection(p).join(",")).join(" ");
+  const focus=a.key===selected,good=a.source_supported_by_frame_shell_topology;
+  const shape=elt("polygon",{points:polygon,stroke:focus?"#193f6f":good?"#53a29b":"#dd785c",
+   "stroke-width":focus?3:1,"stroke-opacity":focus?1:.7,
+   fill:focus?"#d4bc70":good?"#80c7be":"#ee9276",
+   "fill-opacity":focus?.87:good?.35:.60});
+  clickSource(shape,a.key);svg.append(shape);
+ }
+ const active=d.all_shell_parameters.find(a=>a.key===selected);
+ if(active&&objects.some(x=>x.key===selected)){
+  // Native E2K 8x8 mesh is a source REQUEST, not a verified native mesh.
+  // This visualizes requested bilinear divisions only on the selected quad.
+  const n1=Math.min(8,active.n1),n2=Math.min(8,active.n2);
+  for(let i=1;i<n1;i++){
+    const t=i/n1,a=projection(lerp(active.corners_xyz_mm,t,0)),
+      b=projection(lerp(active.corners_xyz_mm,t,1));
+    svg.append(elt("line",{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:"#154f65","stroke-width":1,opacity:.75}));
+  }
+  for(let i=1;i<n2;i++){
+    const t=i/n2,a=projection(lerp(active.corners_xyz_mm,0,t)),
+      b=projection(lerp(active.corners_xyz_mm,1,t));
+    svg.append(elt("line",{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:"#154f65","stroke-width":1,opacity:.75}));
+  }
+  const c=projection(lerp(active.corners_xyz_mm,.5,.5));
+  svg.append(elt("circle",{cx:c[0],cy:c[1],r:3.8,fill:"#193f6f",stroke:"#fff","stroke-width":1.1}));
+ }
+ svg.append(elt("text",{x:13,y:21,"font-size":12,fill:"#54717f"},
+   "ETABS21 original shell surfaces · "+objects.length+" visible · 8×8 lines are mesh previews"));
+}
+function redraw(){
+ sourceLayer(by("r610-plan"),p2);
+ sourceLayer(by("r610-3d"),p3);
+ detail();
+}
+function buildSelect(){
+ const items=sourceCells().sort((a,b)=>a.key.localeCompare(b.key,undefined,{numeric:true}));
+ const sel=by("r610-shell");sel.replaceChildren();
+ for(const a of items){const opt=document.createElement("option");opt.value=a.key;
+  opt.textContent=a.key+(a.source_supported_by_frame_shell_topology?"":" · unsupported");
+  sel.append(opt);}
+ if(!items.some(a=>a.key===selected))selected=items[0]?.key||"";
+ sel.value=selected;
+}
+function detail(){
+ const m=d.all_shell_parameters.find(x=>x.key===selected);
+ const parent=by("r610-shell-detail");parent.replaceChildren();
+ if(!m){insertLine(parent,"p","No shell matches the current filter.");return;}
+ insertLine(parent,"h3",m.key+" · "+m.kind+" · "+m.source_section_canonical);
+ insertLine(parent,"p","Source request: "+m.source_mesh_mode+" · "+m.n1+" × "+m.n2+" divisions ("+
+  m.requested_or_proxy_element_count+" requested/proxy quads). "+m.mesh_rule+".");
+ insertLine(parent,"p","Native vertices (mm): "+m.corners_xyz_mm.map(p=>"("+p.map(x=>fmt(x,1)).join(", ")+")").join("  ·  "));
+ insertLine(parent,"p","Projected plan area "+fmt(m.projected_area_m2,4)+" m²; actual triangle surface area "+
+  fmt(m.true_triangular_surface_area_m2,4)+" m²; original thickness "+fmt(m.source_thickness_mm,1)+" mm.");
+ insertLine(parent,"code","Source dead selfweight ≈ true surface area × thickness × original material unit weight = "+
+   fmt(m.true_area_concrete_selfweight_kN,4)+" kN (gross geometric proxy).");
+ insertLine(parent,"p",m.source_supported_by_frame_shell_topology?
+   "Source connectivity: traceable through original frame/shell object vertices to at least one fixed foundation node. Actual auto-mesh coupling remains to be validated.":
+   "ENGINEERING HOLD: this shell has no source-traced vertical support path through the original frames/shell corner graph. It remains in the original input set, not silently deleted.");
+ if(m.source_applied_loads.length){
+  insertLine(parent,"p","Direct original surface loads: "+m.source_applied_loads.map(x=>
+    x.pattern+" = "+fmt(x.raw_integrated_kN,4)+" kN").join(" + "));
+ }else insertLine(parent,"p","No directly assigned floor finish/live pressure to this source object.");
+}
+function metric(title,value,note){const el=div("r610-fact");insertLine(el,"small",title);
+ insertLine(el,"strong",value);insertLine(el,"p",note);return el;}
+function facts(){
+ const root=by("r610-facts");root.replaceChildren(
+  metric("Original shell objects",d.source_shell_count,"106 explicit 8×8 mesh instructions"),
+  metric("Shells with source support",d.shells_connected_through_source_to_fixed_base,"Frame + shell corner graph"),
+  metric("Unsupported shell objects",d.shells_without_verified_vertical_support_path,"Three unanchored original groups"),
+  metric("Rigid diaphragm points",d.source_diaphragm_points_total,"D1 · D2 · D3, horizontal movement"),
+  metric("LINE wall loads located",d.mapped_source_line_wall_load_count,"Original unsectioned source geometry"),
+  metric("Source design combinations","11 + 11","Exact ULS and SLS combo records")
+ );
+}
+function lines(){
+ const root=by("r610-line"),list=d.source_line_wall_load_to_shell_transfer_proxy;
+ root.replaceChildren();
+ for(const x of list){const el=document.createElement("option");el.value=x.source_line;el.textContent=x.source_line;root.append(el);}
+ if(!list.some(x=>x.source_line===lineKey))lineKey=list[0]?.source_line||"";
+ root.value=lineKey;lineDetail();
+}
+function lineDetail(){
+ const data=d.source_line_wall_load_to_shell_transfer_proxy.find(x=>x.source_line===lineKey);
+ const el=by("r610-line-detail");el.replaceChildren();
+ if(!data){insertLine(el,"p","Select original wall line.");return;}
+ insertLine(el,"h3",data.source_line+" · "+fmt(data.source_wall_kN,5)+" kN");
+ insertLine(el,"p","Original WALL LOAD intensity integrated over native line geometry; "+
+ data.quadrature_intervals+" source geometric samples, "+data.unique_matching_shells+
+ " adjacent original shell targets, zero unmatched samples.");
+ for(const [k,v] of Object.entries(data.candidate_shell_force_share_kN)){
+   insertLine(el,"p",k+" → "+fmt(v,5)+" kN source-conserving proxy share");
+ }
+ insertLine(el,"p","Sum of target shares equals source wall resultant. This partitions geometric input, not ETABS' verified shell/beam mesh end-force transfer.");
+}
+function pattern(){
+ const out=by("r610-gravity");out.replaceChildren();
+ const mass=d.all_source_gravity_loading;
+ for(const [name,value] of Object.entries(mass.pattern_source_integrated_kN)){
+  const p=div("r610-pattern");insertLine(p,"small",name);
+  insertLine(p,"b",fmt(value,3)+" kN");
+  insertLine(p,"p",name==="Dead"?
+    "Gross original frame and 3D shell geometric selfweight proxy.":
+    name==="Live"?"Original full live surface load, not the 30% mass participation value.":
+    "Original E2K object-load integration; all 115 shells retained in source totals.");
+  out.append(p);
+ }
+ out.append(metric("Conditional mass-source weight",
+  fmt(mass.conditional_msSrc1_gravity_weight_kN,3)+" kN",
+  "NOT independently verified ETABS21 mass; 12 unsupported source shells remain."));
+}
+function combos(){
+ const source=d.original_loadcase_and_combination_register[role];
+ const all=source.source_11_load_combinations;
+ const select=by("r610-combo");select.replaceChildren();
+ for(const v of all){const opt=document.createElement("option");opt.value=v.name;opt.textContent=v.name;select.append(opt);}
+ if(!all.some(x=>x.name===comboKey))comboKey=all[0].name;
+ select.value=comboKey;combo();
+}
+function combo(){
+ const a=d.original_loadcase_and_combination_register[role].source_11_load_combinations.find(x=>x.name===comboKey);
+ const parent=by("r610-combo-detail");parent.replaceChildren();if(!a)return;
+ insertLine(parent,"h3",role+" · "+a.name);
+ const t=document.createElement("table"),head=document.createElement("thead"),row=document.createElement("tr");
+ for(const title of ["Source case","Source factor","Numerical standing"]){const th=document.createElement("th");th.textContent=title;row.append(th);}
+ head.append(row);t.append(head);
+ const body=document.createElement("tbody");
+ for(const x of a.terms){const tr=document.createElement("tr");
+  for(const s of [x.case,fmt(x.scale,2),x.case.startsWith("EQ")?"Lateral source mass/response NOT VERIFIED": "Original gravity case inputs, not a complete frame solution"]){
+    const td=document.createElement("td");td.textContent=s;tr.append(td);}
+  body.append(tr);
+ }
+ t.append(body);parent.append(t);
+ insertLine(parent,"p","Known gravity load-input arithmetic: "+fmt(a.gravity_known_exact_source_total_kN,4)+" kN. "+
+ (a.contains_lateral_seismic?
+ "This combination includes an original seismic case whose authentic modal/mass and diaphragm response is not yet reproduced.":
+ "This is not a source-supported force/moment envelope until a connected numerical model executes every participating load pattern."));
+}
+function viewSolver(d,s){
+ const el=by("r610-solver-status");el.replaceChildren();
+ if(!d || d.status!=="INDEPENDENT_RESEARCH_CONNECTED_SHELL_FRAME_GRAVITY_NOT_FULL_SOURCE"||
+   d.original_unsupported_shells_numerically_excluded!==12||
+   d.original_frame_elements_included!==165||d.F3_one_way_shear_unsafe!==true||
+   d.professional_engineer_approved!==false){
+  insertLine(el,"strong","Not a verified complete building solution");
+  insertLine(el,"p","Full source ETABS21 analysis remains blocked by unresolved shell support/connectivity, exact mesh compatibility and unapproved source mass. The original shell and gravity records above remain available for QA.");
+  return;
+ }
+ insertLine(el,"h3","Independent connected-shell research trial · "+d.role+" "+d.source_case);
+ insertLine(el,"p","OpenSees solved "+d.original_frame_elements_included+" original structural frame segments, "+
+ d.vertically_supported_shells_numerically_included+" source-connected shell objects represented by "+
+ d.coarse_numerical_shell_elements+" coarse trial quadrilaterals, and 3 source diaphragm groups.");
+ insertLine(el,"p","Input source gravity = "+fmt(d.applied_gravity.total_applied_downward_N/1000,4)+
+ " kN; summed vertical base reaction = "+fmt(d.sum_native_fixed_base_reactions_N[2]/1000,4)+
+ " kN; residual = "+fmt(d.vertical_equilibrium_residual_N,5)+" N.");
+ insertLine(el,"p","Research-only, nonconforming reduced mesh; source 8×8 meshing, all 115 shell objects and complete seismic/member design cases are not reproduced. F3 unsafe.");
+}
+function init(data){
+ if(data.schema!=="jp.structural.r6p10.original_e2k_source_shell_mesh_and_loadcase_audit.v0.1" ||
+ data.source_shell_count!==115||data.source_diaphragm_points_total!==201||
+ data.shells_without_verified_vertical_support_path!==12||data.engineering_approval!==false||
+ data.source_F3_one_way_shear_unsafe!==true)throw Error("Source scope or engineering acceptance incorrectly changed");
+ d=data;facts();buildSelect();redraw();lines();pattern();combos();
+ by("r610-floor").addEventListener("change",()=>{floor=by("r610-floor").value;buildSelect();redraw();});
+ by("r610-filter").addEventListener("change",()=>{filter=by("r610-filter").value;buildSelect();redraw();});
+ by("r610-shell").addEventListener("change",()=>{selected=by("r610-shell").value;redraw();});
+ by("r610-rot-left").addEventListener("click",()=>{yaw-=Math.PI/12;redraw();});
+ by("r610-rot-right").addEventListener("click",()=>{yaw+=Math.PI/12;redraw();});
+ by("r610-line").addEventListener("change",()=>{lineKey=by("r610-line").value;lineDetail();});
+ by("r610-role").addEventListener("change",()=>{role=by("r610-role").value;combos();});
+ by("r610-combo").addEventListener("change",()=>{comboKey=by("r610-combo").value;combo();});
+ fetch("data/r6p10-source-connected-shell-trial.json",{cache:"no-store"}).then(r=>r.ok?r.json():null)
+  .then(x=>viewSolver(x)).catch(()=>viewSolver(null));
+}
+fetch("data/r6p10-source-shell-diaphragm-loads.json",{cache:"no-store"}).then(r=>{
+ if(!r.ok)throw Error("Governed shell source audit not yet deployed");
+ return r.json();
+}).then(init).catch(e=>{
+ by("r610-facts").textContent="Source-connected shell QA unavailable: "+e.message;
+ by("r610-shell-detail").textContent="No numerical or engineering results will be fabricated while input checks fail.";
+});
+})();
