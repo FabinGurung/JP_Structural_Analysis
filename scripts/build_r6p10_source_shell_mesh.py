@@ -162,7 +162,7 @@ def build():
         gamma=model["materials"][shell["material"]]["unit_weight_N_mm3"] # N/mm3
         deadN=truearea*shell["thickness_mm"]*gamma
         mass_gravity[shell["storey"]]+=deadN/1000
-        section_token=shell["section"].strip(\x27"\x27)
+        section_token=shell["section"].strip(chr(34))
         shell_types=src["roles"]["ULS"]["shell_model_type"]
         if section_token not in shell_types:
             raise MeshQAError("Original E2K shell property name cannot be mapped: "+key)
