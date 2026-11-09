@@ -920,6 +920,45 @@ jobs:
           path: |
             site/data/r6p8-etabs21-source-member-catalogue.json
             site/reports/r6p8-etabs21-member-catalogue-summary.json
+      - name: R6.9 source-native OpenSees 3D bounded ULS/SLS gravity solution and equilibrium QA
+        run: |
+          python -m pytest -q tests/test_r6p9_source_frame_gravity.py
+          python scripts/run_r6p9_source_frame_gravity.py
+          node --check site/r6p9-solver-bridge.js
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          p=Path("site/data/r6p9-etabs21-bounded-frame-solver.json")
+          m=Path("site/reports/r6p9-etabs21-bounded-frame-manifest.json")
+          x=json.loads(p.read_text())
+          y=json.loads(m.read_text())
+          assert y["result_sha256"]==hashlib.sha256(p.read_bytes()).hexdigest()
+          assert y["solved_cases"]==["ULS","SLS"]
+          assert y["F3_one_way_shear_unsafe"] and not y["engineering_approval"]
+          assert not y["full_ETABS21_solver_replication"]
+          assert not x["professional_engineering_approval"]
+          assert x["coverage"]["original_rigid_diaphragm_point_assignments"]==201
+          assert x["coverage"]["original_shell_assignments"]==115
+          assert x["coverage"]["source_frame_elements_retained"]==161
+          assert x["coverage"]["direct_uniform_wall_beam_loads_included"]==70
+          for key in ("ULS","SLS"):
+              r=x["roles"][key]
+              assert r["status"]=="SOURCE_NATIVE_BOUNDED_GRAVITY_FRAME_NUMERICALLY_SOLVED"
+              assert r["reaction_vertical_residual_N"] < .05
+              assert len(r["actual_source_member_end_actions_bounded_only"])==161
+              assert not r["full_member_design_envelope"] and not r["original_ETABS21_result"]
+          for page in ("site/index.html","site/report.html","site/etabs21-member-book.html","site/project-lab.html"):
+              assert "r6p9-solver-bridge.html" in Path(page).read_text()
+          assert 'id="annex-r6p9-source-solver"' in Path("site/report.html").read_text()
+          print("R6P9_2_STIFFNESS_VARIANTS_161_MEMBERS_70_UNIFORM_LOADS_EQUILIBRIUM_PASS_NOT_FULL_ETABS")
+          PY
+      - name: Archive R6.9 source-fingerprinted bounded OpenSees 12-component member forces
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: r6p9-governing-etabs21-frame-only-signed-actions-not-full-building
+          path: |
+            site/data/r6p9-etabs21-bounded-frame-solver.json
+            site/reports/r6p9-etabs21-bounded-frame-manifest.json
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
