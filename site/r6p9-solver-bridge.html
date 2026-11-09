@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>R6.9 · Governing ETABS21 OpenSees solver bridge | JP Structural Analysis</title>
+<meta name="description" content="Verified ETABS21-to-OpenSees source-fed 3D frame-only gravity baseline, source stiffness variants, signed member end-force pairs and reaction-equilibrium working.">
+<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="r6p9-solver-bridge.css"></head>
+<body><header class="site-header"><div class="wrap nav-row">
+<a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">JP</span><span><strong>Structural Analysis</strong><small>R6.9 · SOURCE-FED NUMERICAL SOLVER</small></span></a>
+<nav class="navigation" aria-label="Primary"><a href="index.html">Home</a><a href="report.html#annex-r6p9-source-solver">Report</a><a href="etabs21-member-book.html">Actual model</a><a href="worked-calculations.html">Hand calculations</a></nav>
+</div></header>
+<main class="wrap r69-main">
+<section class="r69-hero"><small>R6.9 · OPEN 3D LINEAR FRAME · AUDITED GRAVITY SUBSET</small>
+<h1>From real model geometry to independently solved member end forces.</h1>
+<p>The adopted ETABS 21 ULS/SLS models supply member coordinates, source material stiffness, section properties and restrained base locations. This first OpenSeesPy computation solves their connected 3D concrete FRAME subset under the original uniformly assigned wall loads and checks reaction equilibrium.</p>
+<div class="r69-links"><a href="etabs21-member-book.html">Original source 2D/3D catalogue</a><a href="worked-calculations.html">Earlier human-hand calculations</a><a href="report.html#annex-r6p9-source-solver">Governed report annex</a></div>
+</section>
+<section class="r69-hold" role="note"><strong>Engineering boundary:</strong> these are independently computed <em>frame-only gravity benchmark</em> forces, NOT ETABS 21 reproduced design outputs, seismic load combinations or a completed building solution. Missing: 115 original area shells, 201 diaphragm point assignments, 30 unsectioned loaded lines, four partial-span beam loads, three unsupported loaded beams, selfweight, slab live/finish loads and all professional checks. <strong>F3 remains NOT SAFE IN ONE WAY SHEAR.</strong></section>
+<section class="r69-metrics" id="r69-metrics" aria-live="polite">Reading verified numerical source…</section>
+<section class="r69-calculation">
+<h2>Procedure — how every solver result was obtained</h2>
+<ol class="r69-procedure">
+<li><strong>Prove source identity.</strong> Verify both original ETABS21 file SHA256s and compare native ULS/SLS supports, diaphragm assignment records, load cases, elastic properties and section modifiers.</li>
+<li><strong>Build the graph.</strong> Connect beam/column ends at the original point+storey identities. Check each frame-only component has a path to an actually restrained base node; exclude the four unsupported islands, not cover them with invented fixities.</li>
+<li><strong>Form member stiffness.</strong> Read section A, E, ν and shape. Compute G=E/[2(1+ν)], I22 and I33 for source shapes, apply the actual ULS or SLS I2/I3 factors and source J factor, noting rectangular torsion is a declared Saint-Venant approximation.</li>
+<li><strong>Apply actual source loads.</strong> Only the 70 original uniform WALL LOAD assignments on supported concrete BEAM objects enter the bounded run. For each, integrate w×L, project gravity to local beam axes and apply a three-dimensional beamUniform load.</li>
+<li><strong>Solve and validate.</strong> Assemble 3D elasticBeamColumn frame stiffness, apply original source base restraints, solve Kff·uf=Ff in OpenSeesPy and recover 12 signed member end actions. Check the sum of all base reactions against the applied load before publishing.</li>
+<li><strong>Hold unmodeled physics visibly.</strong> Diaphragm/shell load transfer, original meshing, selfweight, partial-span line loading, modal eigenvectors and design combinations remain outside this deliberately bounded case.</li>
+</ol></section>
+<section class="r69-controls"><label>Source stiffness variant
+<select id="r69-role"><option value="ULS">ULS input stiffness</option><option value="SLS">SLS input stiffness</option></select></label>
+<label>Actual source member <select id="r69-member"></select></label>
+<button type="button" id="r69-prev">Previous member</button>
+<button type="button" id="r69-next">Next member</button></section>
+<section class="r69-result">
+<div class="r69-result-header"><h2 id="r69-label">Choose a member</h2><span id="r69-state">SOURCE BASELINE ONLY</span></div>
+<p id="r69-method">The source load and section will appear here.</p>
+<div class="r69-actions">
+<div><h3>End I — signed local actions</h3><div id="r69-end-i"></div></div>
+<div><h3>End J — signed local actions</h3><div id="r69-end-j"></div></div></div>
+<h3>Signed end-action comparison</h3>
+<p class="r69-subtle">Bars show signed solver local end actions. Positive and negative directions are meaningful in the member's OpenSees local coordinate system. Force and moment panels use separate units; the bars do not constitute a complete V(x)/M(x) envelope.</p>
+<div class="r69-chart"><svg id="r69-forces" viewBox="0 0 760 440" role="img" aria-label="Signed local member end-force bars"></svg></div>
+<p id="r69-source-link" class="r69-source-link"></p>
+</section>
+<section class="r69-qa"><h2>Base reaction and applied-load equilibrium</h2>
+<div id="r69-reactions"></div>
+<p>All included distributed wall forces are negative global Z. The statics audit requires positive total support Rz equal to the input integrated wall load within a tight numerical tolerance. The omitted original loads are shown separately and must not be used to infer total building gravity or seismic mass.</p>
+</section>
+<section class="r69-qa"><h2>Source coverage and design holds</h2><div id="r69-holds"></div>
+<p><a href="data/r6p9-etabs21-bounded-frame-solver.json">Full source-linked solved member force JSON</a> · <a href="reports/r6p9-etabs21-bounded-frame-manifest.json">Source hashes, checks and publication manifest</a> · <a href="https://github.com/FabinGurung/JP_Structural_Analysis/issues/7">Engineering source and F3 safety holds</a></p></section>
+</main><footer class="site-footer"><div class="wrap footer-inner"><span>R6.9 numerical frame-only baseline — no engineering approval</span><span>Original user-selected E2K files remain in Drive</span></div></footer>
+<script src="r6p9-solver-bridge.js" defer></script></body></html>
