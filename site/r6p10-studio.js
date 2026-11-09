@@ -3,6 +3,7 @@
  */
 (()=>{"use strict";
 const by=id=>document.getElementById(id);
+if(new URLSearchParams(location.search).get("view")==="report") document.body.classList.add("r610-report-view");
 const svgNS="http://www.w3.org/2000/svg";
 const fmt=(x,n=3)=>Number.isFinite(Number(x))?Number(x).toLocaleString("en-US",{minimumFractionDigits:n,maximumFractionDigits:n}):"—";
 const elt=(tag,attrs={},body)=>{const n=document.createElementNS(svgNS,tag);
@@ -81,9 +82,9 @@ function detail(){
  const parent=by("r610-shell-detail");parent.replaceChildren();
  if(!m){insertLine(parent,"p","No shell matches the current filter.");return;}
  insertLine(parent,"h3",m.key+" · "+m.kind+" · "+m.source_section_canonical);
- insertLine(parent,"p","Source request: "+m.source_mesh_mode+" · "+m.n1+" × "+m.n2+" divisions ("+
-  m.requested_or_proxy_element_count+" requested/proxy quads). "+m.mesh_rule+".");
- insertLine(parent,"p","Native vertices (mm): "+m.corners_xyz_mm.map(p=>"("+p.map(x=>fmt(x,1)).join(", ")+")").join("  ·  "));
+ insertLine(parent,"p","Source request: "+m.source_mesh_mode+" · "+m.n1+" × "+m.n2+" divisions. "+
+  (m.source_mesh_mode==="MESHN1XN2"?"The model specifies this division count.":"The displayed divisions approximate the automatic mesh."));
+ insertLine(parent,"p","Panel corner coordinates (mm) · "+m.corners_xyz_mm.map(p=>"("+p.map(x=>fmt(x,1)).join(", ")+")").join("  ·  "));
  insertLine(parent,"p","Projected plan area "+fmt(m.projected_area_m2,4)+" m²; actual triangle surface area "+
   fmt(m.true_triangular_surface_area_m2,4)+" m²; original thickness "+fmt(m.source_thickness_mm,1)+" mm.");
  insertLine(parent,"code","Source dead selfweight ≈ true surface area × thickness × original material unit weight = "+
@@ -243,7 +244,7 @@ function showCasebook(){
        fmt(o.sum_native_fixed_base_reactions_N[2]/1000,4)+" kN; vertical equilibrium residual "+
        fmt(o.vertical_equilibrium_residual_N,5)+" N.");
  }else{
-  insertLine(status,"p",o.status.replaceAll("_"," ")+". Source 11-combination algebra; force-balance residual "+
+  insertLine(status,"p",(o.source_seismic_combination?"Trial combination with centred lateral loading. ":"Trial combination with gravity loading. ")+"Force balance difference "+
       fmt(Math.max(...o.force_residual_N),5)+" N. "+
       (o.source_seismic_combination?"Seismic source requires unresolved mass, mesh and ±5% eccentricity qualification.":
        "Gravity solution is valid only for source-connected 103-shell coarse research structure."));

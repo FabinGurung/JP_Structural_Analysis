@@ -83,3 +83,9 @@
 .r610-action-row strong{font-size:.91rem;color:#1f576f}
 #r610-case-source-link{font-size:.85rem}
 @media(max-width:680px){.r610-actions{grid-template-columns:1fr}.r610-caseview{padding:15px 12px}}
+
+.r610-report-view .r610-wrap { padding: 0; width: 100%; }
+.r610-report-view #r610-mesh { margin: 0; border: 0; padding: .8rem; }
+.r610-report-view .site-header, .r610-report-view .site-footer,
+.r610-report-view .r610-wrap > :not(#r610-mesh),
+.r610-report-view .r610-procedure { display: none; }
