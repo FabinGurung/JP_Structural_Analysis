@@ -47,3 +47,22 @@ def test_native_shell_and_diaph_source_gravity_pattern_solved_with_equilibrium(r
     assert r["vertical_equilibrium_residual_N"]<max(.05,r["applied_gravity"]["total_applied_downward_N"]*3e-5)
     assert len(r["signed_member_end_actions_bounded"])==165
     assert r["F3_one_way_shear_unsafe"] and not r["professional_engineer_approved"]
+
+
+@pytest.mark.parametrize("role,case",[
+    ("ULS","EQX_CONDITIONAL"),("ULS","EQY_CONDITIONAL"),
+    ("SLS","EQX_CONDITIONAL"),("SLS","EQY_CONDITIONAL")
+])
+def test_source_coefficient_only_equivalent_static_diaphragm_3d_lateral_sensitivity(role,case):
+    r=solve(role,case,2)
+    assert r["original_frame_elements_included"]==165
+    assert r["vertically_supported_shells_numerically_included"]==103
+    assert r["source_diaph_points"]==201
+    assert r["applied_conditional_lateral"] is not None
+    assert r["applied_conditional_lateral"]["source_modal_mass_matrix_approved"] is False
+    assert r["applied_conditional_lateral"]["source_E2K_requested_plus_minus_eccentricity_subcases_not_reproduced"]
+    assert r["applied_conditional_lateral"]["eccentricity_applied_to_trial"]==0
+    assert r["horizontal_equilibrium_residual_N"] < max(.1,r["applied_conditional_lateral"]["conditional_base_shear_input_N"]*3e-5)
+    assert len(r["signed_member_end_actions_bounded"])==165
+    assert r["full_source_auto_seismic_case_reproduced"] is False
+    assert r["F3_one_way_shear_unsafe"] and not r["professional_engineer_approved"]
