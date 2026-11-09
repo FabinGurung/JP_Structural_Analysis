@@ -10,7 +10,9 @@ def test_native_2x2_shell_mesh_includes_supported_103_shells_and_real_diaphragms
     assert sum(len(x) for x in model["cells"].values())==412
     assert set(model["masters"])=={"GF","FF","TF"}
     assert sum(d["original_source_point_assignments"] for d in model["diaphragms"])==201
-    assert len(model["supports"])==27
+    assert len(model["supports"])==21
+    assert model["original_declared_supports"]==27
+    assert len(model["unconnected_declared_source_support_ids"])==6
     model["ops"].wipe()
 
 def test_uls_source_connected_shell_frame_dead_load_gravity_case_passes_reaction_equilibrium():
