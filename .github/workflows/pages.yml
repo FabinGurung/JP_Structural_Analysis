@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 29298fe1da90581a883185e22fd952343cf75d9c
+          ref: 38bc1788b6e59e30ae3305ee5c4c6044808091a3
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -735,6 +735,39 @@ jobs:
           assert "etabs21-member-book.html" in Path("site/index.html").read_text()
           assert 'id="annex-r6p8-native-catalogue"' in Path("site/report.html").read_text()
           print("PAGES_R6P8_NATIVE_ETABS21_SOURCE_CALCULATIONS_MEMBER_LINKS_NOT_SOLVED_APPROVAL")
+          PY
+      - name: Publish R6.9 source-bound 3D OpenSees gravity solver with full reaction QA
+        run: |
+          python -m pytest -q tests/test_r6p9_source_frame_gravity.py
+          python scripts/run_r6p9_source_frame_gravity.py
+          node --check site/r6p9-solver-bridge.js
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          p=Path("site/data/r6p9-etabs21-bounded-frame-solver.json")
+          m=Path("site/reports/r6p9-etabs21-bounded-frame-manifest.json")
+          d=json.loads(p.read_text());r=json.loads(m.read_text())
+          assert r["result_sha256"]==hashlib.sha256(p.read_bytes()).hexdigest()
+          assert r["solved_cases"]==["ULS","SLS"]
+          assert not r["full_ETABS21_solver_replication"] and not r["engineering_approval"]
+          assert r["F3_one_way_shear_unsafe"]
+          assert d["coverage"]["original_frame_elements"]==165
+          assert d["coverage"]["source_frame_elements_retained"]==161
+          assert d["coverage"]["direct_uniform_wall_beam_loads_included"]==70
+          assert d["coverage"]["original_shell_assignments"]==115
+          assert d["coverage"]["original_rigid_diaphragm_point_assignments"]==201
+          assert not d["professional_engineering_approval"]
+          for role in ("ULS","SLS"):
+              s=d["roles"][role]
+              assert s["status"]=="SOURCE_NATIVE_BOUNDED_GRAVITY_FRAME_NUMERICALLY_SOLVED"
+              assert s["reaction_vertical_residual_N"] < .05
+              assert len(s["actual_source_member_end_actions_bounded_only"])==161
+              assert not s["rigid_diaphragm_enforced"] and not s["shell_force_transfer_included"]
+              assert not s["original_ETABS21_result"]
+          for file in ("site/index.html","site/project-lab.html","site/report.html","site/etabs21-member-book.html"):
+              assert 'r6p9-solver-bridge.html' in Path(file).read_text()
+          assert 'id="annex-r6p9-source-solver"' in Path("site/report.html").read_text()
+          print("PAGES_R6P9_NATIVE_ETABS21_FRAME_ONLY_161_ELEMENTS_70_LOADS_2_SOLVES_F3_UNSAFE")
           PY
       - name: Validate current report-first coverage and site navigation
         run: |
