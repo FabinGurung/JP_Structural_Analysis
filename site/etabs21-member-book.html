@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>R6.8 | Actual ETABS 21 Source Member Calculation Book | JP Structural Analysis</title>
+<meta name="description" content="Source-linked 2D plan, 3D member inspector, exact geometry, hand-calculated source loads, level comparisons, and model reinforcement input for the original ETABS21 ULS/SLS pair.">
+<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="etabs21-member-book.css"></head>
+<body data-guild-route="g15"><header class="site-header"><div class="wrap nav-row">
+<a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">JP</span><span><strong>Structural Analysis</strong><small>R6.8 · ETABS21 SOURCE CALCULATION BOOK</small></span></a>
+<nav class="navigation" aria-label="Primary navigation"><a href="index.html">Home <small>L0</small></a><a href="report.html">Report <small>L1</small></a><a href="more.html">More <small>L1</small></a></nav>
+</div></header>
+<main class="wrap r68-layout">
+<section class="r68-intro"><span class="eyebrow">R6.8 · ORIGINAL ETABS 21 INPUT · INDEPENDENT ARITHMETIC</span>
+<h1>Every member: where it is, how large it is, and which loads were assigned.</h1>
+<p>Native E2K coordinates, actual member and floor identities, exact assigned wall and floor loading, concrete section geometry, and transparently derived load/volume calculations. Select an element in the linked plan and 3D view to see its input-to-answer working.</p>
+<div class="r68-links"><a href="worked-calculations.html">R6.7 full arithmetic book</a><a href="report.html#annex-r6p8-native-catalogue">Master report annex</a><a href="g15-3d.html#g15-solved">Previous provisional OpenSees solver</a></div>
+</section>
+<div class="r68-boundary"><strong>Read before using:</strong> this page reproduces the user-designated ETABS21 ULS/SLS <em>source inputs</em>, not their solved ETABS reactions or member forces. The historic report's B19/GF result has no same-identified source member here. Model-section reinforcement settings are not a verified bar bending schedule. Gross quantities exclude overlaps, construction allowances and detailing. <strong>F3 remains NOT SAFE IN ONE WAY SHEAR.</strong></div>
+<section class="r68-kpis" id="r68-kpis" aria-label="Source statistics"><p>Loading source-derived catalogue…</p></section>
+<section class="r68-floor" aria-labelledby="r68-floor-heading">
+<h2 id="r68-floor-heading">Floor-by-floor source model comparison</h2>
+<p>Numbers below are derived from native coordinates and applied loads. The load totals include wall line loads, floor finishes and the specified 30% participation of live loads. Source selfweight is shown separately as a dimensional estimate, not a reproduced ETABS story mass.</p>
+<div class="r68-scroll"><table><thead><tr><th>Floor</th><th>Beams</th><th>Columns</th><th>Floor shells</th><th>Floor projected area</th><th>Frame gross concrete</th><th>Participating applied load</th></tr></thead><tbody id="r68-floor-rows"></tbody></table></div>
+</section>
+<section class="r68-controls" aria-label="Member selection">
+<label>Floor <select id="r68-storey"><option value="GF">GF · +3.048 m</option><option value="FF">FF · +6.096 m</option><option value="TF">TF · +9.144 m</option></select></label>
+<label>Elements <select id="r68-category"><option value="BEAM">Beams</option><option value="COLUMN">Columns</option><option value="FLOOR">Slabs / floor panels</option><option value="PANEL">Other source panels</option></select></label>
+<label>Source member <select id="r68-id" aria-label="Select source member"></select></label>
+<button type="button" id="r68-prev">Previous</button><button type="button" id="r68-next">Next</button>
+</section>
+<section class="r68-views" aria-label="Linked 2D/3D source model views">
+<div class="r68-view"><div class="r68-view-title"><h2>2D · Source grid plan</h2><p>A–I / 1–7; original E2K member identities</p></div><svg viewBox="0 0 740 470" id="r68-plan" role="img" aria-label="Interactive ETABS21 source-derived floor plan with selectable members"></svg></div>
+<div class="r68-view"><div class="r68-view-title"><h2>3D · Model member geometry</h2><div class="r68-buttons"><button type="button" id="r68-turn-left">↶</button><button type="button" id="r68-turn-right">↷</button><button type="button" id="r68-fit">Fit</button></div></div><svg viewBox="0 0 740 470" id="r68-scene" role="img" aria-label="Interactive native ETABS21 source member 3D centerlines"></svg></div>
+</section>
+<section class="r68-calc" id="r68-selected" aria-live="polite">
+<div class="r68-calc-header"><div><span class="eyebrow">STEP-BY-STEP SOURCE MEMBER WORKING</span><h2 id="r68-member-name">Choose a member</h2></div><strong id="r68-model-status">ETABS21 INPUT ONLY</strong></div>
+<div id="r68-numeric-input"></div>
+<h3>Hand calculation procedure</h3><div id="r68-steps"></div>
+<h3>Actual source-applied loads</h3><div id="r68-loads"></div>
+<h3>Reinforcement evidence and calculation restrictions</h3><div id="r68-rebar"></div>
+</section>
+<section class="r68-cross"><h2>Report-to-native-source identity crosswalk</h2>
+<p><strong>GF B46</strong> exists in the selected E2K and has the beam section and wall load listed above, but matching a label does not authenticate the old ETABS design-force output. <strong>TF C24</strong> also exists as a column. <strong>GF B19</strong> is absent from the selected model's GF line assignment records; its historic report force cannot be attached to a different beam.</p>
+<p><a href="reports/r6p8-etabs21-member-catalogue-summary.json">Inspect independent floor calculation JSON</a> · <a href="data/r6p8-etabs21-source-member-catalogue.json">Inspect all source-derived members, polygons, quantities and formula inputs (JSON)</a></p>
+</section>
+<section class="r68-cross"><h2>What remains for design-level completion</h2>
+<p>A verified source-model solver run must produce actual nodal displacements, support reactions, modal eigenpairs, diaphragm actions and member end-force envelopes. Separately, approved reinforcement drawings and real footing schedules are necessary for a construction BBS/BOQ. This catalogue is the native geometry and load-intake foundation on which those audited stages can build; it does not substitute simple-support estimates for real multi-storey frame forces.</p>
+</section></main><footer class="site-footer"><div class="wrap footer-inner"><span>ETABS 21 native source inputs · no structural construction approval</span><span>Original Drive files preserved · F3 unsafe</span></div></footer>
+<script src="etabs21-member-book.js" defer></script>
+</body></html>
