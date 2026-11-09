@@ -12,7 +12,7 @@ const tag=(name,attrs={},content)=>{const el=document.createElementNS(ns,name);
 };
 const text=(s,klass)=>{const el=document.createElement("div");if(klass)el.className=klass;el.textContent=s;return el;};
 let model=null,chosen="GF:B46",yaw=-.68,viewLevel="GF",kind="BEAM";
-const structural=m=>m.kind==="BEAM"||m.kind==="COLUMN";
+const structural=m=>m.kind==="BEAM"||m.kind==="COLUMN"||m.kind==="LINE";
 const levels=["GF","FF","TF"];
 const bounds={minX:-1350,maxX:21350,minY:-700,maxY:12550};
 const spanX=bounds.maxX-bounds.minX,spanY=bounds.maxY-bounds.minY;
@@ -41,7 +41,7 @@ function choose(key){
  fillSelect();$("r68-id").value=key;render();
 }
 function fillSelect(){
- const choices=kind==="BEAM"||kind==="COLUMN"?model.members.filter(m=>m.kind===kind&&m.storey===viewLevel):
+ const choices=kind==="BEAM"||kind==="COLUMN"||kind==="LINE"?model.members.filter(m=>m.kind===kind&&m.storey===viewLevel):
  model.shells.filter(m=>m.kind===kind&&m.storey===viewLevel);
  const sel=$("r68-id");sel.replaceChildren();
  for(const m of choices){
@@ -81,7 +81,7 @@ function plan(){
    addChoiceClick(circle,mem.key);svg.append(circle);
   } else {
    const line=tag("line",{x1:p[0],y1:p[1],x2:q[0],y2:q[1],
-     stroke:active?"#db4c40":"#2d7990","stroke-width":active?5:2.0,
+     stroke:active?"#db4c40":mem.kind==="LINE"?"#a58e72":"#2d7990","stroke-width":active?5:mem.kind==="LINE"?1.6:2.0,
      opacity:active?1:.78,"stroke-linecap":"round"});
    addChoiceClick(line,mem.key);svg.append(line);
   }
@@ -103,7 +103,7 @@ function scene(){
   for(const m of model.members.filter(x=>x.storey===lv&&structural(x))){
    const a=xyz(...m.start_xyz_mm),b=xyz(...m.end_xyz_mm),active=chosen===m.key;
    const el=tag("line",{x1:a[0],y1:a[1],x2:b[0],y2:b[1],
-     stroke:active?"#e25748":m.kind==="COLUMN"?"#315879":"#438d8f",
+     stroke:active?"#e25748":m.kind==="COLUMN"?"#315879":m.kind==="LINE"?"#aa9e83":"#438d8f",
      "stroke-width":active?5:1.5,"stroke-linecap":"round",
      opacity:active?1:lv===viewLevel?.85:.28});
    addChoiceClick(el,m.key);svg.append(el);
@@ -143,7 +143,7 @@ function panelDetail(m){
   }
   const caveat=m.kind==="COLUMN"?
    "Column reinforcement pattern/bar areas are ETABS model-section inputs, not independently approved longitudinal rebar counts, lap lengths or tie cutting lengths. Applied axial reaction requires an actual frame solution.":
-   "Beam section cover and zero model design area fields do not establish final tension/compression bars. Shear/moment/reinforcement design requires the actual frame solver and signed combinations.";
+   m.kind==="LINE"?"An unsectioned ETABS LINE is geometric/loaded input, not an authenticated concrete beam. Its wall load can transfer to surrounding shell or frame mesh according to solver connectivity; do not assign beam selfweight, moments or reinforcement to it.":"Beam section cover and zero model design area fields do not establish final tension/compression bars. Shear/moment/reinforcement design requires the actual frame solver and signed combinations.";
   rebar.append(text(caveat,"r68-rebar-note"));
  }else{
   const s=model.shell_sections[m.section],area=m.projected_area_mm2;
