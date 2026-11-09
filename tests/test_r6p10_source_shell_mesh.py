@@ -27,7 +27,7 @@ def test_native_original_shell_mesh_instructions_not_passed_off_as_ETABS_generat
     assert sum(x["requested_or_proxy_element_count"] for x in r["all_shell_parameters"])==r["shell_mesh_requested_or_proxy_total_elements"]
     assert all(x["n1"]>=1 and x["n2"]>=1 for x in r["all_shell_parameters"])
     assert any(x["source_mesh_mode"]=="DEFAULT" and "PROXY" in x["mesh_rule"] for x in r["all_shell_parameters"])
-    assert all(x["source_shell_model_type"]=="ShellThin" for x in r["all_shell_parameters"])
+    assert all(x["source_shell_model_type"]=="ShellThin" for x in r["all_shell_parameters"]), [(x["key"],x["source_section"],x["source_shell_model_type"]) for x in r["all_shell_parameters"] if x["source_shell_model_type"]!="ShellThin"]
 
 def test_full_source_diaphragm_point_assignments_and_vertical_dof_separation():
     r=build()
