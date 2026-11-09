@@ -1,0 +1,90 @@
+name: R6.10 source-software prerelease (engineering HOLD)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/r6p10-software-prerelease.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: r6p10-software-prerelease
+  cancel-in-progress: false
+
+jobs:
+  tag-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout complete history with tags
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Check immutable R6.10 source and existing remote tag
+        env:
+          TARGET_SHA: fc74b1459a9d049d5bc9e90f7287ea8526ca5896
+        run: |
+          set -euo pipefail
+          git cat-file -e "${TARGET_SHA}^{commit}"
+          git fetch --force origin 'refs/tags/*:refs/tags/*'
+          if git show-ref --tags --verify --quiet refs/tags/r6.10; then
+            ACTUAL="$(git rev-list -n1 r6.10)"
+            if [ "$ACTUAL" != "$TARGET_SHA" ]; then
+              echo "::error::Refusing to rewrite existing r6.10 tag. Actual $ACTUAL"
+              exit 1
+            fi
+            echo "Correct remote tag already exists and is preserved."
+          else
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git tag -a r6.10 "$TARGET_SHA" -m 'R6.10 source software milestone; engineering approval held'
+            git push origin refs/tags/r6.10
+          fi
+          test "$(git rev-list -n1 r6.10)" = "$TARGET_SHA"
+      - name: Create or verify R6.10 software prerelease
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: FabinGurung/JP_Structural_Analysis
+        run: |
+          set -euo pipefail
+          if gh release view r6.10 --json isPrerelease --jq '.isPrerelease' >/tmp/ispre 2>/dev/null; then
+            test "$(cat /tmp/ispre)" = true || { echo 'Existing release is not prerelease'; exit 1; }
+            echo "Existing R6.10 prerelease preserved."
+          else
+            cat > /tmp/r610-notes.md <<'EOF'
+          # R6.10 — governed shell/diaphragm source software milestone
+          **Development prerelease. NOT structural engineering, construction or municipal approval.**
+
+          Immutable source commit: `fc74b1459a9d049d5bc9e90f7287ea8526ca5896`
+          - [Merged PR #18](https://github.com/FabinGurung/JP_Structural_Analysis/pull/18)
+          - [R6.10 source CI](https://github.com/FabinGurung/JP_Structural_Analysis/actions/runs/42571050207)
+          - [R6.10 Pages deployment](https://github.com/FabinGurung/JP_Structural_Analysis/actions/runs/42571096096)
+          - [Pokhara G+1.5 project report](https://fabingurung.github.io/JP_Structural_Analysis/projects/pokhara-g15/report.html)
+          - [R6.10 shell/diaphragm studio](https://fabingurung.github.io/JP_Structural_Analysis/r6p10-shell-diaphragm-studio.html)
+          - [Engineering evidence and safety issue #7](https://github.com/FabinGurung/JP_Structural_Analysis/issues/7)
+
+          Included: original shell source-ledger 115 objects, 103 source-connected
+          in bounded research trial, original 165 members, 21 research-connected
+          restraints, original mesh requests and diaphragm records, eight gravity
+          cases, four centred lateral sensitivities, 22 recombined source
+          expressions and preserved report Given / Working / Check layout.
+
+          **Engineering HOLD:** 12 shell objects unanchored; original generated
+          ETABS21 mesh/joints, vertical transfer and full mass unresolved; native
+          accidental eccentricity and full seismic response unverified.
+          F3 is NOT SAFE IN ONE WAY SHEAR. No professional approval.
+          R6.11 candidate-contact audit must be reviewed separately and does
+          not change this frozen source.
+          EOF
+            gh release create r6.10 --verify-tag --prerelease --title 'R6.10 — Shell/Diaphragm Source Software (Engineering HOLD)' --notes-file /tmp/r610-notes.md
+          fi
+      - name: Verify tag and published prerelease
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: FabinGurung/JP_Structural_Analysis
+        run: |
+          set -euo pipefail
+          test "$(git rev-list -n1 r6.10)" = fc74b1459a9d049d5bc9e90f7287ea8526ca5896
+          gh release view r6.10 --json isPrerelease,isDraft --jq '.isPrerelease == true and .isDraft == false' | grep '^true$'
