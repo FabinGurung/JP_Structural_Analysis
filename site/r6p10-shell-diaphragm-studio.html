@@ -22,7 +22,7 @@
 </div>
 <section class="r610-safety" role="note"><strong>Engineering boundary:</strong> Source mesh instructions and diaphragm assignments are real ETABS 21 inputs, not a verified recreation of ETABS’ generated finite-element mesh. Twelve shells lack a proven vertical load path and six original base restraint records do not directly attach to GF columns. Shell-to-frame load sharing and full seismic/mass results remain gated. <strong>F3 remains NOT SAFE IN ONE WAY SHEAR.</strong></section>
 <div class="r610-facts" id="r610-facts" aria-label="Authenticated source counts">Loading original source validation…</div>
-<div class="r610-nav" aria-label="This chapter navigation"><a href="#r610-mesh">01 · Shell mesh</a><a href="#r610-transfer">02 · Wall load paths</a><a href="#r610-mass">03 · Gravity and mass</a><a href="#r610-cases">04 · ULS/SLS cases</a><a href="#r610-solver">05 · Independent solver</a></div>
+<div class="r610-nav" aria-label="This chapter navigation"><a href="#r610-mesh">01 · Shell mesh</a><a href="#r610-transfer">02 · Wall load paths</a><a href="#r610-mass">03 · Gravity and mass</a><a href="#r610-cases">04 · ULS/SLS cases</a><a href="#r611-support">05 · Support contacts</a><a href="#r610-solver">06 · Independent solver</a></div>
 <section class="r610-section" id="r610-mesh"><div class="r610-heading"><span>01 / original geometry</span><h2>All 115 shell objects in two linked views</h2>
 <p>Floor and panel surfaces are the original point-connected E2K polygons. Source 8×8 mesh requests and remaining automatic/default mesh settings are exposed individually. Surfaces in orange do not have a demonstrated connection to restrained vertical support; no phantom elements are added.</p></div>
 <div class="r610-controls"><label>Floor <select id="r610-floor"><option value="GF">GF · +3.048 m</option><option value="FF">FF · +6.096 m</option><option value="TF">TF · +9.144 m</option><option value="ALL">All floors</option></select></label><label>Classification <select id="r610-filter"><option value="ALL">All original surfaces</option><option value="SUPPORTED">Source-connected only</option><option value="FLOATING">Unrestrained shell groups</option><option value="PANEL">Waist slabs and panels</option></select></label>
@@ -32,6 +32,30 @@
 <div class="r610-view"><h3>3D shell geometry</h3><svg id="r610-3d" viewBox="0 0 680 430" role="img" aria-label="Three-dimensional source shell polygons and original storey heights"></svg><p>Includes sloped waist slab geometry, but their physical connections still require verification.</p></div></div>
 <div class="r610-detail" id="r610-shell-detail" aria-live="polite">Select a shell to see native coordinates, section thickness, requested meshing, self-weight and source load formulas.</div>
 <div class="r610-procedure"><div><b>01</b><strong>Geometry</strong><p>Read original four source vertices and storey elevation.</p></div><div><b>02</b><strong>Panel areas</strong><p>Compute projected floor area and actual 3D triangle surface areas separately.</p></div><div><b>03</b><strong>Mesh</strong><p>Check source 8×8 instruction versus any independently reconstructed mesh; never silently equate them.</p></div><div><b>04</b><strong>Vertical support</strong><p>Trace connectivity through shell corners, beams and columns to restrained bases.</p></div></div>
+</section>
+
+<section class="r610-section" id="r611-support">
+<div class="r610-heading"><span>R6.11 / geometric candidates · engineering HOLD</span>
+<h2>Ten source corner contacts, three unanchored groups</h2>
+<p>Yellow dots mark original shell corners and the purple dashed line marks the candidate receiving floor edge or frame axis. These are geometry-only matches, not ETABS21 generated-joint connectivity or verified support reactions.</p></div>
+<div class="r610-controls">
+<label>Original unanchored group <select id="r611-group">
+<option value="GF_F56">GF · group of five · GF:F56</option>
+<option value="FF_F56">FF · group of five · FF:F56</option>
+<option value="FF_B27">FF · group of two · FF:B27</option></select></label>
+<label>Display <select id="r611-view-filter">
+<option value="ALL">All original shells</option>
+<option value="SUPPORTED">Source-connected only; show candidate markers</option>
+</select></label></div>
+<div class="r610-views">
+<div class="r610-view"><h3>2D candidate source geometry</h3>
+<svg id="r611-plan" viewBox="0 0 680 430" role="img" aria-label="2D source shell support contact candidates, not accepted supports"></svg></div>
+<div class="r610-view"><h3>3D candidate source geometry</h3>
+<svg id="r611-3d" viewBox="0 0 680 430" role="img" aria-label="3D source shell support contact candidates, not accepted supports"></svg></div>
+</div><div id="r611-contact-detail" class="r610-detail" aria-live="polite">Loading bounded source contacts…</div>
+<div class="r610-stepnote"><strong>Engineering HOLD — geometry alone does not prove vertical load transfer.</strong>
+<p>Request actual ETABS21 ULS/SLS generated analysis joints, original-to-mesh mapping, shell/frame element connectivity, active edge constraints and balanced signed vertical gravity reactions. All twelve unsupported source shells remain excluded, and F3 is NOT SAFE IN ONE WAY SHEAR.</p>
+<a href="https://github.com/FabinGurung/JP_Structural_Analysis/issues/7">Original engineering evidence issue #7</a></div>
 </section>
 <section class="r610-section" id="r610-transfer"><div class="r610-heading"><span>02 / wall gravity transfer</span><h2>Thirty line loads are no longer invisible</h2><p>Original E2K assigns 30 wall loads to unsectioned geometric LINE objects. The source-backed transfer inspection conserves their resultant and identifies adjacent floor shells. Shared boundaries are split by geometric interpolation, which is a research transfer proxy—not proof of ETABS’ generated shell mesh load path.</p></div>
 <div class="r610-load-widget"><label>Unsectioned source line <select id="r610-line"></select></label><div id="r610-line-detail">Loading source line transfer…</div></div>

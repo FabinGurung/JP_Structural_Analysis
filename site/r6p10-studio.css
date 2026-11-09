@@ -89,3 +89,7 @@
 .r610-report-view .site-header, .r610-report-view .site-footer,
 .r610-report-view .r610-wrap > :not(#r610-mesh),
 .r610-report-view .r610-procedure { display: none; }
+
+#r611-contact-detail strong{display:block;margin-top:15px;color:#955037}
+#r611-contact-detail p{font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+#r611-support .r610-view svg{min-height:185px}

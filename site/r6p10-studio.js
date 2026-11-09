@@ -11,7 +11,7 @@ const elt=(tag,attrs={},body)=>{const n=document.createElementNS(svgNS,tag);
   if(body!==undefined)n.textContent=String(body);return n;};
 const div=(klass)=>{const x=document.createElement("div");if(klass)x.className=klass;return x;};
 function insertLine(parent,tag,text){const el=document.createElement(tag);el.textContent=String(text);parent.append(el);return el;}
-let d=null,floor="GF",filter="ALL",selected="GF:F4",yaw=-.78,role="ULS",lineKey="",comboKey="";
+let d=null,floor="GF",filter="ALL",selected="GF:F4",yaw=-.78,role="ULS",lineKey="",comboKey="",contactGroup="GF_F56";
 const p2=xyz=>[34+xyz[0]/21000*615,400-xyz[1]/12550*355];
 const p3=xyz=>{const x=(xyz[0]-10500)/1000,y=(xyz[1]-6275)/1000,z=xyz[2]/1000;
 return [346+(x*Math.cos(yaw)-y*Math.sin(yaw))*16,292+(x*Math.sin(yaw)+y*Math.cos(yaw))*7.5-z*19];};
@@ -63,10 +63,56 @@ function sourceLayer(svg,projection){
  svg.append(elt("text",{x:13,y:21,"font-size":12,fill:"#54717f"},
    "ETABS21 original shell surfaces · "+objects.length+" visible · 8×8 lines are mesh previews"));
 }
+
+function contactMarkers(svg,project){
+ const audit=d?.r6p11_contact_audit;
+ const group=audit?.groups?.find(g=>g.id===contactGroup);
+ if(!group || (floor!=="ALL" && floor!==group.story)) return;
+ const [start,end]=group.edge_xyz_mm.map(project);
+ const edge=elt("line",{x1:start[0],y1:start[1],x2:end[0],y2:end[1],stroke:"#7841b0","stroke-width":3,"stroke-dasharray":"8 5"});
+ svg.append(edge);
+ for(const c of group.candidates){
+  const p=project(c.xyz_mm);
+  const marker=elt("circle",{cx:p[0],cy:p[1],r:6,fill:"#ffd369",stroke:"#71429a","stroke-width":2});
+  marker.append(elt("title",{},c.source_shell+" corner "+c.corner_source_id+
+   " · geometric candidate only · reaction/constraint NOT verified"));
+  svg.append(marker);
+ }
+}
+function contactDetail(){
+ const host=by("r611-contact-detail");if(!host)return;
+ host.replaceChildren();
+ const audit=d?.r6p11_contact_audit;
+ if(!audit||audit.candidate_source_corners!==10||audit.original_unsupported_shells!==12||
+    audit.support_gate_passed!==false||audit.engineering_approval!==false){
+  insertLine(host,"p","R6.11 input unavailable; no original shell can be admitted.");return;
+ }
+ const group=audit.groups.find(x=>x.id===contactGroup);if(!group)return;
+ insertLine(host,"h3",group.label+" · "+group.target_key);
+ insertLine(host,"p",group.geometric_matches+" of "+group.candidates.length+
+  " source corners coincide with the candidate receiving edge at a tolerance of 0.001 mm.");
+ for(const c of group.candidates){
+  insertLine(host,"p",c.source_shell+" · point "+c.corner_source_id+
+   " · gap "+fmt(c.three_dimensional_gap_mm,6)+" mm · "+fmt(c.edge_fraction_from_first_endpoint*100,2)+
+   "% along edge · native analysis joint, constraint and vertical reaction: NOT VERIFIED");
+ }
+ insertLine(host,"strong","ENGINEERING HOLD — 12 unsupported shells remain excluded. F3 remains unsafe in one-way shear.");
+}
+function drawCandidateViews(){
+ for(const [id,project] of [["r611-plan",p2],["r611-3d",p3]]){
+  const svg=by(id);
+  if(!svg)continue;
+  sourceLayer(svg,project);
+  contactMarkers(svg,project);
+ }
+ contactDetail();
+}
 function redraw(){
  sourceLayer(by("r610-plan"),p2);
  sourceLayer(by("r610-3d"),p3);
- detail();
+ contactMarkers(by("r610-plan"),p2);
+ contactMarkers(by("r610-3d"),p3);
+ detail();drawCandidateViews();
 }
 function buildSelect(){
  const items=sourceCells().sort((a,b)=>a.key.localeCompare(b.key,undefined,{numeric:true}));
@@ -292,8 +338,24 @@ function init(data){
  data.shells_without_verified_vertical_support_path!==12||data.engineering_approval!==false||
  data.source_F3_one_way_shear_unsafe!==true)throw Error("Source scope or engineering acceptance incorrectly changed");
  d=data;facts();buildSelect();redraw();lines();pattern();combos();loadCasebook();
+ if(data.r6p11_contact_audit?.groups?.length===3){
+  by("r611-group").addEventListener("change",()=>{
+   contactGroup=by("r611-group").value;
+   const g=data.r6p11_contact_audit.groups.find(x=>x.id===contactGroup);
+   if(!g)return;
+   floor=g.story;by("r610-floor").value=floor;
+   selected=g.candidates[0].source_shell;
+   filter="ALL";by("r610-filter").value=filter;by("r611-view-filter").value=filter;
+   buildSelect();redraw();
+  });
+  by("r611-view-filter").addEventListener("change",()=>{
+   filter=by("r611-view-filter").value;
+   by("r610-filter").value=filter;buildSelect();redraw();
+  });
+ }
+
  by("r610-floor").addEventListener("change",()=>{floor=by("r610-floor").value;buildSelect();redraw();});
- by("r610-filter").addEventListener("change",()=>{filter=by("r610-filter").value;buildSelect();redraw();});
+ by("r610-filter").addEventListener("change",()=>{filter=by("r610-filter").value;if(by("r611-view-filter")&&["ALL","SUPPORTED"].includes(filter))by("r611-view-filter").value=filter;buildSelect();redraw();});
  by("r610-shell").addEventListener("change",()=>{selected=by("r610-shell").value;redraw();});
  by("r610-rot-left").addEventListener("click",()=>{yaw-=Math.PI/12;redraw();});
  by("r610-rot-right").addEventListener("click",()=>{yaw+=Math.PI/12;redraw();});
