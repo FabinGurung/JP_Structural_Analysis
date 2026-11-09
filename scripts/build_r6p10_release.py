@@ -10,6 +10,7 @@ sys.path.insert(0, str(ROOT))
 from scripts.build_project_reports import PROJECTS, SITE, build as build_projects
 from scripts.build_r6p10_gravity_casebook import OUT as CASEBOOK, export as export_cases
 from scripts.build_r6p10_source_shell_mesh import OUT as SHELLS, export as export_shells
+from scripts.build_r6p12_manual_report_audit import export as export_manual
 
 import json
 
@@ -34,6 +35,9 @@ def main():
             and not cases["all_source_gravity_and_seismic_combination_envelopes_reproduced"]
             and cases["F3_one_way_shear_unsafe"], "Engineering status changed")
     build_projects()
+    manual = export_manual()
+    require(len(manual['checks']) >= 40 and manual['F3_one_way_shear_unsafe']
+            and not manual['engineering_approval'], 'R6.12 manual report evidence failed')
     for project in json.loads(PROJECTS.read_text()):
         route = f"projects/{project['slug']}/report.html"
         report = (SITE / route).read_text()
@@ -41,6 +45,11 @@ def main():
                 '<svg ', '<iframe ', f'href="{route}#project-hand-calculations"')),
                 f"{route} is missing hand calculations, figures, or linked model views")
         require((SITE / project["viewer"]).is_file(), f"Missing model viewer for {route}")
+        if project["slug"] == "pokhara-g15":
+            require('id="project-r6p12-manual"' in report, "R6.12 manual audit link missing")
+            require((SITE/"projects/pokhara-g15/manual-verification.html").is_file(),
+                    "R6.12 manual audit page missing")
+
     print("R6.10 verified: 115 shell records, 8 gravity trials, 4 lateral trials, 22 trial combinations and project report links")
 
 

@@ -982,12 +982,20 @@ jobs:
           SERVER=$!
           trap 'kill $SERVER 2>/dev/null || true' EXIT
           python tests/browser/r6p11_chromium_smoke.py
+          python tests/browser/r6p12_manual_audit_smoke.py
       - name: Archive R6.11 desktop and mobile browser evidence
         if: always()
         uses: actions/upload-artifact@v7.0.1
         with:
           name: r6p11-chromium-desktop-mobile-qa
           path: build/r6p11-browser/*.png
+          if-no-files-found: ignore
+      - name: Archive R6.12 desktop/mobile manual-audit screenshots
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: r6p12-manual-report-desktop-mobile-qa
+          path: build/r6p12-browser/*.png
           if-no-files-found: ignore
       - name: Validate report-first site links and theme
         run: |
