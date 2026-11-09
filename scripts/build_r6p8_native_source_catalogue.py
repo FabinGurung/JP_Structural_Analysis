@@ -148,7 +148,7 @@ def build():
         if target is None or pattern not in PATTERNS:
             raise SourceError("Source-applied load missing target")
         if kind=="F":
-            if target["kind"]!="BEAM":raise SourceError("Frame gravity object load not on beam")
+            if target["kind"] not in ("BEAM","LINE"):raise SourceError("Frame gravity load target must be beam or explicit geometric LINE")
             length_mm=target["length_mm"]
             if method=="U" and len(args)==1:
                 w=strict_number(args[0],id)
