@@ -888,6 +888,38 @@ jobs:
             site/worked-calculations.js
             site/reports/r6p7-worked-calculations.json
             site/reports/r6p7-worked-calculations-manifest.json
+      - name: R6.8 authenticated ETABS21 source-native model and per-member/floor numerical QA
+        run: |
+          python -m pytest -q tests/test_r6p8_native_source_catalogue.py
+          python scripts/build_r6p8_native_source_catalogue.py
+          node --check site/etabs21-member-book.js
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path("site/data/r6p8-etabs21-source-member-catalogue.json")
+          s=Path("site/reports/r6p8-etabs21-member-catalogue-summary.json")
+          d=json.loads(p.read_text());q=json.loads(s.read_text())
+          assert q["catalogue_sha256"] == hashlib.sha256(p.read_bytes()).hexdigest()
+          assert q["record_counts"] == {"points":127,"member_assignments":199,"shell_assignments":115,"assigned_gravity_loads":337}
+          assert abs(q["overall_load_kN"]-3290.2187486)<.02
+          assert not q["is_solver_result"] and not q["engineering_approval"]
+          assert d["result_scope"]["actual_native_member_geometry"]
+          assert not d["result_scope"]["complete_solved_member_end_forces"]
+          assert not d["result_scope"]["approved_rebar_cutting_schedules"]
+          assert d["result_scope"]["F3_one_way_shear_unsafe"]
+          assert d["historical_report_crosswalk"]["source_B19_GF"]["present"] is False
+          for file in ["site/index.html","site/project-lab.html","site/g15-3d.html","site/report.html"]:
+              assert "etabs21-member-book.html" in Path(file).read_text()
+          assert "etabs21-member-book.html" in Path("scripts/build_r6p7_worked_calculations.py").read_text()
+          print("R6P8_NATIVE_ETABS21_GEOMETRY_337_SOURCE_LOADS_199_MEMBERS_F3_HOLD_PASS")
+          PY
+      - name: Archive R6.8 source-safe native ETABS21 member and floor take-off
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: r6p8-actual-e2k21-derived-member-catalogue-not-solved-design
+          path: |
+            site/data/r6p8-etabs21-source-member-catalogue.json
+            site/reports/r6p8-etabs21-member-catalogue-summary.json
       - name: Validate report-first site links and theme
         run: |
           python scripts/build_calculation_coverage.py --check
