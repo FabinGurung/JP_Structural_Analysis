@@ -39,7 +39,7 @@ def strict_number(v, msg):
     return float(v)
 
 def source():
-    source_file = base64.b64decode(SEED.read_text(encoding="ascii").strip(), validate=True)
+    source_file = base64.b64decode("".join(SEED.read_text(encoding="ascii").split()), validate=True)
     if len(source_file)>15000:
         raise SourceError("Compressed source size cap exceeded")
     raw=lzma.decompress(source_file, format=lzma.FORMAT_XZ, memlimit=32*1024*1024)
