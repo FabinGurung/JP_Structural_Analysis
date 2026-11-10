@@ -59,7 +59,7 @@ def main():
         'gravity-pattern end actions and explicitly unverified strength checks for '
         '165 structural members and 115 shells. No ETABS21 design approval.</p>'
         '<p><a href="projects/pokhara-g15/member-gravity.html">'
-        'Open source member gravity and research ledger</a></p></section>\\n')
+        'Open source member gravity and research ledger</a></p></section>\n')
     if target not in original:
         raise ValueError("Original project hand-calculation section disappeared")
     if 'id="project-r6p13-members"' not in original:
