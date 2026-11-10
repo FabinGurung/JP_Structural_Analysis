@@ -30,7 +30,7 @@ with sync_playwright() as p:
         # Verify group filter matches the actual generated source classification.
         group,count=next(iter(data["coverage"]["review_group_counts"].items()))
         page.locator("#r615-group").select_option(group)
-        page.wait_for_function("""count => Number(document.querySelector('#r615-count').innerText.split(' ')[0])===count""",count)
+        page.wait_for_function("""count => Number(document.querySelector('#r615-count').innerText.split(' ')[0])===count""",arg=count)
         assert page.locator("#r615-rows tr").count()==count
         page.locator("#r615-group").select_option("ALL")
         # A full source ID must return one row, not prefix matches.
@@ -50,7 +50,7 @@ with sync_playwright() as p:
             page.locator("#r615-scenario").select_option(scenario)
             actual=sum(any(match in s["scenario"] for s in row["provisional_scenarios"]) for row in data["cases"])
             if actual:
-                page.wait_for_function("""count => Number(document.querySelector('#r615-count').innerText.split(' ')[0])===count""",actual)
+                page.wait_for_function("""count => Number(document.querySelector('#r615-count').innerText.split(' ')[0])===count""",arg=actual)
                 assert page.locator("#r615-rows tr").count()==actual
         page.locator("#r615-scenario").select_option("ALL")
         assert page.locator("#r615-rows tr").count()==77
