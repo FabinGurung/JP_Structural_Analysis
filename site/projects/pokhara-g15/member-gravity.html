@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Reproducible source member-by-member gravity loading and independently bounded OpenSees member action research, with explicit engineering holds.">
+<title>R6.13 | Member gravity and research actions | Pokhara G+1.5</title>
+<link rel="stylesheet" href="../../styles.css"><link rel="stylesheet" href="../../r6p13-member-gravity.css"></head>
+<body data-guild-route="g15">
+<header class="site-header"><div class="wrap nav-row"><a class="brand" href="../../index.html"><span class="brand-mark">JP</span><strong>Structural Analysis</strong></a>
+<nav class="navigation" aria-label="Primary navigation"><a href="report.html">Project report</a><a href="../../etabs21-member-book.html">2D/3D member views</a><a href="../../r6p10-shell-diaphragm-studio.html#r611-support">Shell audit</a></nav></div></header>
+<main class="wrap r613-layout">
+<section class="r613-intro"><p class="eyebrow">R6.13 · SOURCE-BASED ARITHMETIC + BOUNDED NUMERICAL STUDY</p>
+<h1>Member gravity loading and research end forces</h1>
+<p>Compare the governing ETABS21 beam and column inputs against calculated gross quantities, original assigned wall-load resultants and the independent four-pattern gravity trial. Filter by level and inspect the signed end actions for each original member. <strong>These are not ETABS21 design forces.</strong></p>
+<div class="r613-links"><a href="report.html">Return to the original report</a><a href="manual-verification.html">R6.12 historical PDF checks</a><a href="../../etabs21-member-book.html?member=GF%3AB46">Original geometry in linked 2D/3D</a><a href="../../data/r6p13-member-gravity-research.json">Inspect source calculation JSON</a></div></section>
+<div class="r613-hold" role="note"><strong>Engineering HOLD.</strong> Only 103 of 115 original shell objects were admitted in the nonconforming 2×2 research mesh. The remaining 12 lack verified vertical support paths. ULS and SLS here name original stiffness variants, <em>not</em> code-compliant load factors. Missing ETABS21 native meshing, signed full reactions, seismic mass, eccentricity, support transfer, shear/bending capacity and foundation evidence remain open. Original F3 is <strong>NOT SAFE IN ONE WAY SHEAR</strong>.</div>
+<section aria-labelledby="r613-summary-title"><h2 id="r613-summary-title">Source coverage</h2><div id="r613-stats" class="r613-stats" aria-live="polite">Reading source-verified member ledger…</div></section>
+<section id="r613-member-section" aria-labelledby="r613-member-heading"><div class="r613-section-title"><h2 id="r613-member-heading">Beams and columns — original identities</h2><p>One result row per concrete frame element, with source assigned wall load and the largest absolute local-end bending component from the selected research pattern. <strong>It is not an allowable capacity or a design envelope.</strong></p></div>
+<div class="r613-controls">
+<label>Storey <select id="r613-storey"><option value="ALL">All</option><option value="GF">Ground floor</option><option value="FF">First floor</option><option value="TF">Top floor</option></select></label>
+<label>Member <select id="r613-type"><option value="ALL">Beams + columns</option><option value="BEAM">Beams</option><option value="COLUMN">Columns</option></select></label>
+<label>Source stiffness <select id="r613-role"><option value="ULS">ULS variant</option><option value="SLS">SLS variant</option></select></label>
+<label>Research gravity case <select id="r613-case"><option value="Dead">Dead + source selfweight proxy</option><option value="WALL LOAD">Wall line loads</option><option value="FLOOR FINISH">Floor finish</option><option value="Live">Live</option></select></label>
+<label>Source ID <input id="r613-search" placeholder="GF:B46, C24…" autocomplete="off"></label></div>
+<div class="r613-tablewrap"><table><thead><tr><th>Source identity</th><th>Section</th><th>Length (m)</th><th>Gross concrete (m³)</th><th>Own-weight proxy (kN)</th><th>Direct wall load (kN)</th><th>Research |Mend| max (kN·m)</th><th>Inspect</th></tr></thead>
+<tbody id="r613-members"><tr><td colspan="8">Loading…</td></tr></tbody></table></div>
+<p id="r613-count" class="r613-caption"></p>
+<article id="r613-detail" class="r613-detail" aria-live="polite"><p>Select a member to inspect its original load assignments and bounded signed forces.</p></article>
+</section>
+<section aria-labelledby="r613-panel-heading" class="r613-section"><h2 id="r613-panel-heading">Source shell load paths — not a second support model</h2>
+<p>All 115 source shell IDs are retained. The 12 original unsupported objects remain excluded from every numerical result above. The table lists applied floor-finish and live-load resultants; it does not distribute those forces into undocumented individual beams.</p>
+<div class="r613-tablewrap"><table><thead><tr><th>Source shell</th><th>Section / kind</th><th>Area (m²)</th><th>Own-weight proxy (kN)</th><th>Floor finish (kN)</th><th>Live (kN)</th><th>Research shell status</th></tr></thead><tbody id="r613-shells"><tr><td colspan="7">Loading…</td></tr></tbody></table></div></section>
+<section class="r613-section" aria-labelledby="r613-foundation-heading"><h2 id="r613-foundation-heading">Foundation and strength verification</h2>
+<p>The existing historical F3 and CF1 worksheets are retained as <em>independent historical report assertions</em>. They have no authenticated one-to-one reaction mapping to the currently selected ETABS21 support IDs. Consequently, no footing has received a new load capacity rating from the frame actions shown above.</p>
+<p><a href="manual-verification.html">Inspect the F3 / CF1 printed-input arithmetic and discrepancies</a>. Independent strength checks need a complete accepted action envelope, actual bar detailing, material specification, member releases, supported shell transfer and soil verification.</p>
+</section>
+</main><script src="../../r6p13-member-gravity.js" defer></script></body></html>

@@ -11,6 +11,7 @@ from scripts.build_project_reports import PROJECTS, SITE, build as build_project
 from scripts.build_r6p10_gravity_casebook import OUT as CASEBOOK, export as export_cases
 from scripts.build_r6p10_source_shell_mesh import OUT as SHELLS, export as export_shells
 from scripts.build_r6p12_manual_report_audit import export as export_manual
+from scripts.build_r6p13_member_gravity_research import export as export_members
 
 import json
 
@@ -21,7 +22,7 @@ def require(condition, message):
 
 
 def main():
-    _, shells = export_shells()
+    source_mesh, shells = export_shells()
     cases, receipt = export_cases()
     require(sha256(SHELLS.read_bytes()).hexdigest() == shells["source_QA_file_sha256"], "Shell audit checksum mismatch")
     require(sha256(CASEBOOK.read_bytes()).hexdigest() == receipt["casebook_SHA256"], "Casebook checksum mismatch")
@@ -38,6 +39,32 @@ def main():
     manual = export_manual()
     require(len(manual['checks']) >= 40 and manual['F3_one_way_shear_unsafe']
             and not manual['engineering_approval'], 'R6.12 manual report evidence failed')
+    members, member_receipt = export_members(cases=cases, mesh=source_mesh)
+    require(members["count"]["actual_structural_frame_members"] == 165
+            and members["count"]["source_shell_objects"] == 115
+            and members["count"]["research_shells_included"] == 103
+            and members["count"]["research_shells_excluded"] == 12
+            and members["F3_one_way_shear_unsafe"]
+            and not members["engineering_approval"]
+            and not members["research_member_strength_or_capacity_accepted"],
+            "R6.13 member ledger scope or engineering boundary changed")
+    require(member_receipt["governing_model_SHA256"] == cases["source_model_fingerprints"],
+            "R6.13 member data diverges from governing ULS/SLS source")
+    project_report = SITE / "projects/pokhara-g15/report.html"
+    original = project_report.read_text(encoding="utf-8")
+    target = '<section class="rb-card project-tools" id="project-hand-calculations"'
+    block = ('<section class="rb-card project-tools" id="project-r6p13-members">'
+        '<h2>R6.13 · Source member gravity and research actions</h2>'
+        '<p>Member-by-member source geometry, assigned wall loads, independent bounded '
+        'gravity-pattern end actions and explicitly unverified strength checks for '
+        '165 structural members and 115 shells. No ETABS21 design approval.</p>'
+        '<p><a href="projects/pokhara-g15/member-gravity.html">'
+        'Open source member gravity and research ledger</a></p></section>\n')
+    if target not in original:
+        raise ValueError("Original project hand-calculation section disappeared")
+    if 'id="project-r6p13-members"' not in original:
+        project_report.write_text(original.replace(target,block+target,1),encoding="utf-8")
+
     for project in json.loads(PROJECTS.read_text()):
         route = f"projects/{project['slug']}/report.html"
         report = (SITE / route).read_text()
@@ -49,6 +76,10 @@ def main():
             require('id="project-r6p12-manual"' in report, "R6.12 manual audit link missing")
             require((SITE/"projects/pokhara-g15/manual-verification.html").is_file(),
                     "R6.12 manual audit page missing")
+            require('id="project-r6p13-members"' in report,
+                    "R6.13 member ledger link missing from original project report")
+            require((SITE/"projects/pokhara-g15/member-gravity.html").is_file(),
+                    "R6.13 member gravity page missing")
 
     print("R6.10 verified: 115 shell records, 8 gravity trials, 4 lateral trials, 22 trial combinations and project report links")
 
