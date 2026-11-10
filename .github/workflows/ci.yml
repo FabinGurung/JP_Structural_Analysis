@@ -46,6 +46,7 @@ jobs:
         run: |
           node --check site/project-ledger.js
           node --check site/r6p14-tributary.js
+          node --check site/r6p15-edge-cases.js
           node --check site/private-force-viewer.js
       - name: Regenerate curated real-source Gate08 public comparison
         run: python scripts/build_g15_gate08_public.py --output site/data/g15-gate08-reconciliation.v0.1.json
@@ -986,6 +987,7 @@ jobs:
           python tests/browser/r6p12_manual_audit_smoke.py
           python tests/browser/r6p13_member_gravity_smoke.py
           python tests/browser/r6p14_tributary_smoke.py
+          python tests/browser/r6p15_incomplete_edge_smoke.py
       - name: Archive R6.11 desktop and mobile browser evidence
         if: always()
         uses: actions/upload-artifact@v7.0.1
@@ -1013,6 +1015,13 @@ jobs:
         with:
           name: r6p14-slab-beam-tributary-desktop-mobile-qa
           path: build/r6p14-browser/*.png
+          if-no-files-found: ignore
+      - name: Archive R6.15 source edge diagnostics desktop/mobile browser screenshots
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: r6p15-incomplete-edge-desktop-mobile-qa
+          path: build/r6p15-browser/*.png
           if-no-files-found: ignore
       - name: Validate report-first site links and theme
         run: |
