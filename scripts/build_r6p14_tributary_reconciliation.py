@@ -186,7 +186,7 @@ def build(model=None,mesh=None):
             "source_graph_has_base_path":p["source_supported_by_frame_shell_topology"],
             "generated_ETABS_joint_connectivity_confirmed":False,
             "verified_vertical_load_transfer":False,
-            "accepted_design_beam_load_allocation_kN":0.0,
+            "accepted_design_beam_load_allocation_kN":None,
             "conditional_45deg_geometry_allocations":[]}
         if shell["kind"]!="FLOOR":
             record["status"]="WITHHELD_NOT_FLOOR_SHELL"
@@ -199,7 +199,7 @@ def build(model=None,mesh=None):
             record["status"]="WITHHELD_ORIGINAL_SHELL_UNSUPPORTED";rows.append(record);continue
         if not shape["eligible"]:
             record["status"]="WITHHELD_NON_RECTANGULAR_OR_NON_HORIZONTAL";rows.append(record);continue
-        if any(any(z<-.000001 for z in original_loads.values()) for _ in (0,)):
+        if any(z<-.000001 for z in original_loads.values()):
             record["status"]="WITHHELD_SOURCE_LOAD_SIGN_REVIEW";rows.append(record);continue
         if any(len(edge["full_edge_candidate_beams"])!=1 for edge in e):
             record["status"]="WITHHELD_INCOMPLETE_OR_AMBIGUOUS_BEAM_PERIMETER"
@@ -249,7 +249,7 @@ def build(model=None,mesh=None):
             "source_shell_ids":sorted(entry["originating_slabs"]),
             "source_connectivity_proven":False,
             "original_beam_design_force_modified":False,
-            "approved_beam_load_kN":0.0})
+            "approved_beam_load_kN":None})
     assert len(rows)==115
     assert sum(not x["source_graph_has_base_path"] for x in rows)==12
     eligible=[x for x in rows if x["status"].startswith("CONDITIONAL_")]
