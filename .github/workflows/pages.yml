@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: cb891de1670cc88dc0c3259cb4b84d79619ce53a
+          ref: bb7c176ce81208a1bc9a08d5b5052a2a53e11131
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -827,13 +827,14 @@ jobs:
         uses: actions/deploy-pages@v5.0.1
       - name: Verify live Pages source identity, report, studio, and engineering holds
         env:
-          EXPECTED_SOURCE_SHA: cb891de1670cc88dc0c3259cb4b84d79619ce53a
+          EXPECTED_SOURCE_SHA: bb7c176ce81208a1bc9a08d5b5052a2a53e11131
         run: |
           set -euo pipefail
           for attempt in $(seq 1 18); do
             if python3 - <<'PY'
           import json, os, urllib.request
-          base="https://fabingurung.github.io/JP_Structural_Analysis/"
+          site_owner, site_repo=os.environ["GITHUB_REPOSITORY"].split("/")
+          base="https://"+site_owner.lower()+".github.io/"+site_repo+"/"
           def get(path):
               req=urllib.request.Request(base+path,headers={"Cache-Control":"no-cache","User-Agent":"JP-SAR-live-source-verifier"})
               return urllib.request.urlopen(req,timeout=20).read()
@@ -890,9 +891,35 @@ jobs:
           assert abs(b46["source_loading"]["source_member_wall_resultant_kN"]-44.61275)<1e-5
           assert all(m["capacity_verification"]=="NOT_PERFORMED" for m in d["members"])
           assert all(len(m["trial_actions_by_source_stiffness"])==2 for m in d["members"])
+          assert 'id="project-r6p14-tributary"' in report
+          slabpage=get("projects/pokhara-g15/tributary-audit.html?verify="+sha[:12]).decode("utf-8")
+          assert 'id="r614-shell-section"' in slabpage
+          assert "Slab-to-beam tributary" in slabpage
+          slabjs=get("r6p14-tributary.js?verify="+sha[:12]).decode("utf-8")
+          assert "physical_vertical_force_transfer_verified" in slabjs
+          slabs=json.loads(get("data/r6p14-slab-beam-tributary-audit.json?verify="+sha[:12]))
+          assert slabs["schema"]=="jp.structural.r6p14.slab_beam_geometric_tributary_reconciliation.v0.1"
+          assert slabs["governing_model_sha256"]==d["provenance"]["governing_model_SHA256"]
+          scope=slabs["coverage"]
+          assert scope["original_shells"]==115
+          assert scope["source_graph_shells_connected"]==103
+          assert scope["source_graph_shells_without_base_path"]==12
+          assert scope["conditional_complete_perimeter_shells"]+scope["withheld_shells"]==115
+          assert abs(scope["conditional_projected_area_m2"]-scope["conditional_aggregate_beam_area_m2"])<1e-5
+          assert len(slabs["shells"])==115
+          assert sum(not shell["source_graph_has_base_path"] for shell in slabs["shells"])==12
+          assert all(shell["accepted_design_beam_load_allocation_kN"] is None for shell in slabs["shells"])
+          assert all(not shell["verified_vertical_load_transfer"] for shell in slabs["shells"])
+          assert all(beam["approved_beam_load_kN"] is None for beam in slabs["beam_conditional_totals"])
+          assert slabs["twelve_unsupported_shells_excluded"] and slabs["F3_one_way_shear_unsafe"]
+          assert not slabs["engineering_approval"] and not slabs["physical_vertical_force_transfer_verified"]
+          assert not slabs["native_generated_joint_or_edge_constraint_verified"]
+          assert slabs["no_source_gravity_load_case_modified"] and slabs["no_original_design_member_actions_modified"]
+          print("R6P14_LIVE_TRIBUTARY_SOURCE_COVERAGE",json.dumps(scope,sort_keys=True))
 
 
-          print("LIVE_PAGES_R613_SOURCE_MEMBER_GRAVITY_AND_F3_HOLD_VERIFIED",sha)
+
+          print("LIVE_PAGES_R614_SLAB_BEAM_GEOMETRIC_AND_SAFETY_HOLDS_VERIFIED",sha)
           PY
             then
               exit 0
