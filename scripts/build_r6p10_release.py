@@ -57,7 +57,8 @@ def main():
             and trib["coverage"]["source_graph_shells_without_base_path"] == 12
             and trib["twelve_unsupported_shells_excluded"]
             and not trib["physical_vertical_force_transfer_verified"]
-            and not trib["no_source_gravity_load_case_modified"] is False
+            and trib["no_source_gravity_load_case_modified"]
+            and trib["no_original_design_member_actions_modified"]
             and trib["F3_one_way_shear_unsafe"]
             and not trib["engineering_approval"],
             "R6.14 source slab edge and engineering HOLD changed")
