@@ -13,6 +13,7 @@ from scripts.build_r6p10_source_shell_mesh import OUT as SHELLS, export as expor
 from scripts.build_r6p12_manual_report_audit import export as export_manual
 from scripts.build_r6p13_member_gravity_research import export as export_members
 from scripts.build_r6p14_tributary_reconciliation import export as export_tributary
+from scripts.build_r6p15_incomplete_edge_audit import export as export_incomplete
 
 import json
 
@@ -64,6 +65,22 @@ def main():
             "R6.14 source slab edge and engineering HOLD changed")
     require(trib_receipt["source_governing_pair"] == cases["source_model_fingerprints"],
             "R6.14 ULS/SLS source pair mismatch")
+    r615, r615_receipt = export_incomplete(base=trib)
+    require(r615["coverage"]["slabs_examined"] == 77
+            and r615["coverage"]["source_edges_examined"] == 308
+            and sum(r615["coverage"]["review_group_counts"].values()) == 77
+            and sum(r615["coverage"]["frame_edge_class_counts"].values()) == 308
+            and r615["baseline"]["r614_complete_four_edge_shells"] == 25
+            and r615["baseline"]["source_graph_unanchored"] == 12
+            and not r615["original_source_gravity_actions_modified"]
+            and not r615["original_R614_45deg_allocations_modified"]
+            and not r615["member_design_loads_modified"]
+            and not r615["shell_contact_gate_promoted"]
+            and r615["F3_one_way_shear_unsafe"]
+            and not r615["engineering_approval"], "R6.15 source classification/HOLD failed")
+    require(r615_receipt["governing_ULS_SLS_SHA256"] == cases["source_model_fingerprints"],
+            "R6.15 source model fingerprint mismatch")
+
     project_report = SITE / "projects/pokhara-g15/report.html"
     original = project_report.read_text(encoding="utf-8")
     target = '<section class="rb-card project-tools" id="project-hand-calculations"'
@@ -90,6 +107,20 @@ def main():
     if 'id="project-r6p13-members"' not in original:
         project_report.write_text(original.replace(target,block+target,1),encoding="utf-8")
 
+
+    original = project_report.read_text(encoding="utf-8")
+    review_block = ('<section class="rb-card project-tools" id="project-r6p15-incomplete">'
+        '<h2>R6.15 · Individual review of 77 unresolved slab perimeters</h2>'
+        '<p>Source beam-segment gaps, overlaps, adjacent FLOOR objects and '
+        'non-sectioned LINE proximity; strictly hypothetical one-way and '
+        'cantilever studies only. No accepted support path or design loads.</p>'
+        '<p><a href="projects/pokhara-g15/incomplete-edges.html">'
+        'Inspect all 77 withheld slabs and source edges</a></p></section>\n')
+    if 'id="project-r6p15-incomplete"' not in original:
+        if target not in original:
+            raise ValueError("R6.15 report original hand-calculation anchor disappeared")
+        project_report.write_text(original.replace(target,review_block+target,1),encoding="utf-8")
+
     for project in json.loads(PROJECTS.read_text()):
         route = f"projects/{project['slug']}/report.html"
         report = (SITE / route).read_text()
@@ -101,6 +132,10 @@ def main():
             require('id="project-r6p12-manual"' in report, "R6.12 manual audit link missing")
             require((SITE/"projects/pokhara-g15/manual-verification.html").is_file(),
                     "R6.12 manual audit page missing")
+            require('id="project-r6p15-incomplete"' in report,
+                    "R6.15 unresolved perimeter audit link missing")
+            require((SITE/"projects/pokhara-g15/incomplete-edges.html").is_file(),
+                    "R6.15 77-case browser report missing")
             require('id="project-r6p14-tributary"' in report,
                     "R6.14 tributary audit project link missing")
             require((SITE/"projects/pokhara-g15/tributary-audit.html").is_file(),
