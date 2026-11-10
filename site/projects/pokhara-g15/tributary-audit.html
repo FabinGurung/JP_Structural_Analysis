@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>R6.14 · Slab-to-beam tributary source audit | Pokhara G+1.5</title>
+<meta name="description" content="Audited original ETABS21 source slab edges, candidate structural beam matches, 45-degree tributary area proxies and withheld unknown physical load paths.">
+<link rel="stylesheet" href="../../styles.css"><link rel="stylesheet" href="../../r6p14-tributary.css"></head>
+<body data-guild-route="g15"><header class="site-header"><div class="wrap nav-row">
+<a class="brand" href="../../index.html"><span class="brand-mark" aria-hidden="true">JP</span><strong>Structural Analysis</strong></a>
+<nav class="navigation" aria-label="Primary navigation"><a href="report.html">Project report</a>
+<a href="member-gravity.html">R6.13 member gravity</a><a href="../../r6p10-shell-diaphragm-studio.html#r611-support">R6.11 contacts</a></nav>
+</div></header>
+<main class="wrap r614-wrap">
+<section class="r614-intro"><p class="eyebrow">R6.14 · NATIVE INPUT GEOMETRY / PROVISIONAL TRIBUTARY AREAS</p>
+<h1>Which original slab edges actually meet a source beam?</h1>
+<p>Each shell keeps its original corner IDs, XYZ dimensions, source load resultants and full/partial/missing beam-edge comparison. When a four-edge, horizontal rectangular slab has unique structural beam candidates, a conventional 45-degree area split is shown as a <em>geometric study only</em>.</p>
+<div class="r614-links"><a href="report.html">Project report</a><a href="manual-verification.html">R6.12 report cross-check</a><a href="member-gravity.html">R6.13 member actions</a><a href="../../data/r6p14-slab-beam-tributary-audit.json">Inspect complete JSON calculations</a></div>
+</section>
+<div class="r614-hold" role="note"><strong>Engineering HOLD.</strong> Source-edge geometric coincidence does not demonstrate native ETABS21 generated-joint or edge constraints. All twelve unsupported shell objects remain excluded from the numerical model. No calculated load is assigned to an approved beam design action; the original F3 footing remains <strong>NOT SAFE IN ONE WAY SHEAR</strong>. The R6.10 solver already includes its own shell load model; these candidate loads must <strong>not</strong> be added again.</div>
+<section aria-label="Source audit summary"><h2>Source coverage and withheld cases</h2><div id="r614-kpis" class="r614-kpis" aria-live="polite">Reading governed shell geometry…</div><div id="r614-status-breakdown" class="r614-status"></div></section>
+<section class="r614-section" id="r614-shell-section"><h2>Original shell edge audit</h2>
+<p>Select a source shell to see its four original edges, matching beam identities, missing connections and any conditional area split. Non-floor panels and shells without an independently identified source-graph base path are retained but never promoted to supported slabs.</p>
+<div class="r614-controls"><label>Floor <select id="r614-storey"><option value="ALL">All floors</option><option value="GF">Ground floor</option><option value="FF">First floor</option><option value="TF">Top floor</option></select></label>
+<label>Status <select id="r614-status"><option value="ALL">All source shells</option><option value="CONDITIONAL">Complete geometric perimeter only</option><option value="WITHHELD">Withheld or not floor</option><option value="UNSUPPORTED">Original unsupported source shells</option></select></label>
+<label>Shell ID <input id="r614-query" type="search" placeholder="GF:F4 or W3"></label></div>
+<div class="r614-tablebox"><table><thead><tr><th>Original shell ID</th><th>Type</th><th>Projected area, m²</th><th>Original path</th><th>Geometric allocation</th><th>Inspect</th></tr></thead>
+<tbody id="r614-shells"><tr><td colspan="6">Reading source record…</td></tr></tbody></table></div>
+<p id="r614-result-count" class="r614-small"></p>
+<article id="r614-details" class="r614-detail" aria-live="polite">Select a source shell.</article></section>
+<section class="r614-section"><h2>Beam-side conditional geometric totals</h2>
+<p>This shows only original beams receiving a fully qualified geometric *candidate* tributary area. It is <strong>not</strong> the original ETABS slab load, an accepted design line load or a reaction. Withheld shell loads are not redistributed to these beams.</p>
+<div class="r614-tablebox"><table><thead><tr><th>Original beam ID</th><th>Source floor</th><th>Edge candidates</th><th>Tributary area, m²</th><th>Selfweight proxy, kN</th><th>Live load, kN</th><th>Floor finish, kN</th><th>Capacity status</th></tr></thead>
+<tbody id="r614-beams"><tr><td colspan="8">Reading source records…</td></tr></tbody></table></div></section>
+<div class="r614-hold"><strong>Interpretation:</strong> even an exact corner ID match requires a generated-joint, mesh, boundary and signed-reaction check before vertical load transfer is accepted. Neither the original ETABS21 generated mesh nor complete solver results are available in the governing Drive evidence.</div>
+</main><script src="../../r6p14-tributary.js" defer></script></body></html>
