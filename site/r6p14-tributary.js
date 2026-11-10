@@ -33,8 +33,9 @@ function stats(){
 }
 function selectedList(){
  const story=$("r614-storey").value,status=$("r614-status").value,q=$("r614-query").value.trim().toUpperCase();
+ const exactKey=q&&data.shells.some(s=>s.shell_key.toUpperCase()===q);
  return data.shells.filter(s=>(story==="ALL"||s.story===story)&&
-   (!q||s.shell_key.toUpperCase().includes(q)||s.source_section.toUpperCase().includes(q))&&
+   (!q||(exactKey?s.shell_key.toUpperCase()===q:(s.shell_key.toUpperCase().includes(q)||s.source_section.toUpperCase().includes(q))))&&
    (status==="ALL"||status==="CONDITIONAL"&&s.status.startsWith("CONDITIONAL_")||
     status==="WITHHELD"&&!s.status.startsWith("CONDITIONAL_")||
     status==="UNSUPPORTED"&&!s.source_graph_has_base_path));
