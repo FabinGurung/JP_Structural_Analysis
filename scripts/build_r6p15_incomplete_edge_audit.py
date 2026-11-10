@@ -146,8 +146,9 @@ def hypotheses_for_slab(shell,edges):
         if x["frame_match_class"]!="NO_COLLINEAR_FRAME_BEAM" and
            not x["geometric_complete_frame_alignment"])
     if len(all_clean)==2 and (all_clean[0]+2)%4==all_clean[1] and not uncertain:
-        sides={edges[i]["edge_length_mm"] for i in all_clean}
-        if len(sides)!=1: raise ValueError("Opposite source rectangle edge lengths differ")
+        if not math.isclose(edges[all_clean[0]]["edge_length_mm"],
+            edges[all_clean[1]]["edge_length_mm"],abs_tol=0.01):
+            raise ValueError("Opposite source rectangle edge lengths differ")
         per_edge={"A_over_2_m2":round(area/2,7),
                   "source_uniform_resultants_half_kN":{k:round(v/2,7) for k,v in loads.items()}}
         scenario.append({"scenario":"POSSIBLE_ONE_WAY_TWO_OPPOSITE_ALIGNED_FRAME_EDGES",
