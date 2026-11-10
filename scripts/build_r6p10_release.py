@@ -12,6 +12,7 @@ from scripts.build_r6p10_gravity_casebook import OUT as CASEBOOK, export as expo
 from scripts.build_r6p10_source_shell_mesh import OUT as SHELLS, export as export_shells
 from scripts.build_r6p12_manual_report_audit import export as export_manual
 from scripts.build_r6p13_member_gravity_research import export as export_members
+from scripts.build_r6p14_tributary_reconciliation import export as export_tributary
 
 import json
 
@@ -50,6 +51,18 @@ def main():
             "R6.13 member ledger scope or engineering boundary changed")
     require(member_receipt["governing_model_SHA256"] == cases["source_model_fingerprints"],
             "R6.13 member data diverges from governing ULS/SLS source")
+    trib, trib_receipt = export_tributary(mesh=source_mesh)
+    require(trib["coverage"]["original_shells"] == 115
+            and trib["coverage"]["source_graph_shells_connected"] == 103
+            and trib["coverage"]["source_graph_shells_without_base_path"] == 12
+            and trib["twelve_unsupported_shells_excluded"]
+            and not trib["physical_vertical_force_transfer_verified"]
+            and not trib["no_source_gravity_load_case_modified"] is False
+            and trib["F3_one_way_shear_unsafe"]
+            and not trib["engineering_approval"],
+            "R6.14 source slab edge and engineering HOLD changed")
+    require(trib_receipt["source_governing_pair"] == cases["source_model_fingerprints"],
+            "R6.14 ULS/SLS source pair mismatch")
     project_report = SITE / "projects/pokhara-g15/report.html"
     original = project_report.read_text(encoding="utf-8")
     target = '<section class="rb-card project-tools" id="project-hand-calculations"'
@@ -62,6 +75,17 @@ def main():
         'Open source member gravity and research ledger</a></p></section>\n')
     if target not in original:
         raise ValueError("Original project hand-calculation section disappeared")
+    target = '<section class="rb-card project-tools" id="project-hand-calculations"'
+    tributary_block = ('<section class="rb-card project-tools" id="project-r6p14-tributary">'
+        '<h2>R6.14 · Slab-to-beam geometry and conditional tributary areas</h2>'
+        '<p>Original source slab edges, candidate same-floor beam boundaries, '
+        '45-degree geometric load shares only for complete four-edge rectangular candidates, '
+        'and explicit withheld structural load paths. No verified force transfer or design loads.</p>'
+        '<p><a href="projects/pokhara-g15/tributary-audit.html">'
+        'Open slab-to-beam source reconciliation</a></p></section>\n')
+    if 'id="project-r6p14-tributary"' not in original:
+        original = original.replace(target,tributary_block+target,1)
+        project_report.write_text(original,encoding="utf-8")
     if 'id="project-r6p13-members"' not in original:
         project_report.write_text(original.replace(target,block+target,1),encoding="utf-8")
 
@@ -76,6 +100,10 @@ def main():
             require('id="project-r6p12-manual"' in report, "R6.12 manual audit link missing")
             require((SITE/"projects/pokhara-g15/manual-verification.html").is_file(),
                     "R6.12 manual audit page missing")
+            require('id="project-r6p14-tributary"' in report,
+                    "R6.14 tributary audit project link missing")
+            require((SITE/"projects/pokhara-g15/tributary-audit.html").is_file(),
+                    "R6.14 tributary page missing")
             require('id="project-r6p13-members"' in report,
                     "R6.13 member ledger link missing from original project report")
             require((SITE/"projects/pokhara-g15/member-gravity.html").is_file(),
