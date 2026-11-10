@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>R6.15 — 77 Incomplete Slab Edge Cases | Pokhara G+1.5</title>
+<meta name="description" content="Audit 77 withheld ETABS21 source slab perimeters: segmented beam chains, gaps, overlaps, slab continuity observations and hypothetical one-way or cantilever forms, without supporting load transfer claims.">
+<link rel="stylesheet" href="../../styles.css"><link rel="stylesheet" href="../../r6p15-edge-cases.css"></head>
+<body data-guild-route="g15"><header class="site-header"><div class="wrap nav-row">
+<a class="brand" href="../../index.html"><span class="brand-mark" aria-hidden="true">JP</span><strong>Structural Analysis</strong></a>
+<nav class="navigation" aria-label="Primary navigation"><a href="report.html">Project report</a>
+<a href="tributary-audit.html">R6.14 tributary audit</a><a href="member-gravity.html">R6.13 member study</a></nav></div></header>
+<main class="wrap r615-wrap">
+<section class="r615-hero">
+<p class="eyebrow">R6.15 · SOURCE-ONLY EDGE INVESTIGATION</p>
+<h1>The 77 slabs with incomplete or ambiguous beam boundaries</h1>
+<p>Inspect every unresolved original FLOOR shell individually. Distinguish partial beam segments, beam overlap, missing frame edges, touching neighbouring source slabs and unsectioned source lines. Optional one-way or cantilever calculations are labelled <strong>hypothetical geometry studies</strong>, not verified force paths.</p>
+<div class="r615-links"><a href="report.html">Pokhara structural report</a><a href="tributary-audit.html">Full 115-shell R6.14 register</a><a href="../../data/r6p15-incomplete-slab-edge-audit.json">Machine-readable 77-case review</a><a href="../../r6p10-shell-diaphragm-studio.html#r611-support">R6.11 contact audit</a></div>
+</section>
+<div class="r615-warning" role="note"><strong>ENGINEERING HOLD.</strong>
+Source alignment, even a perfectly covered beam edge, is not proof of ETABS21 generated mesh/joint compatibility, support restraints or actual signed vertical reactions. <strong>No original or approved design load has changed.</strong> The 12 source-unanchored shells remain excluded. Footing F3 remains <strong>NOT SAFE IN ONE WAY SHEAR</strong>. One-way/cantilever diagrams and arithmetic are explicitly conditional, with no reinforcement or safe-load determination.</div>
+<section class="r615-summary" aria-label="Full original-source case summary"><h2>Audit coverage</h2>
+<div id="r615-kpis" class="r615-kpis" aria-live="polite">Loading governed source records…</div>
+<div class="r615-panels">
+<div><h3>Review groups</h3><div id="r615-groups" class="r615-group-chips"></div></div>
+<div><h3>Frame-edge classifications</h3><div id="r615-edgecounts" class="r615-group-chips"></div></div>
+<div><h3>Strictly hypothetical slab behaviour</h3><div id="r615-hypotheses" class="r615-group-chips"></div></div>
+</div></section>
+<section id="r615-casework" aria-label="All 77 incomplete slab edges" class="r615-casework">
+<h2>Slab-by-slab evidence</h2>
+<p>Start with the most constrained geometry and select a source ID. Only beam objects with structural sections are considered potential frame edges. Nearby unsectioned source LINEs and touching FLOOR objects are recorded but never treated as physical supports.</p>
+<div class="r615-controls">
+<label>Floor <select id="r615-story"><option value="ALL">All storeys</option><option value="GF">Ground floor</option><option value="FF">First floor</option><option value="TF">Top floor</option></select></label>
+<label>Review group <select id="r615-group"><option value="ALL">All groups</option></select></label>
+<label>Hypothesis <select id="r615-scenario"><option value="ALL">All cases</option><option value="ONE_WAY">Possible one-way</option><option value="CANTILEVER">Possible cantilever</option><option value="NONE">No clean scenario</option></select></label>
+<label>Search shell ID <input type="search" id="r615-query" placeholder="GF:F4, FF:F2…" autocomplete="off"></label>
+</div>
+<div class="r615-table-viewport"><table aria-label="77 original source shells and unresolved edges"><thead><tr>
+<th>Original shell</th><th>Floor</th><th>Area (m²)</th><th>Complete frame edges</th><th>Gap edges</th><th>Ambiguous edges</th><th>Review focus</th><th>Inspect</th>
+</tr></thead><tbody id="r615-rows"><tr><td colspan="8">Reading source edge evidence…</td></tr></tbody></table></div>
+<p class="r615-muted" id="r615-count"></p>
+<article id="r615-detail" class="r615-detail" aria-live="polite">Choose an original source shell to inspect its geometric evidence.</article></section>
+<section class="r615-next">
+<h2>What evidence would change the verdict?</h2>
+<p>For each original source slab: matched ULS/SLS analysis joint and shell mesh element IDs; compatible shell-edge/frame restraints and releases; load direction and genuine supported equilibrium; member-end and foundation support reactions; drawings confirming openings and cantilever anchorage; and an independent engineer’s full strength/serviceability review. Without these, the structural-load field remains <strong>unknown</strong>, never assumed zero or silently redistributed.</p>
+</section>
+</main><script src="../../r6p15-edge-cases.js" defer></script></body></html>
