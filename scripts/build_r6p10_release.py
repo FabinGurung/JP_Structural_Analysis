@@ -14,6 +14,7 @@ from scripts.build_r6p12_manual_report_audit import export as export_manual
 from scripts.build_r6p13_member_gravity_research import export as export_members
 from scripts.build_r6p14_tributary_reconciliation import export as export_tributary
 from scripts.build_r6p15_incomplete_edge_audit import export as export_incomplete
+from scripts.build_r6p16_reproducibility_gate import export as export_reproducibility
 
 import json
 
@@ -81,6 +82,25 @@ def main():
     require(r615_receipt["governing_ULS_SLS_SHA256"] == cases["source_model_fingerprints"],
             "R6.15 source model fingerprint mismatch")
 
+    reproduction, reproduction_receipt = export_reproducibility(r615=r615)
+    require(reproduction["module_count"] == 18
+            and reproduction["module_coverage_status_counts"] == {
+               "DRAFT_UNVALIDATED":1,"IMPLEMENTED_BOUNDED":2,"MISSING":4,"PARTIAL":11}
+            and reproduction["reproduction"]["Gate21_assumption_frame_solved_cases"] == 5
+            and reproduction["reproduction"]["R615_original_edges_inspected"] == 308
+            and not reproduction["reproduction"]["full_governing_ETABS21_model_equivalent"]
+            and not reproduction["reproduction"]["all_historical_report_results_recomputed"]
+            and not reproduction["engineering_approval"]
+            and reproduction["twelve_unsupported_shells_excluded"]
+            and reproduction["F3_one_way_shear_unsafe"],
+            "R6.16 source-to-report acceptance gate failed")
+    require(reproduction["source_scope"]["governing_ULS_SLS_SHA256"]
+           == cases["source_model_fingerprints"],
+           "R6.16 source pair not governing")
+    require(not reproduction_receipt["engineering_approval"]
+           and reproduction_receipt["F3_one_way_shear_unsafe"],
+           "R6.16 evidence receipt invalid")
+
     project_report = SITE / "projects/pokhara-g15/report.html"
     original = project_report.read_text(encoding="utf-8")
     target = '<section class="rb-card project-tools" id="project-hand-calculations"'
@@ -121,6 +141,19 @@ def main():
             raise ValueError("R6.15 report original hand-calculation anchor disappeared")
         project_report.write_text(original.replace(target,review_block+target,1),encoding="utf-8")
 
+    original = project_report.read_text(encoding="utf-8")
+    readiness_block = ('<section class="rb-card project-tools" id="project-r6p16-reproducibility">'
+        '<h2>R6.16 · Can our engine reproduce the complete structural report?</h2>'
+        '<p>Executed OpenSees research vs historic ETABS21 source equivalence, '
+        'all 18 implementation modules, remaining acceptance gaps and safety holds. '
+        'Source report fully verified: NO. Numerically reproducible bounded reports: YES.</p>'
+        '<p><a href="projects/pokhara-g15/reproducibility.html">'
+        'Open first-party engine and report reproducibility review</a></p></section>\n')
+    if 'id="project-r6p16-reproducibility"' not in original:
+        if target not in original:
+            raise ValueError("Original project hand-calculation anchor disappeared")
+        project_report.write_text(original.replace(target,readiness_block+target,1),encoding="utf-8")
+
     for project in json.loads(PROJECTS.read_text()):
         route = f"projects/{project['slug']}/report.html"
         report = (SITE / route).read_text()
@@ -132,6 +165,10 @@ def main():
             require('id="project-r6p12-manual"' in report, "R6.12 manual audit link missing")
             require((SITE/"projects/pokhara-g15/manual-verification.html").is_file(),
                     "R6.12 manual audit page missing")
+            require('id="project-r6p16-reproducibility"' in report,
+                    "R6.16 engine/report readiness link missing")
+            require((SITE/"projects/pokhara-g15/reproducibility.html").is_file(),
+                    "R6.16 reproducibility page missing")
             require('id="project-r6p15-incomplete"' in report,
                     "R6.15 unresolved perimeter audit link missing")
             require((SITE/"projects/pokhara-g15/incomplete-edges.html").is_file(),
