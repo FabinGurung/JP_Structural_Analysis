@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>R6.16 | Can our engine reproduce the structural report? | Pokhara G+1.5</title>
+<meta name="description" content="Audited first-party OpenSees/ETABS-source reproduci­bility, model and code parity, original PDF comparison, 18-module calculations and engineering acceptance holds.">
+<link rel="stylesheet" href="../../styles.css"><link rel="stylesheet" href="../../r6p16-readiness.css"></head>
+<body data-guild-route="g15"><header class="site-header"><div class="wrap nav-row">
+<a class="brand" href="../../index.html"><span class="brand-mark">JP</span><strong>Structural Analysis</strong></a>
+<nav class="navigation" aria-label="Primary navigation"><a href="report.html">Project report</a>
+<a href="incomplete-edges.html">R6.15 source edges</a><a href="../../reports/g15-gate21-calculation-report.html">Executed OpenSees report</a></nav>
+</div></header><main class="wrap r616-main">
+<section class="r616-hero"><p class="eyebrow">R6.16 · INDEPENDENT REPRODUCIBILITY AUDIT</p>
+<h1>Can we reproduce this building’s structural analysis report?</h1>
+<p><strong>We can regenerate numerical research reports from controlled inputs. We cannot yet prove complete equivalence to the governing ETABS21 design or issue an approved building report.</strong> This page separates working calculation software, original-source fidelity, missing model semantics and full design/code validation.</p>
+<div class="r616-links"><a href="report.html">Pokhara original report</a><a href="../../reports/g15-gate21-calculation-report.html">OpenSees numerical report</a><a href="../../data/r6p16-report-reproducibility-readiness.json">Inspect complete evidence JSON</a><a href="incomplete-edges.html">77 original incomplete slab cases</a><a href="https://github.com/FabinGurung/jp-structural-analysis/actions">GitHub Actions QA runs</a></div></section>
+<div class="r616-warning"><strong>Not construction approval.</strong> A green GitHub Actions run proves that specified software tests executed—not that every slab, beam, column, foundation and earthquake response is correct. The currently recorded ETABS21 files are inputs, not authenticated complete solver results. Twelve original shell supports remain unverified and excluded; footing F3 remains <strong>NOT SAFE IN ONE WAY SHEAR</strong>.</div>
+<section aria-label="Reproducibility gate summary"><h2>Where the system stands</h2><div id="r616-kpis" class="r616-kpis" aria-live="polite">Reading evidence manifest…</div>
+<div class="r616-statuses" id="r616-statuses"></div></section>
+<section class="r616-section" aria-labelledby="r616-stages-heading"><h2 id="r616-stages-heading">Seven evidence levels — not the same as engineering acceptance</h2>
+<div id="r616-stages" class="r616-stages">Loading source-status chain…</div></section>
+<section class="r616-section" aria-labelledby="r616-engine-heading">
+<h2 id="r616-engine-heading">Calculation engine coverage — 18 report requirements</h2>
+<p>The versioned coverage register is conservative. It has not been automatically upgraded by the R6.12–R6.15 exploratory calculations. A status of <em>implemented, bounded</em> means tested for a limited class of models, not verified across the whole Pokhara building.</p>
+<div class="r616-filters"><label>Status <select id="r616-module-status"><option value="ALL">All implementation statuses</option><option value="IMPLEMENTED_BOUNDED">Implemented bounded</option><option value="PARTIAL">Partial</option><option value="DRAFT_UNVALIDATED">Draft/unvalidated</option><option value="MISSING">Missing</option></select></label>
+<label>Priority <select id="r616-module-priority"><option value="ALL">All priorities</option><option value="P0">P0 critical</option><option value="P1">P1</option><option value="P2">P2</option></select></label>
+<label>Module <input type="search" id="r616-module-query" placeholder="M04, shell, footing" autocomplete="off"></label></div>
+<div class="r616-table-wrap"><table><thead><tr><th>Module</th><th>Calculation family</th><th>Implementation</th><th>Priority</th><th>Remaining verification</th></tr></thead><tbody id="r616-modules"><tr><td colspan="5">Reading versioned implementation coverage…</td></tr></tbody></table></div>
+<p id="r616-filter-count" class="r616-meta"></p></section>
+<section class="r616-section" aria-labelledby="r616-blockers-heading"><h2 id="r616-blockers-heading">Six completion gates — prioritized</h2>
+<p>These are concrete milestones needed for a reproducible, engineering-reviewable original-model report—not merely more website screens.</p>
+<div id="r616-blockers" class="r616-blockers">Loading engineering prerequisites…</div></section>
+<section class="r616-section"><h2>What GitHub, Actions, Pages and Drive each own</h2>
+<div class="r616-architecture">
+<article><h3>Google Drive</h3><p>Authority for original private E2K models, historical PDF, drawings and evidence. The current publisher does <strong>not</strong> fetch live E2K files on every run.</p></article>
+<article><h3>GitHub repository</h3><p>Versioned Python/OpenSees engine, de-identified derived source snapshots, code basis, checks, tests and report build logic. A snapshot pin is not automatic Drive synchronization.</p></article>
+<article><h3>GitHub Actions</h3><p>Runs pinned numerical scripts and 600+ regression/browser tests, produces manifests, then verifies Pages source SHA and engineering hold flags. Successful CI is software QA.</p></article>
+<article><h3>GitHub Pages</h3><p>Displays reproducible, source-labelled calculations, visual inspection and research reports. It is a presentation surface, not a new structural solver or a shared design database.</p></article></div></section>
+</main><script src="../../r6p16-readiness.js" defer></script></body></html>
