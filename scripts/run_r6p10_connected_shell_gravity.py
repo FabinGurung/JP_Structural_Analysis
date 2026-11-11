@@ -333,6 +333,31 @@ def solve(role="ULS",case="Dead",resolution=2):
     for tag in r["supports"]:
         value=ops.nodeReaction(tag)
         for i in range(3):reactions[i]+=float(value[i])
+    source_support_point_ids={}
+    for source_id in sorted(set(r["ctrl"]["supports"])):
+        original=r["native"]["points_xyz_local_mm"][source_id]
+        source_xyz=tuple(round(float(z),3) for z in original)
+        source_support_point_ids.setdefault(source_xyz,[]).append(source_id)
+    per_support=[]
+    for tag in sorted(r["supports"]):
+        xyz=r["positions"][tag]
+        native_values=[float(v) for v in ops.nodeReaction(tag)]
+        if len(native_values)!=6 or any(not math.isfinite(v) for v in native_values):
+            raise RuntimeError("Original connected base support reaction not six finite components")
+        per_support.append({
+          "solver_node_tag":tag,
+          "xyz_mm":list(xyz),
+          "original_base_point_ids":source_support_point_ids.get(xyz,[]),
+          "signed_Fxyz_N":[round(v,8) for v in native_values[:3]],
+          "signed_Mxyz_Nmm":[round(v,8) for v in native_values[3:]],
+          "reaction_is_from_coarse_research_model":True,
+          "original_ETABS21_signed_reaction_verified":False
+        })
+    if len(per_support)!=21 or any(not item["original_base_point_ids"] for item in per_support):
+        raise RuntimeError("Canonical R6.17 support map differs from original 21 connected supports")
+    for axis in range(3):
+        if abs(sum(item["signed_Fxyz_N"][axis] for item in per_support)-reactions[axis])>0.0001:
+            raise RuntimeError("Per-support signed reaction ledger does not conserve native support resultant")
     if case.startswith("EQ"):
         axis_index=0 if application["axis"]=="X" else 1
         error=abs(reactions[axis_index]+application["conditional_base_shear_input_N"])
@@ -369,6 +394,8 @@ def solve(role="ULS",case="Dead",resolution=2):
       "applied_gravity":application if not case.startswith("EQ") else None,
       "applied_conditional_lateral":application if case.startswith("EQ") else None,
       "sum_native_fixed_base_reactions_N":reactions,
+      "connected_support_signed_reactions_research_only":per_support,
+      "original_27_supports_21_connected":True,
       "vertical_equilibrium_residual_N":error if not case.startswith("EQ") else None,
       "horizontal_equilibrium_residual_N":error if case.startswith("EQ") else None,
       "signed_member_end_actions_bounded":end,
