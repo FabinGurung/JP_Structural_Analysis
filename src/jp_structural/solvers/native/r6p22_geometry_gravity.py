@@ -17,7 +17,7 @@ import json
 import math
 from typing import Any
 
-from jp_structural.solvers.native.one_way_panel_to_beams import transfer_one_way_panels
+from jp_structural.solvers.native.one_way_panel_to_beams import transfer_one_way_panels, PanelRoutingError\nfrom jp_structural.solvers.native.geometry_load_intake import GeometryLoadError
 
 SCHEMA = "jp.structural.r6p22.independent_geometry_gravity.v0.1"
 INPUT_SCHEMA = "jp.structural.r6p22.independent_geometry_input.v0.1"
@@ -341,8 +341,12 @@ def derive_sources(payload: dict) -> dict:
                 "local_column_axial_force_distribution_exact": False
             })
     require(loads and routes, "no supported physical sources routed")
-    routing = transfer_one_way_panels(
-        model=model, loads=loads, routes=routes, gravity_m_s2=g)
+    try:
+        routing = transfer_one_way_panels(
+            model=model, loads=loads, routes=routes, gravity_m_s2=g)
+    except (PanelRoutingError, GeometryLoadError) as exc:
+        raise GeometryGravityHold("HOLD: unsafe slab-to-beam geometry/load source: " +
+                                  str(exc)) from exc
     colweight = math.fsum(x["weight_kN"] for x in ledger_column)
     globalweight = routing["source_total_gravity_kN"] + colweight
     require(globalweight > 0, "zero total physical source gravity")
