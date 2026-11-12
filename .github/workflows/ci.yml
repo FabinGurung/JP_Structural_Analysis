@@ -34,6 +34,16 @@ jobs:
           name: r6p21-independent-opensees-sar-reference-not-approved
           path: build/r6p21-independent-sar/
           if-no-files-found: error
+      - name: R6.22 derive physical geometry gravity, solve signed OpenSees and build source-linked SAR
+        run: |
+          python scripts/build_r6p22_independent_geometry_sar.py --reference --output-dir build/r6p22-independent-geometry
+          python -c 'from pathlib import Path; from jp_structural.reporting.r6p22_pipeline import verify; print("R6P22_GEOMETRY_SAR_VERIFIED", verify(Path("build/r6p22-independent-geometry"))["case_id"])'
+      - name: Archive R6.22 material takeoff, load routes, signed OpenSees SAR and SHA256 receipts
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: r6p22-independent-material-geometry-opensees-sar-reference-NOT-APPROVED
+          path: build/r6p22-independent-geometry/
+          if-no-files-found: error
       - name: Run public-data safety scan
         run: python scripts/check_public_safety.py
       - name: Build sanitized SAR package
