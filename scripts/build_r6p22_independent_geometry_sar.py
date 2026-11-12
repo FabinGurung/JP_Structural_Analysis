@@ -99,7 +99,9 @@ def main() -> None:
     args = parser.parse_args()
     if args.input:
         if _inside(args.input, ROOT):
-            raise ValueError("Real source input must not be committed to public checkout")
+            raise ValueError("Custom source input must not be committed to public checkout")
+        if _inside(args.output_dir, ROOT):
+            raise ValueError("Custom source output must remain outside public checkout")
         source = json.loads(args.input.read_text(encoding="utf-8"))
     else:
         source = reference_fixture()
