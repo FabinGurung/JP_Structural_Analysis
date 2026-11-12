@@ -115,6 +115,48 @@ def _actions(solved: dict) -> list[dict]:
     return rows
 
 
+def _design_summary(checks: dict) -> list[dict]:
+    """Summarize executed RC kernels without treating demand as a PASS."""
+    summary = []
+    for beam in checks["beam_design"]:
+        ends = beam["check"]["end_demands"]
+        _require(len(ends) == 2 and
+                 all(math.isfinite(float(e["required_shear_kN"])) for e in ends),
+                 "M08 two-ended capacity-design shear demands missing")
+        summary.append({
+            "module": "M08", "component_id": beam["member_id"],
+            "governing_reference": "BEAM_I_AND_J",
+            "quantity": "max|required capacity-design shear|",
+            "value": round(max(float(e["required_shear_kN"]) for e in ends), 7),
+            "unit": "kN",
+            "status": "DEMAND_ONLY_STIRRUPS_AND_DETAILING_UNCHECKED",
+        })
+    for column in checks["column_design"]:
+        value = float(column["governing_interaction_utilization"])
+        _require(math.isfinite(value) and value >= 0,
+                 "M09 interaction utilization missing/nonfinite")
+        summary.append({
+            "module": "M09", "component_id": column["member_id"],
+            "governing_reference": column["governing_combination_id"] +
+                                   ":" + column["governing_member_end"],
+            "quantity": "bounded P-M-M interaction utilization",
+            "value": round(value, 7), "unit": "ratio",
+            "status": column["status"],
+        })
+    for joint in checks["joint_design"]:
+        value = float(joint["governing_uncertain_direction_shear_kN"])
+        _require(math.isfinite(value) and value >= 0,
+                 "M10 governing uncertain joint shear missing/nonfinite")
+        summary.append({
+            "module": "M10", "component_id": joint["joint_node_id"],
+            "governing_reference": joint["governing_combination_id"],
+            "quantity": "adverse-direction joint shear screening",
+            "value": round(value, 7), "unit": "kN",
+            "status": joint["status"],
+        })
+    return summary
+
+
 def build(payload: dict, *, contract: dict, coverage: dict) -> dict:
     """Solve the supplied canonical case, then check SAME-MODEL signed actions."""
     validate_input(payload)
@@ -220,6 +262,7 @@ def build(payload: dict, *, contract: dict, coverage: dict) -> dict:
         "signed_end_rows": rows,
         "signed_analysis": signed,
         "bounded_design_checks": checks,
+        "bounded_design_summary": _design_summary(checks),
         "input_source_references": model["source_references"],
         "not_evaluated": blockers,
         "historical_F3_unsafe_flag_overridden": False,
@@ -257,6 +300,8 @@ def render_html(result: dict) -> str:
             f"<td>{esc(m['registry_status'])}</td><td>{esc(m['case_status'])}</td></tr>"
             for m in ch["modules"]
         )
+        if ch["id"] == "06":
+            table += ""  # Keep module status table independent of computed RC results.
         sections.append(
             f'<section id="chapter-{esc(ch["id"])}"><h2>Chapter {esc(ch["id"])}'
             f' — {esc(ch["title"])}</h2><table><thead><tr><th>Module</th>'
@@ -268,6 +313,18 @@ def render_html(result: dict) -> str:
             "kind", "case_id", "member_id", "end", *ACTIONS
         )) + "</tr>" for row in result["signed_end_rows"]
     )
+    design_rows = "".join(
+        "<tr>" + "".join(f"<td>{esc(r[key])}</td>" for key in
+        ("module", "component_id", "governing_reference",
+         "quantity", "value", "unit", "status")) + "</tr>"
+        for r in result["bounded_design_summary"]
+    )
+    design_table = ('<h3>Actual bounded RC check results (NOT a complete design)</h3>'
+                    '<div class="scroll"><table><thead><tr>' +
+                    ''.join(f'<th>{esc(x)}</th>' for x in
+                            ("Module", "Component", "Case/end", "Demand/check",
+                             "Computed", "Units", "Disposition")) +
+                    '</tr></thead><tbody>' + design_rows + '</tbody></table></div>')
     blockers = "".join(f"<li>{esc(x)}</li>" for x in result["not_evaluated"])
     refs = "".join(f'<li><a href="{esc(x["url"])}">{esc(x["id"])}</a></li>'
                    for x in result["code_references"])
@@ -286,7 +343,9 @@ code{{overflow-wrap:anywhere}}@media print{{nav{{display:none}}body{{padding:0}}
 Loads, geometry, supports, building-wide code combinations and full design must be independently established.
 Original F3 adverse finding is not cleared.</p><nav>{headings}</nav></header>
 {''.join(sections)}
-<section><h2>Annex — real OpenSees signed frame actions</h2>
+<section><h2>Annex — independent bounded RC checks and signed member actions</h2>
+{design_table}
+<h3>Real OpenSees signed frame actions</h3>
 <p>{esc(result["counts"]["analysis_cases"])} separately solved source-labelled cases;
 {esc(result["counts"]["signed_combinations"])} algebraically combined cases;
 {esc(result["counts"]["signed_end_rows"])} signed member I/J records.</p>
