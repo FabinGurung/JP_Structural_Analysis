@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 0d6775cc3d5f3657c97a5e933ddeebe42884c982
+          ref: 537dabbc23da96f5a3baa890f071734fddb790e5
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -827,7 +827,7 @@ jobs:
         uses: actions/deploy-pages@v5.0.1
       - name: Verify live Pages source identity, report, studio, and engineering holds
         env:
-          EXPECTED_SOURCE_SHA: 0d6775cc3d5f3657c97a5e933ddeebe42884c982
+          EXPECTED_SOURCE_SHA: 537dabbc23da96f5a3baa890f071734fddb790e5
         run: |
           set -euo pipefail
           for attempt in $(seq 1 18); do
@@ -984,6 +984,52 @@ jobs:
           assert readiness["F3_one_way_shear_unsafe"] and readiness["twelve_unsupported_shells_excluded"]
           assert not readiness["engineering_approval"] and readiness["engineering_acceptance"]=="NOT ACCEPTED"
           print("R6P16_LIVE_SOURCE_TO_REPORT_ACCEPTANCE",json.dumps(readiness["module_coverage_status_counts"],sort_keys=True))
+          assert 'id="project-r6p17-canonical"' in report
+          graph_html=get("projects/pokhara-g15/canonical-model.html?verify="+sha[:12]).decode("utf-8")
+          assert 'id="r617-diagram"' in graph_html and 'id="r617-equilibrium-section"' in graph_html
+          assert "From original joints to a testable structural model" in graph_html
+          graph_js=get("r6p17-canonical.js?verify="+sha[:12]).decode("utf-8")
+          assert "signed_individual_base_reactions" in graph_js
+          graph=json.loads(get("data/r6p17-canonical-3d-source-graph.json?verify="+sha[:12]))
+          assert graph["schema"]=="jp.structural.r6p17.canonical_source_topology_and_bounded_gravity.v0.1"
+          assert graph["governing_ULS_SLS_input_SHA256"]==readiness["source_scope"]["governing_ULS_SLS_SHA256"]
+          original=graph["counts"]
+          assert original["source_frame_objects"]==165
+          assert original["source_shell_objects"]==115
+          assert original["original_source_fixed_base_point_ids"]==27
+          assert original["used_in_current_coarse_FE_fixed_base_nodes"]==21
+          assert original["declared_fixed_base_ids_without_frame_shell_graph_node"]==6
+          assert original["source_components"]==5 and original["components_with_original_fixed_base_path"]==2
+          assert original["source_graph_connected_shells"]==103
+          assert original["original_unanchored_shells_excluded"]==12
+          assert original["independently_solved_bounded_gravity_cases"]==8
+          assert original["signed_individual_base_reactions"]==168
+          assert len(graph["canonical_original_frames"])==165
+          assert len(graph["canonical_original_shells"])==115
+          assert len(graph["individual_twelve_unanchored_shell_investigations"])==12
+          assert len(graph["coarse_trial_signed_gravity_support_reactions"])==8
+          assert all(not s["admitted_to_solved_model"] and s["design_load_transfer_accepted"] is None
+                     for s in graph["individual_twelve_unanchored_shell_investigations"])
+          for case in graph["coarse_trial_signed_gravity_support_reactions"]:
+              assert case["force_equilibrium_verified_for_bounded_model"]
+              assert len(case["signed_support_reactions"])==21
+              assert case["vertical_equilibrium_error_N"]<=case["vertical_equilibrium_tolerance_N"]
+              assert not case["source_model_reactions_accepted_for_final_footing_design"]
+              assert all(not joint["actual_ETABS21_support_reaction_verified"]
+                         for joint in case["signed_support_reactions"])
+          assert graph["no_new_fixed_restraints_or_beam_shell_ties_created"]
+          assert graph["no_source_unsupported_shell_was_added_to_solver"]
+          assert graph["equilibrium_of_research_gravity_cases_verified"]
+          assert not graph["native_ETABS21_generated_joints_or_releases_verified"]
+          assert not graph["source_vertical_reactions_physically_verified"]
+          assert not graph["full_ETABS21_3D_model_reconstructed_and_validated"]
+          assert not graph["final_design_member_or_foundation_reactions_approved"]
+          assert graph["F3_one_way_shear_unsafe"] and not graph["engineering_approval"]
+          receipt17=json.loads(get("reports/r6p17-canonical-model-reaction-receipt.json?verify="+sha[:12]))
+          assert receipt17["source_SHA256"]==graph["governing_ULS_SLS_input_SHA256"]
+          assert not receipt17["source_native_ETABS21_reactions_verified"] and receipt17["F3_one_way_shear_unsafe"]
+          print("R6P17_LIVE_SOURCE_GRAPH_AND_SIGNED_REACTION_SCOPE",json.dumps(original,sort_keys=True))
+
 
           print("R6P15_LIVE_77_CASE_GEOMETRIC_CLASSIFICATION",json.dumps(coverage,sort_keys=True))
 
@@ -991,7 +1037,7 @@ jobs:
 
 
 
-          print("LIVE_PAGES_R616_FIRST_PARTY_REPRODUCIBILITY_NOT_FULL_ETABS_VERIFIED",sha)
+          print("LIVE_PAGES_R617_CANONICAL_SOURCE_GRAPH_12_SHELLS_EIGHT_EQUILIBRATED_CASES_F3_HOLD_VERIFIED",sha)
           PY
             then
               exit 0
