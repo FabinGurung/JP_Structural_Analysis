@@ -15,6 +15,7 @@ from scripts.build_r6p13_member_gravity_research import export as export_members
 from scripts.build_r6p14_tributary_reconciliation import export as export_tributary
 from scripts.build_r6p15_incomplete_edge_audit import export as export_incomplete
 from scripts.build_r6p16_reproducibility_gate import export as export_reproducibility
+from scripts.build_r6p17_canonical_source_graph import export as export_canonical
 
 import json
 
@@ -101,6 +102,31 @@ def main():
            and reproduction_receipt["F3_one_way_shear_unsafe"],
            "R6.16 evidence receipt invalid")
 
+    canonical, canonical_receipt = export_canonical(mesh=source_mesh,casebook=cases)
+    require(canonical["counts"]["source_frame_objects"] == 165
+            and canonical["counts"]["source_shell_objects"] == 115
+            and canonical["counts"]["source_components"] == 5
+            and canonical["counts"]["original_source_fixed_base_point_ids"] == 27
+            and canonical["counts"]["used_in_current_coarse_FE_fixed_base_nodes"] == 21
+            and canonical["counts"]["source_graph_connected_shells"] == 103
+            and canonical["counts"]["original_unanchored_shells_excluded"] == 12
+            and canonical["counts"]["independently_solved_bounded_gravity_cases"] == 8
+            and canonical["counts"]["signed_individual_base_reactions"] == 168
+            and canonical["equilibrium_of_research_gravity_cases_verified"]
+            and not canonical["native_ETABS21_generated_joints_or_releases_verified"]
+            and not canonical["full_ETABS21_3D_model_reconstructed_and_validated"]
+            and canonical["no_new_fixed_restraints_or_beam_shell_ties_created"]
+            and canonical["no_source_unsupported_shell_was_added_to_solver"]
+            and canonical["F3_one_way_shear_unsafe"]
+            and not canonical["engineering_approval"],
+            "R6.17 source graph, signed equilibrium or safety gate failed")
+    require(canonical["governing_ULS_SLS_input_SHA256"]
+            == cases["source_model_fingerprints"],
+            "R6.17 governing model revision mismatch")
+    require(canonical_receipt["F3_one_way_shear_unsafe"]
+            and not canonical_receipt["engineering_approval"],
+            "R6.17 receipt failed safety gate")
+
     project_report = SITE / "projects/pokhara-g15/report.html"
     original = project_report.read_text(encoding="utf-8")
     target = '<section class="rb-card project-tools" id="project-hand-calculations"'
@@ -154,6 +180,19 @@ def main():
             raise ValueError("Original project hand-calculation anchor disappeared")
         project_report.write_text(original.replace(target,readiness_block+target,1),encoding="utf-8")
 
+    original = project_report.read_text(encoding="utf-8")
+    canonical_block = ('<section class="rb-card project-tools" id="project-r6p17-canonical">'
+        '<h2>R6.17 · Canonical original-source 3D model and research gravity equilibrium</h2>'
+        '<p>Original source node/frame/shell graph, individually reviewed 12 source-unanchored '
+        'shells and 21 signed base-reaction records for each of eight bounded research gravity cases. '
+        'No native ETABS21 joint or reaction equivalence or RCC design acceptance.</p>'
+        '<p><a href="projects/pokhara-g15/canonical-model.html">'
+        'Open 3D source model, twelve shell holds and gravity reaction QA</a></p></section>\n')
+    if 'id="project-r6p17-canonical"' not in original:
+        if target not in original:
+            raise ValueError("R6.17 original hand-calculation anchor disappeared")
+        project_report.write_text(original.replace(target,canonical_block+target,1),encoding="utf-8")
+
     for project in json.loads(PROJECTS.read_text()):
         route = f"projects/{project['slug']}/report.html"
         report = (SITE / route).read_text()
@@ -165,6 +204,10 @@ def main():
             require('id="project-r6p12-manual"' in report, "R6.12 manual audit link missing")
             require((SITE/"projects/pokhara-g15/manual-verification.html").is_file(),
                     "R6.12 manual audit page missing")
+            require('id="project-r6p17-canonical"' in report,
+                    "R6.17 canonical source 3D audit link missing")
+            require((SITE/"projects/pokhara-g15/canonical-model.html").is_file(),
+                    "R6.17 canonical source model browser page missing")
             require('id="project-r6p16-reproducibility"' in report,
                     "R6.16 engine/report readiness link missing")
             require((SITE/"projects/pokhara-g15/reproducibility.html").is_file(),

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>R6.17 — Canonical 3D Source Graph & Gravity Reactions | Pokhara G+1.5</title>
+<meta name="description" content="Inspectable original ETABS21 source-joint identity graph, 12 excluded shell investigations and equilibrium-checked research gravity support reactions. Not structural approval.">
+<link rel="stylesheet" href="../../styles.css"><link rel="stylesheet" href="../../r6p17-canonical.css"></head>
+<body data-guild-route="g15">
+<header class="site-header"><div class="wrap nav-row"><a class="brand" href="../../index.html"><span class="brand-mark">JP</span><strong>Structural Analysis</strong></a>
+<nav class="navigation" aria-label="Primary navigation"><a href="report.html">Project report</a><a href="reproducibility.html">R6.16 readiness</a><a href="incomplete-edges.html">R6.15 source edges</a></nav></div></header>
+<main class="wrap r617-wrap">
+<section class="r617-hero"><p class="eyebrow">R6.17 · FIRST-PARTY 3D SOURCE GRAPH / INDEPENDENT EQUILIBRIUM</p>
+<h1>From original joints to a testable structural model</h1>
+<p>A source-ID-preserving three-dimensional map of the original ETABS21 frames, shell boundaries and declared supports. It distinguishes <strong>source graph reachability</strong> from actual generated-analysis joint compatibility and physical support, and records signed OpenSees reactions from the existing bounded coarse 103-shell study.</p>
+<div class="r617-links"><a href="report.html">Return to project report</a><a href="reproducibility.html">Full engine-readiness gates</a><a href="../../data/r6p17-canonical-3d-source-graph.json">Inspect canonical JSON and 168 reaction records</a><a href="../../r6p10-shell-diaphragm-studio.html#r611-support">Earlier R6.11 contact study</a></div>
+</section>
+<aside class="r617-hold" role="note"><strong>ENGINEERING HOLD — NOT A VERIFIED NATIVE ETABS21 MODEL.</strong> Matching source point IDs does not prove compatible generated mesh, releases, offsets, vertical support or original solver reactions. The original 12 unanchored shell objects remain excluded. <strong>F3 remains NOT SAFE IN ONE WAY SHEAR.</strong> Research reaction sums are neither current original ETABS21 results nor accepted design footing reactions.</aside>
+<section aria-label="Model source coverage"><h2>Original model inventory and modelling boundary</h2><div class="r617-kpis" id="r617-kpis" aria-live="polite">Loading original source geometry…</div></section>
+<section id="r617-3d-section" aria-labelledby="r617-model-title"><h2 id="r617-model-title">3D source-identity structure viewer</h2>
+<p>Select a storey and layers to explore the unmodified source graph. <strong>Red shells</strong> have no graph path to the declared original base restraints; green shells have a source-identity path only, not verified FE constraints. The isometric view is a geometric projection, not a substitute for authored drawings.</p>
+<div class="r617-controls"><label>Visible storey <select id="r617-floor"><option value="ALL">Whole structure</option><option value="GF">Ground floor</option><option value="FF">First floor</option><option value="TF">Top floor</option></select></label>
+<label><input type="checkbox" id="r617-frames" checked> Original beams and columns</label>
+<label><input type="checkbox" id="r617-shells" checked> All original shells</label>
+<label><input type="checkbox" id="r617-unsupported" checked> Highlight 12 unsupported shells</label>
+<label><input type="checkbox" id="r617-supports" checked> Connected base restraints</label></div>
+<div class="r617-modelbox"><svg id="r617-diagram" viewBox="0 0 1000 610" role="img" aria-label="Isometric original source frame and shell geometry. Source identity only, no verified solver mesh."></svg><div class="r617-legend">
+<span><i class="r617-frame-line"></i> Frame source member</span><span><i class="r617-anchored"></i> Graph-connected shell</span><span><i class="r617-unanchored"></i> Unanchored source shell</span><span><i class="r617-base"></i> Connected fixed-base source</span></div></div>
+<p class="r617-small" id="r617-model-caption">Select one of the twelve unsupported source shells below to highlight it.</p></section>
+<section class="r617-section" id="r617-excluded-section"><h2>The 12 source-unanchored shells — individually investigated</h2>
+<p>Each entry retains its original shell and point IDs and nearest spatial candidates from the unchanged source geometry. A short spatial distance is <em>not</em> an authenticated structural connection. No snapping, new restraint, or shell admission occurs.</p>
+<div class="r617-controls"><label>Original shell ID <input id="r617-shell-query" type="search" placeholder="GF:W2, FF:W3" autocomplete="off"></label><label>Storey <select id="r617-shell-floor"><option value="ALL">All</option><option value="GF">Ground floor</option><option value="FF">First floor</option><option value="TF">Top floor</option></select></label></div>
+<div class="r617-tablearea"><table><thead><tr><th>Source shell</th><th>Floor</th><th>Original point IDs</th><th>Nearest frame, mm</th><th>Nearest connected shell, mm</th><th>Structural verdict</th><th>Inspect</th></tr></thead><tbody id="r617-excluded"><tr><td colspan="7">Loading original 12-shell audit…</td></tr></tbody></table></div>
+<article class="r617-detail" id="r617-selected-shell" aria-live="polite">Select a shell for its original 3D geometry and neighbouring-source evidence.</article></section>
+<section class="r617-section" id="r617-equilibrium-section"><h2>Gravity equilibrium — research cases, not footing design</h2>
+<p>The original source declares 27 base restraints; only 21 map to nodes in the existing coarse solver graph. Eight independently run research gravity cases each now expose 21 signed six-DOF support-reaction records. <strong>Reaction check:</strong> total upward signed vertical base reaction equals applied downward loading, within the recorded numerical tolerance.</p>
+<div class="r617-controls"><label>Source stiffness variant <select id="r617-role"><option value="ULS">ULS model stiffness</option><option value="SLS">SLS model stiffness</option></select></label>
+<label>Original gravity pattern <select id="r617-pattern"><option value="Dead">Dead</option><option value="Live">Live</option><option value="WALL LOAD">Wall load</option><option value="FLOOR FINISH">Floor finish</option></select></label></div>
+<div class="r617-equil" id="r617-equil" aria-live="polite">Loading signed support equilibrium…</div>
+<div class="r617-tablearea"><table><thead><tr><th>Source base point ID</th><th>X, mm</th><th>Y, mm</th><th>Rz signed, kN</th><th>Rx, kN</th><th>Ry, kN</th><th>Mz, kN·m</th></tr></thead><tbody id="r617-reactions"><tr><td colspan="7">Loading signed research forces…</td></tr></tbody></table></div>
+<p class="r617-small">All values are from the 2×2 coarse OpenSees shell trial and original 21 connected support nodes; actual 8×8 ETABS21 generated-mesh reactions and footing design loads are not available or accepted.</p></section>
+<section class="r617-section r617-next"><h2>What it takes to promote this into an authentic structural model</h2>
+<p>Verify source-story/node identity against drawings and the generated native mesh; establish real shell-edge/frame offsets, releases, joins and diaphragm assignments; resolve the twelve excluded shells by authenticated evidence; independently reconcile input gravity and mass; and prove force/moment equilibrium and mesh convergence before using any reactions in RCC design or F3 footing reassessment.</p>
+</section></main><script src="../../r6p17-canonical.js" defer></script></body></html>

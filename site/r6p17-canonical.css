@@ -1,0 +1,49 @@
+.r617-wrap{max-width:1200px;padding:1.4rem 13px 5rem;color:var(--ink,#1d3c49)}
+.r617-wrap h1{font-size:clamp(1.75rem,4vw,2.65rem);line-height:1.1}
+.r617-wrap h2{font-size:clamp(1.2rem,2.7vw,1.65rem);margin-bottom:7px}
+.r617-wrap p{line-height:1.62}
+.r617-hero{background:#eaf4f3;border:1px solid #bad3d3;border-radius:13px;padding:clamp(16px,3vw,28px)}
+.r617-hero p{max-width:980px}
+.r617-links{display:flex;gap:9px 18px;flex-wrap:wrap;margin:1.2rem 0 0}
+.r617-hold{background:#fff0dc;border:1px solid #b9925f;border-radius:8px;padding:16px 18px;margin:17px 0 25px;line-height:1.68}
+.r617-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin:14px 0 23px}
+.r617-kpi{border:1px solid #c9dce0;border-radius:8px;background:white;padding:12px}
+.r617-kpi small{display:block;color:#536d78;font-size:.76rem}
+.r617-kpi strong{font-size:1.55rem;display:block;font-variant-numeric:tabular-nums}
+.r617-controls{display:flex;flex-wrap:wrap;align-items:center;gap:12px 19px;margin:13px 0}
+.r617-controls label{font-size:.86rem;font-weight:700;display:flex;align-items:center;gap:8px}
+.r617-controls label:has(select),.r617-controls label:has(input[type=search]){align-items:flex-start;flex-direction:column;gap:4px}
+.r617-controls select,.r617-controls input[type=search]{background:#fff;border:1px solid #a9c7d0;border-radius:6px;padding:8px 10px;font:inherit}
+.r617-controls input[type=checkbox]{width:16px;height:16px;accent-color:#327d84}
+.r617-modelbox{border:1px solid #c4d8de;border-radius:11px;background:#f9fcfd;overflow:hidden}
+.r617-modelbox svg{width:100%;min-height:290px;max-height:700px;height:auto;background:linear-gradient(#f5fafb,#eaf1f4);display:block}
+.r617-modelbox svg .r617-select{cursor:pointer}
+.r617-modelbox svg .r617-select:hover{stroke:#a86400;stroke-width:4}
+.r617-legend{display:flex;align-items:center;flex-wrap:wrap;gap:10px 24px;padding:11px 14px;border-top:1px solid #d5e3e6;font-size:.78rem;color:#455e6b}
+.r617-legend span{display:inline-flex;align-items:center;gap:5px}
+.r617-legend i{width:14px;height:14px;border-radius:3px;display:inline-block}
+.r617-frame-line{border-top:3px solid #244b69}.r617-anchored{background:#4eaaa8}.r617-unanchored{background:#c75e50}.r617-base{background:#393c93}
+.r617-small{font-size:.78rem;color:#546b75}
+.r617-section{margin-top:32px}
+.r617-tablearea{overflow:auto;max-height:550px;border:1px solid #c8d9dd;border-radius:9px;background:white}
+.r617-tablearea table{width:100%;min-width:840px;border-collapse:collapse;font-size:.82rem;font-variant-numeric:tabular-nums}
+.r617-tablearea th{position:sticky;top:0;text-align:left;background:#eaf2f4;z-index:1}
+.r617-tablearea th,.r617-tablearea td{padding:10px 12px;border-bottom:1px solid #e2ebed;white-space:nowrap}
+.r617-tablearea tbody tr:hover{background:#f6fafb}
+.r617-tablearea button{border:0;background:#25586e;color:white;border-radius:6px;padding:6px 11px;cursor:pointer}
+.r617-tablearea button:focus-visible{outline:3px solid #cb9640;outline-offset:2px}
+.r617-detail{background:#fff;border:1px solid #ccdce1;border-radius:10px;padding:15px;margin-top:14px}
+.r617-detail h3{font-size:1rem;margin:0 0 8px}
+.r617-detail p{font-size:.87rem}
+.r617-evidence{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.r617-evidence div{background:#f8fbfc;border:1px solid #dae5e8;border-radius:8px;padding:12px}
+.r617-evidence h4{font-size:.83rem;margin:0 0 7px}
+.r617-evidence p{font-size:.8rem;margin:.3rem 0}
+.r617-equil{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:9px;margin:16px 0}
+.r617-equil>div{border:1px solid #c6dbe0;border-radius:9px;padding:12px;background:#fff}
+.r617-equil small{display:block;color:#526b77;font-size:.78rem}
+.r617-equil strong{display:block;font-size:1.25rem;margin-top:5px;font-variant-numeric:tabular-nums}
+.r617-next{background:#eef7f8;border:1px solid #c8dfe3;border-radius:10px;padding:16px}
+.r617-next h2{margin-top:0}
+@media(max-width:540px){.r617-wrap{padding-inline:10px}.r617-hero{padding:13px}.r617-modelbox svg{min-height:220px}.r617-kpi strong{font-size:1.35rem}}
+@media print{.r617-controls,.r617-tablearea button{display:none}.r617-detail,.r617-hold{break-inside:avoid}}
