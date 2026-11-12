@@ -150,6 +150,18 @@ def main():
     require(mesh_receipt["F3_one_way_shear_unsafe"] and not mesh_receipt["engineering_approval"],
             "R6.18 original foundation HOLD accidentally cleared")
 
+    print("R6P18_SOURCE_BOUND_FE_MESH_SIX_AXIS_GATE",json.dumps({
+       "counts":mesh_reactions["counts"],
+       "point_collision_groups":mesh_reactions["source_node_identity_vs_3D_coordinate_collision_audit"]["source_coordinate_rounded_collision_groups"],
+       "research_frame_shell_boundary_2x2":mesh_reactions["shell_frame_boundary_alignment_by_mesh_size"]["2"]["by_geometry_class"],
+       "research_frame_shell_boundary_4x4":mesh_reactions["shell_frame_boundary_alignment_by_mesh_size"]["4"]["by_geometry_class"],
+       "refinement_comparisons":[{
+           "role":q["role"],"pattern":q["source_gravity_pattern"],
+           "max_delta_Rz_kN":q["largest_single_source_support_Rz_change_kN"],
+           "relative_delta":q["largest_source_support_change_relative_to_total_gravity"],
+           "stability_screen_5pct":q["five_percent_reaction_stability_screen_passed"]}
+          for q in mesh_reactions["research_mesh_sensitivity_comparisons"]]
+       },sort_keys=True))
     project_report = SITE / "projects/pokhara-g15/report.html"
     original = project_report.read_text(encoding="utf-8")
     target = '<section class="rb-card project-tools" id="project-hand-calculations"'
