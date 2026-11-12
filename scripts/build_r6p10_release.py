@@ -16,6 +16,7 @@ from scripts.build_r6p14_tributary_reconciliation import export as export_tribut
 from scripts.build_r6p15_incomplete_edge_audit import export as export_incomplete
 from scripts.build_r6p16_reproducibility_gate import export as export_reproducibility
 from scripts.build_r6p17_canonical_source_graph import export as export_canonical
+from scripts.build_r6p18_fe_mesh_foundation import export as export_fe_mesh
 
 import json
 
@@ -127,6 +128,40 @@ def main():
             and not canonical_receipt["engineering_approval"],
             "R6.17 receipt failed safety gate")
 
+    mesh_reactions, mesh_receipt = export_fe_mesh(canonical=canonical,casebook=cases)
+    require(mesh_reactions["counts"]["source_graph_connected_shells"] == 103
+            and mesh_reactions["counts"]["original_unanchored_shells_excluded"] == 12
+            and mesh_reactions["counts"]["original_base_restraints_declared"] == 27
+            and mesh_reactions["counts"]["source_connected_research_support_nodes"] == 21
+            and mesh_reactions["counts"]["baseline_gravity_cases_at_2x2"] == 8
+            and mesh_reactions["counts"]["additional_independently_solved_4x4_refinement_cases"] == 2
+            and mesh_reactions["counts"]["research_signed_base_reaction_records_2x2"] == 168
+            and mesh_reactions["counts"]["research_signed_base_reaction_records_4x4"] == 42
+            and mesh_reactions["r6p18_research_force_and_moment_equilibrium_checked"]
+            and not mesh_reactions["complete_independent_physical_FE_model_accepted"]
+            and not mesh_reactions["source_frame_shell_ties_physically_verified"]
+            and not mesh_reactions["original_F3_CF1_source_support_correspondence_verified"]
+            and not mesh_reactions["engineering_approval"]
+            and mesh_reactions["historical_F3_one_way_shear_unsafe"],
+            "R6.18 3D FE mesh refinement and foundation reaction engineering hold failed")
+    require(mesh_reactions["governing_ULS_SLS_input_SHA256"]
+            == cases["source_model_fingerprints"],
+            "R6.18 governing source ULS/SLS pair drift")
+    require(mesh_receipt["F3_one_way_shear_unsafe"] and not mesh_receipt["engineering_approval"],
+            "R6.18 original foundation HOLD accidentally cleared")
+
+    print("R6P18_SOURCE_BOUND_FE_MESH_SIX_AXIS_GATE",json.dumps({
+       "counts":mesh_reactions["counts"],
+       "point_collision_groups":mesh_reactions["source_node_identity_vs_3D_coordinate_collision_audit"]["source_coordinate_rounded_collision_groups"],
+       "research_frame_shell_boundary_2x2":mesh_reactions["shell_frame_boundary_alignment_by_mesh_size"]["2"]["by_geometry_class"],
+       "research_frame_shell_boundary_4x4":mesh_reactions["shell_frame_boundary_alignment_by_mesh_size"]["4"]["by_geometry_class"],
+       "refinement_comparisons":[{
+           "role":q["role"],"pattern":q["source_gravity_pattern"],
+           "max_delta_Rz_kN":q["largest_single_source_support_Rz_change_kN"],
+           "relative_delta":q["largest_source_support_change_relative_to_total_gravity"],
+           "stability_screen_5pct":q["five_percent_reaction_stability_screen_passed"]}
+          for q in mesh_reactions["research_mesh_sensitivity_comparisons"]]
+       },sort_keys=True))
     project_report = SITE / "projects/pokhara-g15/report.html"
     original = project_report.read_text(encoding="utf-8")
     target = '<section class="rb-card project-tools" id="project-hand-calculations"'
@@ -193,6 +228,20 @@ def main():
             raise ValueError("R6.17 original hand-calculation anchor disappeared")
         project_report.write_text(original.replace(target,canonical_block+target,1),encoding="utf-8")
 
+    report_markup = project_report.read_text(encoding="utf-8")
+    mesh_block = ('<section class="rb-card project-tools" id="project-r6p18-fe">'
+        '<h2>R6.18 · 3D FE mesh refinement, interface alignment and foundation reactions</h2>'
+        '<p>Source-identity based shell/frame contact audit and independent 2×2 versus 4×4 '
+        'OpenSees gravity reactions, including six-axis force/moment balance. '
+        '12 original source-unanchored shells excluded and footing F3 unsafe. '
+        'No actual ETABS21 mesh parity or accepted foundation-design forces.</p>'
+        '<p><a href="projects/pokhara-g15/fe-mesh-audit.html">'
+        'Inspect FE mesh convergence and unapproved source foundation reactions</a></p></section>\n')
+    if 'id="project-r6p18-fe"' not in report_markup:
+        if target not in report_markup:
+            raise ValueError("Original Pokhara hand-calculation anchor disappeared")
+        project_report.write_text(report_markup.replace(target,mesh_block+target,1),encoding="utf-8")
+
     for project in json.loads(PROJECTS.read_text()):
         route = f"projects/{project['slug']}/report.html"
         report = (SITE / route).read_text()
@@ -204,6 +253,10 @@ def main():
             require('id="project-r6p12-manual"' in report, "R6.12 manual audit link missing")
             require((SITE/"projects/pokhara-g15/manual-verification.html").is_file(),
                     "R6.12 manual audit page missing")
+            require('id="project-r6p18-fe"' in report,
+                    "R6.18 first-party FE mesh and foundation reaction report link missing")
+            require((SITE/"projects/pokhara-g15/fe-mesh-audit.html").is_file(),
+                    "R6.18 first-party mesh and support QA browser page missing")
             require('id="project-r6p17-canonical"' in report,
                     "R6.17 canonical source 3D audit link missing")
             require((SITE/"projects/pokhara-g15/canonical-model.html").is_file(),

@@ -165,6 +165,10 @@ def add_gravity_loads(r,case):
     ops=r["ops"];native=r["native"];source=r["source"]
     nodes=defaultdict(float)
     input_N=0.;deferred_N=0.
+    load_moments=[0.,0.,0.]  # external gravity moment about original XYZ origin, N mm
+    def add_vertical_gravity_moment(pos,downward_N):
+        load_moments[0]-=float(pos[1])*downward_N
+        load_moments[1]+=float(pos[0])*downward_N
     source_areas={p["key"]:p for p in source["all_shell_parameters"]}
     for m in native["members"]:
         if m["kind"] not in ("BEAM","COLUMN") or m["key"] not in r["frametags"]:continue
@@ -180,6 +184,7 @@ def add_gravity_loads(r,case):
             transverse=math.sqrt(max(0,1-dz*dz))
             ops.eleLoad("-ele",tag,"-type","-beamUniform",0.0,-w*transverse,-w*dz)
             input_N+=w*length
+            add_vertical_gravity_moment([(xyz0[i]+xyz1[i])/2 for i in range(3)],w*length)
         if case=="WALL LOAD":
             for load in m["applied_loads"]:
                 if load["pattern"]!="WALL LOAD":continue
@@ -188,6 +193,7 @@ def add_gravity_loads(r,case):
                     dz=(xyz1[2]-xyz0[2])/length
                     ops.eleLoad("-ele",tag,"-type","-beamUniform",0.0,-w*math.sqrt(max(0,1-dz*dz)),-w*dz)
                     input_N+=load["raw_integrated_kN"]*1000
+                    add_vertical_gravity_moment([(xyz0[i]+xyz1[i])/2 for i in range(3)],load["raw_integrated_kN"]*1000)
                 elif load["method"]=="T":
                     # A conservative source-resultant and 1st-moment preserving
                     # endpoint approximation; not beam consistent fixed-end
@@ -244,12 +250,16 @@ def add_gravity_loads(r,case):
                             nodes[nid]-=total/48/len(candidates)*pct
                 input_N+=total
     for key,val in nodes.items():
-        if val:ops.load(key,0.,0.,val,0.,0.,0.)
+        if val:
+            ops.load(key,0.,0.,val,0.,0.,0.)
+            add_vertical_gravity_moment(r["positions"][key],-val)
     return {"case":case,"total_applied_downward_N":input_N,
             "nodal_source_load_points":len(nodes),
             "unverified_TRAPF_represented_as_endpoints":case=="WALL LOAD",
             "unsectioned_LINE_source_transfer_interpolated":case=="WALL LOAD",
-            "lost_load_N":deferred_N}
+            "lost_load_N":deferred_N,
+            "input_external_gravity_moments_Nmm":load_moments,
+            "global_moment_origin_xyz_mm":[0.,0.,0.]}
 
 def connected_floor_seismic_weight(r):
     """Auditable source-pattern proxy, NOT native ETABS21 modal mass."""
@@ -358,6 +368,28 @@ def solve(role="ULS",case="Dead",resolution=2):
     for axis in range(3):
         if abs(sum(item["signed_Fxyz_N"][axis] for item in per_support)-reactions[axis])>0.0001:
             raise RuntimeError("Per-support signed reaction ledger does not conserve native support resultant")
+    reaction_global_moments=[0.,0.,0.]
+    for support in per_support:
+        x,y,z=support["xyz_mm"]
+        rx,ry,rz=support["signed_Fxyz_N"]
+        mx,my,mz=support["signed_Mxyz_Nmm"]
+        reaction_global_moments[0]+=mx+y*rz-z*ry
+        reaction_global_moments[1]+=my+z*rx-x*rz
+        reaction_global_moments[2]+=mz+x*ry-y*rx
+    gravity_moment_residual_Nmm=None
+    gravity_moment_tolerance_Nmm=None
+    if not case.startswith("EQ"):
+        if application["lost_load_N"]!=0.0:
+            raise RuntimeError("R6.18 gravity missing original input loading")
+        applied_moments=application["input_external_gravity_moments_Nmm"]
+        gravity_moment_residual_Nmm=[
+            round(abs(reaction_global_moments[i]+applied_moments[i]),6) for i in range(3)
+        ]
+        scale=max(abs(v) for v in reaction_global_moments+applied_moments)
+        gravity_moment_tolerance_Nmm=max(100.,scale*3e-5)
+        if max(gravity_moment_residual_Nmm)>gravity_moment_tolerance_Nmm:
+            raise RuntimeError("R6.18 research gravity moment equilibrium failed: "+
+                str(gravity_moment_residual_Nmm))
     if case.startswith("EQ"):
         axis_index=0 if application["axis"]=="X" else 1
         error=abs(reactions[axis_index]+application["conditional_base_shear_input_N"])
@@ -395,6 +427,10 @@ def solve(role="ULS",case="Dead",resolution=2):
       "applied_conditional_lateral":application if case.startswith("EQ") else None,
       "sum_native_fixed_base_reactions_N":reactions,
       "connected_support_signed_reactions_research_only":per_support,
+      "sum_support_global_reaction_moments_Nmm":[round(v,6) for v in reaction_global_moments],
+      "gravity_global_moment_residual_Nmm":gravity_moment_residual_Nmm,
+      "gravity_global_moment_tolerance_Nmm":gravity_moment_tolerance_Nmm,
+      "original_native_ETABS21_moment_equilibrium_verified":False,
       "original_27_supports_21_connected":True,
       "vertical_equilibrium_residual_N":error if not case.startswith("EQ") else None,
       "horizontal_equilibrium_residual_N":error if case.startswith("EQ") else None,

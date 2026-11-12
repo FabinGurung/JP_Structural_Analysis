@@ -49,6 +49,7 @@ jobs:
           node --check site/r6p15-edge-cases.js
           node --check site/r6p16-readiness.js
           node --check site/r6p17-canonical.js
+          node --check site/r6p18-fe-mesh.js
           node --check site/private-force-viewer.js
       - name: Regenerate curated real-source Gate08 public comparison
         run: python scripts/build_g15_gate08_public.py --output site/data/g15-gate08-reconciliation.v0.1.json
@@ -992,6 +993,7 @@ jobs:
           python tests/browser/r6p15_incomplete_edge_smoke.py
           python tests/browser/r6p16_readiness_smoke.py
           python tests/browser/r6p17_canonical_smoke.py
+          python tests/browser/r6p18_fe_mesh_smoke.py
       - name: Archive R6.11 desktop and mobile browser evidence
         if: always()
         uses: actions/upload-artifact@v7.0.1
@@ -1040,6 +1042,13 @@ jobs:
         with:
           name: r6p17-canonical-source-model-gravity-qa
           path: build/r6p17-browser/*.png
+          if-no-files-found: ignore
+      - name: Archive R6.18 3D FE shell mesh and foundation reaction QA screenshots
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: r6p18-fe-mesh-refinement-foundation-qa
+          path: build/r6p18-browser/*.png
           if-no-files-found: ignore
       - name: Validate report-first site links and theme
         run: |
