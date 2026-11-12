@@ -81,6 +81,10 @@ def test_project_report_reports_only_screened_members_and_never_implies_complete
     assert [x["id"] for x in result["chapters"]] == [
         "01", "02", "03", "04", "05", "06", "07"
     ]
+    assert len(result["bounded_design_summary"]) == 3
+    assert {x["module"] for x in result["bounded_design_summary"]} == {"M08", "M09", "M10"}
+    assert all(x["status"] not in ("APPROVED", "COMPLETE", "DESIGN_SAFE") for x in
+               result["bounded_design_summary"])
     assert not result["all_applicable_design_modules_complete"]
     assert not result["historical_F3_unsafe_flag_overridden"]
     assert result["input_source_references"][0]["source_type"] == "SYNTHETIC_TEST"
@@ -126,6 +130,8 @@ def test_public_synthetic_casebook_files_are_hashed_and_reproducible(tmp_path, r
     assert "Chapter 05" in html and "Chapter 06" in html
     assert "NOT ENGINEERING APPROVED" in html
     assert "Unassessed beam members" in html and "BM2" in html
+    assert "Actual bounded RC check results" in html
+    assert "M08" in html and "M09" in html and "M10" in html
     assert "Unassessed column members" in html and "COL2" in html
     assert "F3 adverse finding" in html
 
