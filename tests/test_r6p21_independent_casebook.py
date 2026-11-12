@@ -202,3 +202,26 @@ def test_cli_reference_reruns_real_fe_and_outputs_a_verifiable_artifact(tmp_path
     assert details["signed_end_rows"] == 32
     assert details["engineering_approval"] is False
     assert verify_bundle(out)["case_id"] == "SYNTHETIC-D2-FRAME-001"
+
+def test_custom_source_labelled_json_cli_runs_without_native_etabs_files(tmp_path):
+    # This tests the public runner's *input contract*, not a real building.
+    case = reference_fixture()
+    case["classification"] = "PROJECT_SOURCE_DERIVED_UNVERIFIED"
+    case["model"]["source_references"] = [{
+        "id": "SYNTHETIC_STRUCTURE_RELABELED_FOR_INPUT_API_TEST",
+        "source_type": "ARCHITECTURAL_DRAWING"
+    }]
+    local_input = tmp_path / "source-case.json"
+    local_input.write_text(json.dumps(case), encoding="utf-8")
+    folder = tmp_path / "local-private-report"
+    process = subprocess.run(
+        [sys.executable, str(ROOT / "scripts/build_r6p21_independent_sar.py"),
+         "--input", str(local_input), "--output-dir", str(folder)],
+        cwd=ROOT, text=True, capture_output=True, check=True
+    )
+    result = json.loads((folder / "independent-sar.json").read_text())
+    assert json.loads(process.stdout)["source_class"] == "PROJECT_SOURCE_DERIVED_UNVERIFIED"
+    assert result["native_ETABS_output_required"] is False
+    assert result["classification"] == "PROJECT_SOURCE_DERIVED_UNVERIFIED"
+    assert not result["project_geometry_and_loads_approved"]
+    assert verify_bundle(folder)["classification"] == "PROJECT_SOURCE_DERIVED_UNVERIFIED"
