@@ -17,7 +17,8 @@ import json
 import math
 from typing import Any
 
-from jp_structural.solvers.native.one_way_panel_to_beams import transfer_one_way_panels, PanelRoutingError\nfrom jp_structural.solvers.native.geometry_load_intake import GeometryLoadError
+from jp_structural.solvers.native.one_way_panel_to_beams import transfer_one_way_panels, PanelRoutingError
+from jp_structural.solvers.native.geometry_load_intake import GeometryLoadError
 
 SCHEMA = "jp.structural.r6p22.independent_geometry_gravity.v0.1"
 INPUT_SCHEMA = "jp.structural.r6p22.independent_geometry_input.v0.1"
