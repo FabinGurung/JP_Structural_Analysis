@@ -62,7 +62,7 @@ def native_candidate(canonical):
     corners = shell["nodes"]
     return {
         "schema": EXPORT_SCHEMA,
-        "governing_source_sha256": canonical["governing_ULS_SLS_input_SHA256"],
+        "governing_source_sha256": dict(canonical["governing_ULS_SLS_input_SHA256"]),
         "export_file_sha256": "c" * 64,
         "source_software": "ETABS21",
         "length_unit": "mm",
