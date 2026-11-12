@@ -44,7 +44,7 @@ with sync_playwright() as p:
         assert len(source["geometric_contacts"])>0
         wanted=source["geometric_contacts"][0]["source_frame_key"]
         page.locator("#r618-search").fill(wanted)
-        page.wait_for_function("""() => document.querySelector('#r618-contact-count')?.innerText.startsWith('')""")
+        page.wait_for_function("""() => Number(document.querySelector('#r618-contact-count')?.innerText.split(' ')[0])>0""")
         assert page.locator("#r618-contacts tr").count()>=1
         assert wanted in page.locator("#r618-contacts").inner_text()
         page.locator("#r618-search").fill("")
