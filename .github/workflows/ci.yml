@@ -24,6 +24,16 @@ jobs:
         run: python -m pip install -e ".[test,opensees]"
       - name: Run unit and regression tests
         run: python -m pytest -q
+      - name: R6.21 independently solve synthetic 3D frame and generate source-linked SAR casebook
+        run: |
+          python scripts/build_r6p21_independent_sar.py --reference --output-dir build/r6p21-independent-sar
+          python -c 'from pathlib import Path; from jp_structural.reporting.independent_casebook import verify_bundle; print("R6P21_BUNDLE_VERIFIED", verify_bundle(Path("build/r6p21-independent-sar"))["case_id"])'
+      - name: Archive R6.21 executable synthetic SAR with numerical signed actions and SHA256 manifest
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: r6p21-independent-opensees-sar-reference-not-approved
+          path: build/r6p21-independent-sar/
+          if-no-files-found: error
       - name: Run public-data safety scan
         run: python scripts/check_public_safety.py
       - name: Build sanitized SAR package
