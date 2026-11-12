@@ -1,3 +1,5 @@
+> **R6.20 scope correction (2026-11-12):** This document is a legacy ETABS-intake **optional research/benchmark** contract, **not a prerequisite** for the independent OpenSees/Python SAR engine or its software milestone. Refer to [R6.20 independent SAR acceptance](R6P20_INDEPENDENT_SAR_ENGINE_ACCEPTANCE.md) for the governing project direction. The 115/103/12 and 27/21 counts are historic research-model findings, not targets an independently grounded model must numerically replicate. Actual geometry, support continuity, load paths, validated design checks, and the historical F3 adverse finding still require proper treatment. Preserve this historical document for provenance.
+
 # R6.19 — Native connectivity and footing evidence gate (development only)
 
 **Parent implementation:** R6.18 `a754d2cc2306ab87541adeb57ffefa63c5551cf4`.

@@ -2,8 +2,10 @@
   "authority": "JP_Structural_Analysis post-Seq9 draft branch; no automatic V0.1 release",
   "code_basis": "NBC 105:2025 for new seismic work, NBC 206:2024 architectural, NBC 205:2024 only after eligibility and 2025 compatibility proof. IS editions require verified clause basis.",
   "frozen_seq9_commit": "f7c2f8ad7d06ec18b750835b311748b129f39a36",
+  "independent_engine_goal": "Generate an independent source-justified OpenSees/Python structural analysis and code-design report; ETABS or E2K output parity is optional benchmark evidence and not an engine release requirement.",
   "live_pages_warning": "Current Charts31 two-ordinate original scan benchmark remains partial source evidence, separate from IS456:1978\u21922000 and NBC105:2025 design approval. Pages requires a separately verified deployment.",
   "precedent_scope": "Two source structural reports: G+1.5 residential and G+2.5 mixed-use. Confidential originals stay in private Drive.",
+  "project_applicability": "Only project-applicable modules can block complete report status: e.g. raft/subgrade (M13) and lift/equipment (M15) are not universal requirements. Unknown physical inputs and relevant design failures remain explicit HOLD.",
   "requirements": [
     {
       "id": "M01",
@@ -28,7 +30,7 @@
       ],
       "precedent_sections": "2.6.1-2.6.3; 4.2",
       "priority": "P0",
-      "remaining_scope": "Bounded source-to-node gravity and seismic mass allocation, conservative center-of-mass, canonical OpenSees mass binding, isolated gravity static solver, and support free-body checks are implemented. Automatic tributary geometry/real load-path identification, distributed frame/area load mapping, shell behavior and source model equivalence remain unresolved.",
+      "remaining_scope": "Bounded source-to-node gravity and seismic mass allocation, conservative center-of-mass, canonical OpenSees mass binding, isolated gravity static solver, and support free-body checks are implemented. Automatic tributary geometry/real load-path identification, distributed frame/area load mapping, shell behavior, independently justified connectivity, and real-building numerical verification remain unresolved.",
       "status": "PARTIAL",
       "title": "Gravity loads and seismic mass",
       "validation_gate": "Synthetic OpenSees frame vertical Rz/Mx/My equilibrium PASS; reject duplicate source keys, geometry drift, existing mass or unsupported units. Real project geometry/source comparison and member-load response benchmarks still pending."
@@ -55,7 +57,7 @@
       ],
       "precedent_sections": "3-4; 5.2-5.4; 5.11-5.14",
       "priority": "P0",
-      "remaining_scope": "Real building gravity/static cases, complete local member force diagrams, reaction-source benchmark, shell/release/offset parity. Phase D2 now reads signed 12-component OpenSees 3D elasticBeamColumn localForce records with member I/J end IDs; solves separate source-identified nodal static cases; performs global 6-component free-body equilibrium; and algebraically combines concurrent signed force/moment components before taking demands. Explicit synthetic 2-column/2-beam-segment frame covered.",
+      "remaining_scope": "Real building gravity/static cases, complete local member force diagrams, independent reaction/member-force benchmarks, conforming shell model, and justified end releases/offsets. Phase D2 now reads signed 12-component OpenSees 3D elasticBeamColumn localForce records with member I/J end IDs; solves separate source-identified nodal static cases; performs global 6-component free-body equilibrium; and algebraically combines concurrent signed force/moment components before taking demands. Explicit synthetic 2-column/2-beam-segment frame covered.",
       "status": "IMPLEMENTED_BOUNDED",
       "title": "3D elastic FE and member force recovery",
       "validation_gate": "Independent free-body equilibrium, supported geometry benchmark and member P/V/M/T comparison. D2 native signed member-end extraction, true OpenSees applied-load reversal, support F/M equilibrium, signed algebra, duplicated/unknown loads, schema and units tests in tests/opensees/test_member_design_bridge.py; no modal phase-coherent signs."
@@ -221,14 +223,14 @@
       "remaining_scope": "Independent solver adapter operationalization, source conflict gates, full numeric checks and immutable run identifiers. D2 signed static case and combination source SHA256, member-end raw action and output checksums, global six-component force/moment equilibrium and explicit design source linkage. Synthetic source action tampering and algebraic inconsistency rejection. No claim of tamper-proof cryptographic authority or real-project equivalence.",
       "status": "PARTIAL",
       "title": "Source QA, numerical verification and provenance",
-      "validation_gate": "No unknown result marked PASS, report reaction discrepancy unresolved until reconciled. D2 199+ test suite QA, same-case algebra checks, invalid/duplicate/missing load fail-closed, checksum and model geometry drift tests, code-status HOLD."
+      "validation_gate": "No unknown result marked PASS; independently verify force/moment equilibrium and numerical convergence; legacy ETABS discrepancy is an optional comparison only. D2 199+ test suite QA, same-case algebra checks, invalid/duplicate/missing load fail-closed, checksum and model geometry drift tests, code-status HOLD."
     },
     {
       "id": "S18",
       "implemented_paths": [],
       "precedent_sections": "1-6; annex",
       "priority": "P2",
-      "remaining_scope": "Consume validated results from R&D LaTeX renderer; numbered equations, force diagrams, checks, citations and private/public separation.",
+      "remaining_scope": "Consume validated first-party OpenSees/Python results into a reproducible SAR renderer; numbered equations, force diagrams, checks, citations and private/public separation.",
       "status": "DRAFT_UNVALIDATED",
       "title": "Complete report/PDF/website projection",
       "validation_gate": "Every report item links to computation run and code edition; no private project publication."

@@ -38,7 +38,7 @@
         "src/jp_structural/solvers/native/load_mass_assembly.py",
         "src/jp_structural/solvers/opensees/load_mass_adapter.py"
       ],
-      "remaining_scope": "Bounded source-to-node gravity and seismic mass allocation, conservative center-of-mass, canonical OpenSees mass binding, isolated gravity static solver, and support free-body checks are implemented. Automatic tributary geometry/real load-path identification, distributed frame/area load mapping, shell behavior and source model equivalence remain unresolved.",
+      "remaining_scope": "Bounded source-to-node gravity and seismic mass allocation, conservative center-of-mass, canonical OpenSees mass binding, isolated gravity static solver, and support free-body checks are implemented. Automatic tributary geometry/real load-path identification, distributed frame/area load mapping, shell behavior, independently justified connectivity, and real-building numerical verification remain unresolved.",
       "validation_gate": "Synthetic OpenSees frame vertical Rz/Mx/My equilibrium PASS; reject duplicate source keys, geometry drift, existing mass or unsupported units. Real project geometry/source comparison and member-load response benchmarks still pending."
     },
     {
@@ -65,7 +65,7 @@
         "src/jp_structural/solvers/native/direct_stiffness.py",
         "src/jp_structural/solvers/opensees/member_design_bridge.py"
       ],
-      "remaining_scope": "Real building gravity/static cases, complete local member force diagrams, reaction-source benchmark, shell/release/offset parity. Phase D2 now reads signed 12-component OpenSees 3D elasticBeamColumn localForce records with member I/J end IDs; solves separate source-identified nodal static cases; performs global 6-component free-body equilibrium; and algebraically combines concurrent signed force/moment components before taking demands. Explicit synthetic 2-column/2-beam-segment frame covered.",
+      "remaining_scope": "Real building gravity/static cases, complete local member force diagrams, independent reaction/member-force benchmarks, conforming shell model, and justified end releases/offsets. Phase D2 now reads signed 12-component OpenSees 3D elasticBeamColumn localForce records with member I/J end IDs; solves separate source-identified nodal static cases; performs global 6-component free-body equilibrium; and algebraically combines concurrent signed force/moment components before taking demands. Explicit synthetic 2-column/2-beam-segment frame covered.",
       "validation_gate": "Independent free-body equilibrium, supported geometry benchmark and member P/V/M/T comparison. D2 native signed member-end extraction, true OpenSees applied-load reversal, support F/M equilibrium, signed algebra, duplicated/unknown loads, schema and units tests in tests/opensees/test_member_design_bridge.py; no modal phase-coherent signs."
     },
     {
@@ -229,7 +229,7 @@
         "src/jp_structural/solvers/opensees/member_design_bridge.py"
       ],
       "remaining_scope": "Independent solver adapter operationalization, source conflict gates, full numeric checks and immutable run identifiers. D2 signed static case and combination source SHA256, member-end raw action and output checksums, global six-component force/moment equilibrium and explicit design source linkage. Synthetic source action tampering and algebraic inconsistency rejection. No claim of tamper-proof cryptographic authority or real-project equivalence.",
-      "validation_gate": "No unknown result marked PASS, report reaction discrepancy unresolved until reconciled. D2 199+ test suite QA, same-case algebra checks, invalid/duplicate/missing load fail-closed, checksum and model geometry drift tests, code-status HOLD."
+      "validation_gate": "No unknown result marked PASS; independently verify force/moment equilibrium and numerical convergence; legacy ETABS discrepancy is an optional comparison only. D2 199+ test suite QA, same-case algebra checks, invalid/duplicate/missing load fail-closed, checksum and model geometry drift tests, code-status HOLD."
     },
     {
       "id": "S18",
@@ -238,8 +238,10 @@
       "precedent_sections": "1-6; annex",
       "priority": "P2",
       "implemented_paths": [],
-      "remaining_scope": "Consume validated results from R&D LaTeX renderer; numbered equations, force diagrams, checks, citations and private/public separation.",
+      "remaining_scope": "Consume validated first-party OpenSees/Python results into a reproducible SAR renderer; numbered equations, force diagrams, checks, citations and private/public separation.",
       "validation_gate": "Every report item links to computation run and code edition; no private project publication."
     }
-  ]
+  ],
+  "independent_engine_goal": "Generate an independent source-justified OpenSees/Python structural analysis and code-design report; ETABS or E2K output parity is optional benchmark evidence and not an engine release requirement.",
+  "project_applicability": "Only project-applicable modules can block complete report status: e.g. raft/subgrade (M13) and lift/equipment (M15) are not universal requirements. Unknown physical inputs and relevant design failures remain explicit HOLD."
 }
