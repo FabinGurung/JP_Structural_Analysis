@@ -90,7 +90,7 @@ def test_misreported_source_reaction_and_support_are_rejected(authority):
     current=canonical_topology(native,ctrl)
     assert len(unsupported_diagnostics(native,current))==12
     altered=deepcopy(cb)
-    q=altered["roles"]["ULS"]["independently_run_research_patterns"]["Dead"]
+    q=altered["role_results"]["ULS"]["independently_run_research_patterns"]["Dead"]
     q["connected_support_signed_reactions_research_only"][0]["signed_Fxyz_N"][2]+=1200
     with pytest.raises(ValueError,match="reaction ledger"):
         gravity_reaction_audit(altered,current)
