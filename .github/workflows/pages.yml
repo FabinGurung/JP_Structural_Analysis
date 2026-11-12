@@ -22,7 +22,7 @@ jobs:
       - name: Checkout governed engine source
         uses: actions/checkout@v6
         with:
-          ref: 537dabbc23da96f5a3baa890f071734fddb790e5
+          ref: f39c89ad55af18ea390a699af159f67f5fc8b517
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -827,7 +827,7 @@ jobs:
         uses: actions/deploy-pages@v5.0.1
       - name: Verify live Pages source identity, report, studio, and engineering holds
         env:
-          EXPECTED_SOURCE_SHA: 537dabbc23da96f5a3baa890f071734fddb790e5
+          EXPECTED_SOURCE_SHA: f39c89ad55af18ea390a699af159f67f5fc8b517
         run: |
           set -euo pipefail
           for attempt in $(seq 1 18); do
@@ -1029,6 +1029,74 @@ jobs:
           assert receipt17["source_SHA256"]==graph["governing_ULS_SLS_input_SHA256"]
           assert not receipt17["source_native_ETABS21_reactions_verified"] and receipt17["F3_one_way_shear_unsafe"]
           print("R6P17_LIVE_SOURCE_GRAPH_AND_SIGNED_REACTION_SCOPE",json.dumps(original,sort_keys=True))
+          assert 'id="project-r6p18-fe"' in report
+          fe_html=get("projects/pokhara-g15/fe-mesh-audit.html?verify="+sha[:12]).decode("utf-8")
+          assert 'id="r618-mesh-section"' in fe_html and 'id="r618-foundation-section"' in fe_html
+          assert "FE mesh compatibility" in fe_html
+          fe_js=get("r6p18-fe-mesh.js?verify="+sha[:12]).decode("utf-8")
+          assert "research_mesh_sensitivity_comparisons" in fe_js
+          fe=json.loads(get("data/r6p18-fe-connection-mesh-foundation-audit.json?verify="+sha[:12]))
+          assert fe["schema"]=="jp.structural.r6p18.source_bounded_fe_mesh_and_foundation_reaction_gate.v0.1"
+          assert fe["governing_ULS_SLS_input_SHA256"]==graph["governing_ULS_SLS_input_SHA256"]
+          fe_counts=fe["counts"]
+          assert fe_counts["original_frame_members"]==165 and fe_counts["original_shells"]==115
+          assert fe_counts["source_graph_connected_shells"]==103 and fe_counts["original_unanchored_shells_excluded"]==12
+          assert fe_counts["original_base_restraints_declared"]==27 and fe_counts["source_connected_research_support_nodes"]==21
+          assert fe_counts["six_declared_base_points_unmatched"]==6
+          assert fe_counts["research_shell_elements_2x2"]==412 and fe_counts["research_shell_elements_4x4"]==1648
+          assert fe_counts["baseline_gravity_cases_at_2x2"]==8
+          assert fe_counts["additional_independently_solved_4x4_refinement_cases"]==2
+          assert fe_counts["research_signed_base_reaction_records_2x2"]==168
+          assert fe_counts["research_signed_base_reaction_records_4x4"]==42
+          assert fe["source_node_identity_vs_3D_coordinate_collision_audit"]["source_coordinate_rounded_collision_groups"]==0
+          interfaces=fe["shell_frame_boundary_alignment_by_mesh_size"]
+          assert set(interfaces)=={"2","4"}
+          for level in ("2","4"):
+              assert interfaces[level]["source_connected_original_shells_examined"]==103
+              assert interfaces[level]["by_geometry_class"]["HANGING_FRAME_ENDPOINT_ON_RESEARCH_SHELL_EDGE"]==15
+              assert all(not row["shell_frame_support_or_load_transfer_accepted"]
+                         and not row["native_ETABS_joint_and_support_constraint_verified"]
+                         for row in interfaces[level]["geometric_contacts"])
+          original_holds=fe["twelve_unconnected_original_shell_holds"]
+          assert len(original_holds["excluded_source_shell_ids"])==12
+          assert original_holds["source_unanchored_shells_added_to_FE"]==0
+          assert len(fe["original_source_connected_2x2_gravity_cases_and_six_axis_equilibrium"])==8
+          assert len(fe["independently_solved_4x4_refinements"])==2
+          for case in fe["original_source_connected_2x2_gravity_cases_and_six_axis_equilibrium"]+fe["independently_solved_4x4_refinements"]:
+              assert case["all_three_force_and_moment_axes_reconciled"]
+              assert len(case["signed_source_mapped_support_reactions"])==21
+              assert max(case["gravity_force_residual_N"])<=case["gravity_force_tolerance_N"]
+              assert max(case["gravity_moment_residual_Nmm"])<=case["gravity_moment_tolerance_Nmm"]
+              assert not case["foundation_design_reactions_accepted"]
+          assert len(fe["research_mesh_sensitivity_comparisons"])==2
+          for study in fe["research_mesh_sensitivity_comparisons"]:
+              assert len(study["support_level_differences"])==21
+              assert study["five_percent_reaction_stability_screen_passed"]
+              assert not study["complete_numerical_mesh_convergence_proven"]
+              assert not study["native_ETABS21_mesh_and_joint_topology_verified"]
+          foundation=fe["unapproved_original_base_point_to_foundation_reaction_register"]
+          assert len(foundation)==21 and len({f["original_source_support_point_id"] for f in foundation})==21
+          assert all(len(f["research_case_signed_reactions"])==8 and f["source_footing_id"] is None
+                     and f["historical_F3_or_CF1_correspondence"] is None
+                     and f["approved_foundation_reaction_or_capacity"] is None
+                     for f in foundation)
+          assert not fe["source_frame_shell_ties_physically_verified"]
+          assert not fe["complete_independent_physical_FE_model_accepted"]
+          assert not fe["original_F3_CF1_source_support_correspondence_verified"]
+          assert not fe["foundation_load_transfer_and_one_two_way_shear_approved"]
+          assert fe["r6p18_research_force_and_moment_equilibrium_checked"]
+          assert fe["historical_F3_one_way_shear_unsafe"] and not fe["engineering_approval"]
+          fe_receipt=json.loads(get("reports/r6p18-first-party-fe-convergence-receipt.json?verify="+sha[:12]))
+          assert fe_receipt["input_sha256"]==fe["governing_ULS_SLS_input_SHA256"]
+          assert fe_receipt["F3_one_way_shear_unsafe"] and not fe_receipt["engineering_approval"]
+          print("R6P18_LIVE_3D_FE_MESH_SIX_AXIS_EQUILIBRIUM",json.dumps(fe_counts,sort_keys=True))
+          print("R6P18_LIVE_REACTION_SCREEN",json.dumps([
+              {"role":study["role"],"pattern":study["source_gravity_pattern"],
+               "max_Rz_delta_kN":study["largest_single_source_support_Rz_change_kN"],
+               "ratio":study["largest_source_support_change_relative_to_total_gravity"],
+               "stability_screen_passed":study["five_percent_reaction_stability_screen_passed"]}
+              for study in fe["research_mesh_sensitivity_comparisons"]],sort_keys=True))
+
 
 
           print("R6P15_LIVE_77_CASE_GEOMETRIC_CLASSIFICATION",json.dumps(coverage,sort_keys=True))
@@ -1037,7 +1105,7 @@ jobs:
 
 
 
-          print("LIVE_PAGES_R617_CANONICAL_SOURCE_GRAPH_12_SHELLS_EIGHT_EQUILIBRATED_CASES_F3_HOLD_VERIFIED",sha)
+          print("LIVE_PAGES_R618_FE_MESH_2X2_4X4_SIX_AXIS_REACTIONS_12_SHELL_F3_HOLD_VERIFIED",sha)
           PY
             then
               exit 0
