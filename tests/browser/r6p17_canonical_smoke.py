@@ -25,7 +25,7 @@ with sync_playwright() as p:
         assert page.locator("#r617-diagram polygon").count()>12
         assert page.locator("#r617-diagram line").count()>=165
         assert "NOT SAFE IN ONE WAY SHEAR" in page.locator(".r617-hold").inner_text()
-        assert "not authenticated solver connections" in page.locator("#r617-diagram").get_attribute("aria-label") if False else True
+        assert "no verified solver mesh" in page.locator("#r617-diagram").get_attribute("aria-label")
         source=page.evaluate("""async () => (await (await fetch('../../data/r6p17-canonical-3d-source-graph.json')).json())""")
         c=source["counts"]
         assert (c["source_frame_objects"],c["source_shell_objects"],
