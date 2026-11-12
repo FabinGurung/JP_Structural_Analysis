@@ -11,7 +11,13 @@ import json
 from pathlib import Path
 
 from jp_structural.reporting.r6p22_pipeline import build, emit, verify
-from scripts.build_r6p21_independent_sar import _inside, ROOT
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def _inside(path: Path, parent: Path) -> bool:
+    target = path.resolve()
+    base = parent.resolve()
+    return target == base or base in target.parents
 
 R5 = ROOT / "examples/sanitized/r5_generic_source_geometry_frame.v0.1.json"
 CONTRACT = ROOT / "registry/report-template-contract.v0.2.json"
