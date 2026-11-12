@@ -206,7 +206,7 @@ def gravity_reaction_audit(casebook,graph):
         raise ValueError("Original numerical shell admission changed")
     rows=[]; support_sets=[]
     for role in ROLES:
-        group=casebook["roles"][role]["independently_run_research_patterns"]
+        group=casebook["role_results"][role]["independently_run_research_patterns"]
         for pattern in CASES:
             d=group[pattern]
             if d["role"]!=role or d["source_case"]!=pattern:raise ValueError("Coarse gravity pattern case drift")
