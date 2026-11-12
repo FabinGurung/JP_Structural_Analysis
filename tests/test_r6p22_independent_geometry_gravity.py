@@ -260,3 +260,13 @@ def test_cli_reference_recomputes_without_etabs_and_prints_result(tmp_path):
     assert report["applied_FE_gravity_kN"] == pytest.approx(211.44)
     assert report["signed_end_rows"] == 80
     assert verify(folder)["engineering_approval"] is False
+
+def test_custom_source_cli_cannot_write_to_public_checkout_even_if_labelled_synthetic(spec, tmp_path):
+    input_file = tmp_path / "synthetic-but-custom.json"
+    input_file.write_text(json.dumps(spec), encoding="utf-8")
+    run_cli = subprocess.run([
+        sys.executable, str(ROOT/"scripts/build_r6p22_independent_geometry_sar.py"),
+        "--input", str(input_file), "--output-dir", str(ROOT/"build/r6p22-untrusted-output")
+    ], cwd=ROOT, capture_output=True, text=True)
+    assert run_cli.returncode != 0
+    assert "outside public checkout" in run_cli.stderr
