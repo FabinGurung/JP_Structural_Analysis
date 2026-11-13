@@ -57,7 +57,7 @@ def reference_fixture() -> dict:
         },
         "x_grid_m": [0., 1., 2., 3., 4.],
         "y_grid_m": [0., 1., 2., 3., 4.],
-        "levels_m": [0., 3., 6., 9.],
+        "levels_m": [0., 3., 6.],
         "concrete": {
             "E_kN_m2": 25_000_000, "poisson": 0.2,
             "unit_weight_kN_m3": 25.0,
