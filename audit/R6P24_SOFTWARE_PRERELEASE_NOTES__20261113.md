@@ -2,7 +2,7 @@
 
 **STATUS: RESEARCH SOFTWARE PRERELEASE · ENGINEERING HOLD · NOT FOR CONSTRUCTION**
 
-**Frozen, QA-passed software commit:** `4f3bacd7e32ce057fd6c8c3542d410747de40066` (`main`)  
+**Frozen, QA-passed software commit:** `c9a4ad136ee70e000150026d0f0e1c049ff143df` (`main`)  
 **Validated research lineage:** `2c4d4d1791c788376087e116c71a6e41e2cf49f6`
 
 ### Delivered in this prerelease
@@ -11,6 +11,7 @@
 - **R6.22:** geometry/material-derived slab, wall, beam and column gravity, explicit one-way beam load paths and source-conserving checks.
 - **R6.23:** genuine multi-floor 3D elastic ShellMITC4 + beam/column FE, shared node connectivity, actual internal slab openings, flexible versus rigid in-plane diaphragms, signed shell/member forces and base reactions.
 - **R6.24:** source-equivalent 2× mesh refinement, per-case numerical displacement/reaction differences and source-preserving artifact validation.
+- **Mobile UI QA:** corrected long-source-digest horizontal overflow, added permanent real Chromium desktop/mobile test gates and screenshots, and keyboard-accessible beam inspection.
 - **GitHub Pages:** publicly visible, read-only, interactive R6.23/R6.24 workbench with floor/case/diaphragm controls, clickable shell/beam force results, support reactions and mesh sensitivity; earlier published structural reports preserved.
 
 The synthetic two-floor benchmark has **31 coarse shells → 124 refined shells**, 31 m² actual slab area after an internal 1 m² opening, **339.00 kN DL** and **62.00 kN LL**. These are **synthetic calculation values, not the Pokhara building's verified design loads.**
@@ -18,8 +19,9 @@ The synthetic two-floor benchmark has **31 coarse shells → 124 refined shells*
 ### Verified build and deployment
 
 - [Research CI: 697 established + 29 dedicated tests passed](https://github.com/FabinGurung/jp-structural-analysis/actions/runs/43398308287)
-- [Independent main numerical/preview QA](https://github.com/FabinGurung/jp-structural-analysis/actions/runs/43398526622)
-- [Successful Pages deployment with both new and legacy live verification](https://github.com/FabinGurung/jp-structural-analysis/actions/runs/43399229100)
+- [Real desktop/mobile Chromium UI regression](https://github.com/FabinGurung/jp-structural-analysis/actions/runs/43436691680)
+- [Independent main numerical/preview QA](https://github.com/FabinGurung/jp-structural-analysis/actions/runs/43436881971)
+- [Successful Pages deployment with both new and legacy live verification](https://github.com/FabinGurung/jp-structural-analysis/actions/runs/43436881758)
 - [Live independent workbench](https://fabingurung.github.io/jp-structural-analysis/r6p23.html)
 - [Canonical report and review issues](https://github.com/FabinGurung/jp-structural-analysis/issues/7)
 - [Full consolidated R6.24 milestone report](https://github.com/FabinGurung/jp-structural-analysis/blob/main/audit/R6P24_SOFTWARE_PREVIEW_MILESTONE_REPORT__20261113.md)
