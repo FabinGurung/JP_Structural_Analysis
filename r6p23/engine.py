@@ -85,8 +85,9 @@ def validate(spec: dict) -> dict:
     }, "complete geometry/material/support/load/diaphragm/code source refs required")
     for key, value in refs.items():
         source_id(value, key + " reference")
-    xs, ys, zs = (_grid(spec.get(k), k)
-                  for k in ("x_grid_m", "y_grid_m", "levels_m"))
+    xs = _grid(spec.get("x_grid_m"), "x_grid_m")
+    ys = _grid(spec.get("y_grid_m"), "y_grid_m")
+    zs = _grid(spec.get("levels_m"), "levels_m", minimum=2, maximum=6)
     require(zs[0] >= 0, "ground level must not be negative")
     material = spec.get("concrete")
     require(isinstance(material, dict), "source-defined elastic concrete required")
