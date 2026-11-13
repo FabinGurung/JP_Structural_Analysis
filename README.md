@@ -95,4 +95,4 @@ The original F3 one-way shear unsafe finding remains visible and unresolved.
 - [R6.24 release notes](audit/R6P24_SOFTWARE_PRERELEASE_NOTES__20261113.md)
 - [One-shot verified release workflow](.github/workflows/r6p24-software-prerelease.yml)
 
-The release tag freezes the tested source commit `4f3bacd7e32ce057fd6c8c3542d410747de40066`; subsequent audit/report/workflow commits do not rewrite that tag. A software prerelease is not a complete independent structural design, a project-specific accepted SAR, or professional/municipal approval. The original F3 one-way-shear adverse finding is preserved.
+The release tag freezes the corrected, mobile-tested source commit `c9a4ad136ee70e000150026d0f0e1c049ff143df`; subsequent audit/report/workflow commits do not rewrite that tag. A software prerelease is not a complete independent structural design, a project-specific accepted SAR, or professional/municipal approval. The original F3 one-way-shear adverse finding is preserved.
