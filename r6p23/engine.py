@@ -59,9 +59,9 @@ def node_id(level: int, i: int, j: int) -> str:
     return f"L{level}:X{i}:Y{j}"
 
 
-def _grid(values: Any, label: str) -> list[float]:
-    require(isinstance(values, list) and 4 <= len(values) <= 24,
-            label + ": at least 3 bays, at most 23")
+def _grid(values: Any, label: str, minimum: int = 4, maximum: int = 24) -> list[float]:
+    require(isinstance(values, list) and minimum <= len(values) <= maximum,
+            label + ": unsupported grid or level count")
     numbers = [finite(v, label) for v in values]
     require(all(numbers[i + 1] - numbers[i] > 1e-6
                 for i in range(len(numbers) - 1)),
