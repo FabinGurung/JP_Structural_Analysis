@@ -41,6 +41,17 @@ jobs:
           python -m r6p23.site_export --site-dir build/r6p24-preview
           python -c 'from pathlib import Path; from r6p23.site_export import verify_export; print("R6P24_PREVIEW_VERIFIED", verify_export(Path("build/r6p24-preview"))["source_SHA256"])'
           node --check build/r6p24-preview/r6p23.js
+      - name: Exercise actual R6.24 desktop/mobile UI interactions and layout
+        run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install --with-deps chromium
+          python audit/r6p24_browser_ui_smoke.py --site-dir build/r6p24-preview --out-dir build/r6p24-ui-qa
+      - name: Preserve verified desktop/mobile screenshots for UI review
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: R6P24-desktop-mobile-browser-QA-SYNTHETIC
+          path: build/r6p24-ui-qa/
+          if-no-files-found: error
       - name: Archive synthetic reference only, NEVER a building design
         uses: actions/upload-artifact@v7.0.1
         with:
