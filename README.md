@@ -1,6 +1,6 @@
 # JP Structural Analysis
 
-**Public showcase:** https://fabingurung.github.io/JP_Structural_Analysis/
+**Public showcase:** https://fabingurung.github.io/jp-structural-analysis/
 
 Governed structural-analysis and Structural Analysis Report (SAR) engine with
 OpenSees/OpenSeesPy as the primary computational engine, explicit source
@@ -32,7 +32,7 @@ The benchmark preserves its known support-reaction reconciliation discrepancy
 as `ENGINEER_REVIEW_REQUIRED`; a successful CI/deployment is not represented
 as professional engineering approval.
 
-[Open the live showcase](https://fabingurung.github.io/JP_Structural_Analysis/) ·
+[Open the live showcase](https://fabingurung.github.io/jp-structural-analysis/) ·
 [Browse the engine branch](https://github.com/FabinGurung/JP_Structural_Analysis/tree/engine/opensees-sar-v0.1)
 
 ## Federated repository boundary — A7 is an index, not this product's template owner
@@ -71,11 +71,11 @@ repin Pages, change the canonical governed working branch, or tag V0.1.
 
 ## R6.23/R6.24 published independent OpenSees explorer
 
-When the separate R6.24 numerical/publishing QA passes, the existing GitHub
+The separate R6.24 numerical/publishing QA passed and the existing GitHub
 Pages workflow publishes a synthetic, source-hashed independent structural
 shell/frame viewer at:
 
-https://fabingurung.github.io/JP_Structural_Analysis/r6p23.html
+https://fabingurung.github.io/jp-structural-analysis/r6p23.html
 
 The interface allows per-floor, per-case and per-diaphragm viewing of actual
 OpenSees-solved beam and shell force components, base reactions and a 4x4
@@ -87,3 +87,12 @@ Only synthetic calculations are published. Static Pages cannot run arbitrary
 Python/OpenSees input from visitors, and this integration is NOT a certified
 engineering design, project-specific SAR, full engine release or approval.
 The original F3 one-way shear unsafe finding remains visible and unresolved.
+
+## R6.24 governed software-preview milestone
+
+- [Software-only R6.24 prerelease with Engineering HOLD](https://github.com/FabinGurung/jp-structural-analysis/releases/tag/r6.24-preview)
+- [Consolidated R6.10–R6.24 milestone report and limitations](audit/R6P24_SOFTWARE_PREVIEW_MILESTONE_REPORT__20261113.md)
+- [R6.24 release notes](audit/R6P24_SOFTWARE_PRERELEASE_NOTES__20261113.md)
+- [One-shot verified release workflow](.github/workflows/r6p24-software-prerelease.yml)
+
+The release tag freezes the tested source commit `4f3bacd7e32ce057fd6c8c3542d410747de40066`; subsequent audit/report/workflow commits do not rewrite that tag. A software prerelease is not a complete independent structural design, a project-specific accepted SAR, or professional/municipal approval. The original F3 one-way-shear adverse finding is preserved.
