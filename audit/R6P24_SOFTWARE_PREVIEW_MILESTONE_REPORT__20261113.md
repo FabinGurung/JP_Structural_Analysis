@@ -3,7 +3,7 @@
 **Report date:** 13 November 2026 (Asia/Kathmandu)  
 **Milestone:** `r6.24-preview` — *software-only prerelease, ENGINEERING HOLD*  
 **Product:** JP Structural Analysis (MOD-STRUCT-001)  
-**Immutable, QA-verified tag target:** `4f3bacd7e32ce057fd6c8c3542d410747de40066` on `main`  
+**Immutable, QA-verified tag target:** `c9a4ad136ee70e000150026d0f0e1c049ff143df` on `main`  
 **Research baseline:** `2c4d4d1791c788376087e116c71a6e41e2cf49f6`  
 **Public workbench:** https://fabingurung.github.io/jp-structural-analysis/r6p23.html  
 **Current structural research approval:** **NOT APPROVED FOR BUILDING DESIGN OR CONSTRUCTION**.
@@ -78,17 +78,18 @@ Implemented user-facing features:
 - Visible source gravity, mesh convergence-screen outcomes and independent signed support reactions.
 - Links to the computation JSON, synthetic casebook, SHA-256 manifest and GitHub source.
 
-**UI QA is bounded:** JavaScript syntax, HTML/export structure, numerical source integrity and live HTTP readback passed in Actions. The page is a **read-only inspection interface**, not an arbitrary building-analysis solver running inside the browser. No independent visual screenshot/pixel-perfect audit, comprehensive keyboard/screen-reader audit or real user usability test has been certified by those checks; do not claim otherwise.
+**UI QA is bounded:** JavaScript syntax, HTML/export structure, numerical source integrity, live HTTP readback and real Chromium desktop/mobile control tests have passed. The mobile test caught and drove a repair for an unbreakable source SHA that previously caused 511 px scroll width on a 390 px viewport. The UI now wraps long hashes and tests keyboard activation, shell/beam selection, floor/case/diaphragm controls and mobile overflow in CI. See [hotfix PR #37](https://github.com/FabinGurung/jp-structural-analysis/pull/37) and [Chromium QA run](https://github.com/FabinGurung/jp-structural-analysis/actions/runs/43436691680). The page is a **read-only inspection interface**, not an arbitrary building-analysis solver running inside the browser. Automated desktop/mobile screenshots are captured; pixel-perfect visual design review, comprehensive screen-reader accessibility certification and real user usability research remain outside current QA; do not claim those checks have been completed.
 
 ## 4. Commits, Actions and verification
 
 | Controlled item | Identity / QA |
 |---|---|
-| `main` software tag target | `4f3bacd7e32ce057fd6c8c3542d410747de40066` |
+| `main` software tag target | `c9a4ad136ee70e000150026d0f0e1c049ff143df` |
 | Latest research engine at milestone | `2c4d4d1791c788376087e116c71a6e41e2cf49f6` |
 | [Research CI](https://github.com/FabinGurung/jp-structural-analysis/actions/runs/43398308287) | **PASS**: 697 established regressions + 29 R6.23/R6.24 regressions; complete broader pipeline |
-| [Main numerical-preview CI](https://github.com/FabinGurung/jp-structural-analysis/actions/runs/43398526622) | **PASS**: dedicated numerical, source integrity and preview bundle gates |
-| [Final Pages deploy and live QA](https://github.com/FabinGurung/jp-structural-analysis/actions/runs/43399229100) | **PASS**: 75 build steps; actual deploy; R6.23 live asset/source/hold verification; existing site report/source regression |
+| [Main numerical-preview CI](https://github.com/FabinGurung/jp-structural-analysis/actions/runs/43436881971) | **PASS**: dedicated numerical, source integrity and preview bundle gates |
+| [Final Pages deploy and live QA](https://github.com/FabinGurung/jp-structural-analysis/actions/runs/43436881758) | **PASS**: 75 build steps; actual deploy; R6.23 live asset/source/hold verification; existing site report/source regression |
+| [Mobile UI/Chromium regression PR #37](https://github.com/FabinGurung/jp-structural-analysis/pull/37) | Merged; 390 px overflow corrected and made a CI gate |
 | [Main integration PR #33](https://github.com/FabinGurung/jp-structural-analysis/pull/33) | Merged |
 | [Research integration PR #34](https://github.com/FabinGurung/jp-structural-analysis/pull/34) | Merged |
 | [Live URL correction PR #35](https://github.com/FabinGurung/jp-structural-analysis/pull/35) | Merged |
