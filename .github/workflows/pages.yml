@@ -842,8 +842,9 @@ jobs:
       - name: Verify live R6.23 independent FE workbench and R6.24 mesh holds
         run: |
           python - <<'PY'
-          import json, time, urllib.request
-          root="https://fabingurung.github.io/JP_Structural_Analysis/"
+          import json, time, urllib.request, os
+          owner, repo = os.environ["GITHUB_REPOSITORY"].split("/")
+          root = "https://" + owner.lower() + ".github.io/" + repo + "/"
           for attempt in range(18):
               try:
                   with urllib.request.urlopen(root+"data/r6p23-preview.json?check="+str(attempt),timeout=12) as f:
