@@ -532,6 +532,14 @@ def solve_case(spec: dict, case: str, mode: str = "FLEXIBLE_SHELL",
             direction_abs_vz[frame["axis"]] += (
                 abs(float(values[2])) + abs(float(values[8]))
             )
+    shell_nodal_resisting_forces = {}
+    for cell, tag in tags_shell.items():
+        response = ops.eleResponse(tag, "forces")
+        require(response is not None and len(response) == 24 and
+                all(math.isfinite(float(x)) for x in response),
+                "ShellMITC4 24-DOF resisting-force vector missing")
+        label = f"L{cell[0]}:CELL:{cell[1]}:{cell[2]}"
+        shell_nodal_resisting_forces[label] = [float(x) for x in response]
     displacements = {}
     for fl, nodes in top["floor_nodes"].items():
         values = {node_id(*key): [float(ops.nodeDisp(tags[key], j))
@@ -574,6 +582,7 @@ def solve_case(spec: dict, case: str, mode: str = "FLEXIBLE_SHELL",
         "max_equilibrium_residual": residual,
         "force_moment_balance_pass": True,
         "signed_frame_end_actions": frame_end,
+        "shell_nodal_resisting_force_vectors": shell_nodal_resisting_forces,
         "shell_to_beam_directional_vz_abs_sum": direction_abs_vz,
         "floor_max_vertical_displacement_m": {
             str(fl): max(abs(vec[2]) for vec in values.values())
