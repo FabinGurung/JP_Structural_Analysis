@@ -293,7 +293,7 @@ def topology(spec: dict) -> dict:
         "column_segment_count": len(columns),
         "floor_areas_m2": {str(fl): f["area_m2"]
                            for fl, f in v["floors"].items()},
-        "removed_opening_cells": {str(fl): f["openings"]
+        "removed_opening_cells": {str(fl): [list(cell) for cell in f["openings"]]
                                   for fl, f in v["floors"].items()},
         "all_shell_nodes_connected_to_base": True,
         "coordinate_proximity_ties_used": False,
