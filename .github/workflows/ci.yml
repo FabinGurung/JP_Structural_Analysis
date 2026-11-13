@@ -24,6 +24,16 @@ jobs:
         run: python -m pip install -e ".[test,opensees]"
       - name: Run unit and regression tests
         run: python -m pytest -q
+      - name: R6.23 run independent 3D shell two-floor reference and verify source/report
+        run: |
+          python -m r6p23.runner --reference --output-dir build/r6p23-independent-shell
+          python -c 'from pathlib import Path; from r6p23.runner import verify; print("R6P23_ARTIFACT_VERIFIED", verify(Path("build/r6p23-independent-shell"))["source_SHA256"])'
+      - name: Archive R6.23 research-only two-floor ShellMITC4 and MPC source calculations
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: r6p23-multifloor-shell-openings-diaphragms-synthetic-NOT-APPROVED
+          path: build/r6p23-independent-shell/
+          if-no-files-found: error
       - name: R6.21 independently solve synthetic 3D frame and generate source-linked SAR casebook
         run: |
           python scripts/build_r6p21_independent_sar.py --reference --output-dir build/r6p21-independent-sar
