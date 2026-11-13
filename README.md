@@ -41,3 +41,30 @@ as professional engineering approval.
 
 **Agent and automation rule:** Never create, update, synchronize or “repair” A7 code, policy, templates, catalogue records, READMEs, website or history as a side effect of work in this repository. An A7 modification requires a **separate task explicitly authorized by the user for A7**, with its own versioning and review. If an A7 listing appears stale, leave A7 unchanged and note a pending pointer correction **locally**. Resolve this repository's own live sources and approvals; do not duplicate its canonical domain files into A7. The CAD/AAD design-and-drawing template is owned by [CAD/AAD](https://github.com/FabinGurung/JP_Computer-Aided-Drawings/tree/main/governance/aad), never by A7. Existing independent domain and private-provider authorities still apply.
 
+
+
+## R6.23 independently runnable multi-floor structural FE preview (development only)
+
+The user-authorized R6.23 integration is available **on `main` as an isolated,
+source-controlled numerical research component**, independently of the older
+publication/Pages dispatcher:
+
+- [R6.23 module and calculation documentation](r6p23/README.md)
+- [Independent OpenSeesPy multistorey shell engine](r6p23/engine.py)
+- [Source-safe command line report generator](r6p23/runner.py)
+- [Numerical/geometry/manifest regression tests](r6p23/test_engine.py)
+- [R6.23 standalone verification workflow](.github/workflows/r6p23-preview.yml)
+
+It computes connected 3D ShellMITC4/beam/column systems over multiple rectangular
+floors, actual shell openings, source-dependent gravity/line loads and both
+flexible-shell / rigid in-plane diaphragm branches, with signed support and
+member actions. It is a **synthetic, bounded research feature**, not an
+accepted actual-building structural design, permit, full SAR engine release,
+or professional approval. The previous F3 one-way-shear FAIL is unresolved.
+
+Run `python -m r6p23.runner --reference --output-dir build/r6p23` after
+installing `openseespy==3.8.0.0`; actual source-derived models, drawings
+and reports must stay out of this public repository.
+
+This integration **does not** merge/release the rest of the research branch,
+repin Pages, change the canonical governed working branch, or tag V0.1.
