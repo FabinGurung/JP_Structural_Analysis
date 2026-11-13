@@ -1,0 +1,65 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Independent OpenSees ShellMITC4 two-floor structural research workbench, signed loads and mesh sensitivity">
+<title>R6.23–R6.24 · Independent Shell FEM | JP Structural Analysis</title>
+<link rel="stylesheet" href="r6p23.css"></head>
+<body><header class="top"><a class="logo" href="index.html">JP · Structural Analysis</a>
+<nav aria-label="Navigation"><a href="index.html">Home</a><a href="projects/index.html">Projects</a>
+<a href="report.html">Report</a><a href="more.html">Methods</a></nav></header>
+<main><div class="kicker">R6.23 / R6.24 · Independent structural calculation engine</div>
+<h1>Two-floor shell, frame<br>and diaphragm solver</h1>
+<p class="lead">Inspect actual signed OpenSeesPy ShellMITC4 and frame-element results,
+source-based dead and live loads, structural openings, reactions and a one-step mesh
+refinement check. These data are independently computed, not ETABS output.</p>
+<p class="hold"><strong>Numerical research demo — NOT a complete engineering design.</strong>
+This is a synthetic rectangular reference, not the Pokhara building. NBC seismic/wind,
+structural capacity, detailing, soil and foundation/F3 checks remain unresolved.
+A 2× mesh refinement is a sensitivity screen, not complete mesh-convergence proof.</p>
+<div class="metrics" aria-label="Reference source totals">
+<div class="metric"><strong id="shell-count">—</strong><span>Real shell elements, base mesh</span></div>
+<div class="metric"><strong id="dead-load">—</strong><span>Source-calculated dead load</span></div>
+<div class="metric"><strong id="live-load">—</strong><span>Imposed load</span></div>
+<div class="metric"><strong id="opening-count">—</strong><span>Opening source cells</span></div></div>
+<div class="panel"><div class="kicker">Solved FE state · <span id="load-status">Loading numerical data</span></div>
+<div class="controls"><label>Floor<select id="floor" aria-label="Choose floor"></select></label>
+<label>Diaphragm method<select id="mode" aria-label="Choose diaphragm model"></select></label>
+<label>Applied action<select id="case" aria-label="Choose load case"></select></label></div>
+<div class="workspace"><div><h3>Actual shell/beam mesh and voids</h3>
+<svg id="plan" role="group" aria-label="Loading two-floor FE plan"></svg>
+<p class="small">Click purple beam lines or blue shell cells to inspect the real
+signed local element force vectors. Red dots are column locations, outlined cells are openings.
+This is a 2D plan inspection of a 3D finite-element solve.</p></div>
+<div><h3>Calculated response</h3><table><tbody>
+<tr><th>Floor shell area</th><td id="floor-area">—</td></tr>
+<tr><th>Applied vertical action</th><td id="gravity">—</td></tr>
+<tr><th>Max floor |Uz|</th><td id="vertical-deflection">—</td></tr>
+<tr><th>Six-axis maximum residual</th><td id="six-residual">—</td></tr>
+<tr><th>X-beam vertical action proxy</th><td id="xbeam">—</td></tr>
+<tr><th>Y-beam vertical action proxy</th><td id="ybeam">—</td></tr>
+</tbody></table><h3 style="margin-top:18px">Selected beam or shell</h3>
+<div id="selected-detail" aria-live="polite">Select a structural element.</div></div></div></div>
+<div class="grid"><section class="panel"><h2>Actual base support reactions</h2>
+<p class="small">Source base nodes, signed support vertical force and moments for the selected case.</p>
+<div class="scroll"><table><thead><tr><th>Support node</th><th>Fz (kN)</th>
+<th>Mx (kNm)</th><th>My (kNm)</th></tr></thead><tbody id="support-body"></tbody></table></div></section>
+<section class="panel" id="convergence"><h2>Next priority · R6.24 mesh sensitivity</h2>
+<p class="small">Identical physical slab/void footprint, loads and materials; original
+4×4 mesh versus refined 8×8 cells. Reported deltas are one-step numerical screens.</p>
+<div class="scroll"><table><thead><tr><th>Diaphragm</th><th>Case</th>
+<th>Response delta</th><th>Base Fz delta</th><th>Screen</th></tr></thead>
+<tbody id="convergence-body"></tbody></table></div>
+<p class="small">Even a passing 5% screen does not prove convergence, seismic adequacy, safe foundations,
+or compliance. Unverified project data remain HOLD.</p></section></div>
+<section class="panel"><h2>Reproduce this calculation</h2>
+<p>Open the versioned source and inspect signed inputs/outputs. New project-specific models
+require the Python/OpenSees runner in a private environment; static GitHub Pages displays
+only verified precomputed synthetic results.</p>
+<p><a href="reports/r6p23-reference/r6p23-multifloor-shell.html">Reference calculation casebook</a> ·
+<a href="reports/r6p23-reference/r6p23-multifloor-shell.json">All signed numerical actions (JSON)</a> ·
+<a href="reports/r6p23-reference/r6p23-multifloor-shell-manifest.json">SHA256 receipt</a> ·
+<a href="data/r6p23-preview.json">Viewer data and R6.24 sensitivity</a> ·
+<a href="https://github.com/FabinGurung/jp-structural-analysis/tree/main/r6p23">Open R6.23 source</a></p>
+<p class="small">Source digest: <code id="source-hash">—</code>. Historical F3 one-way shear failure
+is preserved, not reversed. Professional review is required before construction.</p></section>
+</main><footer>JP Structural Analysis · Independent OpenSees research · Engineering HOLD</footer>
+<script src="r6p23.js" defer></script></body></html>
