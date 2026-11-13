@@ -28,12 +28,19 @@ jobs:
           python-version: '3.12'
       - name: Install pinned independent finite-element test stack
         run: python -m pip install openseespy==3.8.0.0 'pytest>=8,<9'
-      - name: Test independent two-floor shell, openings, diaphragm and signed case math
-        run: python -m pytest -q r6p23/test_engine.py
+      - name: Test two-floor shell, openings, diaphragm, mesh refinement and public export
+        run: python -m pytest -q r6p23/test_engine.py r6p23/test_convergence.py
+      - name: Validate interactive viewer JavaScript
+        run: node --check r6p23/viewer.js
       - name: Run independent first-party numerical model and hash-verify artifacts
         run: |
           python -m r6p23.runner --reference --output-dir build/r6p23-reference
           python -c 'from pathlib import Path; from r6p23.runner import verify; print("R6P23_PUBLIC_REFERENCE_HASH_OK", verify(Path("build/r6p23-reference"))["source_SHA256"])'
+      - name: Run and verify R6.23 interactive Pages build with R6.24 mesh screen
+        run: |
+          python -m r6p23.site_export --site-dir build/r6p24-preview
+          python -c 'from pathlib import Path; from r6p23.site_export import verify_export; print("R6P24_PREVIEW_VERIFIED", verify_export(Path("build/r6p24-preview"))["source_SHA256"])'
+          node --check build/r6p24-preview/r6p23.js
       - name: Archive synthetic reference only, NEVER a building design
         uses: actions/upload-artifact@v7.0.1
         with:
