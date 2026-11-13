@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       TAG: r6.24-preview
-      TARGET_SHA: 4f3bacd7e32ce057fd6c8c3542d410747de40066
+      TARGET_SHA: c9a4ad136ee70e000150026d0f0e1c049ff143df
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GH_REPO: FabinGurung/jp-structural-analysis
     steps:
@@ -34,18 +34,18 @@ jobs:
           set -euo pipefail
           git cat-file -e "$TARGET_SHA^{commit}"
           git merge-base --is-ancestor "$TARGET_SHA" HEAD
-          for run_id in 43398308287 43398526622 43399229100; do
+          for run_id in 43398308287 43436881971 43436881758; do
             result="$(gh api "repos/$GH_REPO/actions/runs/$run_id" --jq '.conclusion')"
             test "$result" = success || { echo "::error::Missing successful prerequisite run $run_id"; exit 1; }
           done
-          source_sha="$(gh api "repos/$GH_REPO/actions/runs/43399229100" --jq '.head_sha')"
+          source_sha="$(gh api "repos/$GH_REPO/actions/runs/43436881758" --jq '.head_sha')"
           test "$source_sha" = "$TARGET_SHA" || { echo "::error::Tag target not live-verified Pages SHA"; exit 1; }
           test -f audit/R6P24_SOFTWARE_PREVIEW_MILESTONE_REPORT__20261113.md
           test -f audit/R6P24_SOFTWARE_PRERELEASE_NOTES__20261113.md
       - name: Checkout the exact QA-passed software commit
         uses: actions/checkout@v6
         with:
-          ref: 4f3bacd7e32ce057fd6c8c3542d410747de40066
+          ref: c9a4ad136ee70e000150026d0f0e1c049ff143df
           path: release-source
           persist-credentials: false
       - name: Python 3.12
