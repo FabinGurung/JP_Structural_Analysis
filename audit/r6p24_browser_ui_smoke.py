@@ -23,8 +23,7 @@ class QuietFiles(SimpleHTTPRequestHandler):
 def verify_page(page, *, mobile: bool, screenshots: Path):
     errors = []
     page.on("pageerror", lambda exc: errors.append(str(exc)))
-    response = page.goto(page.context.base_url + "/r6p23.html",
-                         wait_until="domcontentloaded")
+    response = page.goto("/r6p23.html", wait_until="domcontentloaded")
     assert response is not None and response.status == 200
     expect(page.locator("#load-status")).to_have_text(
         "Synthetic OpenSees calculations verified", timeout=30000)
