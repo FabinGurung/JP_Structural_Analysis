@@ -1,0 +1,152 @@
+name: R6.24 software-only prerelease (ENGINEERING HOLD)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/r6p24-software-prerelease.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: r6p24-software-prerelease
+  cancel-in-progress: false
+
+jobs:
+  freeze-and-publish:
+    runs-on: ubuntu-24.04
+    env:
+      TAG: r6.24-preview
+      TARGET_SHA: 4f3bacd7e32ce057fd6c8c3542d410747de40066
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: FabinGurung/jp-structural-analysis
+    steps:
+      - name: Checkout release audit and governing history
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Verify immutable source commit and successful original CI/Pages
+        run: |
+          set -euo pipefail
+          git cat-file -e "$TARGET_SHA^{commit}"
+          git merge-base --is-ancestor "$TARGET_SHA" HEAD
+          for run_id in 43398308287 43398526622 43399229100; do
+            result="$(gh api "repos/$GH_REPO/actions/runs/$run_id" --jq '.conclusion')"
+            test "$result" = success || { echo "::error::Missing successful prerequisite run $run_id"; exit 1; }
+          done
+          source_sha="$(gh api "repos/$GH_REPO/actions/runs/43399229100" --jq '.head_sha')"
+          test "$source_sha" = "$TARGET_SHA" || { echo "::error::Tag target not live-verified Pages SHA"; exit 1; }
+          test -f audit/R6P24_SOFTWARE_PREVIEW_MILESTONE_REPORT__20261113.md
+          test -f audit/R6P24_SOFTWARE_PRERELEASE_NOTES__20261113.md
+      - name: Checkout the exact QA-passed software commit
+        uses: actions/checkout@v6
+        with:
+          ref: 4f3bacd7e32ce057fd6c8c3542d410747de40066
+          path: release-source
+          persist-credentials: false
+      - name: Python 3.12
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install numerical and Chromium UI verification stack
+        run: |
+          python -m pip install openseespy==3.8.0.0 'pytest>=8,<9' playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Re-run independent shell/diaphragm and 2x-mesh regressions
+        run: |
+          set -euo pipefail
+          cd release-source
+          python -m pytest -q r6p23/test_engine.py r6p23/test_convergence.py
+      - name: Generate and verify synthetic R6.24 HTML/JSON/CSV/mesh bundle
+        run: |
+          set -euo pipefail
+          cd release-source
+          python -m r6p23.site_export --site-dir ../build/r6p24-synthetic-site
+          python - <<'PY'
+          from pathlib import Path
+          from r6p23.site_export import verify_export
+          import json
+          root=Path('../build/r6p24-synthetic-site')
+          r=verify_export(root)
+          d=json.loads((root/'data/r6p23-preview.json').read_text())
+          assert d['engineering_approval'] is False
+          assert d['historical_F3_unsafe_retained'] is True
+          assert d['classification'] == 'SYNTHETIC_REFERENCE'
+          assert d['source_SHA256'] == r['source_SHA256']
+          assert d['source_ledger']['gravity_totals_kN']['DL'] == 339
+          assert d['source_ledger']['gravity_totals_kN']['LL'] == 62
+          assert d['topology']['shell_count'] == 31
+          assert d['mesh_screen']['refined_mesh_shells'] == 124
+          assert d['mesh_screen']['full_asymptotic_mesh_convergence_proven'] is False
+          print('R6P24_INDEPENDENT_RELEASE_REPORT_AND_SOURCE_HOLDS_PASS')
+          PY
+          node --check ../build/r6p24-synthetic-site/r6p23.js
+      - name: Desktop/mobile real Chromium UI smoke and screenshots
+        run: |
+          set -euo pipefail
+          python audit/r6p24_browser_ui_smoke.py --site-dir build/r6p24-synthetic-site --out-dir build/r6p24-ui-qa
+      - name: Pack synthetic-only source reproducibility files and checksum
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile, ZIP_DEFLATED
+          root=Path('build/r6p24-synthetic-site')
+          zipfile=Path('build/R6P24-synthetic-OpenSees-preview-NOT-ENGINEERING-APPROVED.zip')
+          with ZipFile(zipfile,'w',ZIP_DEFLATED) as z:
+              for file in sorted(root.rglob('*')):
+                  if file.is_file():
+                      z.write(file, Path('r6p24-synthetic-site')/file.relative_to(root))
+          assert zipfile.stat().st_size > 10000
+          print('R6P24_VERIFIED_SYNTHETIC_ZIP',zipfile.stat().st_size)
+          PY
+          cd build
+          sha256sum R6P24-synthetic-OpenSees-preview-NOT-ENGINEERING-APPROVED.zip > R6P24-synthetic-OpenSees-preview-NOT-ENGINEERING-APPROVED.sha256
+      - name: Create immutable annotated tag at the already-verified commit
+        run: |
+          set -euo pipefail
+          git fetch --force origin 'refs/tags/*:refs/tags/*'
+          if git show-ref --tags --verify --quiet "refs/tags/$TAG"; then
+            test "$(git rev-list -n1 "$TAG")" = "$TARGET_SHA" || {
+              echo "::error::Existing tag cannot be rewritten"; exit 1;
+            }
+            echo "Existing immutable tag preserved"
+          else
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git tag -a "$TAG" "$TARGET_SHA" -m 'R6.24 independent shell/mesh software preview; engineering HOLD'
+            git push origin "refs/tags/$TAG"
+          fi
+          test "$(git rev-list -n1 "$TAG")" = "$TARGET_SHA"
+      - name: Create verified GitHub prerelease and safe numerical/visual artifacts
+        run: |
+          set -euo pipefail
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            result="$(gh release view "$TAG" --json isPrerelease,isDraft --jq '.isPrerelease == true and .isDraft == false')"
+            test "$result" = true || { echo "::error::Existing release has incorrect category"; exit 1; }
+            echo "Existing correct prerelease preserved"
+          else
+            gh release create "$TAG" --verify-tag --prerelease \
+              --title 'R6.24 — Independent Shell FE & Mesh Sensitivity (Software Preview · ENGINEERING HOLD)' \
+              --notes-file audit/R6P24_SOFTWARE_PRERELEASE_NOTES__20261113.md \
+              build/R6P24-synthetic-OpenSees-preview-NOT-ENGINEERING-APPROVED.zip \
+              build/R6P24-synthetic-OpenSees-preview-NOT-ENGINEERING-APPROVED.sha256 \
+              build/r6p24-ui-qa/desktop.png \
+              build/r6p24-ui-qa/mobile.png
+          fi
+      - name: Verify release category and exact tag
+        run: |
+          set -euo pipefail
+          test "$(git rev-list -n1 "$TAG")" = "$TARGET_SHA"
+          gh release view "$TAG" --json isPrerelease,isDraft,tagName --jq '.isPrerelease == true and .isDraft == false and .tagName == "r6.24-preview"' | grep -Fx true
+          echo 'R6P24_SOFTWARE_PRERELEASE_ENGINEERING_HOLD_VERIFIED'
+      - name: Archive Chromium desktop/mobile QA screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: r6p24-Chromium-desktop-mobile-SYNTHETIC-NOT-APPROVED
+          path: build/r6p24-ui-qa/
+          if-no-files-found: error
