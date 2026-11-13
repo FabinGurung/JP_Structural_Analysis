@@ -68,3 +68,22 @@ and reports must stay out of this public repository.
 
 This integration **does not** merge/release the rest of the research branch,
 repin Pages, change the canonical governed working branch, or tag V0.1.
+
+## R6.23/R6.24 published independent OpenSees explorer
+
+When the separate R6.24 numerical/publishing QA passes, the existing GitHub
+Pages workflow publishes a synthetic, source-hashed independent structural
+shell/frame viewer at:
+
+https://fabingurung.github.io/JP_Structural_Analysis/r6p23.html
+
+The interface allows per-floor, per-case and per-diaphragm viewing of actual
+OpenSees-solved beam and shell force components, base reactions and a 4x4
+versus 8x8 mesh-sensitivity screen. It is based on the self-contained main
+r6p23 package, checked out at the invoking commit; the historic pinned
+full engine, existing report pages and navigation remain preserved.
+
+Only synthetic calculations are published. Static Pages cannot run arbitrary
+Python/OpenSees input from visitors, and this integration is NOT a certified
+engineering design, project-specific SAR, full engine release or approval.
+The original F3 one-way shear unsafe finding remains visible and unresolved.
