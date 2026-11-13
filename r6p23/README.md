@@ -67,3 +67,41 @@ Do not upload actual client drawings or analyses to public Actions, artifacts, m
 ## Branch and release governance
 
 R6.23 is installed in the research branch with full regression tests; an identical isolated runnable subtree may be included on `main` **as a development/preview component** with a dedicated CI job and README pointer. Main/Pages release content and engine default branch must not be silently repinned or tagged. Engineering approval and the complete-engine milestone remain **HOLD** until independent project-specific calculations and professional review are complete.
+
+## R6.24 — Independent mesh refinement and Pages workbench
+
+R6.24 refines the same independently defined two-floor slab/frame geometry from
+a 4×4 shell grid to an 8×8 shell grid, retaining the physical footprint,
+the 1 m² opening, actual load locations, material properties, gravity and
+base restraints. Original nodes map exactly to refined nodes; no ETABS
+solver outputs or ETABS comparison are required.
+
+Under R6.24, signed OpenSees gravity (DL) and source-labelled lateral (HX)
+responses are compared between the two discretizations for flexible shells
+and rigid in-plane Ux/Uy/Rz diaphragms. Changes in matching original-node
+vertical/lateral displacement and footing-node vertical reaction are reported
+as measured numerical differences. A 5% one-step screen is never described
+as proof of full asymptotic convergence or engineering approval.
+
+The source-preflight retains unresolved building drawing, load, footing, soil,
+opening, material and code details. The historical F3 one-way-shear failure
+remains adverse. The sample is NOT the actual G+1.5 building, and no member
+strength, punching, drift, seismic, nonlinear or project foundation design
+acceptance can be inferred from a passing numerical screen.
+
+R6.24 also provides a read-only HTML/CSS/JavaScript solver viewer generated
+from genuine source-hashed R6.23 OpenSees results. Visitors can select a
+floor, load case and diaphragm mode, click frame/shell elements to inspect
+signed forces, review individual support reactions and inspect the mesh
+difference table. GitHub Pages is static and cannot solve arbitrary user
+models with OpenSees in the browser. New project inputs/results must be
+processed privately using the Python CLI and approved source evidence.
+
+Use the isolated numerical and exporter tests:
+
+    python -m pytest -q r6p23/test_engine.py r6p23/test_convergence.py
+    python -m r6p23.site_export --site-dir build/r6p24-synthetic-site
+
+A carefully scoped R6.23/R6.24 software-preview milestone can be considered
+after main/Pages publication and checks pass. A complete-engine milestone,
+engineer-certified SAR or construction-release tag remains NOT READY.
