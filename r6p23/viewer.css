@@ -24,6 +24,9 @@ select{font:inherit;padding:10px;border:1px solid #bdc2ca;background:white;borde
 #selected-detail{white-space:pre-wrap;overflow-wrap:anywhere;font-variant-numeric:tabular-nums;font-size:12px;background:var(--pale);border-radius:9px;padding:14px;min-height:160px}
 table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}td,th{border-bottom:1px solid #e6e7eb;text-align:left;font-size:12px;padding:9px 7px}
 td:nth-child(n+2),th:nth-child(n+2){text-align:right}.scroll{overflow-x:auto}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
-.small{color:var(--muted);font-size:12px}footer{color:var(--muted);font-size:12px;padding:16px 24px;max-width:1190px;margin:0 auto}
-@media(max-width:850px){.workspace,.grid{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}.controls label{flex:1}}
+.small{color:var(--muted);font-size:12px}/* Long source digests and mathematical member IDs may never widen the phone viewport. */
+.panel{overflow-wrap:anywhere}
+#source-hash{overflow-wrap:anywhere;word-break:break-all}
+footer{color:var(--muted);font-size:12px;padding:16px 24px;max-width:1190px;margin:0 auto}
+@media(max-width:850px){.top{flex-wrap:wrap}.top nav{flex-basis:100%}.workspace,.grid{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}.controls label{flex:1}}
 @media print{.controls,.top nav{display:none}main{padding:5px}.panel{break-inside:avoid}}
