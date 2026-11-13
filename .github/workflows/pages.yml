@@ -796,6 +796,20 @@ jobs:
           node --check site/private-force-viewer.js
           node --check site/analysis-studio.js
           node --check site/g15-3d.js
+      - name: Checkout user-approved R6.23/R6.24 independent engine from main SHA
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: r6p23-main
+      - name: Revalidate independent 3D shell and R6.24 mesh regression before publication
+        run: |
+          PYTHONPATH=r6p23-main python -m pytest -q r6p23-main/r6p23/test_engine.py r6p23-main/r6p23/test_convergence.py
+          node --check r6p23-main/r6p23/viewer.js
+      - name: Incorporate verified R6.23 engine into actual Pages site
+        run: |
+          PYTHONPATH=r6p23-main python -m r6p23.site_export --site-dir site
+          PYTHONPATH=r6p23-main python -c 'from pathlib import Path; from r6p23.site_export import verify_export; print("R6P23_PAGES_VERIFIED", verify_export(Path("site"))["source_SHA256"])'
+          node --check site/r6p23.js
       - name: Write deployment metadata
         run: |
           python - <<'PY'
@@ -825,6 +839,36 @@ jobs:
       - name: Deploy GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5.0.1
+      - name: Verify live R6.23 independent FE workbench and R6.24 mesh holds
+        run: |
+          python - <<'PY'
+          import json, time, urllib.request
+          root="https://fabingurung.github.io/JP_Structural_Analysis/"
+          for attempt in range(18):
+              try:
+                  with urllib.request.urlopen(root+"data/r6p23-preview.json?check="+str(attempt),timeout=12) as f:
+                      x=json.load(f)
+                  with urllib.request.urlopen(root+"r6p23.html?check="+str(attempt),timeout=12) as f:
+                      page=f.read().decode("utf-8")
+                  with urllib.request.urlopen(root+"r6p23.js?check="+str(attempt),timeout=12) as f:
+                      js=f.read().decode("utf-8")
+                  assert x["schema"]=="jp.structural.r6p24.pages_independent_shell_preview.v0.1"
+                  assert x["classification"]=="SYNTHETIC_REFERENCE" and x["engineering_approval"] is False
+                  assert x["source_ledger"]["gravity_totals_kN"]["DL"]==339
+                  assert x["source_ledger"]["gravity_totals_kN"]["LL"]==62
+                  assert x["topology"]["shell_count"]==31
+                  assert x["mesh_screen"]["refined_mesh_shells"]==124
+                  assert x["mesh_screen"]["full_asymptotic_mesh_convergence_proven"] is False
+                  assert x["historical_F3_unsafe_retained"] is True
+                  assert "NOT a complete engineering design" in page
+                  assert "shell_nodal_resisting_force_vectors" in js
+                  print("R6P24_LIVE_PAGES_INDEPENDENT_SHELL_REPORT_MESH_AND_HOLDS_PASS")
+                  break
+              except Exception as exc:
+                  if attempt==17:raise
+                  print("R6.23 publishing/CDN not yet ready",attempt+1,type(exc).__name__)
+                  time.sleep(10)
+          PY
       - name: Verify live Pages source identity, report, studio, and engineering holds
         env:
           EXPECTED_SOURCE_SHA: f39c89ad55af18ea390a699af159f67f5fc8b517
