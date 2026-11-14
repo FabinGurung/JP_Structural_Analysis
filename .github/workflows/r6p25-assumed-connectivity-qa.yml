@@ -1,0 +1,62 @@
+name: R6.25 Narayani assumed-connectivity UI QA — not design approved
+
+on:
+  pull_request:
+    paths:
+      - 'r6p25/**'
+      - '.github/workflows/r6p25-assumed-connectivity-qa.yml'
+      - '.github/workflows/pages.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'r6p25/**'
+      - '.github/workflows/r6p25-assumed-connectivity-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-derived-connectivity-and-browser:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - name: Check out pinned original-DXF-derived CAD register
+        uses: actions/checkout@v6
+        with:
+          repository: FabinGurung/jp-drawing-coordination
+          ref: 259d11e1543e4ba7040373a752b823396e12d7f8
+          path: drawing-source
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install deterministic test browser
+        run: |
+          python -m pip install 'pytest>=8,<9' playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Test traceability and explicit assumption boundaries
+        env:
+          R6P25_CAD_ROOT: drawing-source
+        run: |
+          python -m pytest -q r6p25/test_narayani_intake.py r6p25/test_qa_export.py
+          node --check r6p25/qa.js
+      - name: Build pinned real-project assumed-connectivity inspection site
+        run: |
+          mkdir -p build/r6p25-qa
+          printf '<nav><a href="r6p23.html">FE</a></nav>' > build/r6p25-qa/index.html
+          printf '<nav><a href="r6p23.html">FE</a></nav>' > build/r6p25-qa/report.html
+          printf '<nav><a href="r6p23.html">FE</a></nav>' > build/r6p25-qa/more.html
+          printf '<nav><a href="index.html">Home</a></nav>' > build/r6p25-qa/r6p23.html
+          python -m r6p25.qa_export --cad-root drawing-source --site-dir build/r6p25-qa
+          python -c 'from pathlib import Path; from r6p25.qa_export import verify; print("R6P25_QA_SHA256_VERIFIED",verify(Path("build/r6p25-qa"))["cad_source_sha"])'
+      - name: Actually exercise desktop/mobile floor switching, selection and overflow
+        run: python r6p25/browser_smoke.py --site-dir build/r6p25-qa --screenshots build/r6p25-qa-screens
+      - name: Archive screenshots and source hypothesis receipt
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: R6P25-NARAYANI-CONNECTION-QA-NOT-ENGINEERING-APPROVED
+          path: |
+            build/r6p25-qa-screens/
+            build/r6p25-qa/data/r6p25-pages-receipt.json
+          if-no-files-found: error

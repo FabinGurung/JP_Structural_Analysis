@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Narayani Parajuli R6.25 drawing-based assumed structural connectivity review, original-DXF lineage and engineering holds">
+<title>R6.25 Narayani — Connection QA | JP Structural Analysis</title>
+<link rel="stylesheet" href="r6p25.css">
+<script src="r6p25.js" defer></script>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="index.html">JP <span>Structural Analysis</span></a>
+  <nav aria-label="Site navigation">
+    <a href="index.html">Home</a><a href="r6p23.html">FE engine</a>
+    <a href="projects/index.html">Projects</a><a href="r6p25.html" aria-current="page">Narayani QA</a>
+  </nav>
+</header>
+<main>
+  <div class="eyebrow">R6.25 · Real drawing-source intake · PRJ-000007</div>
+  <div class="hero">
+    <div><h1>Narayani — assumed<br>structural connectivity</h1>
+      <p class="lead">Interactive, source-traceable review of proposed Block B in Pokhara. Compare original ground-floor column/footing marks with three-level candidate beam layouts and an <strong>explicit provisional frame-connection hypothesis.</strong></p>
+    </div>
+    <div class="state"><strong>REVIEW MODEL</strong><span>Not an FE solution<br>Not design-approved</span></div>
+  </div>
+  <section class="hold" role="note"><strong>Engineering HOLD: assumptions are not verified support connections.</strong>
+  Ground-floor column locations are from original DXF evidence. Their continuation through FF/SF and rigid RC moment joints is hypothesized so you can inspect possible load paths now. No actual-building OpenSees forces, seismic result, bearing safety or member design is claimed.</section>
+  <section class="metrics" aria-label="Drawing-intake summary">
+    <div class="metric"><strong id="ncols">—</strong><span>GF source column marks</span></div>
+    <div class="metric"><strong id="nfoot">—</strong><span>GF source footing outlines</span></div>
+    <div class="metric"><strong id="nbeams">—</strong><span>GF · FF · SF strip candidates</span></div>
+    <div class="metric"><strong id="ngaps">—</strong><span>Assumed endpoints above 750 mm gap</span></div>
+  </section>
+  <section class="panel" id="review">
+    <div class="section-title">
+      <div><div class="eyebrow">01 / Drawing evidence and candidate connections</div><h2>Review floor-by-floor</h2></div>
+      <span id="load-state" aria-live="polite">Loading source data…</span>
+    </div>
+    <div class="controls">
+      <label>Structural drawing level
+        <select id="floor" aria-label="Choose structural drawing floor" disabled>
+          <option value="GF">Ground floor</option><option value="FF">First floor</option><option value="SF">Second floor</option>
+        </select>
+      </label>
+      <label>Inspect
+        <select id="scope" aria-label="Choose display filter" disabled>
+          <option value="all">All source candidates</option>
+          <option value="gap">Only high-gap hypotheses</option>
+          <option value="near">Only near-column hypotheses</option>
+        </select>
+      </label>
+      <label class="toggle"><input type="checkbox" id="show-ties" checked disabled> Show assumed endpoint ties</label>
+      <label class="toggle"><input type="checkbox" id="show-footings" checked disabled> Show source footings (GF)</label>
+    </div>
+    <div class="workspace">
+      <div class="drawing">
+        <div class="legend"><span><i class="sw column"></i> GF-sourced columns</span>
+          <span><i class="sw beam"></i> Source strips (unverified member class)</span>
+          <span><i class="sw tie"></i> Assumed endpoint ties</span>
+          <span><i class="sw foot"></i> GF footing outlines</span>
+        </div>
+        <svg id="plan" role="group" aria-label="Structural source plan will appear here" viewBox="0 0 400 260">
+          <text x="24" y="44">Loading Narayani drawing data…</text>
+        </svg>
+        <p class="hint">Tap a beam, column or footing to inspect drawing handles and the precise assumption. Positions are shown in a relative original-structural-DXF drawing frame, not a surveyed site layout.</p>
+      </div>
+      <aside class="inspector" aria-live="polite">
+        <div class="eyebrow">Selected element</div><h3 id="selection-heading">Choose a source element</h3>
+        <div id="selection" class="detail">Each beam endpoint includes its hypothesized nearest column and measured plan gap. Distances are diagnostic, not a structural connection.</div>
+        <div class="inspector-bottom">
+          <span>Level</span><strong id="level-label">GF</strong>
+          <span>Source candidate segments</span><strong id="level-beams">—</strong>
+          <span>Source architectural floor area</span><strong id="level-area">—</strong>
+          <span>Verified upper-storey frame joints</span><strong>0</strong>
+        </div>
+      </aside>
+    </div>
+  </section>
+  <section class="panel">
+    <div class="eyebrow">02 / High-risk hypotheses</div>
+    <h2>Connection-distance audit</h2>
+    <p class="hint">A 750 mm diagnostic gap threshold helps surface questionable assumed endpoint ties. This is a QA screening threshold, <strong>not</strong> an NBC 105:2025 structural span, anchorage or joint acceptance criterion.</p>
+    <div class="table-scroll"><table><thead><tr><th>Source strip</th><th>End I nearest</th><th>End J nearest</th><th>Review</th></tr></thead>
+    <tbody id="gaps"><tr><td colspan="4">Loading…</td></tr></tbody></table></div>
+  </section>
+  <section class="twocol">
+    <div class="panel">
+      <div class="eyebrow">03 / Applied model scenario</div><h2>Inputs and references</h2>
+      <dl class="basis">
+        <div><dt>Project</dt><dd>Pokhara Metropolitan City-15, proposed Block B only</dd></div>
+        <div><dt>Seismic edition</dt><dd>NBC 105:2025 · owner-approved edition</dd></div>
+        <div><dt>Concrete unit weight</dt><dd>20 kN/m³ · owner-approved working assumption</dd></div>
+        <div><dt>Material grade</dt><dd>M20 concrete / Fe500 reinforcement · drawing-declared</dd></div>
+        <div><dt>Preliminary bearing assumption</dt><dd>160 kPa · not an all-footings capacity certificate</dd></div>
+        <div><dt>Geotechnical benchmark</dt><dd>166 kPa for 1.5 × 1.5 m at Df=1.5 m and 25 mm settlement</dd></div>
+        <div><dt>Three-level frame</dt><dd>23 columns continued vertically, assumed rigid RC joints, 3 m illustrative storey heights</dd></div>
+        <div><dt>Site soil class</dt><dd>2020 geotech B vs older structural D; 2025 classification held</dd></div>
+      </dl>
+      <p class="references">References:
+        <a href="https://dudbc.gov.np/pages/building-code/" target="_blank" rel="noopener">Nepal DUDBC building codes</a> ·
+        <a href="https://giwmscdnone.gov.np/media/files/NBC_105_2025_Seismic%20Design%20of%20Buildings%20in%20Nepal_lqqvx6a.pdf" target="_blank" rel="noopener">NBC 105:2025</a> ·
+        <a href="https://opensees.github.io/OpenSeesDocumentation/user/manual/model/elements/forceBeamColumn.html" target="_blank" rel="noopener">OpenSees framing method</a> ·
+        <a href="https://drive.google.com/file/d/13y0b0v8BiL2ooMXy0BFn2dtdSHWNOg2N/view" target="_blank" rel="noopener">original geotechnical report</a>.
+      </p>
+    </div>
+    <div class="panel">
+      <div class="eyebrow">04 / Engineering gate</div><h2>What still needs evidence</h2>
+      <ul class="holds">
+        <li><b>FF/SF column continuity:</b> source-matched upper-level sections and elevations, beam-column joints and the architectural/structural datum.</li>
+        <li><b>Frame support:</b> shear, flexure, anchorage and gravity/earthquake transfers at G2; correct I4 original vs owner working I3.</li>
+        <li><b>Foundation:</b> CF1 eccentricity, G1 drawn/scheduled footing mismatch, source reactions and soil bearing/punching.</li>
+        <li><b>Slabs &amp; stairs:</b> genuine closed shell contours, openings, load path and local structural element sections.</li>
+        <li><b>Seismic and soil:</b> NBC 105:2025 site class and physical parameters, response spectrum, diaphragm justification, accidental torsion and cracked stiffness.</li>
+        <li><b>Adverse safety:</b> historical F3 <strong>NOT SAFE IN ONE WAY SHEAR</strong> is still unresolved.</li>
+      </ul>
+      <p class="hint">The <a href="r6p23.html">R6.23/R6.24 OpenSees viewer</a> is a separately solved synthetic benchmark. This R6.25 Narayani page is currently a geometry/connection hypothesis QA viewer—not a real-project finite-element solution.</p>
+    </div>
+  </section>
+  <section class="panel last">
+    <div class="eyebrow">05 / Audit and reproduction</div><h2>Trace every hypothesis</h2>
+    <p>Based on the separately pinned drawing repository commit. Source-derived candidates retain exact original DXF handles in downloadable JSON; a frame continuity assumption is always explicitly flagged, never converted silently into a certified design.</p>
+    <div class="links"><a href="data/r6p25-narayani-qa.json">Inspect source/hypothesis JSON</a>
+      <a href="data/r6p25-pages-receipt.json">SHA256 publication receipt</a>
+      <a href="https://github.com/FabinGurung/jp-structural-analysis/tree/main/r6p25">Python generator and tests</a>
+      <a href="https://github.com/FabinGurung/jp-drawing-coordination/tree/main/public/data/projects/narayani-parajuli">Original-DXF-derived CAD registers</a>
+    </div>
+    <p class="hint">Pinned drawing SHA: <code id="source-sha">—</code>. Engineering approval: <strong>FALSE</strong>. Real-building FE solved cases: <strong>0</strong>.</p>
+  </section>
+</main>
+<footer>JP Structural Analysis · Narayani R6.25 assumed-source QA · ENGINEERING HOLD</footer>
+</body>
+</html>
