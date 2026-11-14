@@ -103,8 +103,8 @@ def test_actual_dead_load_reactions_match_source_formula_with_signed_force():
 
 def test_dead_live_gravity_and_lateral_probes_are_mutually_distinct(result):
     dl=result["cases"]["DL"];ll=result["cases"]["LL"];px=result["cases"]["PX10"];py=result["cases"]["PY10"]
-    assert dl["applied_6axis"]["Fz"]==-pytest.approx(result["source_area_and_load_ledger"]["DL_total_kN"])
-    assert ll["applied_6axis"]["Fz"]==-pytest.approx(result["source_area_and_load_ledger"]["LL_total_kN"])
+    assert dl["applied_6axis"]["Fz"]==pytest.approx(-result["source_area_and_load_ledger"]["DL_total_kN"])
+    assert ll["applied_6axis"]["Fz"]==pytest.approx(-result["source_area_and_load_ledger"]["LL_total_kN"])
     assert px["applied_6axis"]["Fx"]==pytest.approx(30)
     assert py["applied_6axis"]["Fy"]==pytest.approx(30)
     assert px["applied_6axis"]["Fz"]==pytest.approx(0)
