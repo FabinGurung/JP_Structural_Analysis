@@ -233,7 +233,7 @@ def normalize(cad_root: Path) -> dict:
                 "level":level,
                 "paired_original_DXF_handles":handles,
                 "nearest_annotation_HANDLE_proximity_only":txt,
-                "axis_sheet_relative_m":m32["commonAxes"][i],
+                "axis_sheet_relative_m":m32["commonStrictSheetNormalizedAxesM"][i],
                 "status":"ORIGINAL_DXF_PARALLEL_WALL_LINE_CANDIDATE_NOT_VERIFIED_BEAM",
             })
     need(len(source_strips) == 51 and
@@ -332,7 +332,7 @@ def normalize(cad_root: Path) -> dict:
             "cad_source_ground_floor_footing_outlines":footings,
             "cad_source_ground_floor_edge_strip_candidates":beams,
             "cad_source_three_floor_strict_line_pair_candidates":source_strips,
-            "cad_17_common_sheet_axes_not_proof_of_identical_frame_design":m32["commonAxes"],
+            "cad_17_common_sheet_axes_not_proof_of_identical_frame_design":m32["commonStrictSheetNormalizedAxesM"],
             "owner_G2_junction":"BEAMS_MEET_NO_EXTRA_COLUMN_SOURCE_ONLY",
             "owner_C6_F6_strip016":"ORTHOGONAL_WORKING_INTENT_NOT_VERIFIED_SUPPORT",
             "original_I4_vs_owner_working_I3":"PRESERVED_SEPARATE_COORDINATES",
