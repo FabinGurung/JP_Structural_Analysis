@@ -810,6 +810,24 @@ jobs:
           PYTHONPATH=r6p23-main python -m r6p23.site_export --site-dir site
           PYTHONPATH=r6p23-main python -c 'from pathlib import Path; from r6p23.site_export import verify_export; print("R6P23_PAGES_VERIFIED", verify_export(Path("site"))["source_SHA256"])'
           node --check site/r6p23.js
+      - name: Checkout pinned Narayani drawing repository for source-assumed model
+        uses: actions/checkout@v6
+        with:
+          repository: FabinGurung/jp-drawing-coordination
+          ref: 259d11e1543e4ba7040373a752b823396e12d7f8
+          path: r6p25-cad-source
+          persist-credentials: false
+      - name: Validate source-connected Narayani QA graph and protect engineering holds
+        env:
+          R6P25_CAD_ROOT: r6p25-cad-source
+        run: |
+          PYTHONPATH=r6p23-main python -m pytest -q r6p23-main/r6p25/test_narayani_intake.py r6p23-main/r6p25/test_qa_export.py
+          node --check r6p23-main/r6p25/qa.js
+      - name: Publish R6.25 real-drawing Narayani source and connection hypothesis QA
+        run: |
+          PYTHONPATH=r6p23-main python -m r6p25.qa_export --cad-root r6p25-cad-source --site-dir site
+          PYTHONPATH=r6p23-main python -c 'from pathlib import Path; from r6p25.qa_export import verify; print("R6P25_NARAYANI_PUBLIC_QA_VERIFIED",verify(Path("site"))["cad_source_sha"])'
+          node --check site/r6p25.js
       - name: Write deployment metadata
         run: |
           python - <<'PY'
@@ -839,6 +857,43 @@ jobs:
       - name: Deploy GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5.0.1
+      - name: Verify live R6.25 Narayani QA and enforce source assumptions versus FE approval
+        run: |
+          python - <<'PY'
+          import json,time,urllib.request,os
+          owner,repo=os.environ["GITHUB_REPOSITORY"].split("/")
+          base="https://"+owner.lower()+".github.io/"+repo+"/"
+          def fetch(name,attempt):
+              req=urllib.request.Request(base+name+"?r6p25="+str(attempt),headers={"Cache-Control":"no-cache","User-Agent":"JP-SAR-R6P25-source-review"})
+              return urllib.request.urlopen(req,timeout=20).read()
+          for attempt in range(18):
+              try:
+                  raw=fetch("data/r6p25-narayani-qa.json",attempt)
+                  x=json.loads(raw)
+                  page=fetch("r6p25.html",attempt).decode()
+                  script=fetch("r6p25.js",attempt).decode()
+                  receipt=json.loads(fetch("data/r6p25-pages-receipt.json",attempt))
+                  assert x["schema"]=="jp.structural.r6p25.narayani_assumed_connections_public_qa.v0.1"
+                  assert x["cad_source_sha"]=="259d11e1543e4ba7040373a752b823396e12d7f8"
+                  assert x["classification"]=="ORIGINAL_DXF_SOURCE_DERIVED_WITH_ASSUMED_UNVERIFIED_CONNECTIONS"
+                  assert len(x["columns"])==23 and len(x["footings"])==21 and len(x["beams"])==66
+                  assert x["basis"]["seismic_code"]=="NBC 105:2025"
+                  assert x["basis"]["concrete_unit_weight_kN_m3"]==20
+                  assert x["basis"]["site_class_2025"]=="NOT_YET_CLASSIFIED"
+                  assert x["engineering_approval"] is False and x["actual_independent_FE_run"] is False
+                  assert x["summary"]["actual_FE_solved_cases"]==0
+                  assert all(not j["engineer_verified"] for b in x["beams"] for j in b["assumed_endpoint_joints"])
+                  assert receipt["cad_source_sha"]==x["cad_source_sha"]
+                  assert receipt["engineering_approval"] is False
+                  assert "Narayani" in page and "Engineering HOLD" in page
+                  assert "assumed_endpoint_joints" in script and "plan_near_750mm" in script
+                  print("R6P25_LIVE_NARAYANI_QA_ASSUMED_CONNECTIONS_SOURCE_READBACK_SUCCESS")
+                  break
+              except Exception as ex:
+                  if attempt==17:raise
+                  print("Narayani QA CDN refresh",attempt+1,str(ex)[:200])
+                  time.sleep(10)
+          PY
       - name: Verify live R6.23 independent FE workbench and R6.24 mesh holds
         run: |
           python - <<'PY'
