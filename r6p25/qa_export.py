@@ -246,9 +246,12 @@ def emit(data:dict,site:Path)->dict:
         html=page.read_text(encoding="utf8")
         if 'href="r6p25.html"' in html:continue
         anchor='href="r6p23.html"'
-        need(anchor in html, "expected existing R6.23 project navigation link missing on "+name)
-        # Keep menu text compact on narrow phones.
-        html=html.replace(anchor, 'href="r6p25.html">Narayani QA</a><a '+anchor,1)
+        if anchor in html:
+            html=html.replace(anchor,
+                'href="r6p25.html">Narayani QA</a><a '+anchor,1)
+        else:
+            need("</nav>" in html, "site navigation missing on "+name)
+            html=html.replace("</nav>",'<a href="r6p25.html">Narayani QA</a></nav>',1)
         page.write_text(html,encoding="utf8")
     manifest={
         "schema":"jp.structural.r6p25.narayani_public_qa_receipt.v0.1",
