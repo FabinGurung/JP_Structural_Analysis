@@ -39,11 +39,11 @@ def check(site:Path,screenshots:Path)->None:
                 assert "SOURCE: original ground-floor DXF column marker" in page.locator("#selection").inner_text()
                 page.select_option("#floor","FF")
                 assert "17 / 17" in page.locator("#level-beams").inner_text()
-                assert page.locator("#plan line.beam").count()==17
-                page.locator("#plan line.beam").first.click()
+                assert page.locator("#plan rect.beam-hit").count()==17
+                page.locator("#plan rect.beam-hit").first.click()
                 assert "End I candidate" in page.locator("#selection").inner_text()
                 page.select_option("#scope","gap")
-                assert page.locator("#plan line.beam").count()>0
+                assert page.locator("#plan rect.beam-hit").count()>0
                 page.select_option("#scope","all")
                 page.select_option("#floor","SF")
                 assert "17 / 17" in page.locator("#level-beams").inner_text()
