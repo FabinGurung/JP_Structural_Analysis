@@ -1,0 +1,68 @@
+name: R6.25 Narayani independent source-normalization QA (engineering hold)
+
+on:
+  pull_request:
+    paths:
+      - 'r6p25/**'
+      - '.github/workflows/r6p25-narayani-intake.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'r6p25/**'
+      - '.github/workflows/r6p25-narayani-intake.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cad-pinned-narayani-source-integrity:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout structural source and bounded intake code
+        uses: actions/checkout@v6
+      - name: Checkout original-DXF-derived drawing registers at exact approved CAD SHA
+        uses: actions/checkout@v6
+        with:
+          repository: FabinGurung/jp-drawing-coordination
+          ref: 259d11e1543e4ba7040373a752b823396e12d7f8
+          path: drawing-source
+          persist-credentials: false
+      - name: Prove drawing repo snapshot is immutable and expected
+        run: |
+          test "$(git -C drawing-source rev-parse HEAD)" = "259d11e1543e4ba7040373a752b823396e12d7f8"
+          test -f drawing-source/public/data/projects/narayani-parajuli/source-axis-register.v1.json
+          test -f drawing-source/public/data/projects/narayani-parajuli/aad-m32-beam-strip-source-register.json
+      - name: Python 3.12 and source-normalization tests
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install pytest only; no ETABS or project-private package needed
+        run: python -m pip install 'pytest>=8,<9'
+      - name: Validate source-linked columns, footings, geometry, soil assumptions and held joins
+        env:
+          R6P25_CAD_ROOT: drawing-source
+        run: python -m pytest -q r6p25/test_narayani_intake.py
+      - name: Execute actual pinned drawing data normalization and SHA readback
+        run: |
+          python -m r6p25.narayani_intake \
+            --cad-root drawing-source \
+            --output-dir "$RUNNER_TEMP/r6p25-protected"
+          python -c 'from pathlib import Path; from r6p25.narayani_intake import verify; import os; print("R6P25_SHA256_INPUT_REGISTER_VERIFIED", verify(Path(os.environ["RUNNER_TEMP"])/"r6p25-protected")["source_model_sha256"])'
+      - name: Refuse unverified project geometry as completed FE analysis
+        run: |
+          python - <<'PY'
+          import os,json
+          from pathlib import Path
+          p=Path(os.environ["RUNNER_TEMP"])/"r6p25-protected"/"R6P25-NARAYANI-SOURCE-REGISTER-UNAPPROVED.json"
+          m=json.loads(p.read_text())
+          assert not m["building"]["r6p23_r6p24_FE_input_ready"]
+          assert not m["building"]["cross_floor_column_member_and_foundation_support_links_verified"]
+          assert m["engineering_approval"] is False and m["construction_release"] is False
+          assert m["approved_basis"]["concrete_unit_weight_kN_m3"]==20.0
+          assert m["soil"]["reference_table_q_kPa_B1p5_Df1p5"]==166.0
+          assert m["soil"]["approved_conservative_provisional_q_kPa"]==160.0
+          assert m["soil"]["NBC105_2025_site_class"].startswith("NOT_YET")
+          print("R6P25_PROJECT_SOURCE_INTAKE_PASS___REAL_FE_ENGINEERING_HOLD")
+          PY
