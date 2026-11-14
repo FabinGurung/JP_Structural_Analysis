@@ -86,13 +86,26 @@
     }
     for(const b of members){
       const risky=b.assumed_endpoint_joints.some(j=>!j.plan_near_750mm);
+      const x1=b.endpoints[0][0],y1=yy(b.endpoints[0][1]);
+      const x2=b.endpoints[1][0],y2=yy(b.endpoints[1][1]);
       const line=svg("line",{class:"beam"+(floor==="GF"?"":" upper")+(risky?" risky":""),
-        x1:b.endpoints[0][0],y1:yy(b.endpoints[0][1]),
-        x2:b.endpoints[1][0],y2:yy(b.endpoints[1][1]),
-        tabindex:0,role:"button","aria-label":"Inspect source candidate "+b.id});
+        x1,y1,x2,y2,"aria-hidden":"true"});
       svg("title",{},line).textContent=b.id+" · "+(risky?"high-gap":"near")+" source";
-      line.addEventListener("click",()=>choose({...b,type:"beam"}));
-      line.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();choose({...b,type:"beam"});}});
+      // SVG horizontal/vertical line geometry has zero-area bounding boxes in
+      // Chromium; give each line a visible-sized, rotated rectangular hit target
+      // for touch and keyboard controls (QA browser regression enforces this).
+      const length=Math.hypot(x2-x1,y2-y1);
+      const angle=Math.atan2(y2-y1,x2-x1)*180/Math.PI;
+      const hit=svg("rect",{class:"beam-hit",x:0,y:-.20,width:length,height:.40,
+        transform:"translate("+x1+" "+y1+") rotate("+angle+")",
+        tabindex:0,role:"button","aria-label":"Inspect source candidate "+b.id});
+      svg("title",{},hit).textContent="Inspect "+b.id;
+      hit.addEventListener("click",()=>choose({...b,type:"beam"}));
+      hit.addEventListener("mouseenter",()=>line.classList.add("selected"));
+      hit.addEventListener("mouseleave",()=>line.classList.remove("selected"));
+      hit.addEventListener("focus",()=>line.classList.add("selected"));
+      hit.addEventListener("blur",()=>line.classList.remove("selected"));
+      hit.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();choose({...b,type:"beam"});}});
     }
     for(const c of model.columns){
       const circle=svg("circle",{class:"column-mark",cx:c.x,cy:yy(c.y),r:.19,role:"button",tabindex:0,
