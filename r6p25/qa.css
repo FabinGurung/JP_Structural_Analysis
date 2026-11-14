@@ -17,7 +17,7 @@ main{max-width:1230px;margin:auto;padding:20px 23px 72px}.eyebrow{color:#bc3b50;
 #plan{width:100%;height:auto;min-height:315px;max-height:555px;background:#fafaf5;border-radius:12px;border:1px solid #e9ebed;touch-action:manipulation}
 .grid-line{stroke:#e2e6e8;stroke-width:.014;vector-effect:non-scaling-stroke}
 .found{fill:#e1ecd7;stroke:#6e8c60;stroke-width:.035;cursor:pointer;vector-effect:non-scaling-stroke}
-.beam{stroke:#4037a1;stroke-width:.115;stroke-linecap:round;vector-effect:non-scaling-stroke;cursor:pointer;fill:none}.beam.upper{stroke-dasharray:6 3}.beam.risky{stroke:#af4c74}.beam.selected,.beam:hover,.beam:focus{stroke:#ed7c3d;stroke-width:.23;outline:none}
+.beam{stroke:#4037a1;stroke-width:.115;stroke-linecap:round;vector-effect:non-scaling-stroke;cursor:pointer;fill:none}.beam.upper{stroke-dasharray:6 3}.beam.risky{stroke:#af4c74}.beam.selected{stroke:#ed7c3d;stroke-width:.23;outline:none}.beam-hit{fill:rgba(0,0,0,.001);stroke:none;pointer-events:all;cursor:pointer}.beam-hit:focus{outline:none;stroke:#de8947;stroke-width:.025}
 .joint-tie{stroke:#e4a01d;stroke-width:.045;stroke-dasharray:.12 .10;vector-effect:non-scaling-stroke;pointer-events:none}.joint-tie.high{stroke:#cc5769}
 .column-mark{fill:#de3b58;stroke:white;stroke-width:.04;cursor:pointer;vector-effect:non-scaling-stroke}.column-mark:focus,.column-mark:hover{stroke:#27196e;stroke-width:.12;outline:none}
 .mark-label{font-size:.29px;fill:#263553;pointer-events:none;font-weight:750}.axis-label{font-size:.25px;fill:#9b9dab}.hint{font-size:12px;color:var(--muted);margin:10px 0}
