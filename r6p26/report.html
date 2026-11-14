@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f7f6ef">
+<meta name="description" content="Narayani G+1.5-source structural analysis report reconstructed using independently computed OpenSeesPy elastic 3D frame responses, source ledgers and engineering holds">
+<title>Narayani · Independent Structural Analysis Report — R6.26 | JP</title>
+<link rel="stylesheet" href="r6p26-report.css"></head>
+<body>
+<header class="topbar"><a class="brand" href="index.html"><span class="brand-symbol">JP</span><span>Structural Analysis<br><small>INDEPENDENT ENGINE · R6.26</small></span></a>
+<nav aria-label="Primary navigation"><a href="index.html">Home</a><a href="report.html">Original report</a><a href="r6p25.html">Connection QA</a><a href="r6p23.html">FE research</a></nav>
+<button type="button" id="print" class="print" onclick="window.print()">Print report</button></header>
+<div class="report-layout">
+<aside class="sidebar" aria-label="Report table of contents"><div class="sidebar-label">REPORT CONTENTS</div>
+<a href="#executive"><span>00</span> Executive Summary</a>
+<a href="#introduction"><span>01</span> Introduction</a>
+<a href="#basis"><span>02</span> General Data</a>
+<a href="#method"><span>03</span> Procedure</a>
+<a href="#model"><span>04</span> OpenSees Model</a>
+<a href="#results"><span>05</span> Output &amp; Checks</a>
+<a href="#design"><span>06</span> Structural Elements</a>
+<a href="#annex"><span>A</span> Evidence Annex</a>
+<div class="side-note"><strong>ENGINEERING HOLD</strong><p>Conditional source-derived model. Not structural design approval or a permit report.</p></div>
+</aside>
+<main id="main">
+<section class="cover" id="executive">
+<div class="cover-top"><span>JP / STRUCTURAL ENGINEERING</span><span>PRJ-000007 · POKHARA</span></div>
+<div class="cover-line"></div>
+<p class="eyebrow">INDEPENDENT CALCULATION · SOURCE-REVIEW EDITION R6.26</p>
+<h1>Structural Analysis<br>&amp; Design <em>Report</em></h1>
+<p class="lede">Narayani Parajuli · Proposed Block B · Pokhara Metropolitan City-15, Nepal</p>
+<p class="summary">A report-format reconstruction of the original six-chapter structural analysis using <strong>our own OpenSeesPy calculation engine</strong>, drawing-derived coordinates and fully disclosed, provisional connection/loading choices. Not an ETABS output clone or a completed code design.</p>
+<div class="warning"><strong>Engineering HOLD — construction release not authorized.</strong> Original F3 one-way-shear finding remains <b>NOT SAFE</b>. Missing source-verified supports, wall paths, slab shells, seismic demands and design capacities must not be interpreted as zero demand or accepted capacity.</div>
+<div class="facts">
+ <div><span>Original DXF column marks</span><strong data-field="columns">—</strong></div>
+ <div><span>Independent OpenSees cases</span><strong data-field="cases">—</strong></div>
+ <div><span>Modeled frame members</span><strong data-field="members">—</strong></div>
+ <div><span>Global equilibrium</span><strong data-field="eq">—</strong></div>
+</div>
+<h2>Executive Summary</h2>
+<p><strong>This is a runnable calculation report.</strong> Its 3D elastic frame reactions, signed end actions and displacement results are generated afresh from source-labelled input data in GitHub Actions, with six-axis force/moment equilibrium and reproducible artifact hashes. Actual column positions come from the pinned Narayani source DXF extracts. Repeated storey columns, nearest-column beam connections, floors and area-proxy loads remain <strong>explicitly assumed</strong>.</p>
+<p>Engineering acceptance is different from numerical execution. The calculation evaluates dead and imposed gravity plus fixed lateral <em>probe</em> loads; it does <strong>not</strong> calculate NBC 105:2025 design seismic forces, strength capacities, slab/footing punching, foundation soil safety, or ETABS numerical parity.</p>
+</section>
+<section class="chapter" id="introduction">
+<div class="chapter-top"><span>CHAPTER 01</span><span>REFERENCE REPORT STRUCTURE</span></div>
+<h2>1.0 Introduction</h2>
+<h3>1.1 Executive Summary</h3>
+<p>This chapter preserves the original report's intent: describe a residential reinforced-concrete building and the structural calculations supporting its assessment. Our numerical results are independently regenerated; the original report remains a source to audit, not a trusted substitute for FE analysis.</p>
+<h3>1.2 Structural Modelling</h3>
+<p>Model: 3D, six degrees of freedom per node, linear-elastic <code>elasticBeamColumn</code> members. Distinct geometric column foundations are fixed idealizations for preliminary inspection. Candidate beam endpoints are projected onto the nearest source ground-floor column axis; non-close and duplicate mappings are recorded rather than quietly discarded. No floor shell plate or rigid-diaphragm constraint is yet imposed.</p>
+<h3>1.3 Structural System of the Building</h3>
+<p>The source describes a special moment-resisting frame (SMRF). This model approximates rigid beam-column frame joints as a <em>calculation hypothesis</em>. It cannot prove SMRF detailing, ductility, strong-column/weak-beam capacity, joint shear or foundations. Original GF axis I4 and owner-working I3, G2 junction, CF1, and G1 inconsistencies remain open.</p>
+</section>
+<section class="chapter" id="basis"><div class="chapter-top"><span>CHAPTER 02</span><span>INPUTS / ORIGINAL REPORT</span></div>
+<h2>2.0 General Data for Structural Analysis</h2>
+<div class="sectiongrid"><div class="subcard"><h3>2.1–2.4 Materials &amp; codes</h3>
+<dl class="kv"><div><dt>Concrete</dt><dd>M20, source drawing</dd></div><div><dt>Steel</dt><dd>Fe500, source drawing</dd></div>
+<div><dt>Concrete unit weight</dt><dd>20 kN/m³ — user approved</dd></div><div><dt>Concrete E</dt><dd>22,360.68 MPa — original source report, linear elastic</dd></div>
+<div><dt>Seismic edition</dt><dd>NBC 105:2025 — approved; code seismic calculation not complete</dd></div>
+<div><dt>Site</dt><dd>Pokhara · original geotech soil type B (2020) vs older report D</dd></div></dl>
+</div>
+<div class="subcard"><h3>2.5 General Building Layout</h3>
+<table><thead><tr><th>Floor</th><th>Scheduled area</th><th>Assigned frame level</th></tr></thead><tbody id="floor-summary"></tbody></table>
+<p class="note">Architectural floor areas are <strong>not</strong> a verified geometric floor-shell takeoff. Frame level height 3.05 m uses the source report; source ground-floor mark locations are real DXF-derived, upper-storey continuity is assumed.</p></div></div>
+<h3>2.6 Load Calculations</h3><p>The source report gives residential rooms 2 kN/m², terrace 1.5 kN/m², corridors and staircases 3 kN/m², wall line loads 9.24 kN/m and partition line loads 4.47 kN/m. This computation uses a uniform 2 kN/m² <em>room proxy</em>; corridors/stairs are not yet individually attributed, and both wall line loads are <b>omitted pending actual wall paths</b>.</p>
+<div class="subcard" id="ledger"><h3>Independent source-based gravity takeoff</h3><table><thead><tr><th>Source term</th><th>Actual calculation (kN)</th><th>Evidence class</th></tr></thead><tbody id="load-ledger"></tbody></table></div>
+<h3>2.6.4 Seismic and 2.6.5 Wind Loads</h3>
+<p>NBC 105:2025 applies, but a site-appropriate Vs30/seismic class, occupancy/system parameters and accepted mass model are absent. Here PX10 and PY10 are <strong>10 kN lateral per elevated level</strong> for solver probing, NOT equivalent static seismic loading, spectrum loading or a wind action.</p>
+<h3>2.7 Soft Storey / 2.8 Combinations</h3><p>Drift, soft-storey, regularity and strength combinations are not certified. Cases are investigated separately to preserve signed linear results. No fabricated NBC code combination is offered.</p>
+</section>
+<section class="chapter" id="method"><div class="chapter-top"><span>CHAPTER 03</span><span>INDEPENDENT METHOD</span></div>
+<h2>3.0 Analysis and Design Procedure</h2>
+<ol class="steps">
+<li>Read eleven CAD-derived registers at immutable commit; verify original structural drawing SHA identity.</li>
+<li>Normalize 23 source GF column marks and 21 footing outlines; distinguish proposed Block B.</li>
+<li>Preserve original DXF beam candidate handles (32 GF, 17 FF, 17 SF) and audit all assumed endpoint connections.</li>
+<li>Extend source GF column lines to three elevated levels under an explicit 3.05 m/storey hypothesis.</li>
+<li>Use source section schedules where declared and labelled section defaults for unassigned beam/upper-column details.</li>
+<li>Construct physical 3D six-DOF nodes; one elastic frame element per approved calculation hypothesis; omit duplicate/zero mapped spans.</li>
+<li>Compute actual section/membership selfweight using 20 kN/m³; avoid slab/beam depth double count.</li>
+<li>Apply floor areas as <em>uniform nodal gravity proxies</em>, not pretend one-/two-way shell load transfer.</li>
+<li>Independently solve DL, LL, PX10 and PY10 with OpenSeesPy; retain signed member I/J forces.</li>
+<li>Read fixed-base support reactions and global six-axis equilibrium including force-position moments.</li>
+<li>Generate traceable per-member CSV, JSON casebook and SHA256 receipt with explicitly bounded conclusions.</li>
+<li>Block engineering/compliance claims until actual slab, member, joint, soil and seismic source checks are completed.</li>
+</ol>
+</section>
+<section class="chapter" id="model"><div class="chapter-top"><span>CHAPTER 04</span><span>STRUCTURAL MODEL</span></div>
+<h2>4.0 Independent OpenSees 3D Model</h2>
+<p>The original report uses ETABS. This is a separate model built with OpenSeesPy and our own source-connection/element pipeline. Its geometry is neither a converted native ETABS model nor an as-built/approved drawing.</p>
+<div class="controls"><label for="floor-select">Model levels</label><select id="floor-select" aria-label="Select model floor">
+<option value="ALL">All levels — 3D</option><option value="GF">GF</option><option value="FF">FF</option><option value="SF">SF</option></select>
+<label><input type="checkbox" id="show-labels"> Show column axes</label></div>
+<div class="diagramgrid"><div><svg id="frame-visual" role="img" aria-label="Source-projected frame geometry" viewBox="0 0 720 430"><text x="25" y="35">Loading verified solver model…</text></svg>
+<p class="note">The blue/purple model represents source coordinates plus explicitly assumed beam snaps. Amber marks indicate connections whose nearest axis is farther than 750 mm from the source endpoint, an inspection threshold only.</p></div>
+<div class="subcard"><p class="eyebrow">Selected member</p><h3 id="selected-element">Choose a beam or column</h3><p id="member-detail" class="detail">Tap any drawing element to inspect its source identity, level, assumed connections, and current OpenSees member actions.</p><h4>Source-hypothesis register</h4><dl class="kv"><div><dt>Source strips</dt><dd id="source-strip-total">—</dd></div>
+<div><dt>Modeled beam links</dt><dd id="modeled-beams">—</dd></div><div><dt>Omitted/duplicate edges</dt><dd id="omitted-beams">—</dd></div>
+<div><dt>Validated beam-column joins</dt><dd>0</dd></div></dl></div></div>
+</section>
+<section class="chapter" id="results"><div class="chapter-top"><span>CHAPTER 05</span><span>ACTUAL SIGNED OPENSEES RESPONSES</span></div>
+<h2>5.0 Design Output and Structural Checks</h2>
+<p>Results below come from the independent OpenSees engine for the stated <em>assumed model</em>. These are meaningful elastic analysis outputs, <strong>not</strong> NBC design acceptances.</p>
+<div class="controls result-control"><label for="case-select">OpenSees load case</label>
+<select id="case-select" aria-label="Select independently solved load case">
+<option value="DL">DL · provisional dead gravity</option><option value="LL">LL · uniform room imposed proxy</option>
+<option value="PX10">PX10 · +X lateral probe</option><option value="PY10">PY10 · +Y lateral probe</option>
+</select><span id="current-case" class="small-status">DL</span></div>
+<div class="facts result-metrics">
+<div><span>Sum applied Fz</span><strong id="case-load">—</strong></div>
+<div><span>Sum base Fz</span><strong id="case-reaction">—</strong></div>
+<div><span>Largest local moment</span><strong id="case-moment">—</strong></div>
+<div><span>6-axis max residual</span><strong id="case-equilibrium">—</strong></div>
+</div>
+<h3>5.2–5.4 Axial, shear &amp; bending — signed local member end actions</h3>
+<p class="note">Maximum absolute values rank only the current solved scenario. Clicking a row selects the source member in Chapter 4 and shows the I/J local end actions; values are not required reinforcement or code utilization ratios.</p>
+<div class="scroll"><table><thead><tr><th>Rank</th><th>Member</th><th>Type/level</th><th>Max |N| (kN)</th><th>Max |V| (kN)</th><th>Max |M| (kNm)</th></tr></thead><tbody id="member-results"></tbody></table></div>
+<h3>5.6–5.7 Model Displacements (not verified code drift)</h3>
+<div class="scroll"><table><thead><tr><th>Level</th><th>Max |Ux| (mm)</th><th>Max |Uy| (mm)</th><th>Max |Uz| (mm)</th></tr></thead><tbody id="displacement-results"></tbody></table></div>
+<h3>5.12–5.14 Actual Fixed-Base Reactions</h3>
+<div class="scroll"><table><thead><tr><th>GF support axis</th><th>Fx (kN)</th><th>Fy (kN)</th><th>Fz (kN)</th><th>Mx (kNm)</th><th>My (kNm)</th></tr></thead><tbody id="base-results"></tbody></table></div>
+<p class="note">Global force and moment equilibrium is checked about a fixed source-derived XY origin. Equilibrium does not establish correct physical joint connectivity or bearing safety.</p>
+<h3>5.1 Seismic / 5.5 Mass Participation / 5.8–5.11 Irregularities</h3>
+<div class="warning">These source-report checks are <strong>NOT CALCULATED</strong> by the actual-building model: seismic spectrum/ESM base shear, mode participation and torsion, ULS/SLS drift, soft-storey and accidental eccentricity. PX10/PY10 are software-only probe cases.</div>
+</section>
+<section class="chapter" id="design"><div class="chapter-top"><span>CHAPTER 06</span><span>DESIGN ACCEPTANCE REGISTER</span></div>
+<h2>6.0 Design of Structural Elements</h2>
+<p>Response magnitudes from Chapter 5 are not themselves element capacities. Source schedule information and any original ETABS-designed reinforcement are not blindly transferred into our design engine.</p>
+<div class="scroll"><table class="checktable"><thead><tr><th>Original chapter</th><th>Independent-engine deliverable</th><th>Design verdict</th></tr></thead><tbody>
+<tr><td>6.1 Columns</td><td>3D elastic axial / shear / bending from assumed member sections; section/link continuity remains provisional</td><td class="pending">HOLD · strength/ductility/rebar</td></tr>
+<tr><td>6.2 Beams</td><td>Signed local I/J forces for source-candidate projected spans; missing verified actual end connections</td><td class="pending">HOLD · flexure, shear, BCC ratio</td></tr>
+<tr><td>6.3 Slabs</td><td>Floor-area gravity proxy only; no conforming two-way physical ShellMITC4 geometry</td><td class="pending">HOLD · shell analysis/rebar/punching</td></tr>
+<tr><td>6.4 Footings</td><td>23 idealized fixed column bases; 21 source outlines; 160 kPa provisional and soil report 166 kPa conditional</td><td class="danger">F3 NOT SAFE historically · HOLD</td></tr>
+<tr><td>6.5 Staircase</td><td>No physical waist slab, landing or stair support graph registered</td><td class="pending">HOLD · flexure/shear/detailing</td></tr>
+</tbody></table></div>
+<div class="warning"><b>F3 remains NOT SAFE IN ONE WAY SHEAR</b> in the earlier source investigation. Numerical convergence or new elastic reactions cannot reverse that finding without source-verified footing geometry, load combinations and an independently checked redesign.</div>
+</section>
+<section class="chapter" id="annex"><div class="chapter-top"><span>ANNEX</span><span>PROVENANCE &amp; REPRODUCIBILITY</span></div>
+<h2>Calculation Evidence &amp; Sources</h2>
+<h3>Annex A · Source documents and method</h3>
+<div class="sources">
+<a href="https://drive.google.com/file/d/1TpWUmOdrcQqOpkN6qvmhZ12KrYaNABBM/view" target="_blank" rel="noopener">Original Narayani structural analysis report (Drive)</a>
+<a href="https://github.com/FabinGurung/jp-drawing-coordination/tree/259d11e1543e4ba7040373a752b823396e12d7f8/public/data/projects/narayani-parajuli" target="_blank" rel="noopener">Pinned original-DXF-derived drawing source</a>
+<a href="https://drive.google.com/file/d/13y0b0v8BiL2ooMXy0BFn2dtdSHWNOg2N/view" target="_blank" rel="noopener">Project geotechnical report, bearing table</a>
+<a href="https://giwmscdnone.gov.np/media/files/NBC_105_2025_Seismic%20Design%20of%20Buildings%20in%20Nepal_lqqvx6a.pdf" target="_blank" rel="noopener">Government NBC 105:2025</a>
+<a href="https://dudbc.gov.np/pages/building-code/" target="_blank" rel="noopener">Government building codes NBC 103, 104, 110</a>
+<a href="https://openseespydoc.readthedocs.io/en/stable/src/elasticBeamColumn.html" target="_blank" rel="noopener">Independent OpenSees elasticBeamColumn API</a>
+</div>
+<h3>Annex B · Download reproducible model and results</h3>
+<div class="downloads"><a href="reports/r6p26/narayani-independent-frame-results.json">Independent OpenSees signed JSON</a>
+<a href="reports/r6p26/narayani-independent-frame-source.json">Source-labelled model assumptions</a>
+<a href="reports/r6p26/narayani-member-forces.csv">Signed I/J member forces CSV</a>
+<a href="reports/r6p26/narayani-base-reactions.csv">Base reactions CSV</a>
+<a href="reports/r6p26/narayani-verified-manifest.json">SHA256 readback manifest</a>
+<a href="https://github.com/FabinGurung/jp-structural-analysis/tree/main/r6p26">Open calculation code and CI tests</a></div>
+<p class="note">Independent engine report digest: <code id="source-digest">—</code>. Original source report and raw site-private documents have not been republished.</p>
+<h3>Annex C · Open engineering debt</h3><ul id="open-holds" class="holds"><li>Loading source provenance…</li></ul>
+<h3>Annex D · Release scope</h3>
+<p><strong>R6.26 is a bounded, automated numerical report reconstruction</strong>, not a completed structural design report or permit submission. R6.24 remains the last formally tagged software prerelease; this live report may be reviewed now. A final engineering release requires verified 3D slab/wall/stair model, site-specific NBC 105:2025 checks and professional structural sign-off.</p>
+</section>
+<footer>JP Structural Analysis · R6.26 Independent OpenSees report · Generated by GitHub Actions · ENGINEERING HOLD</footer>
+</main></div>
+<script src="r6p26-report.js" defer></script></body></html>
