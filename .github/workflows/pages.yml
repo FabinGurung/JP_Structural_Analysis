@@ -828,6 +828,17 @@ jobs:
           PYTHONPATH=r6p23-main python -m r6p25.qa_export --cad-root r6p25-cad-source --site-dir site
           PYTHONPATH=r6p23-main python -c 'from pathlib import Path; from r6p25.qa_export import verify; print("R6P25_NARAYANI_PUBLIC_QA_VERIFIED",verify(Path("site"))["cad_source_sha"])'
           node --check site/r6p25.js
+      - name: Verify source-controlled Narayani six-chapter independent FE report
+        env:
+          R6P25_CAD_ROOT: r6p25-cad-source
+        run: |
+          PYTHONPATH=r6p23-main python -m pytest -q r6p23-main/r6p26/test_engine.py
+          node --check r6p23-main/r6p26/report.js
+      - name: Recompute live six-chapter Narayani OpenSees report with signed forces
+        run: |
+          PYTHONPATH=r6p23-main python -m r6p26.publish --cad-root r6p25-cad-source --site-dir site
+          PYTHONPATH=r6p23-main python -c 'from pathlib import Path; from r6p26.publish import verify; print("R6P26_SOURCE_AND_FE_RESULTS_VERIFIED", verify(Path("site"))["result_sha256"])'
+          node --check site/r6p26-report.js
       - name: Write deployment metadata
         run: |
           python - <<'PY'
@@ -857,6 +868,50 @@ jobs:
       - name: Deploy GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5.0.1
+      - name: Verify live R6.26 independent calculation report and no false project acceptance
+        run: |
+          python - <<'PY'
+          import json,os,time,urllib.request,hashlib
+          owner,repo=os.environ["GITHUB_REPOSITORY"].split("/")
+          root="https://"+owner.lower()+".github.io/"+repo+"/"
+          def get(path,attempt):
+              req=urllib.request.Request(
+                root+path+"?r6p26="+str(attempt),
+                headers={"Cache-Control":"no-cache",
+                         "User-Agent":"JP-R6P26-OpenSees-independent-report-source-verification"})
+              return urllib.request.urlopen(req,timeout=25).read()
+          for attempt in range(18):
+              try:
+                  raw=get("reports/r6p26/narayani-independent-frame-results.json",attempt)
+                  d=json.loads(raw)
+                  receipt=json.loads(get("reports/r6p26/narayani-verified-manifest.json",attempt))
+                  html=get("r6p26-report.html",attempt).decode()
+                  script=get("r6p26-report.js",attempt).decode()
+                  assert receipt["schema"]=="jp.structural.r6p26.report_reproduction_receipt.v0.1"
+                  assert d["schema"]=="jp.structural.r6p26.narayani_independent_frame_results.v0.1"
+                  assert d["project_id"]=="PRJ-000007"
+                  assert d["geometry_source_cad_commit"]=="259d11e1543e4ba7040373a752b823396e12d7f8"
+                  assert len(d["cases"])==4 and len(d["source_nodes"])==92
+                  assert d["model_counts"]["source_GF_columns"]==23
+                  assert d["model_counts"]["independent_3D_elastic_frame_scenarios"]==4
+                  assert receipt["independent_engine_recalculated"] is True
+                  assert receipt["complete_building_design"] is False
+                  assert receipt["F3_one_way_shear_unsafe_preserved"] is True
+                  assert d["professional_engineering_approval"] is False and d["construction_release"] is False
+                  assert d["seismic_code_design_performed"] is False and d["real_shell_FE_solved"] is False
+                  assert all(v["max_6axis_equilibrium_residual"]<1e-4 for v in d["cases"].values())
+                  assert "1.0 Introduction" in html and "6.0 Design of Structural Elements" in html
+                  assert "NOT SAFE IN ONE WAY SHEAR" in html and "Engineering HOLD" in html
+                  assert "signed_local_member_forces" in script
+                  import hashlib
+                  assert hashlib.sha256(raw).hexdigest()==receipt["files_sha256"]["reports/r6p26/narayani-independent-frame-results.json"]
+                  print("R6P26_LIVE_6CHAPTER_INDEPENDENT_OPENSEES_REPORT_AND_HOLDS_PASS")
+                  break
+              except Exception as e:
+                  if attempt==17:raise
+                  print("R6.26 Pages CDN not ready",attempt+1,str(e)[:200])
+                  time.sleep(10)
+          PY
       - name: Verify live R6.25 Narayani QA and enforce source assumptions versus FE approval
         run: |
           python - <<'PY'
